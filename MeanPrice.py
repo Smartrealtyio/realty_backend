@@ -5,11 +5,11 @@ import MainPreprocessing as MPrep
 
 def MeanPrices(full_sq, rooms, latitude_from, latitude_to,
                longitude_from, longitude_to, price_from=None, price_to=None):
+    MPrep.main_preprocessing()
     df = pd.read_csv(SETTINGS.DATA + '/COORDINATES_MEAN_PRICE.csv')
     price_from = float(price_from) if price_from != None else float(df.price.min())
     price_to = float(price_to) if price_to != None else float(df.price.max())
     # Running main preprocessing
-    MPrep.main_preprocessing()
 
     # Apply requested parameters as filter for flats database
     filter = (((df.full_sq >= full_sq - 5) & (df.full_sq <= full_sq + 5)) & (df.rooms == rooms) &

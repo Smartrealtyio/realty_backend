@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn import preprocessing
-import MeanPriceSettings as SETTINGS
+import settings_local as SETTINGS
 import backports.datetime_fromisoformat as bck
 
 

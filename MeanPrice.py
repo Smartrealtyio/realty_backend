@@ -1,5 +1,5 @@
 import pandas as pd
-import MeanPriceSettings as SETTINGS
+import settings_local as SETTINGS
 import MainPreprocessing as MPrep
 
 

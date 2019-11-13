@@ -111,3 +111,4 @@ __pycache__/
 .idea/
 *.iml
 gunicorn.conf.py
+settings_local.py

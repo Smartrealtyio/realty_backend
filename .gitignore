@@ -110,3 +110,4 @@ __pycache__/
 # IntelliJ files
 .idea/
 *.iml
+gunicorn.conf.py

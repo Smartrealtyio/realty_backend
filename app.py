@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import MeanPrice
 import json
+import math
 
 app = Flask(__name__)
 
@@ -20,6 +21,8 @@ def mean():
         data['price_to'] = None
     mean_price, flats = MeanPrice.MeanPrices(data['full_sq'], data['rooms'], data['latitude_from'], data['latitude_to'],
                          data['longitude_from'], data['longitude_to'], data['price_from'], data['price_to'])
+    if math.isnan(mean_price):
+        mean_price = None
     return jsonify({'mean_price': mean_price, 'flats': flats})
 
 

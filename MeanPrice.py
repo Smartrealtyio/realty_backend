@@ -33,5 +33,5 @@ def MeanPrices(full_sq, rooms, latitude_from, latitude_to,
 
 
 if __name__ == '__main__':
-    MeanPrices(full_sq=75.0, latitude_from=55.81, latitude_to=55.815, longitude_from=37.59,
-               longitude_to=37.595, rooms=3, price_from=None, price_to=None)
+    MeanPrices(full_sq=70, latitude_from=10.0, latitude_to=11.0, longitude_from=10.0,
+               longitude_to=11.0, rooms=2, price_from=None, price_to=None)

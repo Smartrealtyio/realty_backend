@@ -5,6 +5,7 @@ import settings_local as SETTINGS
 import backports.datetime_fromisoformat as bck
 
 
+
 # FINAL PARAMETERS ORDER:
 # ['building_type_str', 'renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'term', 'full_sq', 'kitchen_sq',
 # 'life_sq', 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first']
@@ -62,11 +63,7 @@ def main_preprocessing():
 
     # choose the shortest path on foot
     ds: pd.DataFrame = pd.merge(prices, flats, left_on="flat_id", right_on="id")
-    # ONLY CLOSED DEAL
-    ds = ds.loc[ds['closed'] == True]
-    print(ds.closed.value_counts())
-    ds = ds.drop(['closed'], axis=1)
-    print('HEADERS NAME: ', list(ds.columns))
+
     print('merge#1: ', ds.shape)
     new_ds: pd.DataFrame = pd.merge(districts, buildings, left_on='id', right_on='district_id',
                                     suffixes=['_district', '_building'])
@@ -79,7 +76,11 @@ def main_preprocessing():
     # ds = pd.get_dummies(ds, columns=["transport_type"])
 
     # ds = pd.get_dummies(ds, columns=["max_floor"])
-
+    # ONLY CLOSED DEAL
+    ds = ds.loc[ds['closed'] == True]
+    print(ds.closed.value_counts())
+    ds = ds.drop(['closed'], axis=1)
+    print('HEADERS NAME: ', list(ds.columns))
     ds = ds.drop(['id', 'built_year', 'flats_count', 'id_district', 'name', 'building_id_x', 'building_id_y'], axis=1)
     ds.has_elevator = ds.has_elevator.astype(int)
     ds.renovation = ds.renovation.astype(int)
@@ -90,18 +91,28 @@ def main_preprocessing():
     ds['floor_last'] = np.where(ds['max_floor']==ds['floor'], 1, 0)
     ds['floor_first'] = np.where(ds['floor']==1, 1, 0)
     ds = ds.drop_duplicates(subset='flat_id', keep="last")
-
-    le = preprocessing.LabelEncoder()
-    ds['building_type_str'] = le.fit_transform(ds['building_type_str'])
+    print(ds.building_type_str.value_counts())
+    # le = preprocessing.LabelEncoder()
+    # PANEL = 4; BLOCK = 0; BRICK = 1; MONOLIT = 2; UNKNOWN = 5; MONOLIT_BRICK = 3; WOOD = 6
+    buildings_types = dict(PANEL=4, BLOCK=0, BRICK=1, MONOLIT=2,
+                           UNKNOWN=5, MONOLIT_BRICK=3, WOOD=6)
+    ds.building_type_str.replace(buildings_types, inplace=True)
+    #uniques = ds.building_type_str.unique()
+    #print(uniques)
+    #keys= buildings_types.keys()
+    #if ds[ds['building_type_str']].isin([keys]):
+    #    ds[ds['building_type_str']] = buildings_types.get(ds['building_type_str'])
+    #y = ds.sentiment
+    #ds['building_type_str'] = le.fit_transform(ds['building_type_str'])
 
     ds = ds.drop(['max_floor', "flat_id", 'floor', 'updated_at', 'changed_date', 'id_building', 'district_id', 'transport_type'], axis=1)
     print(ds.shape)
     print('HEADERS NAME FINALY: ', list(ds.columns))
 
     print('Saving to new csv')
+    print(ds.building_type_str[:3])
     ds.to_csv(SETTINGS.DATA+'/COORDINATES_MEAN_PRICE.csv', index=None, header=True)
 
 
 if __name__ == '__main__':
     main_preprocessing()
-

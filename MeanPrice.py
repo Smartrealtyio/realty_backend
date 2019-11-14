@@ -5,7 +5,7 @@ import MainPreprocessing as MPrep
 
 def MeanPrices(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
                longitude_from, longitude_to, price_from=None, price_to=None, building_type_str=None, kitchen_sq=None,
-               life_sq=None, renovation=None, has_elevator=None, floor_first=None, floor_last=None):
+               life_sq=None, renovation=None, has_elevator=None, floor_first=None, floor_last=None, time_to_metro=None):
     MPrep.main_preprocessing()
     df = pd.read_csv(SETTINGS.DATA + '/COORDINATES_MEAN_PRICE.csv')
     price_from = float(price_from) if price_from != None else float(df.price.min())
@@ -28,20 +28,23 @@ def MeanPrices(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
     # df = df.query('rooms == ')
     df = df[filter]
 
-
-    if building_type_str is not None:
+    if time_to_metro != None:
+        df = df[(df.time_to_metro <= time_to_metro)]
+    if rooms != None:
+        df = df[df.rooms == rooms]
+    if building_type_str != None:
         df = df[df.building_type_str == building_type_str]
-    if kitchen_sq is not None:
+    if kitchen_sq != None:
         df = df[(df.kitchen_sq >= kitchen_sq - 5) & (df.kitchen_sq <= kitchen_sq + 5)]
-    if life_sq is not None:
+    if life_sq != None:
         df = df[(df.life_sq >= life_sq - 5) & (df.life_sq <= life_sq + 5)]
-    if renovation is not None:
+    if renovation != None:
         df = df[df.renovation == renovation]
-    if has_elevator is not None:
+    if has_elevator != None:
         df = df[df.has_elevator == has_elevator]
-    if floor_first is not None:
+    if floor_first != None:
         df = df[df.floor_first == 0]
-    if floor_last is not None:
+    if floor_last != None:
         df = df[df.floor_last == 0]
 
 

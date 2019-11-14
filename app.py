@@ -13,8 +13,6 @@ def hello_world():
 
 @app.route('/api/mean/', methods=['GET'])
 def mean():
-    # data = json.loads(request.data)
-    # print(data)
     full_sq_from = float(request.args.get('full_sq_from'))
     full_sq_to = float(request.args.get('full_sq_to'))
     latitude_from = float(request.args.get('latitude_from'))
@@ -31,10 +29,11 @@ def mean():
     has_elevator = float(request.args.get('has_elevator')) if request.args.get('has_elevator') is not None else None
     floor_first = float(request.args.get('floor_first')) if request.args.get('floor_first') is not None else None
     floor_last = float(request.args.get('floor_last')) if request.args.get('floor_last') is not None else None
+    time_to_metro = float(request.args.get('time_to_metro')) if request.args.get('time_to_metro') is not None else None
 
     mean_price, flats = MeanPrice.MeanPrices(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
                                              longitude_from, longitude_to, price_from, price_to, building_type_str,
-                                             kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last)
+                                             kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last, time_to_metro)
 
     if math.isnan(mean_price):
         mean_price = None

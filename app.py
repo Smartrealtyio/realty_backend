@@ -20,7 +20,6 @@ def mean():
 
     if math.isnan(mean_price):
         mean_price = None
-
     return jsonify({'mean_price': mean_price, 'flats': flats})
 
 

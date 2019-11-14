@@ -10,7 +10,7 @@ def hello_world():
     return 'Hello World!'
 
 
-@app.route('/mean/', methods=['POST'])
+@app.route('/api/mean/', methods=['POST'])
 def mean():
     data = json.loads(request.data)
     print(data)
@@ -18,9 +18,9 @@ def mean():
         data['price_from'] = None
     if 'price_to' not in data:
         data['price_to'] = None
-    response = MeanPrice.MeanPrices(data['full_sq'], data['rooms'], data['latitude_from'], data['latitude_to'],
+    mean_price, flats = MeanPrice.MeanPrices(data['full_sq'], data['rooms'], data['latitude_from'], data['latitude_to'],
                          data['longitude_from'], data['longitude_to'], data['price_from'], data['price_to'])
-    return jsonify(response)
+    return jsonify({'mean_price': mean_price, 'flats': flats})
 
 
 @app.route('/predict/', methods=['GET', 'POST'])

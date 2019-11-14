@@ -15,14 +15,12 @@ def hello_world():
 def mean():
     data = json.loads(request.data)
     print(data)
-    if 'price_from' not in data:
-        data['price_from'] = None
-    if 'price_to' not in data:
-        data['price_to'] = None
-    mean_price, flats = MeanPrice.MeanPrices(data['full_sq'], data['rooms'], data['latitude_from'], data['latitude_to'],
-                         data['longitude_from'], data['longitude_to'], data['price_from'], data['price_to'])
+
+    mean_price, flats = MeanPrice.MeanPrices(**data)
+
     if math.isnan(mean_price):
         mean_price = None
+
     return jsonify({'mean_price': mean_price, 'flats': flats})
 
 

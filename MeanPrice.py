@@ -4,7 +4,8 @@ import MainPreprocessing as MPrep
 
 
 def MeanPrices(full_sq, rooms, latitude_from, latitude_to,
-               longitude_from, longitude_to, price_from=None, price_to=None):
+               longitude_from, longitude_to, price_from=None, price_to=None, building_type_str=None, kitchen_sq=None,
+               life_sq=None, renovation=None, has_elevator=None, floor_first=None, floor_last=None):
     MPrep.main_preprocessing()
     df = pd.read_csv(SETTINGS.DATA + '/COORDINATES_MEAN_PRICE.csv')
     price_from = float(price_from) if price_from != None else float(df.price.min())
@@ -16,6 +17,8 @@ def MeanPrices(full_sq, rooms, latitude_from, latitude_to,
               ((df.latitude >= latitude_from) & (df.latitude <= latitude_to)
                & (df.longitude >= longitude_from) & (df.longitude <= longitude_to)) &
               ((df.price >= price_from) & (df.price <= price_to)))
+
+
 
     df = df[filter]
 

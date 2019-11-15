@@ -38,14 +38,18 @@ def mean():
 
     conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
     cur = conn.cursor()
-    cur.execute("select metro_id from time_metro_buildings where building_id=%s", (flats['id_building'],))
-    metro_ids = cur.fetchall()
-    flats['meros'] = []
-    for metro_id in metro_ids:
-        cur.execute("select name from metros where id=%s", (metro_id,))
-        flats['meros'].append(cur.fetchone()[0])
+    for id, flat in flats.items():
+        cur.execute("select metro_id from time_metro_buildings where building_id=%s", (flat['id_building'],))
+        metro_ids = cur.fetchall()
+        flat['meros'] = []
+        for metro_id in metro_ids:
+            cur.execute("select name from metros where id=%s", (metro_id,))
+            flat['meros'].append(cur.fetchone()[0])
 
-    flats['link'] = 'https://realty.yandex.ru/offer/' + str(flats['offer_id'])
+        flat['link'] = 'https://realty.yandex.ru/offer/' + str(flats['offer_id'])
+
+    conn.close()
+
     del flats['offer_id']
     del flats['id_building']
 

@@ -40,16 +40,16 @@ def mean():
     cur = conn.cursor()
     for id, flat in flats.items():
         cur.execute("select metro_id, time_to_metro from time_metro_buildings where building_id=%s", (flat['id_building'],))
-        metro_ids = cur.fetchall()
-        print("METRO", metro_ids)
+        metros_info = cur.fetchall()
         flat['meros'] = []
-        for metro_id in metro_ids:
-            cur.execute("select name from metros where id=%s", (metro_id,))
-            flat['meros'].append(cur.fetchone()[0])
+        for metro in metro_info:
+            cur.execute("select name from metros where id=%s", (metro[0],))
+            flat['meros'].append({'station': cur.fetchone()[0], 'time_to_metro': metro[1]})
 
         flat['link'] = 'https://realty.yandex.ru/offer/' + str(flat['offer_id'])
         del flat['offer_id']
         del flat['id_building']
+        del flat['time_to_metro']
 
     conn.close()
 

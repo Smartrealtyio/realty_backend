@@ -3,6 +3,7 @@ import MeanPrice
 import math
 import psycopg2
 import settings_local as SETTINGS
+from joblib import dump, load
 
 app = Flask(__name__)
 
@@ -58,10 +59,49 @@ def mean():
     return jsonify({'mean_price': mean_price, 'flats': flats})
 
 
-@app.route('/predict/', methods=['GET', 'POST'])
-def predict():
-    return jsonify({'key': 5})
+def func_pred_price(params: list):
 
+    model_price = load(SETTINGS.PRICE_MODEL_PATH)
+    X = params
+    # X = [1, 1, 1, 23, 100, 20, 70, 0, 5, 1, 0, 0, 0]0
+    pred = model_price.predict([X])
+    return int(pred)
+
+def func_pred_term(params: list):
+    model_term = load(SETTINGS.SALE_TIME_MODEL_PATH)
+    X = params
+    pred = model_term.predict([X])
+    return int(pred)
+
+
+@app.route('/map')
+def map():
+    building_type_str = request.args.get('building_type_str')
+    longitude = request.args.get('lng')
+    latitude = request.args.get('lat')
+    full_sq = request.args.get('full_sq')
+    kitchen_sq = request.args.get('kitchen_sq')
+    life_sq = request.args.get('life_sq')
+    is_apartment = request.args.get('is_apartment')
+    renovation = request.args.get('renovation')
+    has_elevator = request.args.get('has_elevator')
+    floor_first = request.args.get('floor_first')
+    floor_last = request.args.get('floor_last')
+    time_to_metro = request.args.get('time_to_metro')
+
+
+    list_of_requested_params_price = [building_type_str, renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
+                                life_sq, is_apartment, time_to_metro, floor_last, floor_first]
+
+    price = func_pred_price(list_of_requested_params_price)
+
+    # SALE TERM PREDICTION
+    list_of_requested_params_term = [building_type_str, renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+                                     life_sq, is_apartment, time_to_metro,
+                                     floor_last, floor_first]
+    term = func_pred_term(list_of_requested_params_term)
+    return {'Price': price, 'Duration': term}
+    # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 
 if __name__ == '__main__':
     app.run()

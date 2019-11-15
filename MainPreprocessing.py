@@ -58,7 +58,8 @@ def main_preprocessing():
                                                      'transport_type', 'created_at', 'updated_at'],
                                               usecols=["building_id", "time_to_metro", "transport_type"], header=0)
 
-    time_to_metro = time_to_metro.drop_duplicates(subset='building_id', keep="first")
+    time_to_metro.sort_values('time_to_metro', ascending=True).drop_duplicates(subset='building_id',
+                                                                               keep="first").sort_index()
     time_to_metro = time_to_metro[time_to_metro['transport_type'] == "ON_FOOT"]
 
     # choose the shortest path on foot

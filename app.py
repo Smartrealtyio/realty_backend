@@ -46,7 +46,7 @@ def mean():
             cur.execute("select name from metros where id=%s", (metro_id,))
             flat['meros'].append(cur.fetchone()[0])
 
-        flat['link'] = 'https://realty.yandex.ru/offer/' + str(flats['offer_id'])
+        flat['link'] = 'https://realty.yandex.ru/offer/' + str(flat['offer_id'])
 
     conn.close()
 

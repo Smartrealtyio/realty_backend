@@ -47,11 +47,10 @@ def mean():
             flat['meros'].append(cur.fetchone()[0])
 
         flat['link'] = 'https://realty.yandex.ru/offer/' + str(flat['offer_id'])
+        del flat['offer_id']
+        del flat['id_building']
 
     conn.close()
-
-    del flats['offer_id']
-    del flats['id_building']
 
     if math.isnan(mean_price):
         mean_price = None

@@ -12,7 +12,7 @@ import backports.datetime_fromisoformat as bck
 
 def main_preprocessing():
 
-    # Data preprocessing #
+    # DATA preprocessing #
     prices: pd.DataFrame = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "prices.csv", names=[
         'id', 'price', 'changed_date', 'flat_id', 'created_at', 'updated_at'
     ], usecols=["price", "flat_id", 'changed_date', 'updated_at'])
@@ -30,7 +30,7 @@ def main_preprocessing():
                                                "kitchen_sq",
                                                "life_sq",
                                                "floor", "is_apartment",
-                                               "building_id",
+                                               "building_id", 'offer_id',
                                                "closed", 'rooms'
                                                ],
                                       true_values="t", false_values="f", header=0)
@@ -43,7 +43,7 @@ def main_preprocessing():
                                                                                               'created_at',
                                                                                               'updated_at'],
                                           usecols=["id", "max_floor", 'building_type_str', "built_year", "flats_count",
-                                                   "renovation",
+                                                   'address', "renovation",
                                                    "has_elevator",
                                                    "district_id", 'longitude', 'latitude',  # nominative scale
                                                    ],
@@ -97,15 +97,9 @@ def main_preprocessing():
     buildings_types = dict(PANEL=4, BLOCK=0, BRICK=1, MONOLIT=2,
                            UNKNOWN=5, MONOLIT_BRICK=3, WOOD=6)
     ds.building_type_str.replace(buildings_types, inplace=True)
-    #uniques = ds.building_type_str.unique()
-    #print(uniques)
-    #keys= buildings_types.keys()
-    #if ds[ds['building_type_str']].isin([keys]):
-    #    ds[ds['building_type_str']] = buildings_types.get(ds['building_type_str'])
-    #y = ds.sentiment
-    #ds['building_type_str'] = le.fit_transform(ds['building_type_str'])
 
-    ds = ds.drop(['max_floor', "flat_id", 'floor', 'updated_at', 'changed_date', 'id_building', 'district_id', 'transport_type'], axis=1)
+
+    ds = ds.drop(['max_floor', "flat_id", 'floor', 'updated_at', 'changed_date', 'district_id', 'transport_type'], axis=1)
     print(ds.shape)
     print('HEADERS NAME FINALY: ', list(ds.columns))
 
@@ -116,3 +110,4 @@ def main_preprocessing():
 
 if __name__ == '__main__':
     main_preprocessing()
+

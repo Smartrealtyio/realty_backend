@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 import MeanPrice
-import json
 import math
+import psycopg2
+import settings_local as SETTINGS
 
 app = Flask(__name__)
 
@@ -34,6 +35,19 @@ def mean():
     mean_price, flats = MeanPrice.MeanPrices(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
                                              longitude_from, longitude_to, price_from, price_to, building_type_str,
                                              kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last, time_to_metro)
+
+    conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
+    cur = conn.cursor()
+    cur.execute("select metro_id from time_metro_buildings where building_id=%s", (flats['id_building'],))
+    metro_ids = cur.fetchall()
+    flats['meros'] = []
+    for metro_id in metro_ids:
+        cur.execute("select name from metros where id=%s", (metro_id,))
+        flats['meros'].append(cur.fetchone()[0])
+
+    flats['link'] = 'https://realty.yandex.ru/offer/' + str(flats['offer_id'])
+    del flats['offer_id']
+    del flats['id_building']
 
     if math.isnan(mean_price):
         mean_price = None

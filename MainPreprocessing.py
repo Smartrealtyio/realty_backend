@@ -77,7 +77,7 @@ def main_preprocessing():
 
     # ds = pd.get_dummies(ds, columns=["max_floor"])
     # ONLY CLOSED DEAL
-    ds = ds.loc[ds['closed'] == True]
+    ds = ds.loc[ds['closed'] == False]
     print(ds.closed.value_counts())
     ds = ds.drop(['closed'], axis=1)
     print('HEADERS NAME: ', list(ds.columns))

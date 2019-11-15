@@ -42,7 +42,7 @@ def mean():
         cur.execute("select metro_id, time_to_metro from time_metro_buildings where building_id=%s", (flat['id_building'],))
         metros_info = cur.fetchall()
         flat['meros'] = []
-        for metro in metro_info:
+        for metro in metros_info:
             cur.execute("select name from metros where id=%s", (metro[0],))
             flat['meros'].append({'station': cur.fetchone()[0], 'time_to_metro': metro[1]})
 

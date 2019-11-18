@@ -66,7 +66,7 @@ def main_preprocessing():
     ds = pd.merge(prices, flats, left_on="flat_id", right_on="id")
 
     print('merge#1: ', ds.shape)
-    new_ds: pd.DataFrame = pd.merge(districts, buildings, left_on='id', right_on='district_id',
+    new_ds = pd.merge(districts, buildings, left_on='id', right_on='district_id',
                                     suffixes=['_district', '_building'])
     print('HEADERS NAME: ', list(new_ds.columns))
 

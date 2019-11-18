@@ -63,7 +63,7 @@ def main_preprocessing():
     time_to_metro = time_to_metro[time_to_metro['transport_type'] == "ON_FOOT"]
 
     # choose the shortest path on foot
-    ds: pd.DataFrame = pd.merge(prices, flats, left_on="flat_id", right_on="id")
+    ds = pd.merge(prices, flats, left_on="flat_id", right_on="id")
 
     print('merge#1: ', ds.shape)
     new_ds: pd.DataFrame = pd.merge(districts, buildings, left_on='id', right_on='district_id',

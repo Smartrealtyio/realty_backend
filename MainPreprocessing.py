@@ -13,7 +13,7 @@ import backports.datetime_fromisoformat as bck
 def main_preprocessing():
 
     # DATA preprocessing #
-    prices: pd.DataFrame = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "prices.csv", names=[
+    prices = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "prices.csv", names=[
         'id', 'price', 'changed_date', 'flat_id', 'created_at', 'updated_at'
     ], usecols=["price", "flat_id", 'changed_date', 'updated_at'])
     print(prices.shape)
@@ -22,7 +22,7 @@ def main_preprocessing():
     prices['term'] = prices[['updated_at', 'changed_date']].apply(
         lambda row: (bck.date_fromisoformat(row['updated_at'][:-9])
                      - bck.date_fromisoformat(row['changed_date'][:-9])).days, axis=1)
-    flats: pd.DataFrame = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "flats.csv",
+    flats = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "flats.csv",
                                       names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
                                              'building_id', 'created_at',
                                              'updated_at', 'offer_id', 'closed', 'rooms'],
@@ -34,7 +34,7 @@ def main_preprocessing():
                                                "closed", 'rooms'
                                                ],
                                       true_values="t", false_values="f", header=0)
-    buildings: pd.DataFrame = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "buildings.csv",
+    buildings = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "buildings.csv",
                                           names=["id", "max_floor", 'building_type_str', "built_year", "flats_count",
                                                                                               "address", "renovation",
                                                                                               "has_elevator",
@@ -48,12 +48,12 @@ def main_preprocessing():
                                                    "district_id", 'longitude', 'latitude',  # nominative scale
                                                    ],
                                           true_values="t", false_values="f", header=0)
-    districts: pd.DataFrame = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "districts.csv",
+    districts = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "districts.csv",
                                           names=['id', 'name', 'population', 'city_id',
                                                  'created_at', 'updated_at', 'prefix'],
                                           usecols=["name", 'id'],
                                           true_values="t", false_values="f", header=0)
-    time_to_metro: pd.DataFrame = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "time_metro_buildings.csv",
+    time_to_metro = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "time_metro_buildings.csv",
                                               names=['id', 'building_id', 'metro_id', 'time_to_metro',
                                                      'transport_type', 'created_at', 'updated_at'],
                                               usecols=["building_id", "time_to_metro", "transport_type"], header=0)

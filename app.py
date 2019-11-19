@@ -35,7 +35,7 @@ def mean():
     floor_last = float(request.args.get('floor_last')) if request.args.get('floor_last') is not None else None
     time_to_metro = float(request.args.get('time_to_metro')) if request.args.get('time_to_metro') is not None else None
     page = int(request.args.get('page')) if request.args.get('page') is not None else 1
-    # sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 1
+    sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 0
     # flats_page_count = int(request.args.get('flats_page_count')) if request.args.get('flats_page_count') is not None else 10
 
     mean_price, flats = MeanPrice.MeanPrices(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
@@ -46,7 +46,10 @@ def mean():
     flats_page_count = 10
     max_page = math.ceil(len(flats) / flats_page_count)
     page = page if page <= max_page else 1
-    flats = sorted(flats, key=lambda x: x['price'])[(page-1)*flats_page_count:page*flats_page_count]
+    if sort_type == 0:
+        flats = sorted(flats, key=lambda x: x['price'])[(page - 1) * flats_page_count:page * flats_page_count]
+    else:
+        flats = sorted(flats, key=lambda x: x['price'])[(page - 1) * flats_page_count:page * flats_page_count]
 
     conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
     cur = conn.cursor()

@@ -57,7 +57,7 @@ def MeanPrices(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
     print('mean_price', mean_price)
     print('flats_below_mean_price', flats_below_mean_price.to_dict('index'))
     # return str(mean_price)
-    return mean_price, flats_below_mean_price.to_dict('index')
+    return mean_price, flats_below_mean_price.to_dict('records')
 
 
 if __name__ == '__main__':

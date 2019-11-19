@@ -39,7 +39,7 @@ def mean():
 
     conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
     cur = conn.cursor()
-    for id, flat in flats.items():
+    for flat in flats:
         cur.execute("select metro_id, time_to_metro from time_metro_buildings where building_id=%s", (flat['id_building'],))
         metros_info = cur.fetchall()
         flat['metros'] = []

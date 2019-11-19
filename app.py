@@ -4,6 +4,7 @@ import math
 import psycopg2
 import settings_local as SETTINGS
 from joblib import dump, load
+import math
 
 app = Flask(__name__)
 
@@ -24,7 +25,8 @@ def mean():
     rooms = float(request.args.get('rooms'))
     price_from = float(request.args.get('price_from')) if request.args.get('price_from') is not None else None
     price_to = float(request.args.get('price_to')) if request.args.get('price_to') is not None else None
-    building_type_str = float(request.args.get('building_type_str')) if request.args.get('building_type_str') is not None else None
+    building_type_str = float(request.args.get('building_type_str')) if request.args.get(
+        'building_type_str') is not None else None
     kitchen_sq = float(request.args.get('kitchen_sq')) if request.args.get('kitchen_sq') is not None else None
     life_sq = float(request.args.get('life_sq')) if request.args.get('life_sq') is not None else None
     renovation = float(request.args.get('renovation')) if request.args.get('renovation') is not None else None
@@ -32,15 +34,23 @@ def mean():
     floor_first = float(request.args.get('floor_first')) if request.args.get('floor_first') is not None else None
     floor_last = float(request.args.get('floor_last')) if request.args.get('floor_last') is not None else None
     time_to_metro = float(request.args.get('time_to_metro')) if request.args.get('time_to_metro') is not None else None
+    page = int(request.args.get('page')) if request.args.get('page') is not None else 1
 
     mean_price, flats = MeanPrice.MeanPrices(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
                                              longitude_from, longitude_to, price_from, price_to, building_type_str,
-                                             kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last, time_to_metro)
+                                             kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last,
+                                             time_to_metro)
+
+    flats_page_count = 10
+    max_page = math.ceil(len(flats) / flats_page_count)
+    page = page if page <= max_page else 1
+    flats = sorted(flats, key=lambda x: x['price'])[(page-1)*flats_page_count:page*flats_page_count]
 
     conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
     cur = conn.cursor()
     for flat in flats:
-        cur.execute("select metro_id, time_to_metro from time_metro_buildings where building_id=%s", (flat['id_building'],))
+        cur.execute("select metro_id, time_to_metro from time_metro_buildings where building_id=%s",
+                    (flat['id_building'],))
         metros_info = cur.fetchall()
         flat['metros'] = []
         for metro in metros_info:
@@ -56,16 +66,16 @@ def mean():
 
     if math.isnan(mean_price):
         mean_price = None
-    return jsonify({'mean_price': mean_price, 'flats': flats})
+    return jsonify({'mean_price': mean_price, 'flats': flats, 'page': page, 'max_page': max_page})
 
 
 def func_pred_price(params: list):
-
     model_price = load(SETTINGS.PRICE_MODEL_PATH)
     X = params
     # X = [1, 1, 1, 23, 100, 20, 70, 0, 5, 1, 0, 0, 0]0
     pred = model_price.predict([X])
     return int(pred)
+
 
 def func_pred_term(params: list):
     model_term = load(SETTINGS.SALE_TIME_MODEL_PATH)
@@ -89,19 +99,21 @@ def map():
     floor_last = request.args.get('floor_last')
     time_to_metro = request.args.get('time_to_metro')
 
-
-    list_of_requested_params_price = [building_type_str, renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
-                                life_sq, is_apartment, time_to_metro, floor_last, floor_first]
+    list_of_requested_params_price = [building_type_str, renovation, has_elevator, longitude, latitude, full_sq,
+                                      kitchen_sq,
+                                      life_sq, is_apartment, time_to_metro, floor_last, floor_first]
 
     price = func_pred_price(list_of_requested_params_price)
 
     # SALE TERM PREDICTION
-    list_of_requested_params_term = [building_type_str, renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+    list_of_requested_params_term = [building_type_str, renovation, has_elevator, longitude, latitude, price, full_sq,
+                                     kitchen_sq,
                                      life_sq, is_apartment, time_to_metro,
                                      floor_last, floor_first]
     term = func_pred_term(list_of_requested_params_term)
     return {'Price': price, 'Duration': term}
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
+
 
 if __name__ == '__main__':
     app.run()

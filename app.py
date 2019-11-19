@@ -35,6 +35,8 @@ def mean():
     floor_last = float(request.args.get('floor_last')) if request.args.get('floor_last') is not None else None
     time_to_metro = float(request.args.get('time_to_metro')) if request.args.get('time_to_metro') is not None else None
     page = int(request.args.get('page')) if request.args.get('page') is not None else 1
+    # sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 1
+    # flats_page_count = int(request.args.get('flats_page_count')) if request.args.get('flats_page_count') is not None else 10
 
     mean_price, flats = MeanPrice.MeanPrices(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
                                              longitude_from, longitude_to, price_from, price_to, building_type_str,

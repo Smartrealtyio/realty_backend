@@ -130,9 +130,14 @@ def map():
 def save():
     try:
         flat = json.loads(request.data)
+        return jsonify({'result': False})
+    except:
+        print('fail in parsing data')
+    try:
         conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
         cur = conn.cursor()
     except:
+        print('fail connection')
         return jsonify({'result': False})
 
     cur.execute("select id from districts where name=%s;", (flat['district'],))

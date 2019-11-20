@@ -65,10 +65,10 @@ def mean():
             flat['metros'].append({'station': cur.fetchone()[0], 'time_to_metro': metro[1]})
 
 
-        if 'cian' not in flat['offer_id']:
+        if 'cian' not in str(flat['offer_id']):
             flat['link'] = 'https://realty.yandex.ru/offer/' + str(flat['offer_id'])
         else:
-            flat['link'] = 'https://www.cian.ru/sale/flat/' + str(flat['offer_id'].split('cian')[1])
+            flat['link'] = 'https://www.cian.ru/sale/flat/' + str(str(flat['offer_id']).split('cian')[1])
         del flat['offer_id']
         del flat['id_building']
         del flat['time_to_metro']

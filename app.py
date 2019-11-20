@@ -128,11 +128,7 @@ def map():
 
 @app.route('/api/save/', methods=['POST'])
 def save():
-    try:
-        flat = json.loads(request.data)
-        return jsonify({'result': False})
-    except:
-        print('fail in parsing data')
+    flat = json.loads(request.data)
     try:
         conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
         cur = conn.cursor()

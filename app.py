@@ -128,8 +128,8 @@ def map():
 
 @app.route('/api/save/', methods=['POST'])
 def save():
-    flat = json.loads(request.data)
     try:
+        flat = json.loads(request.data)
         conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
         cur = conn.cursor()
     except:

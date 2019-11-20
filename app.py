@@ -64,7 +64,6 @@ def mean():
             cur.execute("select name from metros where id=%s", (metro[0],))
             flat['metros'].append({'station': cur.fetchone()[0], 'time_to_metro': metro[1]})
 
-
         if 'cian' not in str(flat['offer_id']):
             flat['link'] = 'https://realty.yandex.ru/offer/' + str(flat['offer_id'])
         else:
@@ -129,8 +128,15 @@ def map():
 @app.route('/api/save/', methods=['POST'])
 def save():
     flat = json.loads(request.data)
+    for price in flat['prices']:
+        date = price[0].split(' ')[0]
+        time = price[0].split(' ')[1]
+
+        price[0] = datetime(int(date.split('-')[0]), int(date.split('-')[1]), int(date.split('-')[2]),
+                        int(time.split(':')[0]), int(time.split(':')[1]), int(time.split(':')[2][:2]))
     try:
-        conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
+        conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user,
+                                password=SETTINGS.password)
         cur = conn.cursor()
     except:
         print('fail connection')
@@ -180,7 +186,10 @@ def save():
             continue
 
     try:
-        coords_response = requests.get('https://geocode-maps.yandex.ru/1.x/?apikey={}&format=json&geocode={}'.format(SETTINGS.yand_api_token, flat["address"]),timeout=5).text
+        coords_response = requests.get(
+            'https://geocode-maps.yandex.ru/1.x/?apikey={}&format=json&geocode={}'.format(SETTINGS.yand_api_token,
+                                                                                          flat["address"]),
+            timeout=5).text
         coords = \
             json.loads(coords_response)['response']['GeoObjectCollection']['featureMember'][0]['GeoObject'][
                 'Point'][
@@ -300,7 +309,6 @@ def save():
     cur.close()
 
     return jsonify({'result': True})
-
 
 
 if __name__ == '__main__':

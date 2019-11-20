@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60px" height="80px" viewBox="0 0 60 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 58 (84663) - https://sketch.com -->
+    <title>Oval Copy 6</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="18" cy="18" r="18"></circle>
+        <filter x="-55.6%" y="-38.9%" width="211.1%" height="211.1%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="2" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="6" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.462745098   0 0 0 0 0.768627451   0 0 0 0 0.490196078  0 0 0 1 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="sr_12" transform="translate(-536.000000, -1959.000000)">
+            <g id="Oval-Copy-4" transform="translate(548.000000, 1965.000000)">
+                <g>
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <use stroke="#FFFFFF" stroke-width="4" fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <use stroke="#66BB6A" stroke-width="2" xlink:href="#path-1"></use>
+                </g>
+                <path d="M26.5883268,13.0163577 L24.656756,11.7660551 L23.0104748,12.831743 L25.3533071,14.3488137 L25.3533071,23.3538537 L10.6466929,23.3538537 L10.6466929,14.307737 L17.4158357,9.2105271 L19.717089,10.6999056 L21.3637819,9.63421767 L17.7945751,7.32376561 C17.5224591,7.14745864 17.1844753,7.16038166 16.9234745,7.35699624 L9.3643308,13.0491267 C9.13667551,13.2208184 9,13.5078941 9,13.8152775 L9,24.2769269 C9,24.7869248 9.36885921,25.2 9.82334645,25.2 L26.1766536,25.2 C26.6311408,25.2 27,24.7869248 27,24.2769269 L27,13.8152775 C27,13.4862019 26.8431525,13.1806647 26.5883268,13.0163577" id="Fill-23" fill="#66BB6A" fill-rule="evenodd"></path>
+            </g>
+        </g>
+    </g>
+</svg>

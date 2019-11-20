@@ -139,10 +139,10 @@ def save():
     try:
         district_id = cur.fetchone()[0]
     except:
-        # logging.info('district does not exist')
+        print('district does not exist')
         conn.close()
         return jsonify({'result': False})
-    # logging.info('district_id' + str(district_id))
+    print('district_id' + str(district_id))
 
     metro_ids = {}
     for metro in flat['metros']:
@@ -188,7 +188,7 @@ def save():
         longitude = float(longitude)
         latitude = float(latitude)
     except IndexError:
-        # logging.info('bad address for yandex-api' + flat['address'])
+        print('bad address for yandex-api' + flat['address'])
         conn.close()
         return jsonify({'result': False})
 
@@ -217,7 +217,7 @@ def save():
             ))
         cur.execute("select id from buildings where address=%s;", (flat['address'],))
         building_id = cur.fetchone()[0]
-        # logging.info('building_id' + str(building_id))
+        print('building_id' + str(building_id))
         for metro, metro_id in metro_ids.items():
             try:
                 cur.execute(
@@ -231,12 +231,12 @@ def save():
                         datetime.now()
                     ))
             except:
-                # logging.info('some new error')
+                print('some new error')
                 conn.close()
                 return jsonify({'result': False})
     else:
         building_id = is_building_exist[0]
-        # logging.info('building already exist' + str(building_id))
+        print('building already exist' + str(building_id))
 
     cur.execute('select * from flats where offer_id=%s', (flat['offer_id'],))
     is_offer_exist = cur.fetchone()
@@ -260,10 +260,10 @@ def save():
             ))
         cur.execute('select id from flats where offer_id=%s;', (flat['offer_id'],))
         flat_id = cur.fetchone()[0]
-        # logging.info('flat_id' + str(flat_id))
+        print('flat_id' + str(flat_id))
     else:
         flat_id = is_offer_exist[0]
-        # logging.info('flat already exist' + str(flat_id))
+        print('flat already exist' + str(flat_id))
 
         cur.execute("""update flats
                        set full_sq=%s, kitchen_sq=%s, life_sq=%s, floor=%s, is_apartment=%s, building_id=%s, updated_at=%s, closed=%s, rooms_total=%s, image=%s
@@ -280,7 +280,7 @@ def save():
             flat['image'],
             flat_id
         ))
-        # logging.info('updated' + str(flat_id))
+        print('updated' + str(flat_id))
 
     for price_info in flat['prices']:
         cur.execute('select * from prices where changed_date=%s', (price_info[0],))

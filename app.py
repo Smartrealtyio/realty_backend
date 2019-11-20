@@ -269,7 +269,7 @@ def save():
                 flat['image'],
                 1
             ))
-        cur.execute('select id from flats where offer_id=%s;', (flat['offer_id'],))
+        cur.execute('select id from flats where offer_id=%s;', ('cian' + flat['offer_id'],))
         flat_id = cur.fetchone()[0]
         print('flat_id' + str(flat_id))
     else:

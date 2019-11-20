@@ -42,7 +42,7 @@ def mean():
                                              longitude_from, longitude_to, price_from, price_to, building_type_str,
                                              kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last,
                                              time_to_metro)
-
+    flats_count = len(flats)
     flats_page_count = 10
     max_page = math.ceil(len(flats) / flats_page_count)
     page = page if page <= max_page else 1
@@ -71,7 +71,7 @@ def mean():
 
     if math.isnan(mean_price):
         mean_price = None
-    return jsonify({'mean_price': mean_price, 'flats': flats, 'page': page, 'max_page': max_page})
+    return jsonify({'mean_price': mean_price, 'flats': flats, 'page': page, 'max_page': max_page, 'count': flats_count})
 
 
 def func_pred_price(params: list):

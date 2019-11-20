@@ -242,8 +242,8 @@ def save():
     is_offer_exist = cur.fetchone()
     if not is_offer_exist:
         cur.execute(
-            """insert into flats (full_sq, kitchen_sq, life_sq, floor, is_apartment, building_id, created_at, updated_at, offer_id, closed, rooms_total, image)
-               values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (
+            """insert into flats (full_sq, kitchen_sq, life_sq, floor, is_apartment, building_id, created_at, updated_at, offer_id, closed, rooms_total, image, resource_id)
+               values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", (
                 flat['full_sq'],
                 flat['kitchen_sq'],
                 flat['life_sq'],
@@ -255,7 +255,8 @@ def save():
                 'cian' + flat['offer_id'],
                 flat['closed'],
                 flat['rooms_count'],
-                flat['image']
+                flat['image'],
+                1
             ))
         cur.execute('select id from flats where offer_id=%s;', (flat['offer_id'],))
         flat_id = cur.fetchone()[0]

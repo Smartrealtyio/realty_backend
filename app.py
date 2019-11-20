@@ -4,7 +4,7 @@ import psycopg2
 import settings_local as SETTINGS
 from joblib import dump, load
 import math
-# import logging
+import logging
 from datetime import datetime
 import requests
 import json

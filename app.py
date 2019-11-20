@@ -127,6 +127,7 @@ def map():
 
 @app.route('/api/save/', methods=['POST'])
 def save():
+    print(request.data)
     flat = json.loads(request.data)
     for price in flat['prices']:
         date = price[0].split(' ')[0]

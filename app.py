@@ -301,6 +301,7 @@ def map():
 #     cur.close()
 #
 #     return jsonify({'result': True})
+#
 
 
 if __name__ == '__main__':

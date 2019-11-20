@@ -253,7 +253,6 @@
         };
 
         const sendSearchForm = (notCreateData, addData) => {
-
             if (!notCreateData) {
                 createSearchRequest();
             }
@@ -263,6 +262,8 @@
             }
 
             const resultsBlock = $('#results-list-block');
+
+            resultsBlock.addClass('in-progress');
 
             const navigate = $('#results-navigate');
             navigate.html('');
@@ -305,6 +306,7 @@
                     navigate.append(navButton);
                 }
 
+                resultsBlock.removeClass('in-progress');
                 resultsBlock.hide();
                 if (searchResult.flats.length) {
                     showResultPage();

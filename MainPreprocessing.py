@@ -25,13 +25,13 @@ def main_preprocessing():
     flats = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "flats.csv",
                                       names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
                                              'building_id', 'created_at',
-                                             'updated_at', 'offer_id', 'closed', 'rooms'],
+                                             'updated_at', 'offer_id', 'closed', 'rooms', 'image', 'resource_id'],
                                       usecols=["id", "full_sq",
                                                "kitchen_sq",
                                                "life_sq",
                                                "floor", "is_apartment",
                                                "building_id", 'offer_id',
-                                               "closed", 'rooms'
+                                               "closed", 'rooms', 'image', 'resource_id'
                                                ],
                                       true_values="t", false_values="f", header=0)
     buildings = pd.read_csv(SETTINGS.PATH_TO_SINGLE_CSV_FILES + "buildings.csv",

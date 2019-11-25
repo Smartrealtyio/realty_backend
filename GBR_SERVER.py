@@ -22,7 +22,7 @@ def model():
     X0 = ds0.drop(['price'], axis=1)
     y0 = ds0[['price']].values.ravel()
     X_train, X_test, y_train, y_test = train_test_split(X0, y0, test_size=0.01, random_state=42)
-    clf = GradientBoostingRegressor(n_estimators=1000, max_depth=12, verbose=10)
+    clf = GradientBoostingRegressor(n_estimators=300, max_depth=12, verbose=10)
 
     clf.fit(X_train, y_train)
     print('Saving ModelMain0')
@@ -36,7 +36,7 @@ def model():
     X1 = ds1.drop(['price'], axis=1)
     y1 = ds1[['price']].values.ravel()
     X_train, X_test, y_train, y_test = train_test_split(X1, y1, test_size=0.01, random_state=42)
-    clf = GradientBoostingRegressor(n_estimators=1000, max_depth=12, verbose=10)
+    clf = GradientBoostingRegressor(n_estimators=300, max_depth=12, verbose=10)
 
     clf.fit(X_train, y_train)
     print('Saving ModelMain1')
@@ -50,7 +50,7 @@ def model():
     X2 = ds2.drop(['price'], axis=1)
     y2 = ds2[['price']].values.ravel()
     X_train, X_test, y_train, y_test = train_test_split(X2, y2, test_size=0.01, random_state=42)
-    clf = GradientBoostingRegressor(n_estimators=1000, max_depth=12, verbose=10)
+    clf = GradientBoostingRegressor(n_estimators=300, max_depth=12, verbose=10)
 
     clf.fit(X_train, y_train)
     print('Saving ModelMain2')

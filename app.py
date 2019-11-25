@@ -7,6 +7,7 @@ import math
 from datetime import datetime
 import requests
 import json
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -79,52 +80,96 @@ def mean():
     return jsonify({'mean_price': mean_price, 'flats': flats, 'page': page, 'max_page': max_page, 'count': flats_count})
 
 
-def func_pred_price(params):
-    model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType.joblib')
+def func_pred_price0(params):
+
+    model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType0.joblib')
     X = params
     # X = [1, 1, 1, 23, 100, 20, 70, 0, 5, 1, 0, 0, 0]0
     pred = model_price.predict([X])
+    return float(pred)
+
+def func_pred_price1(params):
+
+    model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType1.joblib')
+    X = params
+    # X = [1, 1, 1, 23, 100, 20, 70, 0, 5, 1, 0, 0, 0]0
+    pred = model_price.predict([X])
+    return float(pred)
+def func_pred_price2(params):
+
+    model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType2.joblib')
+    X = params
+
+    pred = model_price.predict([X])
+    return float(pred)
+
+def func_pred_term0(params):
+    model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM0.joblib')
+    X = params
+    pred = model_term.predict([X])
     return int(pred)
-
-
-def func_pred_term(params):
-    model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM.joblib')
+def func_pred_term1(params):
+    model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM1.joblib')
+    X = params
+    pred = model_term.predict([X])
+    return int(pred)
+def func_pred_term2(params):
+    model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM2.joblib')
     X = params
     pred = model_term.predict([X])
     return int(pred)
 
 
+
 @app.route('/map')
 def map():
     # building_type_str = request.args.get('building_type_str')
-    longitude = request.args.get('lng')
-    latitude = request.args.get('lat')
-    full_sq = request.args.get('full_sq')
-    kitchen_sq = request.args.get('kitchen_sq')
+    longitude = float(request.args.get('lng'))
+    latitude = float(request.args.get('lat'))
+    full_sq = float(request.args.get('full_sq'))
+    kitchen_sq = float(request.args.get('kitchen_sq'))
     # life_sq = request.args.get('life_sq')
-    is_apartment = request.args.get('is_apartment')
-    renovation = request.args.get('renovation')
-    has_elevator = request.args.get('has_elevator')
-    floor_first = request.args.get('floor_first')
-    floor_last = request.args.get('floor_last')
-    time_to_metro = request.args.get('time_to_metro')
+    is_apartment = int(request.args.get('is_apartment'))
+    renovation = int(request.args.get('renovation'))
+    has_elevator = int(request.args.get('has_elevator'))
+    floor_first = int(request.args.get('floor_first'))
+    floor_last = int(request.args.get('floor_last'))
+    time_to_metro = int(request.args.get('time_to_metro'))
 
-    list_of_requested_params_price = [renovation, has_elevator, longitude, latitude, full_sq,
-                                      kitchen_sq,
+    list_of_requested_params_price = [renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
                                       is_apartment, time_to_metro, floor_last, floor_first]
+    # Data
+    price = 0
+    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
 
-    price = func_pred_price(list_of_requested_params_price)
+    if full_sq < float(data.full_sq.quantile(0.1)):
+        print('0')
+        price = func_pred_price0(list_of_requested_params_price)
+    elif ((full_sq >= float(data.full_sq.quantile(0.1))) & (full_sq <= float(data.full_sq.quantile(0.8)))):
+        print('1')
+        price = func_pred_price1(list_of_requested_params_price)
+    elif full_sq > float(data.full_sq.quantile(0.8)):
+        print('2')
+        price = func_pred_price2(list_of_requested_params_price)
 
     # SALE TERM PREDICTION
-    list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq,
-                                     kitchen_sq,
+    list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                      is_apartment, time_to_metro,
                                      floor_last, floor_first]
+    term = 0
+    # Data
+    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
+    if float(price) < float(data.price.quantile(0.2)):
+        print('0')
+        term = func_pred_term0(list_of_requested_params_term)
+    elif (float(price) >= float(data.price.quantile(0.2))) & (float(price) <= float(data.price.quantile(0.85))):
+        print('1')
+        term = func_pred_term1(list_of_requested_params_term)
+    elif float(price) > float(data.price.quantile(0.85)):
+        print('2')
+        term = func_pred_term2(list_of_requested_params_term)
 
-    term = func_pred_term(list_of_requested_params_term)
-
-    return jsonify({'Price': price, 'Duration': term})
-    # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
+    return {'Price': price, 'Duration': term}
 
 
 if __name__ == '__main__':

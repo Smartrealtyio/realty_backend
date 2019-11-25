@@ -15,7 +15,7 @@ PATH_TO_TIME_MODEL = SETTINGS.MODEL
 
 def model():
     # Load and split dataset.
-    ds = pd.read_csv(prepared_data)
+    ds = pd.read_csv(prepared_data + 'COORDINATES_Pred_Term.csv')
 
     # 0
     # Drop all flats with full_sq > 75

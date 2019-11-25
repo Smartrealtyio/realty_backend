@@ -24,7 +24,7 @@ def main_preprocessing():
     flats = pd.read_csv(raw_data + "flats.csv",
                                       names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
                                              'building_id', 'created_at',
-                                             'updated_at', 'offer_id', 'closed', 'rooms'],
+                                             'updated_at', 'offer_id', 'closed', 'rooms', 'image', 'resource_id'],
                                       usecols=["id", "full_sq",
                                                "kitchen_sq",
                                                "life_sq",

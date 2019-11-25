@@ -169,7 +169,7 @@ def map():
         print('2')
         term = func_pred_term2(list_of_requested_params_term)
 
-    return {'Price': price, 'Duration': term}
+    return jsonify({'Price': price, 'Duration': term})
 
 
 if __name__ == '__main__':

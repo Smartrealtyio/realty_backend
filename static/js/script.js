@@ -132,6 +132,7 @@
                     visParam = param;
                 }
                 const valElement = resultItemElement.is('[data-' + visParam + ']') ? resultItemElement : resultItemElement.find('[data-' + visParam + ']');
+
                 if (valElement.length) {
 
                     if (param === 'price' || param === 'price_per_m') {
@@ -140,6 +141,11 @@
                     switch (valElement.data(visParam)) {
                         case 'text':
                             valElement.text(oneResultItem[visParam]);
+                            break;
+                        case 'background':
+                            valElement.css({
+                                backgroundImage: 'url(' + oneResultItem[visParam] + ')'
+                            });
                             break;
                         default:
                             valElement.attr(valElement.data(visParam), oneResultItem[visParam]);

@@ -145,7 +145,7 @@ def map():
                                       is_apartment, time_to_metro, floor_last, floor_first]
     # Data
     price = 0
-    data = pd.read_csv(SETTINGS.DATA)
+    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
 
     if full_sq < float(data.full_sq.quantile(0.1)):
         print('0')
@@ -200,7 +200,7 @@ def map():
     print(list(a))
     print(len(list(a)))
 
-    return json.dumps({'Price': price, 'Term': term.tolist(), 'PLot': list(a)})
+    return jsonify({'Price': price, 'Term': term.tolist(), 'PLot': list(a)})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

@@ -77,7 +77,7 @@ def Model_2(data: pd.DataFrame):
 
 def model():
     # Load and split dataset.
-    ds = pd.read_csv(prepared_data + 'COORDINATES_Pred_Term.csv')
+    ds = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')
     ds = ds.iloc[:-100]
     Model_0(ds)
 

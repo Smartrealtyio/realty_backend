@@ -8,6 +8,7 @@ from datetime import datetime
 import requests
 import json
 import pandas as pd
+import numpy as np
 
 app = Flask(__name__)
 
@@ -85,7 +86,7 @@ def func_pred_price0(params):
     X = params
     # X = [1, 1, 1, 23, 100, 20, 70, 0, 5, 1, 0, 0, 0]0
     pred = model_price.predict([X])
-    return float(pred)
+    return np.expm1(pred)
 
 
 def func_pred_price1(params):
@@ -93,7 +94,7 @@ def func_pred_price1(params):
     X = params
     # X = [1, 1, 1, 23, 100, 20, 70, 0, 5, 1, 0, 0, 0]0
     pred = model_price.predict([X])
-    return float(pred)
+    return np.expm1(pred)
 
 
 def func_pred_price2(params):
@@ -101,28 +102,28 @@ def func_pred_price2(params):
     X = params
 
     pred = model_price.predict([X])
-    return float(pred)
+    return np.expm1(pred)
 
 
 def func_pred_term0(params):
     model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM0.joblib')
     X = params
     pred = model_term.predict([X])
-    return int(pred)
+    return np.expm1(pred)
 
 
 def func_pred_term1(params):
     model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM1.joblib')
     X = params
     pred = model_term.predict([X])
-    return int(pred)
+    return np.expm1(pred)
 
 
 def func_pred_term2(params):
     model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM2.joblib')
     X = params
     pred = model_term.predict([X])
-    return int(pred)
+    return np.expm1(pred)
 
 
 @app.route('/map')

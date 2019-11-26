@@ -65,6 +65,7 @@ def Model_2(data: pd.DataFrame):
     clf.fit(X_train2, y_train2)
 
     print('Saving ModelMain2')
+
     #if not os.path.exists(cf.base_dir + '/models'):
     #    os.makedirs(cf.base_dir + '/models')
     dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType2.joblib')

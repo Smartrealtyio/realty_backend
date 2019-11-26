@@ -109,21 +109,21 @@ def func_pred_term0(params):
     model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM0.joblib')
     X = params
     pred = model_term.predict([X])
-    return np.expm1(pred)
+    return pred
 
 
 def func_pred_term1(params):
     model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM1.joblib')
     X = params
     pred = model_term.predict([X])
-    return np.expm1(pred)
+    return pred
 
 
 def func_pred_term2(params):
     model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM2.joblib')
     X = params
     pred = model_term.predict([X])
-    return np.expm1(pred)
+    return pred
 
 
 @app.route('/map')
@@ -145,17 +145,20 @@ def map():
                                       is_apartment, time_to_metro, floor_last, floor_first]
     # Data
     price = 0
-    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
+    data = pd.read_csv(SETTINGS.DATA)
 
     if full_sq < float(data.full_sq.quantile(0.1)):
         print('0')
         price = func_pred_price0(list_of_requested_params_price)
+        price = price[0]
     elif ((full_sq >= float(data.full_sq.quantile(0.1))) & (full_sq <= float(data.full_sq.quantile(0.8)))):
         print('1')
         price = func_pred_price1(list_of_requested_params_price)
+        price = price[0]
     elif full_sq > float(data.full_sq.quantile(0.8)):
         print('2')
         price = func_pred_price2(list_of_requested_params_price)
+        price = price[0]
     price_meter_sq = price / full_sq
 
     # SALE TERM PREDICTION
@@ -164,41 +167,41 @@ def map():
                                      floor_last, floor_first]
     term = 0
     # Data
-    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
+    data = pd.read_csv(SETTINGS.DATA)
     data['price_meter_sq'] = data[['price', 'full_sq']].apply(
         lambda row: (row['price'] /
                      row['full_sq']), axis=1)
     if float(price) < float(data.price.quantile(0.2)):
         print('0')
         term = func_pred_term0(list_of_requested_params_term)
+        print(type(term))
     elif (float(price) >= float(data.price.quantile(0.2))) & (float(price) <= float(data.price.quantile(0.85))):
         print('1')
         term = func_pred_term1(list_of_requested_params_term)
+        print(type(term))
     elif float(price) > float(data.price.quantile(0.85)):
         print('2')
         term = func_pred_term2(list_of_requested_params_term)
-
-    print(term)
+        print(type(term))
 
     filter1 = ((data.full_sq <= full_sq + 1) & (
-            (data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
-            (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)) & (
-                           (data.price_meter_sq <= price_meter_sq + 3000) & (
-                           data.price_meter_sq >= price_meter_sq - 3000))
-               & (data.term < 380) & (
-                       (data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
-
+            (data.longitude >= longitude - 0.001) & (data.longitude <= longitude + 0.001) &
+            (data.latitude >= latitude - 0.001) & (data.latitude <= latitude + 0.001)) &
+               ((data.price_meter_sq <= price_meter_sq + 3000) & (data.price_meter_sq >= price_meter_sq - 3000))
+               & (data.term < 400) & (
+                           (data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
     ds = data[filter1]
     print(ds.shape)
 
-    x = ds.term.tolist()
-    y = ds.price.tolist()
+    x = data.term.tolist()
+    y = data.price.tolist()
     a = []
     a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
     print(list(a))
     print(len(list(a)))
 
-    return jsonify({'Price': price, 'Duration': term, 'Plot': list(a)})
+    return jsonify({'Price': price, 'Term': term.tolist(), 'PLot': list(a)})
+    # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 
 

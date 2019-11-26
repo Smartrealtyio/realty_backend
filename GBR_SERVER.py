@@ -1,8 +1,11 @@
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.preprocessing import StandardScaler, PowerTransformer
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import r2_score, scorer, mean_squared_error
+# import Realty.config as cf
 from joblib import dump, load
 import os
 import settings_local as SETTINGS
@@ -11,80 +14,74 @@ prepared_data = SETTINGS.DATA
 PATH_TO_PRICE_MODEL = SETTINGS.MODEL
 
 
-def model():
-    # Load and split dataset.
-    ds = pd.read_csv(prepared_data + '/COORDINATES_Pred_Price.csv')
-
-    # 0
-    ds0 = ds[((ds.full_sq < ds.full_sq.quantile(0.1)))]
+def Model_0(data: pd.DataFrame):
+    data = data
+    print("Data: ", data.shape)
+    ds0 = data[((data.full_sq < data.full_sq.quantile(0.25)))]
     print('Data #0 length: ', ds0.shape)
-
     X0 = ds0.drop(['price'], axis=1)
-    y0 = ds0[['price']].values.ravel()
-    X_train, X_test, y_train, y_test = train_test_split(X0, y0, test_size=0.01, random_state=42)
-    clf = GradientBoostingRegressor(n_estimators=300, max_depth=12, verbose=10)
-
-    clf.fit(X_train, y_train)
+    sc = StandardScaler()
+    X0 = sc.fit_transform(X0)
+    ds0["price"] = np.log1p(ds0["price"])
+    y0 = ds0[['price']]
+    X_train0, X_test0, y_train0, y_test0 = train_test_split(X0, y0, test_size=0.01, random_state=42)
+    clf = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=10)
+    clf.fit(X_train0, y_train0)
     print('Saving ModelMain0')
-
+    #if not os.path.exists(cf.base_dir + '/models'):
+    #    os.makedirs(cf.base_dir + '/models')
     dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType0.joblib')
 
-    # 1
-    ds1 = ds[((ds.full_sq >= ds.full_sq.quantile(0.1)) & (ds.full_sq <= ds.full_sq.quantile(0.8)))]
+def Model_1(data: pd.DataFrame):
+    ds1 = data[((data.full_sq >= data.full_sq.quantile(0.25)) & (data.full_sq <= data.full_sq.quantile(0.8)))]
     print('Data #1 length: ', ds1.shape)
-
     X1 = ds1.drop(['price'], axis=1)
-    y1 = ds1[['price']].values.ravel()
-    X_train, X_test, y_train, y_test = train_test_split(X1, y1, test_size=0.01, random_state=42)
-    clf = GradientBoostingRegressor(n_estimators=300, max_depth=12, verbose=10)
+    sc = StandardScaler()
+    X1 = sc.fit_transform(X1)
 
-    clf.fit(X_train, y_train)
+    ds1["price"] = np.log1p(ds1["price"])
+    y1 = ds1[['price']]
+
+    X_train1, X_test1, y_train1, y_test1 = train_test_split(X1, y1, test_size=0.01, random_state=42)
+    clf = GradientBoostingRegressor(n_estimators=50, max_depth=6, verbose=10)
+    clf.fit(X_train1, y_train1)
     print('Saving ModelMain1')
-
+    #if not os.path.exists(cf.base_dir + '/models'):
+    #    os.makedirs(cf.base_dir + '/models')
     dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType1.joblib')
 
-    # 2
-    ds2 = ds[((ds.full_sq > ds.full_sq.quantile(0.8)))]
-    print('Data #2 length: ', ds0.shape)
-
+def Model_2(data: pd.DataFrame):
+    ds2 = data[((data.full_sq > data.full_sq.quantile(0.8)))]
+    print('Data #2 length: ', ds2.shape)
     X2 = ds2.drop(['price'], axis=1)
-    y2 = ds2[['price']].values.ravel()
-    X_train, X_test, y_train, y_test = train_test_split(X2, y2, test_size=0.01, random_state=42)
-    clf = GradientBoostingRegressor(n_estimators=300, max_depth=12, verbose=10)
+    sc = StandardScaler()
+    X2 = sc.fit_transform(X2)
 
-    clf.fit(X_train, y_train)
+    ds2["price"] = np.log1p(ds2["price"])
+    y2 = ds2[['price']]
+    X_train2, X_test2, y_train2, y_test2 = train_test_split(X2, y2, test_size=0.01, random_state=42)
+
+    clf = GradientBoostingRegressor(n_estimators=50, max_depth=6, verbose=10)
+    clf.fit(X_train2, y_train2)
+
     print('Saving ModelMain2')
-
+    #if not os.path.exists(cf.base_dir + '/models'):
+    #    os.makedirs(cf.base_dir + '/models')
     dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType2.joblib')
 
-    '''
-    param_grid = {
-    'max_depth': [5, 8, 10, 12, 15],
-    'max_features': [2, 3],
-    'min_samples_leaf': [3, 4, 5],
-    'min_samples_split': [8, 10, 12],
-    'n_estimators': [100, 200, 300, 1000]
-    }
-    clf = GradientBoostingRegressor(learning_rate=0.1)
-    grid_search = RandomizedSearchCV(estimator=clf, param_distributions=param_grid,
-                               cv=3, n_jobs=-1, verbose=8, n_iter=10)
-    grid_search.fit(X_train, y_train)
-    print("Best Score: ", grid_search.best_score_)
-    print('Best Params: ', grid_search.best_params_)
-    '''
-    # clf = GradientBoostingRegressor(learning_rate=0.1, n_estimators=600, min_samples_split=8,
-    # min_samples_leaf=5, max_features=2, max_depth=10, verbose=10)
+def model():
+    data = pd.read_csv(prepared_data + '/COORDINATES_Pred_Price.csv')
+    Model_0(data)
 
-    # clf = GradientBoostingRegressor(learning_rate=0.07, n_estimators=1000, min_samples_split=8,
-    #                                min_samples_leaf=5, max_features=2, max_depth=10, verbose=10)
+    Model_1(data)
 
-    # r2_score_val = r2_score(y_test, pd.Series(pred))
-
-    # print("\nR2_score: ", r2_score_val)
+    Model_2(data)
 
 
 if __name__ == '__main__':
     model()
+
+
 
 '''
 {'Алтуфьевский': 1, 'Южное Медведково': 114, 'Лосиноостровский': 49, 'Ярославский': 117,

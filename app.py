@@ -200,7 +200,7 @@ def map():
     print(list(a))
     print(len(list(a)))
 
-    return jsonify({'Price': price, 'Term': term.tolist(), 'PLot': list(a)})
+    return json.dumps({'Price': price, 'Term': term.tolist(), 'PLot': list(a)})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

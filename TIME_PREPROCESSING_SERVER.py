@@ -112,7 +112,7 @@ def main_preprocessing():
     print('HEADERS NAME FINALY: ', list(ds.columns))
 
     print('Saving to new csv')
-    ds.to_csv(prepared_data+'COORDINATES_Pred_Term.csv', index=None, header=True)
+    ds.to_csv(prepared_data+'/COORDINATES_Pred_Term.csv', index=None, header=True)
 
 
 if __name__ == '__main__':

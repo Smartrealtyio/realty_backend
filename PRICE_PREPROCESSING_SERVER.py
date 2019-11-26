@@ -102,7 +102,7 @@ def main_processing():
                   'transport_type',
                   "building_type_str"], axis=1)
 
-    ds.to_csv(prepared_data + 'COORDINATES_Pred_Price.csv', index=None, header=True)
+    ds.to_csv(prepared_data + '/COORDINATES_Pred_Price.csv', index=None, header=True)
 
 
 if __name__ == '__main__':

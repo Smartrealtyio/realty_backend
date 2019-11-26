@@ -185,6 +185,8 @@ def map():
                            data.price_meter_sq >= price_meter_sq - 3000))
                & (data.term < 380) & (
                        (data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
+
+    print(term)
     ds = data[filter1]
     print(ds.shape)
 

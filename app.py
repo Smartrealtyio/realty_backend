@@ -178,6 +178,8 @@ def map():
         print('2')
         term = func_pred_term2(list_of_requested_params_term)
 
+    print(term)
+
     filter1 = ((data.full_sq <= full_sq + 1) & (
             (data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
             (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)) & (
@@ -186,7 +188,6 @@ def map():
                & (data.term < 380) & (
                        (data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
 
-    print(term)
     ds = data[filter1]
     print(ds.shape)
 

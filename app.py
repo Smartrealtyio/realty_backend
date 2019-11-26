@@ -145,7 +145,7 @@ def map():
                                       is_apartment, time_to_metro, floor_last, floor_first]
     # Data
     price = 0
-    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
+    data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
 
     if full_sq < float(data.full_sq.quantile(0.1)):
         print('0')
@@ -174,19 +174,18 @@ def map():
     if float(price) < float(data.price.quantile(0.2)):
         print('0')
         term = func_pred_term0(list_of_requested_params_term)
-        print(type(term))
+
     elif (float(price) >= float(data.price.quantile(0.2))) & (float(price) <= float(data.price.quantile(0.85))):
         print('1')
         term = func_pred_term1(list_of_requested_params_term)
-        print(type(term))
+
     elif float(price) > float(data.price.quantile(0.85)):
         print('2')
         term = func_pred_term2(list_of_requested_params_term)
-        print(type(term))
 
     filter1 = ((data.full_sq <= full_sq + 1) & (
-            (data.longitude >= longitude - 0.001) & (data.longitude <= longitude + 0.001) &
-            (data.latitude >= latitude - 0.001) & (data.latitude <= latitude + 0.001)) &
+            (data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
+            (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)) &
                ((data.price_meter_sq <= price_meter_sq + 3000) & (data.price_meter_sq >= price_meter_sq - 3000))
                & (data.term < 400) & (
                            (data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
@@ -197,9 +196,8 @@ def map():
     y = ds.price.tolist()
     a = []
     a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
-    print(list(a))
-    print(len(list(a)))
-
+    # print(list(a))
+    # print(len(list(a)))
     print(term.tolist())
 
     return json.dumps({'Price': price, 'Term': term.tolist(), 'PLot': list(a)})

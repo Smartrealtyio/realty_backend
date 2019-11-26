@@ -167,7 +167,7 @@ def map():
                                      floor_last, floor_first]
     term = 0
     # Data
-    data = pd.read_csv(SETTINGS.DATA)
+    data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
     data['price_meter_sq'] = data[['price', 'full_sq']].apply(
         lambda row: (row['price'] /
                      row['full_sq']), axis=1)

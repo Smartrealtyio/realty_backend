@@ -193,12 +193,14 @@ def map():
     ds = data[filter1]
     print(ds.shape)
 
-    x = data.term.tolist()
-    y = data.price.tolist()
+    x = ds.term.tolist()
+    y = ds.price.tolist()
     a = []
     a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
     print(list(a))
     print(len(list(a)))
+
+    print(term.tolist())
 
     return json.dumps({'Price': price, 'Term': term.tolist(), 'PLot': list(a)})
     # , 'Term': term})

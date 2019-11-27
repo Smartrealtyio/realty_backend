@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 import MeanPrice
 import psycopg2
 import settings_local as SETTINGS
+from sklearn import linear_model
 from joblib import dump, load
 import math as m
 import math
@@ -171,10 +172,43 @@ def map():
                                      floor_last, floor_first, X, Y]
     term = 0
     # Data
-    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
-    data['price_meter_sq'] = data[['price', 'full_sq']].apply(
-        lambda row: (row['price'] /
-                     row['full_sq']), axis=1)
+    data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
+    filter_term = (((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8)) & (
+            (data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
+            (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)) &
+                   ((data.price_meter_sq <= price_meter_sq + 2000) & (data.price_meter_sq >= price_meter_sq - 2000))
+                   & ((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
+    data_term = data[(filter_term)]
+
+
+    if data_term.shape[0] < 1:
+        filter_term = (((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8)) & (
+                (data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
+                (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) &
+                       ((data.price_meter_sq <= price_meter_sq + 2000) & (data.price_meter_sq >= price_meter_sq - 2000))
+                       & ((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
+        data_term = data[(filter_term)]
+
+
+    reg = linear_model.LinearRegression().fit(data_term[['price']], data_term[['term']])
+
+
+    term = reg.predict([[price]])
+
+    if term < 0:
+        filter_term = (((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8)) & (
+                (data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
+                (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) &
+                       ((data.price_meter_sq <= price_meter_sq + 2000) & (data.price_meter_sq >= price_meter_sq - 2000))
+                       & ((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
+        data_term = data[(filter_term)]
+        reg = linear_model.LinearRegression().fit(data_term[['price']], data_term[['term']])
+
+        # sns.lmplot(x='term', y='price', data=data_term)
+        # plt.show()
+        term = reg.predict([[price]])
+
+    '''
     if float(price) < float(data.price.quantile(0.2)):
         print('0')
         term = func_pred_term0(list_of_requested_params_term)
@@ -186,7 +220,7 @@ def map():
     elif float(price) > float(data.price.quantile(0.85)):
         print('2')
         term = func_pred_term2(list_of_requested_params_term)
-
+    '''
     filter1 = ((data.full_sq <= full_sq + 1) & (
             (data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
             (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)) &

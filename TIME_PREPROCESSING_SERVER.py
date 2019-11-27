@@ -105,7 +105,9 @@ def main_preprocessing():
     num = ds._get_numeric_data()
 
     num[num < 0] = 0
-
+    ds['price_meter_sq'] = ds[['price', 'full_sq']].apply(
+        lambda row: (row['price'] /
+                     row['full_sq']), axis=1)
     ds = ds.drop(['max_floor', "flat_id", 'floor','building_type_str', 'rooms', 'life_sq', 'updated_at', 'changed_date',
                   'id_building', 'district_id', 'transport_type'], axis=1)
 

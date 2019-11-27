@@ -3,6 +3,7 @@ import MeanPrice
 import psycopg2
 import settings_local as SETTINGS
 from joblib import dump, load
+import math as m
 import math
 from datetime import datetime
 import requests
@@ -84,7 +85,6 @@ def mean():
 def func_pred_price0(params):
     model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType0.joblib')
     X = params
-    # X = [1, 1, 1, 23, 100, 20, 70, 0, 5, 1, 0, 0, 0]0
     pred = model_price.predict([X])
     return np.expm1(pred)
 
@@ -92,9 +92,11 @@ def func_pred_price0(params):
 def func_pred_price1(params):
     model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType1.joblib')
     X = params
-    # X = [1, 1, 1, 23, 100, 20, 70, 0, 5, 1, 0, 0, 0]0
+
     pred = model_price.predict([X])
     return np.expm1(pred)
+
+
 
 
 def func_pred_price2(params):
@@ -140,9 +142,11 @@ def map():
     floor_first = int(request.args.get('floor_first'))
     floor_last = int(request.args.get('floor_last'))
     time_to_metro = int(request.args.get('time_to_metro'))
+    X = (m.cos(latitude) * m.cos(longitude))
+    Y = (m.cos(latitude) * m.sin(longitude))
 
     list_of_requested_params_price = [renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
-                                      is_apartment, time_to_metro, floor_last, floor_first]
+                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y]
     # Data
     price = 0
     data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
@@ -163,11 +167,11 @@ def map():
 
     # SALE TERM PREDICTION
     list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                     is_apartment, time_to_metro,
-                                     floor_last, floor_first]
+                                      is_apartment, time_to_metro,
+                                     floor_last, floor_first, X, Y]
     term = 0
     # Data
-    data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
+    data = pd.read_csv(SETTINGS.DATA)
     data['price_meter_sq'] = data[['price', 'full_sq']].apply(
         lambda row: (row['price'] /
                      row['full_sq']), axis=1)
@@ -196,9 +200,9 @@ def map():
     y = ds.price.tolist()
     a = []
     a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
-    # print(list(a))
-    # print(len(list(a)))
-    print(term.tolist())
+
+
+
 
     return jsonify({'Price': price, 'Duration': term.tolist()[0], 'PLot': list(a)})
     # , 'Term': term})

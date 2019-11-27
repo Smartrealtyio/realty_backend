@@ -22,16 +22,37 @@ def Model_0(data: pd.DataFrame):
     print('Data #0 length: ', ds0.shape)
     X0 = ds0.drop(['term'], axis=1)
     sc = StandardScaler()
-    X0 = sc.fit_transform(X0)
-    ds0["term"] = np.log1p(ds0["term"])
-    y0 = ds0[['term']]
-    X_train0, X_test0, y_train0, y_test0 = train_test_split(X0, y0, test_size=0.01, random_state=42)
-
+    # X0 = sc.fit_transform(X0)
+    # ds0["term"] = np.log1p(ds0["term"])
+    y0 = ds0[['term']].values.ravel()
+    '''
+    model = CatBoostRegressor(iterations=50, max_depth=4, learning_rate=0.1,
+                              task_type="GPU",
+                              devices='0:1')
+    model.fit(X0,
+              y0,
+              verbose=10)
+    '''
     clf = GradientBoostingRegressor(n_estimators=50, max_depth=4, verbose=10)
     clf.fit(X0, y0)
+    """
+    clf = GradientBoostingRegressor() # {'n_estimators': 150, 'max_depth': 4}
+    param_grid = {
+        #'min_samples_split': [10, 30, 70, 100],
+        'n_estimators': [50, 150, 250, 350, 500],
+        'max_depth': [2, 4, 6, 8, 10]
+    }
+    n_iter_search = 25
+    random_search = RandomizedSearchCV(clf, param_distributions=param_grid,
+                                       n_iter=n_iter_search, cv=3, verbose=5)
 
+
+    random_search.fit(X0, y0)
+    print("RandomizedSearchCV" )
+    print("Best0 : ", random_search.best_params_)
+    """
     print('Saving ModelMain0')
-    #if not os.path.exists(cf.base_dir + '/models'):
+    # if not os.path.exists(cf.base_dir + '/models'):
     #    os.makedirs(cf.base_dir + '/models')
     dump(clf, PATH_TO_TIME_MODEL + '/GBR_COORDINATES_TERM0.joblib')
 
@@ -41,19 +62,38 @@ def Model_1(data: pd.DataFrame):
     print('Data #1 length: ', ds1.shape)
     X1 = ds1.drop(['term'], axis=1)
     sc = StandardScaler()
-    X1 = sc.fit_transform(X1)
+    # X1 = sc.fit_transform(X1)
 
-    ds1["term"] = np.log1p(ds1["term"])
-    y1 = ds1[['term']]
+    # ds1["term"] = np.log1p(ds1["term"])
+    y1 = ds1[['term']].values.ravel()
 
-
-    X_train1, X_test1, y_train1, y_test1 = train_test_split(X1, y1, test_size=0.01, random_state=42)
-
-    clf = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=10)
+    '''
+    model = CatBoostRegressor(iterations=50, max_depth=4, learning_rate=0.1,
+                              task_type="GPU",
+                              devices='0:1')
+    model.fit(X1,
+              y1,
+              verbose=10)
+    '''
+    clf = GradientBoostingRegressor(n_estimators=50, max_depth=6, verbose=10)
     clf.fit(X1, y1)
+    '''
+    clf = GradientBoostingRegressor() # {'n_estimators': 50, 'max_depth': 4}
+    param_grid = {
+        #'min_samples_split': [10, 30, 70, 100],
+        'n_estimators': [50, 150, 250, 350, 500],
+        'max_depth': [2, 4, 6, 8, 10]
+    }
+    n_iter_search = 30
+    random_search = RandomizedSearchCV(clf, param_distributions=param_grid,
+                                       n_iter=n_iter_search, cv=3, verbose=5)
 
+    random_search.fit(X1, y1)
+    print("RandomizedSearchCV")
+    print("Best1 : ", random_search.best_params_)
+    '''
     print('Saving ModelMain1')
-    #if not os.path.exists(cf.base_dir + '/models'):
+    # if not os.path.exists(cf.base_dir + '/models'):
     #    os.makedirs(cf.base_dir + '/models')
     dump(clf, PATH_TO_TIME_MODEL + '/GBR_COORDINATES_TERM1.joblib')
 
@@ -63,15 +103,40 @@ def Model_2(data: pd.DataFrame):
     print('Data #2 length: ', ds2.shape)
     X2 = ds2.drop(['term'], axis=1)
     sc = StandardScaler()
-    X2 = sc.fit_transform(X2)
+    # X2 = sc.fit_transform(X2)
 
-    ds2["term"] = np.log1p(ds2["term"])
-    y2 = ds2[['term']]
-    X_train2, X_test2, y_train2, y_test2 = train_test_split(X2, y2, test_size=0.01, random_state=42)
+    # ds2["term"] = np.log1p(ds2["term"])
+    y2 = ds2[['term']].values.ravel()
 
-    clf = GradientBoostingRegressor(n_estimators=50, max_depth=2, verbose=10)
+    '''
+    model = CatBoostRegressor(iterations=50, max_depth=2, learning_rate=0.1,
+                              task_type="GPU",
+                              devices='0:1')
+    model.fit(X2,
+              y2,
+              verbose=10)
+        '''
+
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=2, verbose=10)
     clf.fit(X2, y2)
+    '''
+    clf = GradientBoostingRegressor() #{'n_estimators': 50, 'max_depth': 6}
+    param_grid = {
+        #'min_samples_split': [10, 30, 70, 100],
+        'n_estimators': [50, 150, 250, 350, 500],
+        'max_depth': [2, 4, 6, 8, 10]
+    }
+    n_iter_search = 30
+    random_search = RandomizedSearchCV(clf, param_distributions=param_grid,
+                                       n_iter=n_iter_search, cv=3, verbose=5)
 
+    random_search.fit(X2, y2)
+    print("RandomizedSearchCV")
+    print("Best2 : ", random_search.best_params_)
+    '''
+    print('Saving ModelMain2')
+    # if not os.path.exists(cf.base_dir + '/models'):
+    #    os.makedirs(cf.base_dir + '/models')
     dump(clf, PATH_TO_TIME_MODEL + '/GBR_COORDINATES_TERM2.joblib')
 
 

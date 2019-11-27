@@ -21,31 +21,64 @@ def Model_0(data: pd.DataFrame):
     print('Data #0 length: ', ds0.shape)
     X0 = ds0.drop(['price'], axis=1)
     sc = StandardScaler()
-    X0 = sc.fit_transform(X0)
+    # X0 = sc.fit_transform(X0)
     ds0["price"] = np.log1p(ds0["price"])
-    y0 = ds0[['price']]
-    X_train0, X_test0, y_train0, y_test0 = train_test_split(X0, y0, test_size=0.01, random_state=42)
+    y0 = ds0[['price']].values.ravel()
     clf = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=10)
-    clf.fit(X_train0, y_train0)
+    print(X0.shape, y0.shape)
+    clf.fit(X0, y0)
+    '''
+    clf = GradientBoostingRegressor() # {'n_estimators': 150, 'max_depth': 4}
+    param_grid = {
+        #'min_samples_split': [10, 30, 70, 100],
+        'n_estimators': [50, 150, 250, 350, 500],
+        'max_depth': [2, 4, 6, 8, 10]
+    }
+    n_iter_search = 25
+    random_search = RandomizedSearchCV(clf, param_distributions=param_grid,
+                                       n_iter=n_iter_search, cv=3, verbose=5)
+
+
+    random_search.fit(X0, y0)
+    print("RandomizedSearchCV" )
+    print("Best0 : ", random_search.best_params_)
+    '''
     print('Saving ModelMain0')
-    #if not os.path.exists(cf.base_dir + '/models'):
-    #    os.makedirs(cf.base_dir + '/models')
+
     dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType0.joblib')
 
 def Model_1(data: pd.DataFrame):
     ds1 = data[((data.full_sq >= data.full_sq.quantile(0.25)) & (data.full_sq <= data.full_sq.quantile(0.8)))]
     print('Data #1 length: ', ds1.shape)
     X1 = ds1.drop(['price'], axis=1)
+    print(X1.columns)
     sc = StandardScaler()
-    X1 = sc.fit_transform(X1)
+    # X1 = sc.fit_transform(X1)
 
     ds1["price"] = np.log1p(ds1["price"])
-    y1 = ds1[['price']]
+    y1 = ds1[['price']].values.ravel()
 
-    X_train1, X_test1, y_train1, y_test1 = train_test_split(X1, y1, test_size=0.01, random_state=42)
-    clf = GradientBoostingRegressor(n_estimators=50, max_depth=6, verbose=10)
-    clf.fit(X_train1, y_train1)
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
+    print(X1.shape, y1.shape)
+
+    clf.fit(X1, y1)
+    """
+    clf = GradientBoostingRegressor() # {'n_estimators': 50, 'max_depth': 6}
+    param_grid = {
+        #'min_samples_split': [10, 30, 70, 100],
+        'n_estimators': [50, 150, 250, 350, 500],
+        'max_depth': [2, 4, 6, 8, 10]
+    }
+    n_iter_search = 30
+    random_search = RandomizedSearchCV(clf, param_distributions=param_grid,
+                                       n_iter=n_iter_search, cv=3, verbose=5)
+
+    random_search.fit(X1, y1)
+    print("RandomizedSearchCV")
+    print("Best1 : ", random_search.best_params_)
+    """
     print('Saving ModelMain1')
+
     #if not os.path.exists(cf.base_dir + '/models'):
     #    os.makedirs(cf.base_dir + '/models')
     dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType1.joblib')
@@ -55,15 +88,28 @@ def Model_2(data: pd.DataFrame):
     print('Data #2 length: ', ds2.shape)
     X2 = ds2.drop(['price'], axis=1)
     sc = StandardScaler()
-    X2 = sc.fit_transform(X2)
+    # X2 = sc.fit_transform(X2)
 
     ds2["price"] = np.log1p(ds2["price"])
-    y2 = ds2[['price']]
-    X_train2, X_test2, y_train2, y_test2 = train_test_split(X2, y2, test_size=0.01, random_state=42)
-
+    y2 = ds2[['price']].values.ravel()
     clf = GradientBoostingRegressor(n_estimators=50, max_depth=6, verbose=10)
-    clf.fit(X_train2, y_train2)
+    print(X2.shape, y2.shape)
+    clf.fit(X2, y2)
+    '''
+    clf = GradientBoostingRegressor() #{'n_estimators': 50, 'max_depth': 6}
+    param_grid = {
+        #'min_samples_split': [10, 30, 70, 100],
+        'n_estimators': [50, 150, 250, 350, 500],
+        'max_depth': [2, 4, 6, 8, 10]
+    }
+    n_iter_search = 30
+    random_search = RandomizedSearchCV(clf, param_distributions=param_grid,
+                                       n_iter=n_iter_search, cv=3, verbose=5)
 
+    random_search.fit(X2, y2)
+    print("RandomizedSearchCV")
+    print("Best2 : ", random_search.best_params_)
+    '''
     print('Saving ModelMain2')
 
     #if not os.path.exists(cf.base_dir + '/models'):

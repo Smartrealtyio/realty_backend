@@ -230,8 +230,8 @@ def map():
     ds = data[filter1]
     print(ds.shape)
 
-    x = ds.term.tolist()
-    y = ds.price.tolist()
+    x = ds.term.tolist().sort()
+    y = ds.price.tolist().sort()
     a = []
     a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
 

@@ -222,25 +222,24 @@ def map():
         term = func_pred_term2(list_of_requested_params_term)
     '''
     filter1 = ((data.full_sq <= full_sq + 1) & (
-            (data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
-            (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)) &
-               ((data.price_meter_sq <= price_meter_sq + 3000) & (data.price_meter_sq >= price_meter_sq - 3000))
-               & (data.term < 400) & (
+            (data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
+            (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) &
+               ((data.price_meter_sq <= price_meter_sq + 5000) & (data.price_meter_sq >= price_meter_sq - 5000)) &
+               (data.term < 450) & (
                            (data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
     ds = data[filter1]
     print(ds.shape)
 
-    x = ds.term.tolist()
-    print(type(x))
-    y = ds.price.tolist().sort()
-    print(type(y))
+    x = ds.term
+    x = np.sort(x).tolist()
+
+    y = ds.price
+    y = np.sort(y).tolist()
     a = []
     a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
 
 
-
-
-    return jsonify({'Price': price, 'Duration': term.tolist()[0], 'PLot': list(a)})
+return jsonify({'Price': price, 'Duration': term.tolist()[0], 'PLot': list(a)})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

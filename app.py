@@ -239,7 +239,7 @@ def map():
     a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
 
 
-return jsonify({'Price': price, 'Duration': term.tolist()[0], 'PLot': list(a)})
+    return jsonify({'Price': price, 'Duration': term.tolist()[0], 'PLot': list(a)})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

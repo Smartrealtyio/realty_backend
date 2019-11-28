@@ -237,7 +237,7 @@ def map():
     y = np.sort(y).tolist()
     a = []
     a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
-
+    print(a)
 
     return jsonify({'Price': price, 'Duration': term.tolist()[0], 'PLot': list(a)})
     # , 'Term': term})

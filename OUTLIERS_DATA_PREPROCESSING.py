@@ -13,7 +13,7 @@ prepared_data = SETTINGS.DATA
 def main_preprocessing():
 
     # DATA preprocessing #
-    prices: pd.DataFrame = pd.read_csv(raw_data+ "prices.csv", names=[
+    prices = pd.read_csv(raw_data+ "prices.csv", names=[
         'id', 'price', 'changed_date', 'flat_id', 'created_at', 'updated_at'
     ], usecols=["price", "flat_id", 'changed_date', 'updated_at'])
     print(prices.shape)
@@ -22,7 +22,7 @@ def main_preprocessing():
     prices['term'] = prices[['updated_at', 'changed_date']].apply(
         lambda row: (bck.date_fromisoformat(row['updated_at'][:-9])
                      - bck.date_fromisoformat(row['changed_date'][:-9])).days, axis=1)
-    flats: pd.DataFrame = pd.read_csv(raw_data+ "flats.csv",
+    flats = pd.read_csv(raw_data+ "flats.csv",
                                       names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
                                              'building_id', 'created_at',
                                              'updated_at', 'offer_id', 'closed', 'rooms', 'image', 'resource_id'],
@@ -34,7 +34,7 @@ def main_preprocessing():
                                                "closed", 'rooms', 'image', 'resource_id'
                                                ],
                                       true_values="t", false_values="f", header=0)
-    buildings: pd.DataFrame = pd.read_csv(raw_data+ "buildings.csv",
+    buildings = pd.read_csv(raw_data+ "buildings.csv",
                                           names=["id", "max_floor", 'building_type_str', "built_year", "flats_count",
                                                                                               "address", "renovation",
                                                                                               "has_elevator",
@@ -48,12 +48,12 @@ def main_preprocessing():
                                                    "district_id", 'longitude', 'latitude',  # nominative scale
                                                    ],
                                           true_values="t", false_values="f", header=0)
-    districts: pd.DataFrame = pd.read_csv(raw_data+ "districts.csv",
+    districts = pd.read_csv(raw_data+ "districts.csv",
                                           names=['id', 'name', 'population', 'city_id',
                                                  'created_at', 'updated_at', 'prefix'],
                                           usecols=["name", 'id'],
                                           true_values="t", false_values="f", header=0)
-    time_to_metro: pd.DataFrame = pd.read_csv(raw_data+ "time_metro_buildings.csv",
+    time_to_metro = pd.read_csv(raw_data+ "time_metro_buildings.csv",
                                               names=['id', 'building_id', 'metro_id', 'time_to_metro',
                                                      'transport_type', 'created_at', 'updated_at'],
                                               usecols=["building_id", "time_to_metro", "transport_type"], header=0)
@@ -62,7 +62,7 @@ def main_preprocessing():
     time_to_metro = time_to_metro[time_to_metro['transport_type'] == "ON_FOOT"]
 
     # choose the shortest path on foot
-    ds: pd.DataFrame = pd.merge(prices, flats, left_on="flat_id", right_on="id")
+    ds = pd.merge(prices, flats, left_on="flat_id", right_on="id")
 
     print('HEADERS NAME: ', list(ds.columns))
     print('merge#1: ', ds.shape)

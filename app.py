@@ -143,7 +143,7 @@ def mean():
 
     conn.close()
 
-    print('flats', len(flats))
+    print('flats', len(flats), flush=True)
 
     # if math.isnan(mean_price):
     #     mean_price = None

@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
-import MeanPrice
+# import MeanPrice
+import FIND_OUTLIERS
 import psycopg2
 import settings_local as SETTINGS
 from sklearn import linear_model
@@ -44,10 +45,10 @@ def mean():
     sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 0
     # flats_page_count = int(request.args.get('flats_page_count')) if request.args.get('flats_page_count') is not None else 10
 
-    mean_price, flats = MeanPrice.MeanPrices(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
-                                             longitude_from, longitude_to, price_from, price_to, building_type_str,
-                                             kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last,
-                                             time_to_metro)
+    mean_price, flats = FIND_OUTLIERS.OutliersSearch(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
+                                                     longitude_from, longitude_to, price_from, price_to, building_type_str,
+                                                     kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last,
+                                                     time_to_metro)
     flats_count = len(flats)
     flats_page_count = 10
     max_page = math.ceil(len(flats) / flats_page_count)

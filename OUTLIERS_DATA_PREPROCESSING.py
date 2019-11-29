@@ -7,8 +7,8 @@ import settings_local as SETTINGS
 # FINAL PARAMETERS ORDER:
 # ['building_type_str', 'renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'term', 'full_sq', 'kitchen_sq',
 # 'life_sq', 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first']
-raw_data = 'C:/Storage/DDG/DATA/RAW/NewYandex/'
-prepared_data = "C:/Storage/DDG/DATA/PREPARED/"
+raw_data = SETTINGS.PATH_TO_SINGLE_CSV_FILES
+prepared_data = SETTINGS.DATA
 
 def main_preprocessing():
 
@@ -25,13 +25,13 @@ def main_preprocessing():
     flats: pd.DataFrame = pd.read_csv(raw_data+ "flats.csv",
                                       names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
                                              'building_id', 'created_at',
-                                             'updated_at', 'offer_id', 'closed', 'rooms'],
+                                             'updated_at', 'offer_id', 'closed', 'rooms', 'image', 'resource_id'],
                                       usecols=["id", "full_sq",
                                                "kitchen_sq",
                                                "life_sq",
                                                "floor", "is_apartment",
-                                               "building_id",
-                                               "closed", 'rooms'
+                                               "building_id", 'offer_id',
+                                               "closed", 'rooms', 'image', 'resource_id'
                                                ],
                                       true_values="t", false_values="f", header=0)
     buildings: pd.DataFrame = pd.read_csv(raw_data+ "buildings.csv",
@@ -121,7 +121,7 @@ def main_preprocessing():
     print('HEADERS NAME FINALY: ', list(ds.columns))
 
     print('Saving to new csv: ', ds.shape)
-    ds.to_csv(prepared_data+'COORDINATES_OUTLIERS.csv', index=None, header=True)
+    ds.to_csv(prepared_data+'/COORDINATES_OUTLIERS.csv', index=None, header=True)
 
 
 if __name__ == '__main__':

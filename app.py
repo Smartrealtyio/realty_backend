@@ -61,6 +61,8 @@ def mean():
     data = data[['price_meter_sq', 'full_sq']]
     data = data[data.price_meter_sq < data.price_meter_sq.quantile(0.2)]
 
+    print('data', data.shape, flush=True)
+
     model = load(MODEL_OUTLIERS)
     # outliers = model.predict(data)
     outliers_it = data[model.predict(data) == -1]

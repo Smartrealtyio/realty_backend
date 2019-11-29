@@ -43,6 +43,8 @@ def mean():
     time_to_metro = float(request.args.get('time_to_metro')) if request.args.get('time_to_metro') is not None else None
     page = int(request.args.get('page')) if request.args.get('page') is not None else 1
     sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 0
+
+    print(latitude_from, latitude_to, longitude_from, longitude_to, flush=True)
     # flats_page_count = int(request.args.get('flats_page_count')) if request.args.get('flats_page_count') is not None else 10
 
     # mean_price, flats = FIND_OUTLIERS.OutliersSearch(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,

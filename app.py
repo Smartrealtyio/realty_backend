@@ -75,28 +75,28 @@ def mean():
                & (ds.longitude >= longitude_from) & (ds.longitude <= longitude_to)))
     ds = ds[filter]
 
-    if time_to_metro != None:
-        ds = ds[(ds.time_to_metro <= time_to_metro)]
-    if rooms != None:
-        ds = ds[ds.rooms == rooms]
-    if building_type_str != None:
-        ds = ds[ds.building_type_str == building_type_str]
-    if kitchen_sq != None:
-        ds = ds[(ds.kitchen_sq >= kitchen_sq - 5) & (ds.kitchen_sq <= kitchen_sq + 5)]
-    if life_sq != None:
-        ds = ds[(ds.life_sq >= life_sq - 5) & (ds.life_sq <= life_sq + 5)]
-    if renovation != None:
-        ds = ds[ds.renovation == renovation]
-    if has_elevator != None:
-        ds = ds[ds.has_elevator == has_elevator]
-    if floor_first != None:
-        ds = ds[ds.floor_first == 0]
-    if floor_last != None:
-        ds = ds[ds.floor_last == 0]
-    if price_from != None:
-        ds = ds[ds.price >= price_from]
-    if price_to != None:
-        ds = ds[ds.price <= price_to]
+    # if time_to_metro != None:
+    #     ds = ds[(ds.time_to_metro <= time_to_metro)]
+    # if rooms != None:
+    #     ds = ds[ds.rooms == rooms]
+    # if building_type_str != None:
+    #     ds = ds[ds.building_type_str == building_type_str]
+    # if kitchen_sq != None:
+    #     ds = ds[(ds.kitchen_sq >= kitchen_sq - 5) & (ds.kitchen_sq <= kitchen_sq + 5)]
+    # if life_sq != None:
+    #     ds = ds[(ds.life_sq >= life_sq - 5) & (ds.life_sq <= life_sq + 5)]
+    # if renovation != None:
+    #     ds = ds[ds.renovation == renovation]
+    # if has_elevator != None:
+    #     ds = ds[ds.has_elevator == has_elevator]
+    # if floor_first != None:
+    #     ds = ds[ds.floor_first == 0]
+    # if floor_last != None:
+    #     ds = ds[ds.floor_last == 0]
+    # if price_from != None:
+    #     ds = ds[ds.price >= price_from]
+    # if price_to != None:
+    #     ds = ds[ds.price <= price_to]
 
     print('ds columns', ds.columns, flush=True)
     print(ds.head(), flush=True)

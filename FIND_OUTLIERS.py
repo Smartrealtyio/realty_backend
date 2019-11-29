@@ -2,7 +2,7 @@ from sklearn.ensemble import IsolationForest
 import numpy as np
 import pandas as pd
 # import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 from joblib import dump, load
 import settings_local as SETTINGS
 

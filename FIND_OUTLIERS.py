@@ -19,7 +19,7 @@ def OutliersSearch():
 
 
 
-    clf = IsolationForest(max_samples=10, random_state=42, contamination=.01, max_features=2)
+    clf = IsolationForest(max_samples=10, random_state=42, contamination=0.1, max_features=2)
     clf.fit(data)
     # save model
     dump(clf, MODEL_OUTLIERS)

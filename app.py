@@ -62,7 +62,7 @@ def mean():
     model = load(MODEL_OUTLIERS)
     # outliers = model.predict(data)
     outliers_it = data[model.predict(data) == -1]
-    print('Outliers: ', outliers_it.shape[0])
+    print('Outliers: ', outliers_it.shape[0], flush=True)
     outliers_it['flat_id'] = outliers_it.index
     new_data = pd.read_csv(DATA_OUTLIERS)
     print(new_data.shape)
@@ -98,7 +98,10 @@ def mean():
     if price_to != None:
         ds = ds[ds.price <= price_to]
 
+    print('ds columns', ds.columns, flush=True)
+
     flats = ds.to_dict('record')
+
 
     flats_count = len(flats)
     flats_page_count = 10
@@ -112,6 +115,7 @@ def mean():
     conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
     cur = conn.cursor()
     for flat in flats:
+        print(flat.keys(), flush=True)
         cur.execute("select metro_id, time_to_metro from time_metro_buildings where building_id=%s",
                     (flat['id_building'],))
         metros_info = cur.fetchall()

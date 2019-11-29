@@ -99,6 +99,7 @@ def mean():
         ds = ds[ds.price <= price_to]
 
     print('ds columns', ds.columns, flush=True)
+    print(ds.head(), flush=True)
 
     flats = ds.to_dict('record')
 

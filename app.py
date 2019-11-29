@@ -143,6 +143,8 @@ def mean():
 
     conn.close()
 
+    print('flats', len(flats))
+
     # if math.isnan(mean_price):
     #     mean_price = None
     return jsonify({'flats': flats, 'page': page, 'max_page': max_page, 'count': flats_count})

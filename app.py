@@ -45,10 +45,61 @@ def mean():
     sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 0
     # flats_page_count = int(request.args.get('flats_page_count')) if request.args.get('flats_page_count') is not None else 10
 
-    mean_price, flats = FIND_OUTLIERS.OutliersSearch(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
-                                                     longitude_from, longitude_to, price_from, price_to, building_type_str,
-                                                     kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last,
-                                                     time_to_metro)
+    # mean_price, flats = FIND_OUTLIERS.OutliersSearch(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
+    #                                                  longitude_from, longitude_to, price_from, price_to, building_type_str,
+    #                                                  kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last,
+    #
+    #
+    #                           time_to_metro)
+
+    DATA_OUTLIERS = SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv'
+    MODEL_OUTLIERS = SETTINGS.MODEL + '/models.joblib'
+
+    data = pd.read_csv(DATA_OUTLIERS)
+    data = data[['price_meter_sq', 'full_sq']]
+    data = data[data.price_meter_sq < data.price_meter_sq.quantile(0.2)]
+
+    model = load(MODEL_OUTLIERS)
+    # outliers = model.predict(data)
+    outliers_it = data[model.predict(data) == -1]
+    print('Outliers: ', outliers_it.shape[0])
+    outliers_it['flat_id'] = outliers_it.index
+    new_data = pd.read_csv(DATA_OUTLIERS)
+    print(new_data.shape)
+    new_data['flat_id'] = new_data.index
+    ds = pd.merge(new_data, outliers_it, left_on="flat_id", right_on="flat_id", suffixes=['', 'double'])
+    ds = ds.drop(['flat_id', 'full_sqdouble', 'price_meter_sqdouble'], axis=1)
+
+    filter = (((ds.full_sq >= full_sq_from) & (ds.full_sq <= full_sq_to)) & (ds.rooms == rooms) &
+              ((ds.latitude >= latitude_from) & (ds.latitude <= latitude_to)
+               & (ds.longitude >= longitude_from) & (ds.longitude <= longitude_to)))
+    ds = ds[filter]
+
+    if time_to_metro != None:
+        ds = ds[(ds.time_to_metro <= time_to_metro)]
+    if rooms != None:
+        ds = ds[ds.rooms == rooms]
+    if building_type_str != None:
+        ds = ds[ds.building_type_str == building_type_str]
+    if kitchen_sq != None:
+        ds = ds[(ds.kitchen_sq >= kitchen_sq - 5) & (ds.kitchen_sq <= kitchen_sq + 5)]
+    if life_sq != None:
+        ds = ds[(ds.life_sq >= life_sq - 5) & (ds.life_sq <= life_sq + 5)]
+    if renovation != None:
+        ds = ds[ds.renovation == renovation]
+    if has_elevator != None:
+        ds = ds[ds.has_elevator == has_elevator]
+    if floor_first != None:
+        ds = ds[ds.floor_first == 0]
+    if floor_last != None:
+        ds = ds[ds.floor_last == 0]
+    if price_from != None:
+        ds = ds[ds.price >= price_from]
+    if price_to != None:
+        ds = ds[ds.price <= price_to]
+
+    flats = ds.to_dict('record')
+
     flats_count = len(flats)
     flats_page_count = 10
     max_page = math.ceil(len(flats) / flats_page_count)
@@ -79,9 +130,9 @@ def mean():
 
     conn.close()
 
-    if math.isnan(mean_price):
-        mean_price = None
-    return jsonify({'mean_price': mean_price, 'flats': flats, 'page': page, 'max_page': max_page, 'count': flats_count})
+    # if math.isnan(mean_price):
+    #     mean_price = None
+    return jsonify({'flats': flats, 'page': page, 'max_page': max_page, 'count': flats_count})
 
 
 def func_pred_price0(params):

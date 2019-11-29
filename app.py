@@ -76,10 +76,10 @@ def mean():
 
     print('ds shape', ds.shape, flush=True)
 
-    #filter = (((ds.rooms == rooms)|(ds.rooms == 0)|(ds.rooms==1)|(ds.rooms==2)) &
-    #          ((ds.latitude >= latitude_from) & (ds.latitude <= latitude_to))
-    #           & ((ds.longitude >= longitude_from) & (ds.longitude <= longitude_to)))
-    #ds = ds[filter]
+    filter = (((ds.rooms == rooms)|(ds.rooms == 0)|(ds.rooms==1)|(ds.rooms==2)) &
+             ((ds.latitude >= latitude_from) & (ds.latitude <= latitude_to))
+              & ((ds.longitude >= longitude_from) & (ds.longitude <= longitude_to)))
+    ds = ds[filter]
 
     print('ds', ds.shape, flush=True)
 
@@ -140,6 +140,7 @@ def mean():
         del flat['offer_id']
         del flat['id_building']
         del flat['time_to_metro']
+        print(flat, flush=True)
 
     conn.close()
 

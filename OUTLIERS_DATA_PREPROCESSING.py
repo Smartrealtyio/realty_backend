@@ -19,9 +19,9 @@ def main_preprocessing():
     print(prices.shape)
 
     # Calculating selling term. TIME UNIT: DAYS
-    # prices['term'] = prices[['updated_at', 'changed_date']].apply(
-    #    lambda row: (bck.date_fromisoformat(row['updated_at'][:-9])
-    #                 - bck.date_fromisoformat(row['changed_date'][:-9])).days, axis=1)
+    prices['term'] = prices[['updated_at', 'changed_date']].apply(
+       lambda row: (bck.date_fromisoformat(row['updated_at'][:-9])
+                    - bck.date_fromisoformat(row['changed_date'][:-9])).days, axis=1)
     flats = pd.read_csv(raw_data+ "flats.csv",
                                       names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
                                              'building_id', 'created_at',

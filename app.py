@@ -139,7 +139,7 @@ def mean():
         else:
             flat['link'] = 'https://www.cian.ru/sale/flat/' + str(flat['offer_id'])
 
-        if math.isnan(flat['image']):
+        if type(flat['image']) != 'str':
             flat['image'] = None
         del flat['offer_id']
         del flat['id_building']

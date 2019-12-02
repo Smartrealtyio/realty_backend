@@ -12,6 +12,7 @@ import requests
 import json
 import pandas as pd
 import numpy as np
+import math
 
 app = Flask(__name__)
 
@@ -76,10 +77,10 @@ def mean():
 
     print('ds shape', ds.shape, flush=True)
 
-    #filter = (((ds.rooms == rooms)|(ds.rooms == 0)|(ds.rooms==1)|(ds.rooms==2)) &
+    # filter = (((ds.rooms == rooms)|(ds.rooms == 0)|(ds.rooms==1)|(ds.rooms==2)) &
     #          ((ds.latitude >= latitude_from) & (ds.latitude <= latitude_to))
     #           & ((ds.longitude >= longitude_from) & (ds.longitude <= longitude_to)))
-    #ds = ds[filter]
+    # ds = ds[filter]
 
     print('ds', ds.shape, flush=True)
 
@@ -124,7 +125,7 @@ def mean():
     conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
     cur = conn.cursor()
     for flat in flats:
-        print(flat.keys(), flush=True)
+        # print(flat.keys(), flush=True)
         cur.execute("select metro_id, time_to_metro from time_metro_buildings where building_id=%s",
                     (flat['id_building'],))
         metros_info = cur.fetchall()
@@ -137,11 +138,23 @@ def mean():
             flat['link'] = 'https://realty.yandex.ru/offer/' + str(flat['offer_id'])
         else:
             flat['link'] = 'https://www.cian.ru/sale/flat/' + str(flat['offer_id'])
+
+        cur.execute("select address from buildings where id=%s",
+                    (flat['id_building'],))
+        flat['address'] = cur.fetchone()[0]
+
+        # print(flat['image'], flush=True)
+
+        if type(flat['image']) != str:
+            flat['image'] = None
         del flat['offer_id']
         del flat['id_building']
         del flat['time_to_metro']
+        # print(flat, flush=True)
 
     conn.close()
+
+    print('flats', len(flats), flush=True)
 
     # if math.isnan(mean_price):
     #     mean_price = None

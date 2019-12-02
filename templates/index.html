@@ -117,10 +117,12 @@
         </div>
     </section>
 
+
     <a id="calculate"></a>
     <section class="main_section main_section__calculate">
         <div class="content-wrapper">
 
+            <!-- Выбор формы -->
             <input type="radio" name="form-type" value="calc-price" id="calc-price" class="novisible">
             <input type="radio" checked name="form-type" value="search-price" id="search-price" class="novisible">
 
@@ -132,6 +134,8 @@
                     <label for="search-price">Найти выгодное<br/>предложение</label>
                 </div>
             </div>
+            <!-- / Выбор формы -->
+
 
             <div class="calculate-form">
                 <div class="calculate-form_map">
@@ -140,6 +144,7 @@
                     <div class="calculate-form_map_container" id="realty-map"></div>
                 </div>
 
+                <!-- Форма поиска выгодных предложений -->
                 <form class="calculate-form_fields" id="search-form">
                     <div class="calculate-form_field">
                         <div class="calculate-form_field_label">
@@ -175,7 +180,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="calculate-form_field">
                         <div class="calculate-form_field_label">
                             Общая площадь (м<sup>2</sup>)
@@ -195,14 +199,10 @@
                             </div>
                         </div>
                     </div>
-
-
                     <input type="checkbox" class="additional-params_checkbox" id="additional-params-checkbox">
-
                     <label class="additional-params_link" id="additional-params-link" for="additional-params-checkbox">
                         <span>Дополнительные опции</span>
                     </label>
-
                     <div class="additional-params_params" id="additional-params">
                         <div class="calculate-form_field">
                             <div class="calculate-form_field_label">
@@ -285,14 +285,13 @@
                             </label>
                         </div>
                     </div>
-
                     <div class="calculate-form_btn">
                         <button type="submit" class="btn btn-submit">Найти</button>
                     </div>
                 </form>
 
 
-
+                <!-- Форма расчета стоимости квартиры -->
                 <form class="calculate-form_fields" id="calculate-form">
                     <div class="calculate-form_field">
                         <div class="calculate-form_field_label">
@@ -310,7 +309,6 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="calculate-form_field">
                         <div class="calculate-form_field_label">
                             Общая площадь
@@ -324,7 +322,6 @@
                             </span>
                         </div>
                     </div>
-
                     <div class="calculate-form_field">
                         <div class="calculate-form_field_label">
                             Площадь кухни
@@ -337,7 +334,6 @@
                             </span>
                         </div>
                     </div>
-
                     <div class="calculate-form_field">
                         <div class="calculate-form_field_label">
                             Жилая площадь
@@ -350,7 +346,6 @@
                             </span>
                         </div>
                     </div>
-
                     <div class="calculate-form_checkbox-group">
                         <label class="calculate-form_checkbox">
                             <input type="checkbox" name="is_apartment">
@@ -378,13 +373,10 @@
                             <span class="calculate-form_checkbox_text">Последний этаж</span>
                         </label>
                     </div>
-
                     <div class="calculate-form_btn">
                         <button type="submit" class="btn btn-submit">Рассчитать</button>
                     </div>
                 </form>
-
-
 
                 <div class="calculate-form_map" id="results-list-block" style="display: none">
                     <div class="results-list">
@@ -394,13 +386,14 @@
                             <span id="search-items-count"></span> предложений
                         </div>
                         <div id="visible-results"></div>
-                        <div class="results-list_navigation" id="results-navigate"></div>
+                        <div class="show-more">
+                            <button class="show-more_btn" id="show-more-button">Показать ещё 10</button>
+                        </div>
+                        <!--<div class="results-list_navigation" id="results-navigate"></div>-->
                     </div>
                 </div>
+
             </div>
-
-
-
 
 
             <div class="calculate-form_result" id="results" style="display: none;">

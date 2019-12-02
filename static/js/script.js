@@ -1,3 +1,14 @@
+const chartColorsList = [];
+
+for (let k = 1; k <= 32; k++) {
+    if (k <= 16) {
+        chartColorsList.push('rgb(' + (128 + k * 8 - 1) + ', ' + (k * 16 - 1) + ', ' + k * 3 + ')');
+    } else {
+        chartColorsList.push('rgb(' + ((32 - k) * 16 - 1) + ', ' + (128 + (32 - k) * 8 - 1) + ', ' + k * 3 + ')');
+    }
+}
+
+
 (function($) {
 
     $.fn.validator = function() {
@@ -362,12 +373,50 @@
 
             $.ajax({
                 url: '/map',
+                // url: 'static/plot-chart.json',
                 data: calculateFormRequest
             }).always(() => {
                 results.show();
             }).then((res) => {
                 resultPrice.text(res.Price.toLocaleString() + ' руб.');
                 resultDuration.text(res.Duration + ' дн.');
+
+                const chartData = [];
+
+                const allPeriod = res.PLot[res.PLot.length - 1]['x'];
+                let latestValue = res.PLot.shift();
+
+                const stepColor = Math.floor(allPeriod / chartColorsList.length);
+
+                const allColors = chartColorsList.map((item) => {
+                    return item;
+                });
+
+                let linesColor = allColors.shift();
+
+                for (let k = latestValue['x']; k < allPeriod; k++) {
+
+
+                    if (res.PLot[0].x === k) {
+                        latestValue = res.PLot.shift();
+                        if (latestValue['x'] / stepColor < res.PLot[0]['x'] / stepColor) {
+                            linesColor = allColors.shift();
+                        }
+                    }
+
+                    while(res.PLot[0].x <= k) {
+                        res.PLot.shift();
+                    }
+
+                    chartData.push({
+                        x: k,
+                        y: latestValue['y'],
+                        lineColor: linesColor
+                    });
+                }
+
+                chart.data = chartData;
+
             });
         };
 
@@ -377,7 +426,50 @@
             return false;
         });
 
+
+
+        let chart;
+
+
+        am4core.ready(function() {
+            am4core.useTheme(am4themes_animated);
+            chart = am4core.create("chartdiv", am4charts.XYChart);
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.ticks.template.disabled = true;
+            categoryAxis.renderer.line.opacity = 0;
+            categoryAxis.renderer.grid.template.disabled = true;
+            categoryAxis.renderer.minGridDistance = 40;
+            categoryAxis.dataFields.category = "x";
+            categoryAxis.startLocation = 0.4;
+            categoryAxis.endLocation = 0.6;
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            valueAxis.tooltip.disabled = true;
+            valueAxis.renderer.line.opacity = 0;
+            valueAxis.renderer.ticks.template.disabled = true;
+            valueAxis.min = 0;
+
+            var lineSeries = chart.series.push(new am4charts.LineSeries());
+            lineSeries.dataFields.categoryX = "x";
+            lineSeries.dataFields.valueY = "y";
+            lineSeries.tooltipText = "Цена: {valueY.value} руб.";
+            lineSeries.fillOpacity = 0.7;
+            lineSeries.strokeWidth = 3;
+            lineSeries.propertyFields.stroke = "lineColor";
+            lineSeries.propertyFields.fill = "lineColor";
+
+            chart.cursor = new am4charts.XYCursor();
+            chart.cursor.behavior = "panX";
+            chart.cursor.lineX.opacity = 0;
+            chart.cursor.lineY.opacity = 0;
+
+        });
+
     });
+
+
+
 
 
 

@@ -250,7 +250,8 @@ def map():
                                      floor_last, floor_first, X, Y]
     term = 0
     # Data
-    data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
+    data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_OUTLIERS.csv')
+
     filter_term = (((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
     data_term = data[(((data.price_meter_sq <= price_meter_sq + 3000) & (data.price_meter_sq >= price_meter_sq - 3000))&filter_term & ((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8))
                       & ((data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &

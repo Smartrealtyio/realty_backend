@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 # import MeanPrice
 import FIND_OUTLIERS
+from sklearn import linear_model
 import psycopg2
 import settings_local as SETTINGS
 from sklearn import linear_model
@@ -251,17 +252,16 @@ def map():
     term = 0
     # Data
     data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
-    filter_term = ((
-                           (data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
-                           (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)) &
-                   ((data.price_meter_sq <= price_meter_sq + 2000) & (data.price_meter_sq >= price_meter_sq - 2000))
+    filter_term = (((data.price_meter_sq <= price_meter_sq + 2000) & (data.price_meter_sq >= price_meter_sq - 2000))
                    & ((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
-    data_term = data[(filter_term & ((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8)))]
+    data_term = data[(filter_term & ((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8))
+                      &((data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
+                           (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)))]
 
-    from sklearn import linear_model
     print('SHAPE', data_term.shape[0])
     if data_term.shape[0] < 1:
-        data_term = data[(filter_term & ((data.full_sq <= full_sq + 11) & (data.full_sq >= full_sq - 11)))]
+        data_term = data[(((data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
+                           (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) & filter_term & ((data.full_sq <= full_sq + 11) & (data.full_sq >= full_sq - 11)))]
 
 
     reg = linear_model.LinearRegression().fit(data_term[['price']], data_term[['term']])

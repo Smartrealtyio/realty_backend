@@ -12,6 +12,7 @@ import requests
 import json
 import pandas as pd
 import numpy as np
+import math
 
 app = Flask(__name__)
 
@@ -137,6 +138,9 @@ def mean():
             flat['link'] = 'https://realty.yandex.ru/offer/' + str(flat['offer_id'])
         else:
             flat['link'] = 'https://www.cian.ru/sale/flat/' + str(flat['offer_id'])
+
+        if math.isnan(flat['image']):
+            flat['image'] = None
         del flat['offer_id']
         del flat['id_building']
         del flat['time_to_metro']

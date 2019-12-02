@@ -10,7 +10,7 @@
     };
 
 
-    let myMap, resultItem, resultsBlock, clusterer;
+    let myMap, resultItem, resultsBlock, clusterer, searchResult = [];
     let mapCenter, placemark;
 
     let searchFormRequest = {};
@@ -95,9 +95,6 @@
 
 
     const showResultPage = function(searchResult) {
-        resultsBlock.html('');
-
-        $('#visible-items-count').text(searchResult.flats.length);
 
         searchResult.flats.forEach((oneResultItem) => {
 
@@ -150,6 +147,7 @@
         const results = $('#results');
         const resultPrice = $('#result_price');
         const resultDuration = $('#result_duration');
+        $('[data-validator]').validator();
 
 
         $('#search-init').on('click', () => {
@@ -160,7 +158,6 @@
         });
 
 
-        $('[data-validator]').validator();
 
 
         const createClusters = (data) => {
@@ -216,7 +213,6 @@
             clusterer.add(placemarks);
         };
 
-
         const createSearchRequest = () => {
             const fields = $('input, select', searchForm);
             const values = {};
@@ -248,8 +244,6 @@
             searchFormRequest['longitude_to'] = mapInfo[1][1];
         };
 
-
-
         const createNavigation = (pagesCount) => {
             let navButtons = [], activeNavButton;
 
@@ -279,6 +273,15 @@
             }
         };
 
+        const iniShowMoreResults = () => {
+            let currentPage = 1;
+            document.getElementById('show-more-button').onclick = () => {
+                currentPage++;
+                sendSearchForm(true, {
+                    page: currentPage
+                });
+            };
+        };
 
         const sendSearchForm = (notCreateData, addData) => {
 
@@ -289,27 +292,36 @@
 
             if (!notCreateData) {
                 searchResultsBlock.hide();
+                resultsBlock.html('');
                 createSearchRequest();
             }
 
+            let requestData = {...searchFormRequest};
             if (addData) {
-                searchFormRequest = $.extend(searchFormRequest, addData);
+                requestData = $.extend(requestData, addData);
             }
 
 
             $.ajax({
-                url: '/api/mean/',
-                // url: 'static/test.json',
-                data: searchFormRequest
+                // url: '/api/mean/',
+                url: 'static/test.json',
+                data: requestData
             }).then((res) => {
                 searchResultsBlock.show().removeClass('in-progress');
                 $('#search-items-count').text(res['count']);
+
                 if (!notCreateData) {
-                    createNavigation(res['max_page']);
+                    searchResult = res['flats'];
+                    iniShowMoreResults();
+                    // createNavigation(res['max_page']);
+                } else {
+                    searchResult = searchResult.concat(res['flats']);
                 }
+
                 searchResultsBlock.removeClass('in-progress');
                 if (res.flats.length) {
-                    createClusters(res.flats);
+                    $('#visible-items-count').text(searchResult.length);
+                    createClusters(searchResult);
                     showResultPage(res);
                 }
             });
@@ -320,6 +332,7 @@
             sendSearchForm();
             return false;
         });
+
 
 
 

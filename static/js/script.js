@@ -1,9 +1,20 @@
 (function($) {
 
-    const PAGE_SIZE = 10;
+    $.fn.validator = function() {
+        $(this).each(function() {
+            const input = $(this);
+            input.on("input keydown keyup mousedown mouseup select contextmenu drop", function(event) {
 
-    let myMap, resultItem, searchResult, resultsBlock,
-        currentPage, resultsNavBtns, resultsActiveNavBtn, clusterer;
+            });
+        });
+    };
+
+
+    let myMap, resultItem, resultsBlock, clusterer;
+    let mapCenter, placemark;
+
+    let searchFormRequest = {};
+    const calculateFormRequest = {};
 
     $(() => {
         const header = $('#header');
@@ -24,12 +35,17 @@
     });
 
 
-    let mapCenter, placemark;
-    let formRequest = {};
+    // Инициализация карты
+    const init = () => {
+        mapCenter = [55.76, 37.64];
+        myMap = new window['ymaps'].Map("realty-map", {
+            center: mapCenter,
+            zoom: 15
+        });
+    };
+    window['ymaps'].ready(init);
 
-    const calculateFormRequest = {};
-
-
+    // Вычисление времени до метро
     const checkMetroDuration = () => {
         window['ymaps'].geocode(mapCenter, { kind: 'metro' }).then((res) => {
             const nearest = res.geoObjects.get(0);
@@ -46,67 +62,40 @@
         });
     };
 
-
-    const setMarkerPosition = () => {
-        placemark.geometry.setCoordinates(mapCenter);
-        calculateFormRequest.lat = mapCenter[0];
-        calculateFormRequest.lng = mapCenter[1];
+    // Установка маркера для формы расчета стоимости
+    const setMarkerPosition = (coo) => {
+        placemark.geometry.setCoordinates(coo);
+        calculateFormRequest.lat = coo[0];
+        calculateFormRequest.lng = coo[1];
         checkMetroDuration()
     };
 
-
-
-    const init = () => {
-        mapCenter = [55.76, 37.64];
-        myMap = new window['ymaps'].Map("realty-map", {
-            center: mapCenter,
-            zoom: 15
-        });
-    };
-
-
-
+    // Изменение координат маркера
     const iniMarkerPosition = (event) => {
-        mapCenter = event.get('coords');
-        setMarkerPosition();
+        setMarkerPosition(event.get('coords'));
     };
 
-
+    // Инициализация формы поиска выгодных предложений
     const iniSearchForm = () => {
         myMap.events.remove('click', iniMarkerPosition);
         myMap.geoObjects.remove(placemark);
         clusterer ? myMap.geoObjects.add(clusterer) : clusterer;
     };
 
-
+    // Инициализация формы расчета стоимости
     const iniAnalyzeForm = () => {
         placemark = new window['ymaps'].Placemark(mapCenter, {}, {
             preset: 'islands#redIcon'
         });
         myMap.geoObjects.add(placemark);
-        setMarkerPosition();
+        setMarkerPosition(mapCenter);
         myMap.events.add('click', iniMarkerPosition);
         clusterer ? myMap.geoObjects.remove(clusterer) : false;
     };
 
 
-
-    window['ymaps'].ready(init);
-
-
-    $.fn.validator = function() {
-        $(this).each(function() {
-            const input = $(this);
-            input.on("input keydown keyup mousedown mouseup select contextmenu drop", function(event) {
-
-            });
-        });
-    };
-
-    const showResultPage = function(pageNumber) {
+    const showResultPage = function(searchResult) {
         resultsBlock.html('');
-        currentPage = pageNumber;
-
 
         $('#visible-items-count').text(searchResult.flats.length);
 
@@ -162,14 +151,16 @@
         const resultPrice = $('#result_price');
         const resultDuration = $('#result_duration');
 
+
         $('#search-init').on('click', () => {
             iniSearchForm();
         });
         $('#analyze-init').on('click', () => {
             iniAnalyzeForm();
         });
-        $('[data-validator]').validator();
 
+
+        $('[data-validator]').validator();
 
 
         const createClusters = (data) => {
@@ -202,7 +193,7 @@
             for (let k in data) {
 
                 const resultItem = data[k];
-                searchResult.push(data[k]);
+
                 const pm = new window['ymaps'].Placemark([resultItem.latitude, resultItem.longitude], {
                     balloonContentHeader: data[k].address,
                     balloonContentBody:
@@ -247,76 +238,79 @@
             });
             const convertedFormData = values;
             for (const k in convertedFormData) {
-                formRequest[k] = convertedFormData[k];
+                searchFormRequest[k] = convertedFormData[k];
             }
-            results.hide();
-            const mapInfo = myMap.getBounds();
-            formRequest['latitude_from'] = mapInfo[0][0];
-            formRequest['latitude_to'] = mapInfo[1][0];
-            formRequest['longitude_from'] = mapInfo[0][1];
-            formRequest['longitude_to'] = mapInfo[1][1];
 
+            const mapInfo = myMap.getBounds();
+            searchFormRequest['latitude_from'] = mapInfo[0][0];
+            searchFormRequest['latitude_to'] = mapInfo[1][0];
+            searchFormRequest['longitude_from'] = mapInfo[0][1];
+            searchFormRequest['longitude_to'] = mapInfo[1][1];
         };
 
-        const sendSearchForm = (notCreateData, addData) => {
-            if (!notCreateData) {
-                createSearchRequest();
-            }
 
-            if (addData) {
-                formRequest = $.extend(formRequest, addData);
-            }
 
-            const resultsBlock = $('#results-list-block');
-
-            resultsBlock.addClass('in-progress');
+        const createNavigation = (pagesCount) => {
+            let navButtons = [], activeNavButton;
 
             const navigate = $('#results-navigate');
             navigate.html('');
 
+            for (let n = 0; n < pagesCount; n++) {
+                const navButton = $('<a>');
+                navButton.attr('href', '#results-list');
+                navButton.addClass('results-list_navigation-btn');
+                navButton.text(n + 1);
+                navButton.data('page', n);
+
+                if (!n) {
+                    activeNavButton = navButton.addClass('active');
+                }
+
+                navButton.on('click', function() {
+                    activeNavButton.removeClass('active');
+                    activeNavButton = $(this).addClass('active');
+                    sendSearchForm(true, {
+                        page: n + 1
+                    });
+                });
+                navButtons.push(navButton);
+                navigate.append(navButton);
+            }
+        };
+
+
+        const sendSearchForm = (notCreateData, addData) => {
+
+            const searchResultsBlock = $('#results-list-block');
+            searchResultsBlock.addClass('in-progress');
+
             myMap.geoObjects.remove(clusterer);
+
+            if (!notCreateData) {
+                searchResultsBlock.hide();
+                createSearchRequest();
+            }
+
+            if (addData) {
+                searchFormRequest = $.extend(searchFormRequest, addData);
+            }
+
 
             $.ajax({
                 url: '/api/mean/',
                 // url: 'static/test.json',
-                data: formRequest
-            }).always(() => {
-                // results.show();
+                data: searchFormRequest
             }).then((res) => {
-                searchResult = res;
-
-                resultsNavBtns = [];
-                resultsBlock.show();
-
-                $('#search-items-count').text(searchResult.flats.length);
-
-                for (let n = 0; n < res.max_page; n++) {
-                    const navButton = $('<a>');
-                    navButton.attr('href', '#results-list');
-                    navButton.addClass('results-list_navigation-btn');
-                    navButton.text(n + 1);
-                    navButton.data('page', n);
-
-                    if (n + 1 === searchResult.page) {
-                        navButton.addClass('active');
-                    }
-
-                    navButton.on('click', () => {
-                        $(this).addClass('active');
-                        sendSearchForm(true, {
-                            page: n + 1
-                        });
-                    });
-
-                    resultsNavBtns.push(navButton);
-                    navigate.append(navButton);
+                searchResultsBlock.show().removeClass('in-progress');
+                $('#search-items-count').text(res['count']);
+                if (!notCreateData) {
+                    createNavigation(res['max_page']);
                 }
-
-                resultsBlock.removeClass('in-progress');
-                resultsBlock.hide();
-                if (searchResult.flats.length) {
-                    showResultPage();
-                    resultsBlock.show();
+                searchResultsBlock.removeClass('in-progress');
+                if (res.flats.length) {
+                    createClusters(res.flats);
+                    showResultPage(res);
                 }
             });
         };
@@ -324,15 +318,12 @@
         const searchForm = $('#search-form').on('submit', (event) => {
             event.preventDefault();
             sendSearchForm();
-
             return false;
         });
 
 
 
-
-        const calculateForm = $('#calculate-form').on('submit', (event) => {
-            event.preventDefault();
+        const sendCalculateForm = () => {
             const fields = $('input, select', calculateForm);
             const values = {};
 
@@ -350,10 +341,8 @@
                 }
             });
 
-            const convertedFormData = values;
-
-            for (const k in convertedFormData) {
-                calculateFormRequest[k] = convertedFormData[k];
+            for (const k in values) {
+                calculateFormRequest[k] = values[k];
             }
 
             results.hide();
@@ -364,9 +353,14 @@
             }).always(() => {
                 results.show();
             }).then((res) => {
-                resultPrice.text(res.Price + ' руб.');
+                resultPrice.text(res.Price.toLocaleString() + ' руб.');
                 resultDuration.text(res.Duration + ' дн.');
             });
+        };
+
+        const calculateForm = $('#calculate-form').on('submit', (event) => {
+            event.preventDefault();
+            sendCalculateForm();
             return false;
         });
 

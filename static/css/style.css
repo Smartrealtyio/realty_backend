@@ -688,6 +688,7 @@ sup {
     margin-bottom: 18px;
     text-decoration: none;
     transition: all linear 0.1s;
+    box-sizing: border-box;
 }
 .results-list_item:hover {
     border-color: #67bc6b;

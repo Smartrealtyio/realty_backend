@@ -303,8 +303,8 @@
 
 
             $.ajax({
-                // url: '/api/mean/',
-                url: 'static/test.json',
+                url: '/api/mean/',
+                // url: 'static/test.json',
                 data: requestData
             }).then((res) => {
                 searchResultsBlock.show().removeClass('in-progress');

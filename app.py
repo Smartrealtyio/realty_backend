@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 # import MeanPrice
 import FIND_OUTLIERS
+from sklearn import linear_model
 import psycopg2
 import settings_local as SETTINGS
 from sklearn import linear_model
@@ -251,21 +252,16 @@ def map():
     term = 0
     # Data
     data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
-    filter_term = (((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8)) & (
-            (data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
-            (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)) &
-                   ((data.price_meter_sq <= price_meter_sq + 2000) & (data.price_meter_sq >= price_meter_sq - 2000))
+    filter_term = (((data.price_meter_sq <= price_meter_sq + 2000) & (data.price_meter_sq >= price_meter_sq - 2000))
                    & ((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
-    data_term = data[(filter_term)]
+    data_term = data[(filter_term & ((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8))
+                      &((data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
+                           (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)))]
 
-
+    print('SHAPE', data_term.shape[0])
     if data_term.shape[0] < 1:
-        filter_term = (((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8)) & (
-                (data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
-                (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) &
-                       ((data.price_meter_sq <= price_meter_sq + 2000) & (data.price_meter_sq >= price_meter_sq - 2000))
-                       & ((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
-        data_term = data[(filter_term)]
+        data_term = data[(((data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
+                           (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) & filter_term & ((data.full_sq <= full_sq + 11) & (data.full_sq >= full_sq - 11)))]
 
 
     reg = linear_model.LinearRegression().fit(data_term[['price']], data_term[['term']])
@@ -273,18 +269,7 @@ def map():
 
     term = reg.predict([[price]])
 
-    if term < 0:
-        filter_term = (((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8)) & (
-                (data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
-                (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) &
-                       ((data.price_meter_sq <= price_meter_sq + 2000) & (data.price_meter_sq >= price_meter_sq - 2000))
-                       & ((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
-        data_term = data[(filter_term)]
-        reg = linear_model.LinearRegression().fit(data_term[['price']], data_term[['term']])
 
-        # sns.lmplot(x='term', y='price', data=data_term)
-        # plt.show()
-        term = reg.predict([[price]])
 
     '''
     if float(price) < float(data.price.quantile(0.2)):
@@ -313,8 +298,10 @@ def map():
 
     y = ds.price
     y = np.sort(y).tolist()
+    #a = []
+    #a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
     a = []
-    a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
+    a += ({'x': x, 'y': y} for x, y in zip(x, y))
     print(a)
 
     return jsonify({'Price': price, 'Duration': term.tolist()[0], 'PLot': list(a)})

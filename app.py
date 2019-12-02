@@ -251,15 +251,14 @@ def map():
     term = 0
     # Data
     data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
-    filter_term = (((data.price_meter_sq <= price_meter_sq + 3000) & (data.price_meter_sq >= price_meter_sq - 3000))
-                   & ((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
-    data_term = data[(filter_term & ((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8))
+    filter_term = (((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
+    data_term = data[(((data.price_meter_sq <= price_meter_sq + 3000) & (data.price_meter_sq >= price_meter_sq - 3000))&filter_term & ((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8))
                       & ((data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
                          (data.latitude >= latitude - 0.01) & (data.latitude <= latitude + 0.01)))]
 
     print('SHAPE', data_term.shape[0])
     if data_term.shape[0] < 1:
-        data_term = data[(((data.longitude >= longitude - 0.09) & (data.longitude <= longitude + 0.09) &
+        data_term = data[(((data.price_meter_sq <= price_meter_sq + 3500) & (data.price_meter_sq >= price_meter_sq - 3500))&((data.longitude >= longitude - 0.09) & (data.longitude <= longitude + 0.09) &
                            (data.latitude >= latitude - 0.09) & (data.latitude <= latitude + 0.09)) & filter_term & (
                                   (data.full_sq <= full_sq + 11) & (data.full_sq >= full_sq - 11)))]
     print('SHAPEEEE  #2:  ', data_term.shape[0])

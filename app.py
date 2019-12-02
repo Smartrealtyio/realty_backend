@@ -262,7 +262,7 @@ def map():
         data_term = data[(((data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
                            (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) & filter_term & (
                                   (data.full_sq <= full_sq + 11) & (data.full_sq >= full_sq - 11)))]
-    print('SHAPE  #2:  ', data_term.shape[0])
+    print('SHAPEEEE  #2:  ', data_term.shape[0])
     reg = linear_model.LinearRegression().fit(data_term[['price']], data_term[['term']])
 
 

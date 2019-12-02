@@ -251,7 +251,7 @@ def map():
     term = 0
     # Data
     data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
-    filter_term = (((data.price_meter_sq <= price_meter_sq + 2000) & (data.price_meter_sq >= price_meter_sq - 2000))
+    filter_term = (((data.price_meter_sq <= price_meter_sq + 3000) & (data.price_meter_sq >= price_meter_sq - 3000))
                    & ((data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
     data_term = data[(filter_term & ((data.full_sq <= full_sq + 8) & (data.full_sq >= full_sq - 8))
                       & ((data.longitude >= longitude - 0.01) & (data.longitude <= longitude + 0.01) &
@@ -259,8 +259,8 @@ def map():
 
     print('SHAPE', data_term.shape[0])
     if data_term.shape[0] < 1:
-        data_term = data[(((data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
-                           (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) & filter_term & (
+        data_term = data[(((data.longitude >= longitude - 0.09) & (data.longitude <= longitude + 0.09) &
+                           (data.latitude >= latitude - 0.09) & (data.latitude <= latitude + 0.09)) & filter_term & (
                                   (data.full_sq <= full_sq + 11) & (data.full_sq >= full_sq - 11)))]
     print('SHAPEEEE  #2:  ', data_term.shape[0])
     reg = linear_model.LinearRegression().fit(data_term[['price']], data_term[['term']])

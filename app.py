@@ -139,7 +139,7 @@ def mean():
         else:
             flat['link'] = 'https://www.cian.ru/sale/flat/' + str(flat['offer_id'])
 
-        cur.execute("select address from buildings where building_id=%s",
+        cur.execute("select address from buildings where id=%s",
                     (flat['id_building'],))
         flat['address'] = cur.fetchone()[0]
 

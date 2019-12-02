@@ -139,6 +139,10 @@ def mean():
         else:
             flat['link'] = 'https://www.cian.ru/sale/flat/' + str(flat['offer_id'])
 
+        cur.execute("select address from buildings where building_id=%s",
+                    (flat['id_building'],))
+        flat['address'] = cur.fetchone()[0]
+
         # print(flat['image'], flush=True)
 
         if type(flat['image']) != str:

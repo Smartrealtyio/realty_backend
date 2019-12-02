@@ -125,7 +125,7 @@ def mean():
     conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
     cur = conn.cursor()
     for flat in flats:
-        print(flat.keys(), flush=True)
+        # print(flat.keys(), flush=True)
         cur.execute("select metro_id, time_to_metro from time_metro_buildings where building_id=%s",
                     (flat['id_building'],))
         metros_info = cur.fetchall()
@@ -139,14 +139,14 @@ def mean():
         else:
             flat['link'] = 'https://www.cian.ru/sale/flat/' + str(flat['offer_id'])
 
-        print(flat['image'])
+        print(flat['image'], flush=True)
 
         if type(flat['image']) != 'str':
             flat['image'] = None
         del flat['offer_id']
         del flat['id_building']
         del flat['time_to_metro']
-        print(flat, flush=True)
+        # print(flat, flush=True)
 
     conn.close()
 

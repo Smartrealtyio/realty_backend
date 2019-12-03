@@ -311,8 +311,8 @@ def map():
     filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 10)) & (
             (clean_data.longitude >= longitude - 0.1) & (clean_data.longitude <= longitude + 0.1) &
             (clean_data.latitude >= latitude - 0.1) & (clean_data.latitude <= latitude + 0.1)) &
-               ((clean_data.price_meter_sq <= price_meter_sq + 4000) & (
-                           clean_data.price_meter_sq >= price_meter_sq - 4000)) &
+               ((clean_data.price_meter_sq <= price_meter_sq + 20000) & (
+                           clean_data.price_meter_sq >= price_meter_sq - 20000)) &
                (clean_data.term < 500) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
                         clean_data.time_to_metro <= time_to_metro + 2)))
     ds = clean_data[filter1]

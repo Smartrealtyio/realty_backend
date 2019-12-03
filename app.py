@@ -235,15 +235,15 @@ def map():
     if full_sq < float(data.full_sq.quantile(0.1)):
         print('0')
         price = func_pred_price0(list_of_requested_params_price)
-        price = price[0]
+        price = int(price[0])
     elif ((full_sq >= float(data.full_sq.quantile(0.1))) & (full_sq <= float(data.full_sq.quantile(0.8)))):
         print('1')
         price = func_pred_price1(list_of_requested_params_price)
-        price = price[0]
+        price = int(price[0])
     elif full_sq > float(data.full_sq.quantile(0.8)):
         print('2')
         price = func_pred_price2(list_of_requested_params_price)
-        price = price[0]
+        price = int(price[0])
     price_meter_sq = price / full_sq
 
     # SALE TERM PREDICTION
@@ -290,6 +290,7 @@ def map():
     reg.fit(data_term[['price']], data_term[['term']])
 
     term = reg.predict([[price]])
+    term = int(term.item(0))
     print(term)
 
 
@@ -319,16 +320,19 @@ def map():
 
     x = ds.term
     x = x.tolist()
+    x += [term]
 
     y = ds.price
     y = y.tolist()
+    y += [price]
+
 
     a = []
     a += ({'x': x, 'y': y} for x, y in zip(x, y))
     # Sort Dictionary
     a = sorted(a, key=lambda i: (i['x'], i['y']))
 
-    return jsonify({'Price': price, 'Duration': term.tolist()[0], 'PLot': list(a)})
+    return jsonify({'Price': price, 'Duration': term, 'PLot': list(a)})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

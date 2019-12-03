@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, render_template
 import FIND_OUTLIERS
 import psycopg2
 import settings_local as SETTINGS
+from sklearn.ensemble import GradientBoostingRegressor
 from sklearn import linear_model
 from joblib import dump, load
 from sklearn.ensemble import RandomForestRegressor
@@ -252,21 +253,44 @@ def map():
     term = 0
     # Data
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
-    print(data.shape)
 
-    filter1 = (((data.full_sq <= full_sq + 3) & (data.full_sq >= full_sq - 10)) & (
-            (data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
-            (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) &
-               ((data.price_meter_sq <= price_meter_sq + 5000) & (data.price_meter_sq >= price_meter_sq - 5000)) &
-               (data.term < 450) & (
-                       (data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
-    data_term = data[filter1]
+    # Remove Outliers from price and term
+
+    def remove_outlier(df_in, col_name):
+        q1 = df_in[col_name].quantile(0.15)
+        q3 = df_in[col_name].quantile(0.85)
+        iqr = q3 - q1  # Interquartile range
+        fence_low = q1 - 1.5 * iqr
+        fence_high = q3 + 1.5 * iqr
+        df_out = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
+        return df_out
+
+    df = remove_outlier(data, 'price')
+    print("After removing price_outliers: ", df)
+
+
+    ds = remove_outlier(data, 'term')
+    print("After removing term_outliers: ", ds)
+
+    clean_data = pd.merge(df, ds, on=list(data.columns))
+    print("Clean data: ", clean_data.shape)
+
+    filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 10)) & (
+            (clean_data.longitude >= longitude - 0.1) & (clean_data.longitude <= longitude + 0.1) &
+            (clean_data.latitude >= latitude - 0.1) & (clean_data.latitude <= latitude + 0.1)) &
+               ((clean_data.price_meter_sq <= price_meter_sq + 2000) & (
+                           clean_data.price_meter_sq >= price_meter_sq - 2000)) & (
+                       (clean_data.time_to_metro >= time_to_metro - 2) & (
+                           clean_data.time_to_metro <= time_to_metro + 2)))
+
+    data_term = clean_data[filter1]
     print('SHAPE #2: ', data_term.shape[0])
 
-    reg = RandomForestRegressor()
+    reg = GradientBoostingRegressor(learning_rate=0.01, n_estimators=50)
     reg.fit(data_term[['price']], data_term[['term']])
 
     term = reg.predict([[price]])
+    print(term)
 
 
 
@@ -283,25 +307,26 @@ def map():
         print('2')
         term = func_pred_term2(list_of_requested_params_term)
     '''
-    filter1 = (((data.full_sq <= full_sq + 3) & (data.full_sq >= full_sq - 10)) & (
-            (data.longitude >= longitude - 0.08) & (data.longitude <= longitude + 0.08) &
-            (data.latitude >= latitude - 0.08) & (data.latitude <= latitude + 0.08)) &
-               ((data.price_meter_sq <= price_meter_sq + 5000) & (data.price_meter_sq >= price_meter_sq - 5000)) &
-               (data.term < 450) & (
-                           (data.time_to_metro >= time_to_metro - 2) & (data.time_to_metro <= time_to_metro + 2)))
-    ds = data[filter1]
+    filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 10)) & (
+            (clean_data.longitude >= longitude - 0.1) & (clean_data.longitude <= longitude + 0.1) &
+            (clean_data.latitude >= latitude - 0.1) & (clean_data.latitude <= latitude + 0.1)) &
+               ((clean_data.price_meter_sq <= price_meter_sq + 4000) & (
+                           clean_data.price_meter_sq >= price_meter_sq - 4000)) &
+               (clean_data.term < 500) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
+                        clean_data.time_to_metro <= time_to_metro + 2)))
+    ds = clean_data[filter1]
     print(ds.shape)
 
     x = ds.term
-    x = np.sort(x).tolist()
+    x = x.tolist()
 
     y = ds.price
-    y = np.sort(y).tolist()
-    #a = []
-    #a += ({'x{0}'.format(k): x, 'y{0}'.format(k): y} for k, x, y in zip(list(range(len(x))), x, y))
+    y = y.tolist()
+
     a = []
     a += ({'x': x, 'y': y} for x, y in zip(x, y))
-    print(a)
+    # Sort Dictionary
+    a = sorted(a, key=lambda i: (i['x'], i['y']))
 
     return jsonify({'Price': price, 'Duration': term.tolist()[0], 'PLot': list(a)})
     # , 'Term': term})

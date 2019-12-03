@@ -309,10 +309,9 @@ def map():
         term = func_pred_term2(list_of_requested_params_term)
     '''
     filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (
-            (clean_data.longitude >= longitude - 0.01) & (clean_data.longitude <= longitude + 0.01) &
-            (clean_data.latitude >= latitude - 0.01) & (clean_data.latitude <= latitude + 0.01)) &
-               ((clean_data.price_meter_sq <= price_meter_sq + 20000) & (
-                           clean_data.price_meter_sq >= price_meter_sq - 20000)) &
+            (clean_data.longitude >= longitude - 0.1) & (clean_data.longitude <= longitude + 0.1) &
+            (clean_data.latitude >= latitude - 0.1) & (clean_data.latitude <= latitude + 0.1)) &
+               
                (clean_data.term < 500) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
                         clean_data.time_to_metro <= time_to_metro + 2)))
     ds = clean_data[filter1]
@@ -332,6 +331,7 @@ def map():
     a += ({'x': x, 'y': y} for x, y in zip(x, y))
     # Sort Dictionary
     a = sorted(a, key=lambda i: i['y'], reverse=False)
+    print(a)
 
     return jsonify({'Price': price, 'Duration': term, 'PLot': list(a)})
     # , 'Term': term})

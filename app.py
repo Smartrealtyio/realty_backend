@@ -74,17 +74,25 @@ def mean():
     new_data = pd.read_csv(DATA_OUTLIERS)
     print(new_data.shape)
     new_data['flat_id'] = new_data.index
-    ds = pd.merge(new_data, outliers_it, left_on="flat_id", right_on="flat_id", suffixes=['', 'double'])
-    ds = ds.drop(['flat_id', 'full_sqdouble', 'price_meter_sqdouble'], axis=1)
+    #ds = pd.merge(new_data, outliers_it, left_on="flat_id", right_on="flat_id", suffixes=['', 'double'])
+    #ds = ds.drop(['flat_id', 'full_sqdouble', 'price_meter_sqdouble'], axis=1)
+    full_data_outliers = new_data[new_data.flat_id.isin(outliers_it.flat_id)]
+    sklearn_score_anomalies = model.score_samples(full_data_outliers[['price_meter_sq', 'full_sq']])
+    original_paper_score = np.array([((-1 * s + 0.5) - 1) * 100 for s in sklearn_score_anomalies])
+    print(original_paper_score)
+    df_f = pd.DataFrame({'profit': original_paper_score}, index=full_data_outliers.index)
+    print(df_f.head())
+    new_df = pd.concat([full_data_outliers, df_f], axis=1)
 
-    print('ds shape', ds.shape, flush=True)
+
+    print('ds shape', new_df.shape, flush=True)
 
     # filter = (((ds.rooms == rooms)|(ds.rooms == 0)|(ds.rooms==1)|(ds.rooms==2)) &
     #          ((ds.latitude >= latitude_from) & (ds.latitude <= latitude_to))
     #           & ((ds.longitude >= longitude_from) & (ds.longitude <= longitude_to)))
     # ds = ds[filter]
 
-    print('ds', ds.shape, flush=True)
+    print('ds', new_df.shape, flush=True)
 
     # if time_to_metro != None:
     #     ds = ds[(ds.time_to_metro <= time_to_metro)]
@@ -109,10 +117,10 @@ def mean():
     # if price_to != None:
     #     ds = ds[ds.price <= price_to]
 
-    print('ds columns', ds.columns, flush=True)
-    print(ds.head(), flush=True)
+    print('ds columns', new_df.columns, flush=True)
+    print(new_df.head(), flush=True)
 
-    flats = ds.to_dict('record')
+    flats = new_df.to_dict('record')
 
 
     flats_count = len(flats)

@@ -312,7 +312,7 @@ def map():
             (clean_data.longitude >= longitude - 0.1) & (clean_data.longitude <= longitude + 0.1) &
             (clean_data.latitude >= latitude - 0.1) & (clean_data.latitude <= latitude + 0.1)) &
 
-               (clean_data.term < 500) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
+               (clean_data.term < term) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
                         clean_data.time_to_metro <= time_to_metro + 2)))
     ds = clean_data[filter1]
     print(ds.shape)

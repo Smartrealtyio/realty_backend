@@ -317,7 +317,7 @@ def map():
     ds = clean_data[filter1]
     print(ds.shape)
 
-    ds = ds[ds.price <= price]
+    ds = ds[ds.price <= price+100000]
     x = ds.term
     x = x.tolist()
     x += [term]

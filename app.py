@@ -331,7 +331,7 @@ def map():
     a = []
     a += ({'x': x, 'y': y} for x, y in zip(x, y))
     # Sort Dictionary
-    a = sorted(a, key=lambda i: (i['x'], i['y']))
+    a = sorted(a, key=lambda i: i['y'], reverse=False)
 
     return jsonify({'Price': price, 'Duration': term, 'PLot': list(a)})
     # , 'Term': term})

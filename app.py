@@ -275,11 +275,11 @@ def map():
     clean_data = pd.merge(df, ds, on=list(data.columns))
     print("Clean data: ", clean_data.shape)
 
-    filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 10)) & (
-            (clean_data.longitude >= longitude - 0.1) & (clean_data.longitude <= longitude + 0.1) &
-            (clean_data.latitude >= latitude - 0.1) & (clean_data.latitude <= latitude + 0.1)) &
-               ((clean_data.price_meter_sq <= price_meter_sq + 2000) & (
-                           clean_data.price_meter_sq >= price_meter_sq - 2000)) & (
+    filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (
+            (clean_data.longitude >= longitude - 0.01) & (clean_data.longitude <= longitude + 0.01) &
+            (clean_data.latitude >= latitude - 0.01) & (clean_data.latitude <= latitude + 0.01)) &
+               ((clean_data.price_meter_sq <= price_meter_sq + 20000) & (
+                           clean_data.price_meter_sq >= price_meter_sq - 20000)) & (
                        (clean_data.time_to_metro >= time_to_metro - 2) & (
                            clean_data.time_to_metro <= time_to_metro + 2)))
 
@@ -308,9 +308,9 @@ def map():
         print('2')
         term = func_pred_term2(list_of_requested_params_term)
     '''
-    filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 10)) & (
-            (clean_data.longitude >= longitude - 0.1) & (clean_data.longitude <= longitude + 0.1) &
-            (clean_data.latitude >= latitude - 0.1) & (clean_data.latitude <= latitude + 0.1)) &
+    filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (
+            (clean_data.longitude >= longitude - 0.01) & (clean_data.longitude <= longitude + 0.01) &
+            (clean_data.latitude >= latitude - 0.01) & (clean_data.latitude <= latitude + 0.01)) &
                ((clean_data.price_meter_sq <= price_meter_sq + 20000) & (
                            clean_data.price_meter_sq >= price_meter_sq - 20000)) &
                (clean_data.term < 500) & ((clean_data.time_to_metro >= time_to_metro - 2) & (

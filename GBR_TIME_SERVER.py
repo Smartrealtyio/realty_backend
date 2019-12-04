@@ -101,7 +101,7 @@ def Model_1(data: pd.DataFrame):
 def Model_2(data: pd.DataFrame):
     ds2 = data[(data.price > data.price.quantile(0.8))]
     print('Data #2 length: ', ds2.shape)
-    X2 = ds2.drop(['term'], axis=1)
+    X2 = ds2.drop(['term', 'offer_id'], axis=1)
     sc = StandardScaler()
     # X2 = sc.fit_transform(X2)
 
@@ -144,11 +144,11 @@ def model():
     # Load and split dataset.
     ds = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')
     ds = ds.iloc[:-100]
-    Model_0(ds)
+    # Model_0(ds)
 
-    Model_1(ds)
+    # Model_1(ds)
 
-    Model_2(ds)
+    # Model_2(ds)
 
 if __name__ == '__main__':
     model()

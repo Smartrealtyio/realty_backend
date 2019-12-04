@@ -13,13 +13,13 @@ MODEL_OUTLIERS = SETTINGS.MODEL + '/models.joblib'
 def OutliersSearch():
 
     data = pd.read_csv(DATA_OUTLIERS)
-    data = data[['price_meter_sq', 'full_sq']]
-    data = data[data.price_meter_sq < data.price_meter_sq.quantile(0.2)]
+    # data = data[['price_meter_sq', 'full_sq']]
+    # data = data[data.price_meter_sq < data.price_meter_sq.quantile(0.2)]
     print("Data price_meter_sq < price_meter_sq.quantile(0.2): ", data.shape, flush=True)
 
 
 
-    clf = IsolationForest(max_samples=10, random_state=42, contamination=0.1, max_features=2)
+    clf = IsolationForest(contimation=0.1,)
     clf.fit(data)
     # save model
     dump(clf, MODEL_OUTLIERS)

@@ -236,17 +236,17 @@ def map():
     # Remove Outliers from price and term
 
     def remove_outlier(df_in, col_name):
-        q1 = df_in[col_name].quantile(0.20)
+        q1 = df_in[col_name].quantile(0.15)
         q3 = df_in[col_name].quantile(0.85)
-        iqr = q3 - q1  # Interquartile range
-        fence_low = q1 - 1.5 * iqr
-        fence_high = q3 + 1.5 * iqr
-        df_out = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
+        #iqr = q3 - q1  # Interquartile range
+        #fence_low = q1 - 1.5 * iqr
+        #fence_high = q3 + 1.5 * iqr
+        df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
         return df_out
 
     df = remove_outlier(data, 'price')
     print("After removing price_outliers: ", df.shape)
-    print("DATA: ", data.shape)
+
 
     ds = remove_outlier(data, 'term')
     print("After removing term_outliers: ", ds.shape)

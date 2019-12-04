@@ -94,10 +94,7 @@ def main_processing():
     # REPLACE -1 WITH 0
     num = ds._get_numeric_data()
 
-    num[num < 0] = 0
-    ds['price_meter_sq'] = ds[['price', 'full_sq']].apply(
-        lambda row: (row['price'] /
-                     row['full_sq']), axis=1)
+    
 
     ds = ds.drop(['max_floor', 'life_sq', 'rooms', 'built_year', "flat_id", 'floor', 'id_building', 'district_id',
                   'transport_type',

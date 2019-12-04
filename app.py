@@ -94,7 +94,7 @@ def mean():
     if building_type_str != None:
         new_df = new_df[new_df.building_type_str == building_type_str]
     if kitchen_sq != None:
-        new_df = new_df[(new_df.kitchen_sq >= kitchen_sq - 5) & (new_df.kitchen_sq <= kitchen_sq + 5)]
+        new_df = new_df[(new_df.kitchen_sq >= kitchen_sq - 1) & (new_df.kitchen_sq <= kitchen_sq + 1)]
     if life_sq != None:
         new_df = new_df[(new_df.life_sq >= life_sq - 5) & (new_df.life_sq <= life_sq + 5)]
     if renovation != None:

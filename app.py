@@ -350,7 +350,7 @@ def map():
     a = sorted(a, key=lambda i: i['x'], reverse=False)
     print(a)
 
-    return jsonify({'Price': price, 'Duration': term, 'PLot': list(a), 'FlatsTerm': data_term.to_dict('record_two')})
+    return jsonify({'Price': price, 'Duration': term, 'PLot': list(a), 'FlatsTerm': term_links.to_dict('record_two')})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

@@ -112,6 +112,13 @@ def main_preprocessing():
                   'id_building', 'district_id', 'transport_type'], axis=1)
 
     print('HEADERS NAME FINALY: ', list(ds.columns))
+
+    print("All data: ", ds.shape)
+    ds = ds[ds.resource_id == 0]
+    print('Just Yandex: ', ds.shape)
+
+
+
     def remove_outlier(df_in, col_name):
         q1 = df_in[col_name].quantile(0.10)
         q3 = df_in[col_name].quantile(0.90)

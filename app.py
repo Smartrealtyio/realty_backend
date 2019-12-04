@@ -245,15 +245,16 @@ def map():
         return df_out
 
     df = remove_outlier(data, 'price')
-    #print("After removing price_outliers: ", df)
+    print("After removing price_outliers: ", df.shape)
 
 
     ds = remove_outlier(data, 'term')
-    #print("After removing term_outliers: ", ds)
+    print("After removing term_outliers: ", ds.shape)
 
     clean_data = pd.merge(df, ds, on=list(ds.columns))
-    print('Min term: ', clean_data.term.quantile(0.15))
-    print('Clean data description: ', clean_data.describe(), flush=True)
+    print('Clean data shape: ', clean_data.shape)
+    print('Min term: ', clean_data.term.min())
+    print('Clean data description: ', clean_data[['term']].describe(), flush=True)
     print("Clean data: ", clean_data.shape, flush=True)
 
     filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (

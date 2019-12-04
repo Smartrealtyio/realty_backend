@@ -75,6 +75,7 @@ def mean():
     df_f = pd.DataFrame({'profit': original_paper_score}, index=full_data_outliers.index)
     print(df_f.head())
     new_df = pd.concat([full_data_outliers, df_f], axis=1)
+    new_df = new_df.sort_values(by=['profit'], ascending=False)
 
 
     print('ds shape', new_df.shape, flush=True)

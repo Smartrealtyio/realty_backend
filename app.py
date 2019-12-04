@@ -252,6 +252,7 @@ def map():
     print("After removing term_outliers: ", ds)
 
     clean_data = pd.merge(df, ds, on=list(data.columns))
+    print('Clean data description: ', clean_data.describe()['term'])
     print("Clean data: ", clean_data.shape)
 
     filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (

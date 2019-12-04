@@ -70,7 +70,7 @@ def mean():
     #ds = ds.drop(['flat_id', 'full_sqdouble', 'price_meter_sqdouble'], axis=1)
     full_data_outliers = new_data[new_data.flat_id.isin(outliers_it.flat_id)]
     sklearn_score_anomalies = model.score_samples(full_data_outliers[['price_meter_sq', 'full_sq']])
-    original_paper_score = np.array([((-1 * s + 0.5) - 1) * 100 for s in sklearn_score_anomalies])
+    original_paper_score = np.array([(((-1 * s + 0.5) - 1) * 100) * 2 for s in sklearn_score_anomalies])
     print(original_paper_score)
     df_f = pd.DataFrame({'profit': original_paper_score}, index=full_data_outliers.index)
     print(df_f.head())
@@ -237,7 +237,7 @@ def map():
 
 
 
-    filter1 = (((data.full_sq <= full_sq + 3) & (data.full_sq >= full_sq - 3)) & (
+    filter1 = (((data.full_sq <= full_sq + 1) & (data.full_sq >= full_sq - 3)) & (
             (data.longitude >= longitude - 0.05) & (data.longitude <= longitude + 0.05) &
             (data.latitude >= latitude - 0.05) & (data.latitude <= latitude + 0.05)) &
                ((data.price_meter_sq <= price_meter_sq + 20000) & (

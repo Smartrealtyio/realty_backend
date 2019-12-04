@@ -246,7 +246,7 @@ def map():
 
     df = remove_outlier(data, 'price')
     print("After removing price_outliers: ", df.shape)
-
+    print("DATA: ", data.shape)
 
     ds = remove_outlier(data, 'term')
     print("After removing term_outliers: ", ds.shape)

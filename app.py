@@ -301,7 +301,7 @@ def map():
             (clean_data.latitude >= latitude - 0.05) & (clean_data.latitude <= latitude + 0.05)) &
                (clean_data.term <= term) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
                         clean_data.time_to_metro <= time_to_metro + 2)))
-    ds = data_term
+    ds = data_term[data_term.term <= term]
     #ds = clean_data[filter1]
     print(ds.shape)
 

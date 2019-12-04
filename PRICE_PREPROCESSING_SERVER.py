@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import settings_local as SETTINGS
+import math as m
 
 raw_data = SETTINGS.PATH_TO_SINGLE_CSV_FILES
 prepared_data = SETTINGS.DATA
@@ -101,6 +102,13 @@ def main_processing():
     ds = ds.drop(['max_floor', 'life_sq', 'rooms', 'built_year', "flat_id", 'floor', 'id_building', 'district_id',
                   'transport_type',
                   "building_type_str"], axis=1)
+    num[num < 0] = 0
+    ds['X'] = ds[['latitude', 'longitude']].apply(
+        lambda row: (m.cos(row['latitude']) *
+                     m.cos(row['longitude'])), axis=1)
+    ds['Y'] = ds[['latitude', 'longitude']].apply(
+        lambda row: (m.cos(row['latitude']) *
+                     m.sin(row['longitude'])), axis=1)
 
     def remove_outlier(df_in, col_name):
         q1 = df_in[col_name].quantile(0.10)

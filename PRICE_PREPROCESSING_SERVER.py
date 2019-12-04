@@ -103,21 +103,20 @@ def main_processing():
                   "building_type_str"], axis=1)
 
     def remove_outlier(df_in, col_name):
-        q1 = df_in[col_name].quantile(0.15)
-        q3 = df_in[col_name].quantile(0.85)
+        q1 = df_in[col_name].quantile(0.10)
+        q3 = df_in[col_name].quantile(0.90)
         iqr = q3 - q1  # Interquartile range
         fence_low = q1 - 1.5 * iqr
         fence_high = q3 + 1.5 * iqr
         df_out = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
         return df_out
 
-    ds = remove_outlier(ds, 'price')
-    print("After removing price_outliers: ", ds)
+    df = remove_outlier(ds, 'price')
+    print("After removing price_outliers: ", df)
 
 
-    ds = remove_outlier(ds, 'term')
-    print("After removing term_outliers: ", ds)
-    ds.to_csv(prepared_data + '/COORDINATES_Pred_Price.csv', index=None, header=True)
+    clean_data = pd.merge(df, ds, on=list(data.columns))
+    clean_data.to_csv(prepared_data + '/COORDINATES_Pred_Price.csv', index=None, header=True)
 
 
 if __name__ == '__main__':

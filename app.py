@@ -301,7 +301,8 @@ def map():
             (clean_data.latitude >= latitude - 0.05) & (clean_data.latitude <= latitude + 0.05)) &
                (clean_data.term <= term) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
                         clean_data.time_to_metro <= time_to_metro + 2)))
-    ds = clean_data[filter1]
+    ds = data_term
+    #ds = clean_data[filter1]
     print(ds.shape)
 
     ds = ds[ds.price <= price+100000]

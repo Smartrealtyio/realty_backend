@@ -303,6 +303,14 @@ def map():
     print(term)
 
 
+    # Add links to flats
+    term_links = data_term.to_dict('record_two')
+    for i in term_links:
+        if i['resource_id'] == 0:
+            i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id'])
+        else:
+            i['link'] = 'https://www.cian.ru/sale/flat/' + str(i['offer_id'])
+
 
     '''
     if float(price) < float(data.price.quantile(0.2)):

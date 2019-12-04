@@ -292,6 +292,7 @@ def map():
                            clean_data.time_to_metro <= time_to_metro + 2)))
 
     data_term = clean_data[filter1]
+
     print('SHAPE #2: ', data_term.shape[0])
 
     reg = GradientBoostingRegressor(learning_rate=0.01, n_estimators=50)
@@ -341,7 +342,7 @@ def map():
     a = sorted(a, key=lambda i: i['x'], reverse=False)
     print(a)
 
-    return jsonify({'Price': price, 'Duration': term, 'PLot': list(a)})
+    return jsonify({'Price': price, 'Duration': term, 'PLot': list(a), 'FlatsTerm': data_term.to_dict('record_two')})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

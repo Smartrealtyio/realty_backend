@@ -233,39 +233,19 @@ def map():
     # Data
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
-    # Remove Outliers from price and term
-
-    def remove_outlier(df_in, col_name):
-        q1 = df_in[col_name].quantile(0.15)
-        q3 = df_in[col_name].quantile(0.85)
-        #iqr = q3 - q1  # Interquartile range
-        #fence_low = q1 - 1.5 * iqr
-        #fence_high = q3 + 1.5 * iqr
-        df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
-        return df_out
-
-    df = remove_outlier(data, 'price')
-    print("After removing price_outliers: ", df.shape)
 
 
-    ds = remove_outlier(data, 'term')
-    print("After removing term_outliers: ", ds.shape)
 
-    clean_data = pd.merge(df, ds, on=list(ds.columns))
-    print('Clean data shape: ', clean_data.shape)
-    print('Min term: ', clean_data.term.min())
-    print('Clean data description: ', clean_data[['term']].describe(), flush=True)
-    print("Clean data: ", clean_data.shape, flush=True)
 
-    filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (
-            (clean_data.longitude >= longitude - 0.05) & (clean_data.longitude <= longitude + 0.05) &
-            (clean_data.latitude >= latitude - 0.05) & (clean_data.latitude <= latitude + 0.05)) &
-               ((clean_data.price_meter_sq <= price_meter_sq + 20000) & (
-                           clean_data.price_meter_sq >= price_meter_sq - 20000)) & (
-                       (clean_data.time_to_metro >= time_to_metro - 2) & (
-                           clean_data.time_to_metro <= time_to_metro + 2)))
+    filter1 = (((data.full_sq <= full_sq + 3) & (data.full_sq >= full_sq - 3)) & (
+            (data.longitude >= longitude - 0.05) & (data.longitude <= longitude + 0.05) &
+            (data.latitude >= latitude - 0.05) & (data.latitude <= latitude + 0.05)) &
+               ((data.price_meter_sq <= price_meter_sq + 20000) & (
+                           data.price_meter_sq >= price_meter_sq - 20000)) & (
+                       (data.time_to_metro >= time_to_metro - 2) & (
+                           data.time_to_metro <= time_to_metro + 2)))
 
-    data_term = clean_data[filter1]
+    data_term = data[filter1]
 
     print('SHAPE #2: ', data_term.shape[0])
 
@@ -299,14 +279,14 @@ def map():
         print('2')
         term = func_pred_term2(list_of_requested_params_term)
     '''
-    filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (
-            (clean_data.longitude >= longitude - 0.05) & (clean_data.longitude <= longitude + 0.05) &
-            (clean_data.latitude >= latitude - 0.05) & (clean_data.latitude <= latitude + 0.05)) &
-               (clean_data.term <= term) & ((clean_data.price_meter_sq <= price_meter_sq + 20000) & (
-                           clean_data.price_meter_sq >= price_meter_sq - 20000)) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
-                        clean_data.time_to_metro <= time_to_metro + 2)))
+    filter1 = (((data.full_sq <= full_sq + 3) & (data.full_sq >= full_sq - 3)) & (
+            (data.longitude >= longitude - 0.05) & (data.longitude <= longitude + 0.05) &
+            (data.latitude >= latitude - 0.05) & (data.latitude <= latitude + 0.05)) &
+               (data.term <= term) & ((data.price_meter_sq <= price_meter_sq + 20000) & (
+                           data.price_meter_sq >= price_meter_sq - 20000)) & ((data.time_to_metro >= time_to_metro - 2) & (
+                        data.time_to_metro <= time_to_metro + 2)))
     # ds = data_term[data_term.term <= term]
-    ds = clean_data[filter1]
+    ds = data[filter1]
     print(ds.shape)
 
     ds = ds[ds.price <= price+100000]

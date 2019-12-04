@@ -112,9 +112,26 @@ def main_preprocessing():
                   'id_building', 'district_id', 'transport_type'], axis=1)
 
     print('HEADERS NAME FINALY: ', list(ds.columns))
+    def remove_outlier(df_in, col_name):
+        q1 = df_in[col_name].quantile(0.10)
+        q3 = df_in[col_name].quantile(0.90)
+        #iqr = q3 - q1  # Interquartile range
+        #fence_low = q1 - 1.5 * iqr
+        #fence_high = q3 + 1.5 * iqr
+        df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
+        return df_out
+
+    df = remove_outlier(ds, 'price')
+    print("After removing price_outliers: ", df.shape)
+
+
+    df1 = remove_outlier(ds, 'term')
+    print("After removing term_outliers: ", df1.shape)
+
+    clean_data = pd.merge(df, df1, on=list(ds.columns))
 
     print('Saving to new csv')
-    ds.to_csv(prepared_data+'/COORDINATES_Pred_Term.csv', index=None, header=True)
+    clean_data.to_csv(prepared_data+'/COORDINATES_Pred_Term.csv', index=None, header=True)
 
 
 if __name__ == '__main__':

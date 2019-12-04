@@ -251,7 +251,8 @@ def map():
     ds = remove_outlier(data, 'term')
     #print("After removing term_outliers: ", ds)
 
-    clean_data = pd.merge(df, ds, on=list(data.columns))
+    clean_data = pd.merge(df, ds, on=list(ds.columns))
+    print('Min term: ', clean_data.term.quantile(0.15))
     print('Clean data description: ', clean_data.describe(), flush=True)
     print("Clean data: ", clean_data.shape, flush=True)
 

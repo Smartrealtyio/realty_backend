@@ -48,14 +48,6 @@ def mean():
     sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 0
 
     print(latitude_from, latitude_to, longitude_from, longitude_to, flush=True)
-    # flats_page_count = int(request.args.get('flats_page_count')) if request.args.get('flats_page_count') is not None else 10
-
-    # mean_price, flats = FIND_OUTLIERS.OutliersSearch(full_sq_from, full_sq_to, rooms, latitude_from, latitude_to,
-    #                                                  longitude_from, longitude_to, price_from, price_to, building_type_str,
-    #                                                  kitchen_sq, life_sq, renovation, has_elevator, floor_first, floor_last,
-    #
-    #
-    #                           time_to_metro)
 
     DATA_OUTLIERS = SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv'
     MODEL_OUTLIERS = SETTINGS.MODEL + '/models.joblib'
@@ -187,7 +179,6 @@ def func_pred_price1(params):
 
 
 
-
 def func_pred_price2(params):
     model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType2.joblib')
     X = params
@@ -195,26 +186,6 @@ def func_pred_price2(params):
     pred = model_price.predict([X])
     return np.expm1(pred)
 
-
-def func_pred_term0(params):
-    model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM0.joblib')
-    X = params
-    pred = model_term.predict([X])
-    return pred
-
-
-def func_pred_term1(params):
-    model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM1.joblib')
-    X = params
-    pred = model_term.predict([X])
-    return pred
-
-
-def func_pred_term2(params):
-    model_term = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM2.joblib')
-    X = params
-    pred = model_term.predict([X])
-    return pred
 
 
 @app.route('/map')
@@ -238,13 +209,13 @@ def map():
                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y]
     # Data
     price = 0
-    data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Term.csv')
+    data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Price.csv')
 
-    if full_sq < float(data.full_sq.quantile(0.1)):
+    if full_sq < float(data.full_sq.quantile(0.25)):
         print('0')
         price = func_pred_price0(list_of_requested_params_price)
         price = int(price[0])
-    elif ((full_sq >= float(data.full_sq.quantile(0.1))) & (full_sq <= float(data.full_sq.quantile(0.8)))):
+    elif ((full_sq >= float(data.full_sq.quantile(0.25))) & (full_sq <= float(data.full_sq.quantile(0.8)))):
         print('1')
         price = func_pred_price1(list_of_requested_params_price)
         price = int(price[0])
@@ -284,8 +255,8 @@ def map():
     print("Clean data: ", clean_data.shape)
 
     filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (
-            (clean_data.longitude >= longitude - 0.1) & (clean_data.longitude <= longitude + 0.1) &
-            (clean_data.latitude >= latitude - 0.1) & (clean_data.latitude <= latitude + 0.1)) &
+            (clean_data.longitude >= longitude - 0.05) & (clean_data.longitude <= longitude + 0.05) &
+            (clean_data.latitude >= latitude - 0.05) & (clean_data.latitude <= latitude + 0.05)) &
                ((clean_data.price_meter_sq <= price_meter_sq + 20000) & (
                            clean_data.price_meter_sq >= price_meter_sq - 20000)) & (
                        (clean_data.time_to_metro >= time_to_metro - 2) & (
@@ -326,10 +297,9 @@ def map():
         term = func_pred_term2(list_of_requested_params_term)
     '''
     filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (
-            (clean_data.longitude >= longitude - 0.01) & (clean_data.longitude <= longitude + 0.01) &
-            (clean_data.latitude >= latitude - 0.01) & (clean_data.latitude <= latitude + 0.01)) &
-
-               (clean_data.term < term) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
+            (clean_data.longitude >= longitude - 0.05) & (clean_data.longitude <= longitude + 0.05) &
+            (clean_data.latitude >= latitude - 0.05) & (clean_data.latitude <= latitude + 0.05)) &
+               (clean_data.term <= term) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
                         clean_data.time_to_metro <= time_to_metro + 2)))
     ds = clean_data[filter1]
     print(ds.shape)

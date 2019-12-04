@@ -94,7 +94,7 @@ def main_processing():
     # REPLACE -1 WITH 0
     num = ds._get_numeric_data()
 
-    
+
 
     ds = ds.drop(['max_floor', 'life_sq', 'rooms', 'built_year', "flat_id", 'floor', 'id_building', 'district_id',
                   'transport_type',

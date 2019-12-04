@@ -116,6 +116,7 @@ def main_processing():
 
 
     clean_data = pd.merge(df, ds, on=list(ds.columns))
+    print("Clean data columns: ", clean_data.columns)
     clean_data.to_csv(prepared_data + '/COORDINATES_Pred_Price.csv', index=None, header=True)
 
 

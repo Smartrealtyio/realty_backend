@@ -79,35 +79,35 @@ def mean():
 
     print('ds shape', new_df.shape, flush=True)
 
-    # filter = (((ds.rooms == rooms)|(ds.rooms == 0)|(ds.rooms==1)|(ds.rooms==2)) &
-    #          ((ds.latitude >= latitude_from) & (ds.latitude <= latitude_to))
-    #           & ((ds.longitude >= longitude_from) & (ds.longitude <= longitude_to)))
-    # ds = ds[filter]
+    filter = ((new_df.rooms == rooms) &
+             ((new_df.latitude >= latitude_from) & (new_df.latitude <= latitude_to))
+              & ((new_df.longitude >= longitude_from) & (new_df.longitude <= longitude_to)))
+    new_df = new_df[filter]
 
     print('ds', new_df.shape, flush=True)
 
-    # if time_to_metro != None:
-    #     ds = ds[(ds.time_to_metro <= time_to_metro)]
-    # if rooms != None:
-    #     ds = ds[ds.rooms == rooms]
-    # if building_type_str != None:
-    #     ds = ds[ds.building_type_str == building_type_str]
-    # if kitchen_sq != None:
-    #     ds = ds[(ds.kitchen_sq >= kitchen_sq - 5) & (ds.kitchen_sq <= kitchen_sq + 5)]
-    # if life_sq != None:
-    #     ds = ds[(ds.life_sq >= life_sq - 5) & (ds.life_sq <= life_sq + 5)]
-    # if renovation != None:
-    #     ds = ds[ds.renovation == renovation]
-    # if has_elevator != None:
-    #     ds = ds[ds.has_elevator == has_elevator]
-    # if floor_first != None:
-    #     ds = ds[ds.floor_first == 0]
-    # if floor_last != None:
-    #     ds = ds[ds.floor_last == 0]
-    # if price_from != None:
-    #     ds = ds[ds.price >= price_from]
-    # if price_to != None:
-    #     ds = ds[ds.price <= price_to]
+    if time_to_metro != None:
+        new_df = new_df[(new_df.time_to_metro <= time_to_metro)]
+    if rooms != None:
+        new_df = new_df[new_df.rooms == rooms]
+    if building_type_str != None:
+        new_df = new_df[new_df.building_type_str == building_type_str]
+    if kitchen_sq != None:
+        new_df = new_df[(new_df.kitchen_sq >= kitchen_sq - 5) & (new_df.kitchen_sq <= kitchen_sq + 5)]
+    if life_sq != None:
+        new_df = new_df[(new_df.life_sq >= life_sq - 5) & (new_df.life_sq <= life_sq + 5)]
+    if renovation != None:
+        new_df = new_df[new_df.renovation == renovation]
+    if has_elevator != None:
+        new_df = new_df[new_df.has_elevator == has_elevator]
+    if floor_first != None:
+        new_df = new_df[new_df.floor_first == 0]
+    if floor_last != None:
+        new_df = new_df[new_df.floor_last == 0]
+    if price_from != None:
+        new_df = new_df[new_df.price >= price_from]
+    if price_to != None:
+        new_df = new_df[new_df.price <= price_to]
 
     print('ds columns', new_df.columns, flush=True)
     print(new_df.head(), flush=True)

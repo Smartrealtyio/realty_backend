@@ -232,11 +232,11 @@ def map():
     term = 0
     # Data
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
-
+    print("Initial shape: ", data.shape)
     # Remove Outliers from price and term
 
     def remove_outlier(df_in, col_name):
-        q1 = df_in[col_name].quantile(0.15)
+        q1 = df_in[col_name].quantile(0.20)
         q3 = df_in[col_name].quantile(0.85)
         iqr = q3 - q1  # Interquartile range
         fence_low = q1 - 1.5 * iqr

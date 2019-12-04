@@ -115,7 +115,7 @@ def main_processing():
     print("After removing price_outliers: ", df)
 
 
-    clean_data = pd.merge(df, ds, on=list(data.columns))
+    clean_data = pd.merge(df, ds, on=list(ds.columns))
     clean_data.to_csv(prepared_data + '/COORDINATES_Pred_Price.csv', index=None, header=True)
 
 

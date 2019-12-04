@@ -245,15 +245,15 @@ def map():
         return df_out
 
     df = remove_outlier(data, 'price')
-    print("After removing price_outliers: ", df)
+    #print("After removing price_outliers: ", df)
 
 
     ds = remove_outlier(data, 'term')
-    print("After removing term_outliers: ", ds)
+    #print("After removing term_outliers: ", ds)
 
     clean_data = pd.merge(df, ds, on=list(data.columns))
-    print('Clean data description: ', clean_data.describe())
-    print("Clean data: ", clean_data.shape)
+    print('Clean data description: ', clean_data.describe(), flush=True)
+    print("Clean data: ", clean_data.shape, flush=True)
 
     filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (
             (clean_data.longitude >= longitude - 0.05) & (clean_data.longitude <= longitude + 0.05) &

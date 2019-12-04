@@ -317,8 +317,8 @@ def map():
         term = func_pred_term2(list_of_requested_params_term)
     '''
     filter1 = (((clean_data.full_sq <= full_sq + 3) & (clean_data.full_sq >= full_sq - 3)) & (
-            (clean_data.longitude >= longitude - 0.1) & (clean_data.longitude <= longitude + 0.1) &
-            (clean_data.latitude >= latitude - 0.1) & (clean_data.latitude <= latitude + 0.1)) &
+            (clean_data.longitude >= longitude - 0.01) & (clean_data.longitude <= longitude + 0.01) &
+            (clean_data.latitude >= latitude - 0.01) & (clean_data.latitude <= latitude + 0.01)) &
 
                (clean_data.term < term) & ((clean_data.time_to_metro >= time_to_metro - 2) & (
                         clean_data.time_to_metro <= time_to_metro + 2)))

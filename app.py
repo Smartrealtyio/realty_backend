@@ -304,7 +304,7 @@ def map():
 
 
     # Add links to flats
-    term_links = data_term.to_dict('record_two')
+    term_links = data_term.to_dict('record')
     for i in term_links:
         if i['resource_id'] == 0:
             i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id'])

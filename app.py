@@ -259,7 +259,8 @@ def map():
     sc = StandardScaler()
     reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=50)
     reg.fit(sc.fit_transform(df_for_current_label[['renovation', 'has_elevator',  'longitude','latitude','floor_last', 'floor_first','price_meter_sq']]), df_for_current_label[['term']])
-    X1 = df_for_current_label.drop(['price'], axis=1)
+    X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                                      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
     print(X1.columns)
     sc = StandardScaler()
     # X1 = sc.fit_transform(X1)

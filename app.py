@@ -335,7 +335,7 @@ def map():
     print(ds.shape)
     '''
     df_for_current_label = df_for_current_label[df_for_current_label.term <= term+100]
-    df_for_current_label = df_for_current_label[df_for_current_label.price <= price + 1000000]
+    
     # df_for_current_label = df_for_current_label[((df_for_current_label.price <= price+1500000)& (df_for_current_label.price >= price-1500000))]
     x = df_for_current_label.term
     x = x.tolist()

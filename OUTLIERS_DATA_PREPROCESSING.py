@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import backports.datetime_fromisoformat as bck
 import math as m
+from joblib import dump
+from sklearn.cluster import KMeans
 import settings_local as SETTINGS
 
 # FINAL PARAMETERS ORDER:
@@ -9,6 +11,7 @@ import settings_local as SETTINGS
 # 'life_sq', 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first']
 raw_data = SETTINGS.PATH_TO_SINGLE_CSV_FILES
 prepared_data = SETTINGS.DATA
+PATH_TO_TIME_MODEL = SETTINGS.MODEL
 
 def main_preprocessing():
 
@@ -120,8 +123,34 @@ def main_preprocessing():
     #               'floor_first', 'renovation', 'floor_last', "is_apartment"], axis=1)
     print('HEADERS NAME FINALY: ', list(ds.columns))
 
-    print('Saving to new csv: ', ds.shape)
-    ds.to_csv(prepared_data+'/COORDINATES_OUTLIERS.csv', index=None, header=True)
+    print("All data: ", ds.shape)
+    ds = ds[ds.resource_id == 0]
+    print('Just Yandex: ', ds.shape)
+
+    def remove_outlier(df_in, col_name):
+        q1 = df_in[col_name].quantile(0.10)
+        q3 = df_in[col_name].quantile(0.90)
+        # iqr = q3 - q1  # Interquartile range
+        # fence_low = q1 - 1.5 * iqr
+        # fence_high = q3 + 1.5 * iqr
+        df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
+        return df_out
+
+    df = remove_outlier(ds, 'price')
+    print("After removing price_outliers: ", df.shape)
+
+    df1 = remove_outlier(ds, 'term')
+    print("After removing term_outliers: ", df1.shape)
+
+    clean_data = pd.merge(df, df1, on=list(ds.columns))
+    kmeans = KMeans(n_clusters=100, random_state=42).fit(clean_data[['longitude', 'latitude']])
+
+    dump(kmeans, PATH_TO_TIME_MODEL + '/KMEAN_CLUSTERIZATION_OPEN.joblib')
+    labels = kmeans.labels_
+    clean_data['clusters'] = labels
+
+    print('Saving to new csv')
+    clean_data.to_csv(prepared_data + '/COORDINATES_OUTLIERS.csv', index=None, header=True)
 
 
 if __name__ == '__main__':

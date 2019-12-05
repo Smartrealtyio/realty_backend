@@ -147,8 +147,8 @@ def main_preprocessing():
 
         clean_data = pd.merge(df, df1, on=list(ds.columns))
         kmeans = KMeans(n_clusters=100, random_state=42).fit(clean_data[['longitude', 'latitude']])
-        
-        dump(kmeans, PATH_TO_TIME_MODEL + '/GBR_COORDINATES_TERM2.joblib')
+
+        dump(kmeans, PATH_TO_TIME_MODEL + '/KMEAN_CLUSTERIZATION.joblib')
         labels = kmeans.labels_
         clean_data['clusters'] = labels
 

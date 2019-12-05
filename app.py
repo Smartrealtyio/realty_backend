@@ -51,7 +51,7 @@ def mean():
     sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 0
 
     print(latitude_from, latitude_to, longitude_from, longitude_to, flush=True)
-
+    '''
     DATA_OUTLIERS = SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv'
     MODEL_OUTLIERS = SETTINGS.MODEL + '/models.joblib'
 
@@ -82,6 +82,12 @@ def mean():
 
 
     print('ds shape', new_df.shape, flush=True)
+    '''
+
+    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv')
+    new_df = data
+
+
 
     filter = ((new_df.rooms == rooms) &
              ((new_df.latitude >= latitude_from) & (new_df.latitude <= latitude_to))
@@ -113,9 +119,27 @@ def mean():
     if price_to != None:
         new_df = new_df[new_df.price <= price_to]
 
-    print('ds columns', new_df.columns, flush=True)
-    print(new_df.head(), flush=True)
+    # PRICE
+    X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
+    new_df["price"] = np.log1p(new_df["price"])
+    y1 = new_df[['price']].values.ravel()
+    print(X1.shape, y1.shape)
 
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
+    clf.fit(X1, y1)
+
+    new_df["price"] = np.expm1(new_df["price"])
+    new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply( lambda row:
+        int(np.expm1(clf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                                   row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
+                                   row.floor_first, row.X, row.Y]]))[0]))
+
+    new_df = new_df[new_df.pred_price < new_df.price]
+    # price = np.expm1(pred)
+    # price = int(price[0])
+    # print("Predicted Price: ", price)
     flats = new_df.to_dict('record')
 
 
@@ -165,7 +189,7 @@ def mean():
     # if math.isnan(mean_price):
     #     mean_price = None
     return jsonify({'flats': flats, 'page': page, 'max_page': max_page, 'count': flats_count})
-
+'''
 
 def func_pred_price0(params):
     model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType0.joblib')
@@ -190,7 +214,7 @@ def func_pred_price2(params):
     pred = model_price.predict([X])
     return np.expm1(pred)
 
-
+'''
 
 @app.route('/map')
 def map():
@@ -231,13 +255,12 @@ def map():
         price = int(price[0])
     price_meter_sq = price / full_sq
     '''
-    # SALE TERM
 
     # Data
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
 
-    kmeans = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM2.joblib')
+    kmeans = load(SETTINGS.MODEL + '/KMEAN_CLUSTERIZATION.joblib')
     current_label = kmeans.predict([[longitude, latitude]])
     print("Current label: ", current_label)
 

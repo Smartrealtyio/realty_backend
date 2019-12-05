@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn import preprocessing
 import backports.datetime_fromisoformat as bck
+from joblib import dump
 import settings_local as SETTINGS
 from sklearn.cluster import KMeans
 
@@ -10,7 +11,7 @@ from sklearn.cluster import KMeans
 # 'life_sq', 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first']
 raw_data = SETTINGS.PATH_TO_SINGLE_CSV_FILES
 prepared_data = SETTINGS.DATA
-
+PATH_TO_TIME_MODEL = SETTINGS.MODEL
 
 def main_preprocessing():
 
@@ -146,6 +147,8 @@ def main_preprocessing():
 
         clean_data = pd.merge(df, df1, on=list(ds.columns))
         kmeans = KMeans(n_clusters=100, random_state=42).fit(clean_data[['longitude', 'latitude']])
+        kmeans = KMeans(n_clusters=180, random_state=42).fit(ds[['longitude', 'latitude']])
+        dump(kmeans, PATH_TO_TIME_MODEL + '/GBR_COORDINATES_TERM2.joblib')
         labels = kmeans.labels_
         clean_data['clusters'] = labels
 

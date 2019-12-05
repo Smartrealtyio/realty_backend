@@ -141,17 +141,17 @@ def Model_2(data: pd.DataFrame):
     dump(clf, PATH_TO_TIME_MODEL + '/GBR_COORDINATES_TERM2.joblib')
 
 
-def model():
+#def model():
     # Load and split dataset.
-    ds = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')
-    ds = ds.iloc[:-100]
-    kmeans = KMeans(n_clusters=180, random_state=42).fit(ds[['longitude', 'latitude']])
-    dump(kmeans, PATH_TO_TIME_MODEL + '/GBR_COORDINATES_TERM2.joblib')
+    #ds = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')
+    #ds = ds.iloc[:-100]
+    #kmeans = KMeans(n_clusters=180, random_state=42).fit(ds[['longitude', 'latitude']])
+    #dump(kmeans, PATH_TO_TIME_MODEL + '/GBR_COORDINATES_TERM2.joblib')
     # Model_0(ds)
 
     # Model_1(ds)
 
     # Model_2(ds)
 
-if __name__ == '__main__':
-    model()
+#if __name__ == '__main__':
+    #model()

@@ -136,11 +136,11 @@ def mean():
                                    row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
                                    row.floor_first, row.X, row.Y]]))[0]), axis=1)
     new_df["price"] = np.expm1(new_df["price"])
-    print(new_df[['pred_price', "price"]].head())
 
     new_df = new_df[new_df.pred_price < new_df.price]
     new_df['profit'] = new_df[['pred_price', 'price']].apply(lambda row: (100-(row.pred_price*100/row.price)), axis=1)
     new_df = new_df.sort_values(by=['profit'], ascending=False)
+    print(new_df[['pred_price', "price"]].head())
 
 
 

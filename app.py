@@ -104,7 +104,7 @@ def mean():
         int(np.expm1(clf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                                    row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
                                    row.floor_first, row.X, row.Y]]))[0]), axis=1)
-    new_df["price"] = np.log1p(new_df["price"])
+    new_df["price"] = np.expm1(new_df["price"])
     print(new_df[['pred_price', "price"]].head())
 
     new_df = new_df[new_df.pred_price < new_df.price]

@@ -211,10 +211,12 @@ def map():
 
     list_of_requested_params_price = [renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y]
+
+    '''
     # Data
     price = 0
     data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Price.csv')
-    '''
+
     if full_sq < float(data.full_sq.quantile(0.25)):
         print('0')
         price = func_pred_price0(list_of_requested_params_price)
@@ -229,20 +231,45 @@ def map():
         price = int(price[0])
     price_meter_sq = price / full_sq
     '''
-    # SALE TERM PREDICTION
-    list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                      is_apartment, time_to_metro,
-                                     floor_last, floor_first, X, Y]
-    term = 0
+    # SALE TERM
+
     # Data
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
 
-    kmeans = KMeans(n_clusters=180, random_state=42).fit(data[['longitude','latitude', 'full_sq']])
-    current_label = kmeans.predict([[longitude, latitude,full_sq]])
+    kmeans = KMeans(n_clusters=180, random_state=42).fit(data[['longitude', 'latitude', 'full_sq']])
+    current_label = kmeans.predict([[longitude, latitude, full_sq]])
     print("Current label: ", current_label)
     labels = kmeans.labels_
     data['clusters'] = labels
+    df_for_current_label = data[data.clusters == current_label[0]]
+
+    X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
+
+    sc = StandardScaler()
+    # X1 = sc.fit_transform(X1)
+
+    df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
+    y1 = df_for_current_label[['price']].values.ravel()
+
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
+    print(X1.shape, y1.shape)
+
+    clf.fit(X1, y1)
+
+    df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
+    pred = clf.predict([list_of_requested_params_price])
+    price = np.expm1(pred)
+    print("Predicted Price: ", price)
+    price_meter_sq = price / full_sq
+    #list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+    #                                  is_apartment, time_to_metro,
+    #                                 floor_last, floor_first, X, Y]
+    term = 0
+
+
+
     '''
     filter1 = (((data.full_sq <= full_sq + 1) & (data.full_sq >= full_sq - 3)) & (
             (data.longitude >= longitude - 0.05) & (data.longitude <= longitude + 0.05) &
@@ -254,30 +281,13 @@ def map():
 
     data_term = data[filter1]
     '''
-    df_for_current_label = data[data.clusters == current_label[0]]
-    print('SHAPE #2: ', df_for_current_label.shape[0])
+
     sc = StandardScaler()
     reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=50)
-    reg.fit(sc.fit_transform(df_for_current_label[['renovation', 'has_elevator',  'longitude','latitude','floor_last', 'floor_first','price_meter_sq']]), df_for_current_label[['term']])
-    X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                                      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
-    print(X1.columns)
-    sc = StandardScaler()
-    # X1 = sc.fit_transform(X1)
+    reg.fit(sc.fit_transform(df_for_current_label[['renovation', 'has_elevator', 'longitude','latitude','full_sq', 'floor_last', 'floor_first','price_meter_sq']]), df_for_current_label[['term']])
 
-    df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
-    y1 = df_for_current_label[['price']].values.ravel()
 
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
-    print(X1.shape, y1.shape)
-
-    clf.fit(X1, y1)
-    df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
-    pred = clf.predict([list_of_requested_params_price])
-    price = np.expm1(pred)
-    price_meter_sq = price / full_sq
-
-    term = reg.predict(sc.fit_transform([[renovation, has_elevator, longitude, latitude, floor_last, floor_first, price_meter_sq]]))
+    term = reg.predict(sc.fit_transform([[renovation, has_elevator, longitude, latitude, full_sq, floor_last, floor_first, price_meter_sq]]))
     term = int(term.item(0))
     print(term)
 
@@ -301,8 +311,8 @@ def map():
     ds = data[filter1]
     print(ds.shape)
     '''
-    df_for_current_label =df_for_current_label[df_for_current_label.term < 500]
-    df_for_current_label = df_for_current_label[((df_for_current_label.price <= price+1500000)& (df_for_current_label.price >= price-1500000))]
+    df_for_current_label = df_for_current_label[df_for_current_label.term < 500]
+    # df_for_current_label = df_for_current_label[((df_for_current_label.price <= price+1500000)& (df_for_current_label.price >= price-1500000))]
     x = df_for_current_label.term
     x = x.tolist()
     x += [term]

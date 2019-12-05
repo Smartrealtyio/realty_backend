@@ -283,7 +283,7 @@ def map():
     print(ds.shape)
     '''
 
-    data = data[data.price <= price+100000]
+    data = data[((data.price <= price+1500000)& (data.price >= price-1500000))]
     x = data.term
     x = x.tolist()
     x += [term]

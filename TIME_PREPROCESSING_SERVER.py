@@ -19,6 +19,7 @@ def main_preprocessing():
             'id', 'price', 'changed_date', 'flat_id', 'created_at', 'updated_at'
         ], usecols=["price", "flat_id", 'changed_date', 'updated_at'])
         print(prices.shape)
+        prices = prices.iloc[:-3]
 
         # Calculating selling term. TIME UNIT: DAYS
         prices['term'] = prices[['updated_at', 'changed_date']].apply(

@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 # import MeanPrice
 import FIND_OUTLIERS
+from sklearn.cluster import KMeans
 import psycopg2
 import settings_local as SETTINGS
 from sklearn.ensemble import GradientBoostingRegressor
@@ -235,9 +236,13 @@ def map():
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
 
-
-
-
+    kmeans = KMeans(n_clusters=30, random_state=0).fit(data[['renovation', 'longitude', 'latitude','price', 'full_sq', 'time_to_metro',
+                                                             'price_meter_sq']])
+    current_label = kmeans.predict([[renovation, longitude, latitude, price, full_sq, time_to_metro, price_meter_sq]])
+    print("Current label: ", current_label)
+    labels = kmeans.labels_
+    data['clusters'] = labels
+    '''
     filter1 = (((data.full_sq <= full_sq + 1) & (data.full_sq >= full_sq - 3)) & (
             (data.longitude >= longitude - 0.05) & (data.longitude <= longitude + 0.05) &
             (data.latitude >= latitude - 0.05) & (data.latitude <= latitude + 0.05)) &
@@ -247,11 +252,11 @@ def map():
                            data.time_to_metro <= time_to_metro + 2)))
 
     data_term = data[filter1]
-
-    print('SHAPE #2: ', data_term.shape[0])
+    '''
+    print('SHAPE #2: ', data.shape[0])
 
     reg = GradientBoostingRegressor(learning_rate=0.01, n_estimators=50)
-    reg.fit(data_term[['price']], data_term[['term']])
+    reg.fit(data[['price']], data[['term']])
 
     term = reg.predict([[price]])
     term = int(term.item(0))
@@ -259,26 +264,13 @@ def map():
 
 
     # Add links to flats
-    term_links = data_term.to_dict('record')
+    term_links = data.to_dict('record')
     for i in term_links:
         if i['resource_id'] == 0:
             i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id'])
         else:
             i['link'] = 'https://www.cian.ru/sale/flat/' + str(i['offer_id'])
 
-
-    '''
-    if float(price) < float(data.price.quantile(0.2)):
-        print('0')
-        term = func_pred_term0(list_of_requested_params_term)
-
-    elif (float(price) >= float(data.price.quantile(0.2))) & (float(price) <= float(data.price.quantile(0.85))):
-        print('1')
-        term = func_pred_term1(list_of_requested_params_term)
-
-    elif float(price) > float(data.price.quantile(0.85)):
-        print('2')
-        term = func_pred_term2(list_of_requested_params_term)
     '''
     filter1 = (((data.full_sq <= full_sq + 3) & (data.full_sq >= full_sq - 3)) & (
             (data.longitude >= longitude - 0.05) & (data.longitude <= longitude + 0.05) &
@@ -286,16 +278,17 @@ def map():
                (data.term <= term) & ((data.price_meter_sq <= price_meter_sq + 20000) & (
                            data.price_meter_sq >= price_meter_sq - 20000)) & ((data.time_to_metro >= time_to_metro - 2) & (
                         data.time_to_metro <= time_to_metro + 2)))
-    # ds = data_term[data_term.term <= term]
+
     ds = data[filter1]
     print(ds.shape)
+    '''
 
-    ds = ds[ds.price <= price+100000]
-    x = ds.term
+    data = data[data.price <= price+100000]
+    x = data.term
     x = x.tolist()
     x += [term]
 
-    y = ds.price
+    y = data.price
     y = y.tolist()
     y += [price]
 

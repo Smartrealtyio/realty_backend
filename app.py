@@ -282,9 +282,18 @@ def map():
 
     data_term = data[filter1]
     '''
+    def remove_outlier(df_in, col_name):
+        q1 = df_in[col_name].quantile(0.20)
+        q3 = df_in[col_name].quantile(0.80)
+        # iqr = q3 - q1  # Interquartile range
+        # fence_low = q1 - 1.5 * iqr
+        # fence_high = q3 + 1.5 * iqr
+        df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
+        return df_out
 
+    df_for_current_label = remove_outlier(df_for_current_label, 'price')
     sc = StandardScaler()
-    reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=350, max_depth=4)
+    reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=50, max_depth=4)
     reg.fit(df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']], df_for_current_label[['term']])
 
@@ -295,8 +304,8 @@ def map():
     print(term)
 
     def remove_outlier(df_in, col_name):
-        q1 = df_in[col_name].quantile(0.10)
-        q3 = df_in[col_name].quantile(0.90)
+        q1 = df_in[col_name].quantile(0.20)
+        q3 = df_in[col_name].quantile(0.80)
         # iqr = q3 - q1  # Interquartile range
         # fence_low = q1 - 1.5 * iqr
         # fence_high = q3 + 1.5 * iqr

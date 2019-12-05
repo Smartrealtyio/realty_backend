@@ -252,10 +252,11 @@ def map():
 
     data_term = data[filter1]
     '''
-    print('SHAPE #2: ', data.shape[0])
+    df_for_current_label = data[data.clusters == current_label[0]]
+    print('SHAPE #2: ', df_for_current_label.shape[0])
 
     reg = GradientBoostingRegressor(learning_rate=0.01, n_estimators=50)
-    reg.fit(data[['price']], data[['term']])
+    reg.fit(df_for_current_label[['price']], df_for_current_label[['term']])
 
     term = reg.predict([[price]])
     term = int(term.item(0))
@@ -263,7 +264,7 @@ def map():
 
 
     # Add links to flats
-    term_links = data.to_dict('record')
+    term_links = df_for_current_label.to_dict('record')
     for i in term_links:
         if i['resource_id'] == 0:
             i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id'])
@@ -282,12 +283,12 @@ def map():
     print(ds.shape)
     '''
 
-    data = data[((data.price <= price+1500000)& (data.price >= price-1500000))]
-    x = data.term
+    df_for_current_label = df_for_current_label[((df_for_current_label.price <= price+1500000)& (df_for_current_label.price >= price-1500000))]
+    x = df_for_current_label.term
     x = x.tolist()
     x += [term]
 
-    y = data.price
+    y = df_for_current_label.price
     y = y.tolist()
     y += [price]
 

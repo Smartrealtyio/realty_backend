@@ -107,7 +107,7 @@ def mean():
     new_df["price"] = np.log1p(new_df["price"])
     print(new_df[['pred_price', "price"]].head())
 
-    new_df = new_df[new_df.pred_price < new_df.price + 1000000]
+    new_df = new_df[new_df.pred_price < new_df.price]
 
     filter = ((new_df.rooms == rooms) &
              ((new_df.latitude >= latitude_from) & (new_df.latitude <= latitude_to))

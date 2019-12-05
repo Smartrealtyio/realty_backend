@@ -136,7 +136,7 @@ def mean():
                                    row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
                                    row.floor_first, row.X, row.Y]]))[0]), axis=1)
 
-    new_df = new_df[new_df.pred_price < new_df.price]
+    new_df = new_df[new_df.pred_price < new_df.price+1000000]
     # price = np.expm1(pred)
     # price = int(price[0])
     # print("Predicted Price: ", price)

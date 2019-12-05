@@ -144,7 +144,7 @@ def main_preprocessing():
         print("After removing term_outliers: ", df1.shape)
 
         clean_data = pd.merge(df, df1, on=list(ds.columns))
-        kmeans = KMeans(n_clusters=180, random_state=42).fit(ds[['longitude', 'latitude']])
+        kmeans = KMeans(n_clusters=180, random_state=42).fit(clean_data[['longitude', 'latitude']])
         labels = kmeans.labels_
         clean_data['clusters'] = labels
 

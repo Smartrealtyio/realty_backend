@@ -236,7 +236,7 @@ def map():
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
 
-    kmeans = KMeans(n_clusters=50, random_state=0).fit(data[['longitude', 'latitude']])
+    kmeans = KMeans(n_clusters=30, random_state=0).fit(data[['longitude', 'latitude']])
     current_label = kmeans.predict([[longitude, latitude]])
     print("Current label: ", current_label)
     labels = kmeans.labels_
@@ -255,10 +255,10 @@ def map():
     df_for_current_label = data[data.clusters == current_label[0]]
     print('SHAPE #2: ', df_for_current_label.shape[0])
 
-    reg = GradientBoostingRegressor(learning_rate=0.01, n_estimators=50)
-    reg.fit(df_for_current_label[['price']], df_for_current_label[['term']])
+    reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=50)
+    reg.fit(df_for_current_label[['price', 'renovation', 'floor_first', 'floor_last']], df_for_current_label[['term']])
 
-    term = reg.predict([[price]])
+    term = reg.predict([[price,renovation, floor_first, floor_last]])
     term = int(term.item(0))
     print(term)
 

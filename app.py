@@ -139,7 +139,7 @@ def mean():
     new_df["price"] = np.expm1(new_df["price"])
 
     # Check Profit Offers using Outliers algorithm detection
-    outliers_alg = IsolationForest(contimation=0.2)
+    outliers_alg = IsolationForest(contamination=0.2)
     outliers_alg.fit(data)
     outliers_it = new_df[outliers_alg.predict(new_df) == -1]
     print('Outliers: ', outliers_it.shape[0], flush=True)

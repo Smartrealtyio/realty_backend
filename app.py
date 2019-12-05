@@ -214,7 +214,7 @@ def map():
     # Data
     price = 0
     data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Price.csv')
-
+    '''
     if full_sq < float(data.full_sq.quantile(0.25)):
         print('0')
         price = func_pred_price0(list_of_requested_params_price)
@@ -228,7 +228,7 @@ def map():
         price = func_pred_price2(list_of_requested_params_price)
         price = int(price[0])
     price_meter_sq = price / full_sq
-
+    '''
     # SALE TERM PREDICTION
     list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                       is_apartment, time_to_metro,
@@ -259,6 +259,21 @@ def map():
     sc = StandardScaler()
     reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=50)
     reg.fit(sc.fit_transform(df_for_current_label[['renovation', 'has_elevator',  'longitude','latitude','floor_last', 'floor_first','price_meter_sq']]), df_for_current_label[['term']])
+    X1 = df_for_current_label.drop(['price'], axis=1)
+    print(X1.columns)
+    sc = StandardScaler()
+    # X1 = sc.fit_transform(X1)
+
+    df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
+    y1 = df_for_current_label[['price']].values.ravel()
+
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
+    print(X1.shape, y1.shape)
+
+    clf.fit(X1, y1)
+    pred = clf.predict([X])
+    price = np.expm1(pred)
+    price_meter_sq = price / full_sq
 
     term = reg.predict(sc.fit_transform([[renovation, has_elevator, longitude, latitude, floor_last, floor_first, price_meter_sq]]))
     term = int(term.item(0))

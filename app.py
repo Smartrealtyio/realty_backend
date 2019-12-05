@@ -154,11 +154,12 @@ def mean():
     flats_page_count = 10
     max_page = math.ceil(len(flats) / flats_page_count)
     page = page if page <= max_page else 1
+    '''
     if sort_type == 0:
         flats = sorted(flats, key=lambda x: x['price'])[(page - 1) * flats_page_count:page * flats_page_count]
     else:
         flats = sorted(flats, key=lambda x: x['price'])[(page - 1) * flats_page_count:page * flats_page_count]
-
+    '''
     conn = psycopg2.connect(host=SETTINGS.host, dbname=SETTINGS.name, user=SETTINGS.user, password=SETTINGS.password)
     cur = conn.cursor()
     for flat in flats:

@@ -295,6 +295,18 @@ def map():
     term = int(term.item(0))
     print(term)
 
+    def remove_outlier(df_in, col_name):
+        q1 = df_in[col_name].quantile(0.10)
+        q3 = df_in[col_name].quantile(0.90)
+        # iqr = q3 - q1  # Interquartile range
+        # fence_low = q1 - 1.5 * iqr
+        # fence_high = q3 + 1.5 * iqr
+        df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
+        return df_out
+
+    df_for_current_label = remove_outlier(df_for_current_label, 'price')
+    print("After removing price_outliers: ", df_for_current_label.shape)
+
 
     # Add links to flats
     term_links = df_for_current_label.to_dict('record')

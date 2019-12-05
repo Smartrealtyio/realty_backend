@@ -125,8 +125,8 @@ def model():
     Model_2(data)
 
 
-if __name__ == '__main__':
-    model()
+#if __name__ == '__main__':
+#       model()
 
 
 

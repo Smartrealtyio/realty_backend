@@ -253,7 +253,7 @@ def map():
     df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
     y1 = df_for_current_label[['price']].values.ravel()
 
-    clf = GradientBoostingRegressor(n_estimators=50, max_depth=4, verbose=10)
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
     print(X1.shape, y1.shape)
 
     clf.fit(X1, y1)

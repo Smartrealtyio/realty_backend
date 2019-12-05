@@ -261,6 +261,7 @@ def map():
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
     pred = clf.predict([list_of_requested_params_price])
     price = np.expm1(pred)
+    price = int(price[0])
     print("Predicted Price: ", price)
     price_meter_sq = price / full_sq
     #list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
@@ -312,7 +313,7 @@ def map():
     print(ds.shape)
     '''
     df_for_current_label = df_for_current_label[df_for_current_label.term < 500]
-    # df_for_current_label = df_for_current_label[((df_for_current_label.price <= price+1500000)& (df_for_current_label.price >= price-1500000))]
+    df_for_current_label = df_for_current_label[((df_for_current_label.price <= price+1500000)& (df_for_current_label.price >= price-1500000))]
     x = df_for_current_label.term
     x = x.tolist()
     x += [term]

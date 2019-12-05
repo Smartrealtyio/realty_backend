@@ -236,7 +236,7 @@ def map():
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
 
-    kmeans = KMeans(n_clusters=50, random_state=0).fit(data[['price_meter_sq']])
+    kmeans = KMeans(n_clusters=1000, random_state=0).fit(data[['price_meter_sq']])
     current_label = kmeans.predict([[price_meter_sq]])
     print("Current label: ", current_label)
     labels = kmeans.labels_

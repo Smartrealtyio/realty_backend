@@ -87,7 +87,25 @@ def mean():
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv')
     new_df = data
 
+    # PRICE
+    X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
+    new_df["price"] = np.log1p(new_df["price"])
+    y1 = new_df[['price']].values.ravel()
+    print(X1.shape, y1.shape)
 
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
+    clf.fit(X1, y1)
+
+    # new_df["price"] = np.expm1(new_df["price"])
+    new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(
+        lambda row:
+        int(np.expm1(clf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                                   row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
+                                   row.floor_first, row.X, row.Y]]))[0]), axis=1)
+
+    new_df = new_df[new_df.pred_price < new_df.price + 1000000]
 
     filter = ((new_df.rooms == rooms) &
              ((new_df.latitude >= latitude_from) & (new_df.latitude <= latitude_to))
@@ -119,24 +137,7 @@ def mean():
     if price_to != None:
         new_df = new_df[new_df.price <= price_to]
 
-    # PRICE
-    X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
-    new_df["price"] = np.log1p(new_df["price"])
-    y1 = new_df[['price']].values.ravel()
-    print(X1.shape, y1.shape)
 
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
-    clf.fit(X1, y1)
-
-    #new_df["price"] = np.expm1(new_df["price"])
-    new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply( lambda row:
-        int(np.expm1(clf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
-                                   row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, row.X, row.Y]]))[0]), axis=1)
-
-    new_df = new_df[new_df.pred_price < new_df.price+1000000]
     # price = np.expm1(pred)
     # price = int(price[0])
     # print("Predicted Price: ", price)

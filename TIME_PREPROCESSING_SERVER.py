@@ -3,6 +3,7 @@ import numpy as np
 from sklearn import preprocessing
 import backports.datetime_fromisoformat as bck
 import settings_local as SETTINGS
+from sklearn.cluster import KMeans
 
 # FINAL PARAMETERS ORDER:
 # ['building_type_str', 'renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'term', 'full_sq', 'kitchen_sq',
@@ -143,6 +144,9 @@ def main_preprocessing():
         print("After removing term_outliers: ", df1.shape)
 
         clean_data = pd.merge(df, df1, on=list(ds.columns))
+        kmeans = KMeans(n_clusters=180, random_state=42).fit(ds[['longitude', 'latitude']])
+        labels = kmeans.labels_
+        clean_data['clusters'] = labels
 
         print('Saving to new csv')
         clean_data.to_csv(prepared_data+'/COORDINATES_Pred_Term.csv', index=None, header=True)

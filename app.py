@@ -240,8 +240,7 @@ def map():
     kmeans = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM2.joblib')
     current_label = kmeans.predict([[longitude, latitude]])
     print("Current label: ", current_label)
-    labels = kmeans.labels_
-    data['clusters'] = labels
+
     df_for_current_label = data[data.clusters == current_label[0]]
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-3)&(df_for_current_label.full_sq <= full_sq+3))]
 

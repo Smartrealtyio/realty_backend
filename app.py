@@ -269,6 +269,7 @@ def map():
     clf.fit(X1, y1)
 
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
+
     pred = clf.predict([list_of_requested_params_price])
     price = np.expm1(pred)
     price = int(price[0])
@@ -281,17 +282,7 @@ def map():
 
 
 
-    '''
-    filter1 = (((data.full_sq <= full_sq + 1) & (data.full_sq >= full_sq - 3)) & (
-            (data.longitude >= longitude - 0.05) & (data.longitude <= longitude + 0.05) &
-            (data.latitude >= latitude - 0.05) & (data.latitude <= latitude + 0.05)) &
-               ((data.price_meter_sq <= price_meter_sq + 20000) & (
-                           data.price_meter_sq >= price_meter_sq - 20000)) & (
-                       (data.time_to_metro >= time_to_metro - 2) & (
-                           data.time_to_metro <= time_to_metro + 2)))
 
-    data_term = data[filter1]
-    '''
     def remove_outlier(df_in, col_name):
         q1 = df_in[col_name].quantile(0.20)
         q3 = df_in[col_name].quantile(0.80)
@@ -308,7 +299,7 @@ def map():
     sc = StandardScaler()
 
     # TERM
-    reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=50, max_depth=4)
+    reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=350, max_depth=4)
     reg.fit(df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']], df_for_current_label[['term']])
 

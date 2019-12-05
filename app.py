@@ -82,35 +82,14 @@ def mean():
 
 
     print('ds shape', new_df.shape, flush=True)
+    
     '''
+
 
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv')
     new_df = data
-
-    # PRICE
-    X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
-    new_df["price"] = np.log1p(new_df["price"])
-    y1 = new_df[['price']].values.ravel()
-    print(X1.shape, y1.shape)
-
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
-    clf.fit(X1, y1)
-
-    # new_df["price"] = np.expm1(new_df["price"])
-    new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(
-        lambda row:
-        int(np.expm1(clf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
-                                   row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, row.X, row.Y]]))[0]), axis=1)
-    new_df["price"] = np.expm1(new_df["price"])
-    print(new_df[['pred_price', "price"]].head())
-
-    new_df = new_df[new_df.pred_price < new_df.price]
-
     filter = ((new_df.rooms == rooms) &
-             ((new_df.latitude >= latitude_from) & (new_df.latitude <= latitude_to))
+              ((new_df.latitude >= latitude_from) & (new_df.latitude <= latitude_to))
               & ((new_df.longitude >= longitude_from) & (new_df.longitude <= longitude_to)))
     new_df = new_df[filter]
 
@@ -138,6 +117,31 @@ def mean():
         new_df = new_df[new_df.price >= price_from]
     if price_to != None:
         new_df = new_df[new_df.price <= price_to]
+
+    # PRICE
+    X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
+    new_df["price"] = np.log1p(new_df["price"])
+    y1 = new_df[['price']].values.ravel()
+    print(X1.shape, y1.shape)
+
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
+    clf.fit(X1, y1)
+
+    # new_df["price"] = np.expm1(new_df["price"])
+    new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(
+        lambda row:
+        int(np.expm1(clf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                                   row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
+                                   row.floor_first, row.X, row.Y]]))[0]), axis=1)
+    new_df["price"] = np.expm1(new_df["price"])
+    print(new_df[['pred_price', "price"]].head())
+
+    new_df = new_df[new_df.pred_price < new_df.price]
+    new_df['profit'] = new_df[['pred_price', 'price']].apply(lambda row: (100-(row.pred_price*100/row.price)), axis=1)
+    new_df = new_df.sort_values(by=['profit'], ascending=False)
+
 
 
     # price = np.expm1(pred)

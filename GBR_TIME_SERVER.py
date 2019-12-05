@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
 from sklearn.metrics import r2_score, scorer, mean_squared_error
 import logging
 from sklearn.preprocessing import LabelEncoder
@@ -144,6 +145,8 @@ def model():
     # Load and split dataset.
     ds = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')
     ds = ds.iloc[:-100]
+    kmeans = KMeans(n_clusters=180, random_state=42).fit(ds[['longitude', 'latitude']])
+    dump(kmeans, PATH_TO_TIME_MODEL + '/GBR_COORDINATES_TERM2.joblib')
     # Model_0(ds)
 
     # Model_1(ds)

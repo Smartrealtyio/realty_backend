@@ -237,7 +237,7 @@ def map():
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
 
-    kmeans = KMeans(n_clusters=180, random_state=42).fit(data[['longitude', 'latitude']])
+    kmeans = load(SETTINGS.MODEL + '/GBR_COORDINATES_TERM2.joblib')
     current_label = kmeans.predict([[longitude, latitude]])
     print("Current label: ", current_label)
     labels = kmeans.labels_

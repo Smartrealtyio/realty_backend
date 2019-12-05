@@ -271,7 +271,7 @@ def map():
     print(X1.shape, y1.shape)
 
     clf.fit(X1, y1)
-    pred = clf.predict([X])
+    pred = clf.predict([list_of_requested_params_price])
     price = np.expm1(pred)
     price_meter_sq = price / full_sq
 

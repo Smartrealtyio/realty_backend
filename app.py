@@ -243,6 +243,16 @@ def map():
 
     df_for_current_label = data[data.clusters == current_label[0]]
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-3)&(df_for_current_label.full_sq <= full_sq+3))]
+    def remove_outlier(df_in, col_name):
+        q1 = df_in[col_name].quantile(0.20)
+        q3 = df_in[col_name].quantile(0.80)
+        # iqr = q3 - q1  # Interquartile range
+        # fence_low = q1 - 1.5 * iqr
+        # fence_high = q3 + 1.5 * iqr
+        df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
+        return df_out
+
+    df_for_current_label = remove_outlier(df_for_current_label, 'price')
 
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
@@ -292,7 +302,7 @@ def map():
         return df_out
 
     df = remove_outlier(df_for_current_label, 'price')
-    ds = remove_outlier(df_for_current_label, 'price')
+    ds = remove_outlier(df_for_current_label, 'term')
     clean_data = pd.merge(df, ds, on=list(ds.columns))
     df_for_current_label = clean_data
     sc = StandardScaler()

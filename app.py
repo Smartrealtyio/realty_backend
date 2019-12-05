@@ -272,6 +272,7 @@ def map():
     print(X1.shape, y1.shape)
 
     clf.fit(X1, y1)
+    df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
     pred = clf.predict([list_of_requested_params_price])
     price = np.expm1(pred)
     price_meter_sq = price / full_sq

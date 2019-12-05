@@ -237,12 +237,13 @@ def map():
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
 
-    kmeans = KMeans(n_clusters=180, random_state=42).fit(data[['longitude', 'latitude', 'full_sq']])
-    current_label = kmeans.predict([[longitude, latitude, full_sq]])
+    kmeans = KMeans(n_clusters=180, random_state=42).fit(data[['longitude', 'latitude']])
+    current_label = kmeans.predict([[longitude, latitude]])
     print("Current label: ", current_label)
     labels = kmeans.labels_
     data['clusters'] = labels
     df_for_current_label = data[data.clusters == current_label[0]]
+    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-3)&(df_for_current_label.full_sq <= full_sq+3))]
 
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]

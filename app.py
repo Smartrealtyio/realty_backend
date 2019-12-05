@@ -4,6 +4,7 @@ import FIND_OUTLIERS
 from sklearn.cluster import KMeans
 import psycopg2
 import settings_local as SETTINGS
+from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn import linear_model
 from joblib import dump, load
@@ -14,6 +15,7 @@ from datetime import datetime
 import requests
 import json
 import pandas as pd
+
 import numpy as np
 import math
 
@@ -254,11 +256,11 @@ def map():
     '''
     df_for_current_label = data[data.clusters == current_label[0]]
     print('SHAPE #2: ', df_for_current_label.shape[0])
-
+    sc = StandardScaler()
     reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=50)
-    reg.fit(df_for_current_label[['price_meter_sq']], df_for_current_label[['term']])
+    reg.fit(sc.fit_transform(df_for_current_label[['renovation', 'has_elevator',  'longitude','latitude','floor_last', 'floor_first','price_meter_sq']]), df_for_current_label[['term']])
 
-    term = reg.predict([[price_meter_sq]])
+    term = reg.predict(sc.fit_transform([[renovation, has_elevator, longitude, latitude, floor_last, floor_first, price_meter_sq]]))
     term = int(term.item(0))
     print(term)
 

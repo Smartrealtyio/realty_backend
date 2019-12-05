@@ -5,6 +5,7 @@ from sklearn.cluster import KMeans
 import psycopg2
 import settings_local as SETTINGS
 from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import IsolationForest
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn import linear_model
 from joblib import dump, load
@@ -137,7 +138,20 @@ def mean():
                                    row.floor_first, row.X, row.Y]]))[0]), axis=1)
     new_df["price"] = np.expm1(new_df["price"])
 
+    # Check Profit Offers using Outliers algorithm detection
+    outliers_alg = IsolationForest(contimation=0.2)
+    outliers_alg.fit(data)
+    outliers_it = new_df[outliers_alg.predict(new_df) == -1]
+    print('Outliers: ', outliers_it.shape[0], flush=True)
+    outliers_it['flat_id'] = outliers_it.index
+
+
     new_df = new_df[new_df.pred_price < new_df.price]
+    new_df['flat_id'] = new_df.index
+    print('Profitable offers using price prediction model: ', new_df.shape[0])
+
+    new_df = new_df[new_df.flat_id.isin(outliers_it.flat_id)]
+    print('After concat: ', new_df.shape[0])
     new_df['profit'] = new_df[['pred_price', 'price']].apply(lambda row: (100-(row.pred_price*100/row.price)), axis=1)
     new_df = new_df.sort_values(by=['profit'], ascending=False)
     print(new_df[['pred_price', "price"]].head())

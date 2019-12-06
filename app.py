@@ -344,12 +344,14 @@ def map():
         # fence_high = q3 + 1.5 * iqr
         df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
         return df_out
-
-    df = remove_outlier(df_for_current_label, 'price')
-    ds = remove_outlier(df_for_current_label, 'term')
+    '''
+    df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.7)]
+    # df = remove_outlier(df_for_current_label, 'price')
+    ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 2.7)]
+    # ds = remove_outlier(df_for_current_label, 'term')
     clean_data = pd.merge(df, ds, on=list(ds.columns))
     df_for_current_label = clean_data
-    '''
+
     sc = StandardScaler()
 
     # TERM

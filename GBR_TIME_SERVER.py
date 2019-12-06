@@ -34,7 +34,7 @@ def Model_0(data: pd.DataFrame):
               y0,
               verbose=10)
     '''
-    clf = GradientBoostingRegressor(n_estimators=50, max_depth=4, verbose=10)
+    clf = GradientBoostingRegressor(n_estimators=250, max_depth=4, verbose=10)
     clf.fit(X0, y0)
     """
     clf = GradientBoostingRegressor() # {'n_estimators': 150, 'max_depth': 4}

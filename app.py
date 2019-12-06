@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, render_template
 from scipy import stats
 import psycopg2
 import settings_local as SETTINGS
-PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModel.joblib'
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import IsolationForest
 from sklearn.ensemble import GradientBoostingRegressor
@@ -17,6 +16,7 @@ import pandas as pd
 import numpy as np
 import math
 
+PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModel.joblib'
 app = Flask(__name__)
 
 
@@ -117,6 +117,7 @@ def mean():
         new_df = new_df[new_df.price <= price_to]
 
     # PRICE
+    '''
 
     X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                  'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
@@ -126,9 +127,9 @@ def mean():
 
     clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
     clf.fit(X1, y1)
-
-    #   clf = load(PATH_TO_PRICE_MODEL)
-    # new_df["price"] = np.expm1(new_df["price"])
+    '''
+    clf = load(PATH_TO_PRICE_MODEL)
+    new_df["price"] = np.expm1(new_df["price"])
     new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                    'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(
         lambda row:
@@ -313,7 +314,7 @@ def map():
     y1 = df_for_current_label[['price']].values.ravel()
 
     # PRICE
-    clf = GradientBoostingRegressor(n_estimators=70, max_depth=4, verbose=10)
+    clf = GradientBoostingRegressor(n_estimators=170, max_depth=4, verbose=10)
     print(X1.shape, y1.shape)
 
     clf.fit(X1, y1)
@@ -353,7 +354,7 @@ def map():
 
     # TERM
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
-    reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=50, max_depth=4)
+    reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=150, max_depth=4)
     reg.fit(df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']], df_for_current_label[['term']])
 

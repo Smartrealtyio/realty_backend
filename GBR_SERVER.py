@@ -11,7 +11,8 @@ import os
 import settings_local as SETTINGS
 
 prepared_data = SETTINGS.DATA
-PATH_TO_PRICE_MODEL = SETTINGS.MODEL
+
+PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModel.joblib'
 
 
 def Model_0(data: pd.DataFrame):
@@ -84,17 +85,15 @@ def Model_1(data: pd.DataFrame):
     dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType1.joblib')
 
 def Model_2(data: pd.DataFrame):
-    ds2 = data[((data.full_sq > data.full_sq.quantile(0.8)))]
-    print('Data #2 length: ', ds2.shape)
-    X2 = ds2.drop(['price'], axis=1)
-    sc = StandardScaler()
-    # X2 = sc.fit_transform(X2)
+    X1 = data[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
+    data["price"] = np.log1p(data["price"])
+    y1 = data[['price']].values.ravel()
+    print(X1.shape, y1.shape)
 
-    ds2["price"] = np.log1p(ds2["price"])
-    y2 = ds2[['price']].values.ravel()
-    clf = GradientBoostingRegressor(n_estimators=50, max_depth=6, verbose=10)
-    print(X2.shape, y2.shape)
-    clf.fit(X2, y2)
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
+    clf.fit(X1, y1)
+    dump(clf, PATH_TO_PRICE_MODEL)
     '''
     clf = GradientBoostingRegressor() #{'n_estimators': 50, 'max_depth': 6}
     param_grid = {
@@ -114,19 +113,19 @@ def Model_2(data: pd.DataFrame):
 
     #if not os.path.exists(cf.base_dir + '/models'):
     #    os.makedirs(cf.base_dir + '/models')
-    dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType2.joblib')
+
 
 def model():
-    data = pd.read_csv(prepared_data + '/COORDINATES_Pred_Price.csv')
+    data = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')
     Model_0(data)
 
-    Model_1(data)
+    #Model_1(data)
 
-    Model_2(data)
+    #Model_2(data)
 
 
-#if __name__ == '__main__':
-#       model()
+if __name__ == '__main__':
+    model()
 
 
 

@@ -85,6 +85,10 @@ def Model_1(data: pd.DataFrame):
     dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType1.joblib')
 
 def Model_2(data: pd.DataFrame):
+    from scipy import stats
+
+    data = data[(np.abs(stats.zscore(data.price)) < 2.7)]
+    data = data[(np.abs(stats.zscore(data.term)) < 2.7)]
     X1 = data[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
     data["price"] = np.log1p(data["price"])

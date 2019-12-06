@@ -171,7 +171,8 @@ def mean():
 
     flats_count = len(flats)
     flats_page_count = 10
-    max_page = math.ceil(len(flats) / flats_page_count)
+    # max_page = math.ceil(len(flats) / flats_page_count)
+    max_page = 1
     page = page if page <= max_page else 1
     '''
     if sort_type == 0:

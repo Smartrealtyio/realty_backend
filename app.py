@@ -131,7 +131,7 @@ def mean():
     clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
     clf.fit(X1, y1)
 
-    #clf = load(PATH_TO_PRICE_MODEL)
+    #   clf = load(PATH_TO_PRICE_MODEL)
     # new_df["price"] = np.expm1(new_df["price"])
     new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                    'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(
@@ -302,7 +302,9 @@ def map():
         df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
         return df_out
 
-    df_for_current_label = remove_outlier(df_for_current_label, 'price')
+    from scipy import stats
+    df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
+    # df_for_current_label = remove_outlier(df_for_current_label, 'price')
 
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
@@ -332,7 +334,7 @@ def map():
 
 
 
-
+    '''
     def remove_outlier(df_in, col_name):
         q1 = df_in[col_name].quantile(0.20)
         q3 = df_in[col_name].quantile(0.80)
@@ -346,6 +348,7 @@ def map():
     ds = remove_outlier(df_for_current_label, 'term')
     clean_data = pd.merge(df, ds, on=list(ds.columns))
     df_for_current_label = clean_data
+    '''
     sc = StandardScaler()
 
     # TERM

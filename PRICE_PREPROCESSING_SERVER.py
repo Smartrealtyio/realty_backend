@@ -125,5 +125,5 @@ def main_processing():
     clean_data.to_csv(prepared_data + '/COORDINATES_Pred_Price.csv', index=None, header=True)
 
 
-if __name__ == '__main__':
-    main_processing()
+#if __name__ == '__main__':
+#    main_processing()

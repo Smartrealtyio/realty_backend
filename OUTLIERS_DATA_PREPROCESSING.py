@@ -136,10 +136,14 @@ def main_preprocessing():
         df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
         return df_out
 
-    df = remove_outlier(ds, 'price')
+    from scipy import stats
+    df = ds[(np.abs(stats.zscore(ds.price)) < 3)]
+
+    #df = remove_outlier(ds, 'price')
     print("After removing price_outliers: ", df.shape)
 
-    df1 = remove_outlier(ds, 'term')
+    df1 = ds[(np.abs(stats.zscore(ds.term)) < 3)]
+    #df1 = remove_outlier(ds, 'term')
     print("After removing term_outliers: ", df1.shape)
 
     clean_data = pd.merge(df, df1, on=list(ds.columns))

@@ -117,11 +117,11 @@ def Model_2(data: pd.DataFrame):
 
 def model():
     data = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')
-    Model_0(data)
+    #Model_0(data)
 
     #Model_1(data)
 
-    #Model_2(data)
+    Model_2(data)
 
 
 if __name__ == '__main__':

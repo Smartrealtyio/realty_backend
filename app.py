@@ -304,7 +304,7 @@ def map():
         return df_out
 
     from scipy import stats
-    df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
+    df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.7)]
     # df_for_current_label = remove_outlier(df_for_current_label, 'price')
 
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
@@ -365,8 +365,8 @@ def map():
     print(term)
 
 
-    df_for_current_label = remove_outlier(df_for_current_label, 'price')
-    print("After removing price_outliers: ", df_for_current_label.shape)
+    #df_for_current_label = remove_outlier(df_for_current_label, 'price')
+    #print("After removing price_outliers: ", df_for_current_label.shape)
 
 
     # Add links to flats

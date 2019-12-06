@@ -1,16 +1,12 @@
 from flask import Flask, request, jsonify, render_template
-# import MeanPrice
-import FIND_OUTLIERS
-from sklearn.cluster import KMeans
+from scipy import stats
 import psycopg2
 import settings_local as SETTINGS
 PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModel.joblib'
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import IsolationForest
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn import linear_model
 from joblib import dump, load
-from sklearn.ensemble import RandomForestRegressor
 import math as m
 import math
 from datetime import datetime
@@ -303,20 +299,21 @@ def map():
         df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
         return df_out
 
-    from scipy import stats
+
     df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.7)]
     # df_for_current_label = remove_outlier(df_for_current_label, 'price')
 
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
 
-    sc = StandardScaler()
+    # sc = StandardScaler()
     # X1 = sc.fit_transform(X1)
 
     df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
     y1 = df_for_current_label[['price']].values.ravel()
+
     # PRICE
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
+    clf = GradientBoostingRegressor(n_estimators=70, max_depth=4, verbose=10)
     print(X1.shape, y1.shape)
 
     clf.fit(X1, y1)
@@ -356,7 +353,7 @@ def map():
 
     # TERM
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
-    reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=350, max_depth=4)
+    reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=50, max_depth=4)
     reg.fit(df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']], df_for_current_label[['term']])
 

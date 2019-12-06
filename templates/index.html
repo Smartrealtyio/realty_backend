@@ -394,7 +394,7 @@
                         </div>
                         <div id="visible-results"></div>
                         <div class="show-more">
-                            <button class="show-more_btn" id="show-more-button">Показать ещё 10</button>
+                            <button class="show-more_btn" id="show-more-button">Показать ещё</button>
                         </div>
                         <!--<div class="results-list_navigation" id="results-navigate"></div>-->
                     </div>
@@ -505,7 +505,9 @@
 <template id="result-item-tpl">
 
     <a data-link="href" class="results-list_item" target="_blank">
-        <div class="results-list_item_img" data-image="background"></div>
+        <div class="results-list_item_img">
+            <div class="results-list_item_img_content" data-image="background"></div>
+        </div>
 
         <div class="results-list_item_desc">
             <span class="results-list_item_desc_rooms">
@@ -525,6 +527,7 @@
             <span class="results-list_item_price_per">
                 <span data-visible_price_per_m="text"></span> ₽ за м<sup>2</sup>
             </span>
+            <div class="results-list_item_profit" data-visible_profit="text"></div>
         </div>
     </a>
 </template>

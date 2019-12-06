@@ -634,7 +634,8 @@ sup {
 }
 
 [value="search-price"]:checked ~ .calculate-form #calculate-form ,
-[value="search-price"]:checked ~ .calculate-form [data-analyze-map-title] {
+[value="search-price"]:checked ~ .calculate-form [data-analyze-map-title],
+[value="search-price"]:checked ~ #results {
     display: none;
 }
 
@@ -701,27 +702,34 @@ sup {
     white-space: nowrap;
     display: table-cell;
     vertical-align: middle;
+    position: relative;
+    padding-top: 50px;
+    padding-left: 40px;
 }
 .results-list_item_price_full {
     color: #212121;
-    font-size: 24px;
+    font-size: 20px;
     display: block;
 }
 .results-list_item_price_per {
     color: #67bc6b;
     display: block;
-    margin-top: 13px;
-    font-size: 16px;
+    margin-top: 5px;
+    font-size: 14px;
 }
 .results-list_item_img {
-    width: 150px;
-    height: 150px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.results-list_item_img_content {
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     background-color: #f3f3f3;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    display: table-cell;
-    vertical-align: middle;
     background-size: cover;
+    display: inline-block;
 }
 
 .results-list_item_desc {
@@ -738,11 +746,25 @@ sup {
 }
 .results-list_item_desc_address {
     display: block;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 .results-list_item_desc_metro {
     color: #99a1a4;
+}
+.results-list_item_profit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    /* font-weight: normal; */
+    font-size: 12px;
+    background: url(../images/sale.svg) center center no-repeat;
+    background-size: contain;
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    line-height: 50px;
+    color: #67bc6b;
 }
 .results-list_navigation {
     margin-top: 20px;
@@ -789,10 +811,13 @@ sup {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
 }
 
-
 template {
     display: none;
 }
+
+
+
+
 
 @media screen and (max-width: 990px) {
     .header_menu_list {

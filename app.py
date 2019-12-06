@@ -148,7 +148,7 @@ def mean():
     outliers_it['flat_id'] = outliers_it.index
 
 
-    new_df = new_df[new_df.pred_price < new_df.price]
+    new_df = new_df[new_df.price < new_df.pred_price]
     new_df['flat_id'] = new_df.index
     print('Profitable offers using price prediction model: ', new_df.shape[0])
 

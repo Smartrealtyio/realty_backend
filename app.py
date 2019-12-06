@@ -4,6 +4,7 @@ import FIND_OUTLIERS
 from sklearn.cluster import KMeans
 import psycopg2
 import settings_local as SETTINGS
+PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModel.joblib'
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import IsolationForest
 from sklearn.ensemble import GradientBoostingRegressor
@@ -120,6 +121,7 @@ def mean():
         new_df = new_df[new_df.price <= price_to]
 
     # PRICE
+    '''
     X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                  'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
     new_df["price"] = np.log1p(new_df["price"])
@@ -128,7 +130,8 @@ def mean():
 
     clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
     clf.fit(X1, y1)
-
+    '''
+    clf = load(PATH_TO_PRICE_MODEL)
     # new_df["price"] = np.expm1(new_df["price"])
     new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                    'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(

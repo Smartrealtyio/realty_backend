@@ -154,7 +154,7 @@ def mean():
 
     new_df = new_df[new_df.flat_id.isin(outliers_it.flat_id)]
     print('After concat: ', new_df.shape[0])
-    new_df['profit'] = new_df[['pred_price', 'price']].apply(lambda row: (100-(row.pred_price*100/row.price)), axis=1)
+    new_df['profit'] = new_df[['pred_price', 'price']].apply(lambda row: ((row.pred_price*100/row.price)-100), axis=1)
     new_df = new_df.sort_values(by=['profit'], ascending=False)
     print(new_df[['pred_price', "price"]].head())
 

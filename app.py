@@ -129,7 +129,7 @@ def mean():
     clf.fit(X1, y1)
     '''
     clf = load(PATH_TO_PRICE_MODEL)
-    new_df["price"] = np.expm1(new_df["price"])
+    new_df["price"] = np.log1p(new_df["price"])
     new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                    'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(
         lambda row:

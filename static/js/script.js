@@ -123,7 +123,7 @@ for (let k = 1; k <= 32; k++) {
 
             for (let param in oneResultItem) {
                 let visParam;
-                if (param === 'price' || param === 'price_per_m') {
+                if (param === 'price' || param === 'price_per_m' || param === 'profit') {
                     visParam = 'visible_' + param;
                 } else {
                     visParam = param;
@@ -135,6 +135,11 @@ for (let k = 1; k <= 32; k++) {
                     if (param === 'price' || param === 'price_per_m') {
                         oneResultItem[visParam] = oneResultItem[param].toLocaleString();
                     }
+
+                    if (param === 'profit') {
+                        oneResultItem[visParam] = Math.max(Math.round(oneResultItem[param] * 10), 1) / 10 + '%';
+                    }
+
                     switch (valElement.data(visParam)) {
                         case 'text':
                             valElement.text(oneResultItem[visParam]);
@@ -320,6 +325,11 @@ for (let k = 1; k <= 32; k++) {
             }).then((res) => {
                 searchResultsBlock.show().removeClass('in-progress');
                 $('#search-items-count').text(res['count']);
+                if (res['max_page'] === res['page']) {
+                    $('#show-more-button').hide();
+                } else {
+                    $('#show-more-button').show();
+                }
 
                 if (!notCreateData) {
                     searchResult = res['flats'];
@@ -386,7 +396,7 @@ for (let k = 1; k <= 32; k++) {
                 const allPeriod = res.PLot[res.PLot.length - 1]['x'];
                 let latestValue = res.PLot.shift();
 
-                const stepColor = Math.floor(allPeriod / chartColorsList.length);
+                const stepColor = allPeriod / chartColorsList.length;
 
                 const allColors = chartColorsList.map((item) => {
                     return item;
@@ -439,9 +449,9 @@ for (let k = 1; k <= 32; k++) {
             categoryAxis.renderer.ticks.template.disabled = true;
             categoryAxis.renderer.line.opacity = 0;
             categoryAxis.renderer.grid.template.disabled = true;
-            categoryAxis.renderer.minGridDistance = 40;
+            categoryAxis.renderer.minGridDistance = 50;
             categoryAxis.dataFields.category = "x";
-            categoryAxis.startLocation = 0.4;
+            categoryAxis.startLocation = 0.1;
             categoryAxis.endLocation = 0.6;
 
             var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
@@ -454,8 +464,8 @@ for (let k = 1; k <= 32; k++) {
             lineSeries.dataFields.categoryX = "x";
             lineSeries.dataFields.valueY = "y";
             lineSeries.tooltipText = "Цена: {valueY.value} руб.";
-            lineSeries.fillOpacity = 0.7;
-            lineSeries.strokeWidth = 3;
+            lineSeries.fillOpacity = 0.8;
+            lineSeries.strokeWidth = 1;
             lineSeries.propertyFields.stroke = "lineColor";
             lineSeries.propertyFields.fill = "lineColor";
 

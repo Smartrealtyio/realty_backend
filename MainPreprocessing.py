@@ -109,6 +109,6 @@ def main_preprocessing():
     ds.to_csv(SETTINGS.DATA+'/COORDINATES_MEAN_PRICE.csv', index=None, header=True)
 
 
-if __name__ == '__main__':
-    main_preprocessing()
+#if __name__ == '__main__':
+#    main_preprocessing()
 

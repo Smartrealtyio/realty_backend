@@ -15,76 +15,7 @@ prepared_data = SETTINGS.DATA
 PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModel.joblib'
 
 
-def Model_0(data: pd.DataFrame):
-    data = data
-    print("Data: ", data.shape)
-    ds0 = data[((data.full_sq < data.full_sq.quantile(0.25)))]
-    print('Data #0 length: ', ds0.shape)
-    X0 = ds0.drop(['price'], axis=1)
-    sc = StandardScaler()
-    # X0 = sc.fit_transform(X0)
-    ds0["price"] = np.log1p(ds0["price"])
-    y0 = ds0[['price']].values.ravel()
-    clf = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=10)
-    print(X0.shape, y0.shape)
-    clf.fit(X0, y0)
-    '''
-    clf = GradientBoostingRegressor() # {'n_estimators': 150, 'max_depth': 4}
-    param_grid = {
-        #'min_samples_split': [10, 30, 70, 100],
-        'n_estimators': [50, 150, 250, 350, 500],
-        'max_depth': [2, 4, 6, 8, 10]
-    }
-    n_iter_search = 25
-    random_search = RandomizedSearchCV(clf, param_distributions=param_grid,
-                                       n_iter=n_iter_search, cv=3, verbose=5)
-
-
-    random_search.fit(X0, y0)
-    print("RandomizedSearchCV" )
-    print("Best0 : ", random_search.best_params_)
-    '''
-    print('Saving ModelMain0')
-
-    dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType0.joblib')
-
-def Model_1(data: pd.DataFrame):
-    ds1 = data[((data.full_sq >= data.full_sq.quantile(0.25)) & (data.full_sq <= data.full_sq.quantile(0.8)))]
-    print('Data #1 length: ', ds1.shape)
-    X1 = ds1.drop(['price'], axis=1)
-    print(X1.columns)
-    sc = StandardScaler()
-    # X1 = sc.fit_transform(X1)
-
-    ds1["price"] = np.log1p(ds1["price"])
-    y1 = ds1[['price']].values.ravel()
-
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
-    print(X1.shape, y1.shape)
-
-    clf.fit(X1, y1)
-    """
-    clf = GradientBoostingRegressor() # {'n_estimators': 50, 'max_depth': 6}
-    param_grid = {
-        #'min_samples_split': [10, 30, 70, 100],
-        'n_estimators': [50, 150, 250, 350, 500],
-        'max_depth': [2, 4, 6, 8, 10]
-    }
-    n_iter_search = 30
-    random_search = RandomizedSearchCV(clf, param_distributions=param_grid,
-                                       n_iter=n_iter_search, cv=3, verbose=5)
-
-    random_search.fit(X1, y1)
-    print("RandomizedSearchCV")
-    print("Best1 : ", random_search.best_params_)
-    """
-    print('Saving ModelMain1')
-
-    #if not os.path.exists(cf.base_dir + '/models'):
-    #    os.makedirs(cf.base_dir + '/models')
-    dump(clf, PATH_TO_PRICE_MODEL + '/GBR_COORDINATES_no_bldgType1.joblib')
-
-def Model_2(data: pd.DataFrame):
+def Model(data: pd.DataFrame):
     from scipy import stats
 
     data = data[(np.abs(stats.zscore(data.price)) < 2.7)]
@@ -95,37 +26,13 @@ def Model_2(data: pd.DataFrame):
     y1 = data[['price']].values.ravel()
     print(X1.shape, y1.shape)
 
-    clf = GradientBoostingRegressor(n_estimators=170, max_depth=12, verbose=10, max_features=5)
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=12, verbose=10, max_features=5)
     clf.fit(X1, y1)
     dump(clf, PATH_TO_PRICE_MODEL)
-    '''
-    clf = GradientBoostingRegressor() #{'n_estimators': 50, 'max_depth': 6}
-    param_grid = {
-        #'min_samples_split': [10, 30, 70, 100],
-        'n_estimators': [50, 150, 250, 350, 500],
-        'max_depth': [2, 4, 6, 8, 10]
-    }
-    n_iter_search = 30
-    random_search = RandomizedSearchCV(clf, param_distributions=param_grid,
-                                       n_iter=n_iter_search, cv=3, verbose=5)
-
-    random_search.fit(X2, y2)
-    print("RandomizedSearchCV")
-    print("Best2 : ", random_search.best_params_)
-    '''
-    print('Saving ModelMain2')
-
-    #if not os.path.exists(cf.base_dir + '/models'):
-    #    os.makedirs(cf.base_dir + '/models')
-
 
 def model():
     data = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')
-    #Model_0(data)
-
-    #Model_1(data)
-
-    Model_2(data)
+    Model(data)
 
 
 if __name__ == '__main__':

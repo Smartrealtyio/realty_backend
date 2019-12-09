@@ -25,12 +25,12 @@ def OutliersSearch():
     y1 = data[['price']].values.ravel()
     print(X1.shape, y1.shape)
 
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=12, verbose=10, max_features=5)
     clf.fit(X1, y1)
     dump(clf, PATH_TO_PRICE_MODEL)
 
 
-if __name__ == '__main__':
-    OutliersSearch()
+# if __name__ == '__main__':
+#     OutliersSearch()
 
 

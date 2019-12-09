@@ -116,8 +116,10 @@ def main_processing():
         df_out = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
         return df_out
 
-    df = remove_outlier(ds, 'price')
+    from scipy import stats
+    df = ds[(np.abs(stats.zscore(ds.price)) < 2.7)]
     print("After removing price_outliers: ", df)
+
 
 
     clean_data = pd.merge(df, ds, on=list(ds.columns))

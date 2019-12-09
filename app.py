@@ -217,32 +217,7 @@ def mean():
     # if math.isnan(mean_price):
     #     mean_price = None
     return jsonify({'flats': flats, 'page': page, 'max_page': max_page, 'count': flats_count})
-'''
 
-def func_pred_price0(params):
-    model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType0.joblib')
-    X = params
-    pred = model_price.predict([X])
-    return np.expm1(pred)
-
-
-def func_pred_price1(params):
-    model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType1.joblib')
-    X = params
-
-    pred = model_price.predict([X])
-    return np.expm1(pred)
-
-
-
-def func_pred_price2(params):
-    model_price = load(SETTINGS.MODEL + '/GBR_COORDINATES_no_bldgType2.joblib')
-    X = params
-
-    pred = model_price.predict([X])
-    return np.expm1(pred)
-
-'''
 
 @app.route('/map')
 def map():
@@ -264,25 +239,7 @@ def map():
     list_of_requested_params_price = [renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y]
 
-    '''
-    # Data
-    price = 0
-    data = pd.read_csv(SETTINGS.DATA  + '/COORDINATES_Pred_Price.csv')
 
-    if full_sq < float(data.full_sq.quantile(0.25)):
-        print('0')
-        price = func_pred_price0(list_of_requested_params_price)
-        price = int(price[0])
-    elif ((full_sq >= float(data.full_sq.quantile(0.25))) & (full_sq <= float(data.full_sq.quantile(0.8)))):
-        print('1')
-        price = func_pred_price1(list_of_requested_params_price)
-        price = int(price[0])
-    elif full_sq > float(data.full_sq.quantile(0.8)):
-        print('2')
-        price = func_pred_price2(list_of_requested_params_price)
-        price = int(price[0])
-    price_meter_sq = price / full_sq
-    '''
 
     # Data
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')

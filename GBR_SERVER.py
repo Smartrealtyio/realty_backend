@@ -95,7 +95,7 @@ def Model_2(data: pd.DataFrame):
     y1 = data[['price']].values.ravel()
     print(X1.shape, y1.shape)
 
-    clf = GradientBoostingRegressor(n_estimators=170, max_depth=4, verbose=10)
+    clf = GradientBoostingRegressor(n_estimators=170, max_depth=12, verbose=10, max_features=5)
     clf.fit(X1, y1)
     dump(clf, PATH_TO_PRICE_MODEL)
     '''

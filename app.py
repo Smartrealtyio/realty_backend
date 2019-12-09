@@ -130,7 +130,8 @@ def mean():
     '''
     clf = load(PATH_TO_PRICE_MODEL)
     print(clf.feature_importances_)
-    X1 = new_df.drop(['price'], axis=1)
+    X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
     feat_imp = pd.Series(clf.feature_importances_, X1.columns).sort_values(ascending=False)
     print(feat_imp)
     #new_df["price"] = np.log1p(new_df["price"])

@@ -86,7 +86,7 @@ def mean():
 
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv')
     new_df = data
-    filter = ((new_df.rooms == rooms) &
+    filter = (((new_df.full_sq >= full_sq_from)&(new_df.full_sq <= full_sq_to))&(new_df.rooms == rooms) &
               ((new_df.latitude >= latitude_from) & (new_df.latitude <= latitude_to))
               & ((new_df.longitude >= longitude_from) & (new_df.longitude <= longitude_to)))
     new_df = new_df[filter]

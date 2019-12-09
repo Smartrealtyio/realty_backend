@@ -129,14 +129,15 @@ def mean():
     clf.fit(X1, y1)
     '''
     clf = load(PATH_TO_PRICE_MODEL)
-    new_df["price"] = np.log1p(new_df["price"])
+    print(clf.feature_importances_)
+    #new_df["price"] = np.log1p(new_df["price"])
     new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                    'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(
         lambda row:
         int(np.expm1(clf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                                    row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
                                    row.floor_first, row.X, row.Y]]))[0]), axis=1)
-    new_df["price"] = np.expm1(new_df["price"])
+    #new_df["price"] = np.expm1(new_df["price"])
 
     # Check Profit Offers using Outliers algorithm detection
     outliers_alg = IsolationForest(contamination=0.2)

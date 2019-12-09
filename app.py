@@ -129,7 +129,7 @@ def mean():
     clf.fit(X1, y1)
     '''
     clf = load(PATH_TO_PRICE_MODEL)
-    print(clf.feature_importances_)
+
     X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
     feat_imp = pd.Series(clf.feature_importances_, X1.columns).sort_values(ascending=False)
@@ -145,10 +145,8 @@ def mean():
 
     # Check Profit Offers using Outliers algorithm detection
     outliers_alg = IsolationForest(contamination=0.2)
-    outliers_alg.fit(new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']])
-    outliers_it = new_df[outliers_alg.predict(new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]) == -1]
+    outliers_alg.fit(new_df[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']])
+    outliers_it = new_df[outliers_alg.predict(new_df[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']]) == -1]
     print('Outliers: ', outliers_it.shape[0], flush=True)
     outliers_it['flat_id'] = outliers_it.index
 

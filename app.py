@@ -335,12 +335,12 @@ def map():
 
 
 
-    random_search = RandomizedSearchCV(xgb, param_distributions=params, n_iter=param_comb, scoring='roc_auc', n_jobs=4,
+    random_search = RandomizedSearchCV(xgb, param_distributions=params, n_iter=param_comb, n_jobs=4,
                                        cv=folds, verbose=3, random_state=1001)
 
     # Here we go
     start_time = timer(None)  # timing starts from this point for "start_time" variable
-    random_search.fit(X1_xgb, y1_xgb.ravel())
+    random_search.fit(X1_xgb, y1_xgb)
     timer(start_time)  # timing ends here for "start_time" variable
     print('\n Best hyperparameters:')
     print(random_search.best_params_)

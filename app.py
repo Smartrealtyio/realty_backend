@@ -275,7 +275,7 @@ def map():
     y1 = df_for_current_label[['price']].values.ravel()
 
     # PRICE
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10, max_features=5)
     print(X1.shape, y1.shape)
 
     clf.fit(X1, y1)
@@ -318,7 +318,7 @@ def map():
                                                  (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
 
-    reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=150, max_depth=4)
+    reg = GradientBoostingRegressor(n_estimators=150, max_depth=8, max_features=5)
     reg.fit(df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']], df_for_current_label[['term']])
 

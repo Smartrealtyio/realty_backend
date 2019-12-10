@@ -287,6 +287,7 @@ def map():
     # XGBoost
     X1_xgb = X1.values
     y1_xgb = df_for_current_label[['price']].values
+    '''
     best_xgb_model = xgboost.XGBRegressor(colsample_bytree=0.4,
                                           gamma=0,
                                           learning_rate=0.1,
@@ -303,6 +304,52 @@ def map():
     print("XGB price: ", price_xgb)
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
     price = (price_gbr+price_xgb)/2
+    '''
+    # Grid Search XGBoost
+    # A parameter grid for XGBoost
+    from datetime import datetime
+    from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
+    from sklearn.metrics import roc_auc_score
+    from sklearn.model_selection import StratifiedKFold
+    def timer(start_time=None):
+        if not start_time:
+            start_time = datetime.now()
+            return start_time
+        elif start_time:
+            thour, temp_sec = divmod((datetime.now() - start_time).total_seconds(), 3600)
+            tmin, tsec = divmod(temp_sec, 60)
+            print('\n Time taken: %i hours %i minutes and %s seconds.' % (thour, tmin, round(tsec, 2)))
+    params = {
+        'min_child_weight': [1, 3, 5],
+        'gamma': [0, 0.2, 0.3, 0.5, 1, 1.2],
+        'subsample': [0.6, 0.8, 1.0],
+        'max_depth': [3, 4, 5],
+        'colsample_bytree': [0.3, 0.4, 0.5, 0.6],
+        'reg_lambda': [0, 0.2, 0.4, 0.6, 0.8],
+        'reg_alpha': [0, 0.1, 0.3, 0.5, 0.7]
+    }
+    xgb = xgboost.XGBRegressor(n_estimators=600, learning_rate=0.1)
+
+    folds = 3
+    param_comb = 5
+
+    skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=1001)
+
+    random_search = RandomizedSearchCV(xgb, param_distributions=params, n_iter=param_comb, scoring='roc_auc', n_jobs=4,
+                                       cv=skf.split(X, Y), verbose=3, random_state=1001)
+
+    # Here we go
+    start_time = timer(None)  # timing starts from this point for "start_time" variable
+    random_search.fit(X, Y)
+    timer(start_time)  # timing ends here for "start_time" variable
+    print('\n Best hyperparameters:')
+    print(random_search.best_params_)
+    print('\n Best estimator:')
+    print(random_search.best_estimator_)
+    print('\n Best normalized gini score for %d-fold search with %d parameter combinations:' % (folds, param_comb))
+    print(random_search.best_score_ * 2 - 1)
+
+    price = price_gbr
     price = int(price[0])
     print("Predicted Price: ", price)
     price_meter_sq = price / full_sq

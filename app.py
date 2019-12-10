@@ -287,7 +287,7 @@ def map():
     pred_gbr = gbr.predict([list_of_requested_params_price])
     price_gbr = np.expm1(pred_gbr)
     print("Price gbr: ", price_gbr)
-
+    '''
     # XGBoost
     X1_xgb = X1.values
     y1_xgb = df_for_current_label[['price']].values
@@ -306,8 +306,12 @@ def map():
     best_xgb_model.fit(X1_xgb, y1_xgb)
     price_xgb = np.expm1(best_xgb_model.predict(np.array(list_of_requested_params_price).reshape((1,-1))))
     print("XGB price: ", price_xgb)
-    df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
     price = (price_gbr+price_xgb)/2
+    '''
+    df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
+
+
+    price = price_gbr
     '''
     # Grid Search XGBoost
     # A parameter grid for XGBoost

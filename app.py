@@ -251,10 +251,10 @@ def map():
     print("Current label: ", current_label)
 
     df_for_current_label = data[data.clusters == current_label[0]]
-    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-3)&(df_for_current_label.full_sq <= full_sq+3))]
+    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-2)&(df_for_current_label.full_sq <= full_sq+2))]
     def remove_outlier(df_in, col_name):
-        q1 = df_in[col_name].quantile(0.20)
-        q3 = df_in[col_name].quantile(0.80)
+        q1 = df_in[col_name].quantile(0.15)
+        q3 = df_in[col_name].quantile(0.85)
         # iqr = q3 - q1  # Interquartile range
         # fence_low = q1 - 1.5 * iqr
         # fence_high = q3 + 1.5 * iqr
@@ -262,7 +262,7 @@ def map():
         return df_out
 
 
-    df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.7)]
+    df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
     # df_for_current_label = remove_outlier(df_for_current_label, 'price')
 
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
@@ -304,9 +304,9 @@ def map():
         df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
         return df_out
     '''
-    df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.7)]
+    df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
     # df = remove_outlier(df_for_current_label, 'price')
-    ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 2.7)]
+    ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 2.8)]
     # ds = remove_outlier(df_for_current_label, 'term')
     clean_data = pd.merge(df, ds, on=list(ds.columns))
     df_for_current_label = clean_data
@@ -314,7 +314,10 @@ def map():
     sc = StandardScaler()
 
     # TERM
+    df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq+1)&
+                                                 (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
+
     reg = GradientBoostingRegressor(learning_rate=0.1, n_estimators=150, max_depth=4)
     reg.fit(df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']], df_for_current_label[['term']])

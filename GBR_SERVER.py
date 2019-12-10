@@ -7,12 +7,14 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import r2_score, scorer, mean_squared_error
 # import Realty.config as cf
 from joblib import dump, load
+import xgboost
 import os
 import settings_local as SETTINGS
 
 prepared_data = SETTINGS.DATA
 
-PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModel.joblib'
+PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModelGBR.joblib'
+PATH_TO_PRICE_MODEL_X = SETTINGS.MODEL + '/PriceModelXGBoost.joblib'
 
 
 def Model(data: pd.DataFrame):
@@ -29,6 +31,24 @@ def Model(data: pd.DataFrame):
     clf = GradientBoostingRegressor(n_estimators=350, max_depth=12, verbose=10, max_features=5)
     clf.fit(X1, y1)
     dump(clf, PATH_TO_PRICE_MODEL)
+
+    # XGBoost
+    X1_xgb = X1.values
+    y1_xgb = data[['price']].values
+
+    best_xgb_model = xgboost.XGBRegressor(colsample_bytree=0.4,
+                                          gamma=0,
+                                          learning_rate=0.07,
+                                          max_depth=3,
+                                          min_child_weight=1,
+                                          n_estimators=4000,
+                                          reg_alpha=0.75,
+                                          reg_lambda=0.45,
+                                          subsample=0.6,
+                                          seed=42)
+    print("XGB start fitting: ")
+    best_xgb_model.fit(X1_xgb, y1_xgb)
+    dump(best_xgb_model, PATH_TO_PRICE_MODEL_X)
 
 def model():
     data = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')

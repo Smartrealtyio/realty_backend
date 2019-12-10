@@ -318,7 +318,7 @@ def map():
                                                  (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
 
-    reg = GradientBoostingRegressor(n_estimators=150, max_depth=8, max_features=5)
+    reg = GradientBoostingRegressor(n_estimators=350, max_depth=8, max_features=5)
     reg.fit(df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']], df_for_current_label[['term']])
 

@@ -279,7 +279,7 @@ def map():
 
     # PRICE
     # GBR
-    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=10, max_features=2)
+    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=15, verbose=10, max_features=2)
     print(X1.shape, y1.shape)
     gbr.fit(X1, y1)
     pred_gbr = gbr.predict([list_of_requested_params_price])
@@ -391,7 +391,7 @@ def map():
                                                  (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
 
-    reg = GradientBoostingRegressor(n_estimators=350, max_depth=6, max_features=3)
+    reg = GradientBoostingRegressor(n_estimators=350, max_depth=12, max_features=3)
     reg.fit(df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']], df_for_current_label[['term']])
 

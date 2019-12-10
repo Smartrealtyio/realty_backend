@@ -278,7 +278,7 @@ def map():
     y1 = df_for_current_label[['price']].values.ravel()
 
     # PRICE
-    '''
+
     # GBR
     gbr = GradientBoostingRegressor(n_estimators=350, max_depth=15, verbose=10, max_features=2)
     print(X1.shape, y1.shape)
@@ -286,6 +286,7 @@ def map():
     pred_gbr = gbr.predict([list_of_requested_params_price])
     price_gbr = np.expm1(pred_gbr)
     print("Price gbr: ", price_gbr)
+
     '''
     # XGBoost
     X1_xgb = X1.values
@@ -311,6 +312,7 @@ def map():
 
 
     price = price_xgb
+    '''
     '''
     # Grid Search XGBoost
     # A parameter grid for XGBoost
@@ -355,9 +357,9 @@ def map():
     print(random_search.best_estimator_)
     print('\n Best normalized gini score for %d-fold search with %d parameter combinations:' % (folds, param_comb))
     print(random_search.best_score_ * 2 - 1)
- 
-    price = price_gbr
     '''
+    price = price_gbr
+
     price = int(price[0])
     print("Predicted Price: ", price)
     price_meter_sq = price / full_sq

@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from scipy import stats
+import xgboost
 import psycopg2
 import settings_local as SETTINGS
 from sklearn.preprocessing import StandardScaler
@@ -275,15 +276,32 @@ def map():
     y1 = df_for_current_label[['price']].values.ravel()
 
     # PRICE
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10, max_features=5)
+    # GBR
+    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10, max_features=5)
     print(X1.shape, y1.shape)
+    gbr.fit(X1, y1)
+    pred_gbr = gbr.predict([list_of_requested_params_price])
+    price_gbr = np.expm1(pred_gbr)
 
-    clf.fit(X1, y1)
+    # XGBoost
+    X1_xgb = X1.values
+    y1_xgb = df_for_current_label[['price']].values
+    best_xgb_model = xgboost.XGBRegressor(colsample_bytree=0.4,
+                                          gamma=0,
+                                          learning_rate=0.07,
+                                          max_depth=3,
+                                          min_child_weight=1,
+                                          n_estimators=10000,
+                                          reg_alpha=0.75,
+                                          reg_lambda=0.45,
+                                          subsample=0.6,
+                                          seed=42)
+
+    best_xgb_model.fit(X1, y1)
+    predict_xgb = np.expm1(best_xgb_model.predict(np.array(list_of_requested_params_price).reshape((1,-1))))
 
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
-
-    pred = clf.predict([list_of_requested_params_price])
-    price = np.expm1(pred)
+    price = (pred_gbr+predict_xgb)/2
     price = int(price[0])
     print("Predicted Price: ", price)
     price_meter_sq = price / full_sq

@@ -282,7 +282,7 @@ def map():
     gbr.fit(X1, y1)
     pred_gbr = gbr.predict([list_of_requested_params_price])
     price_gbr = np.expm1(pred_gbr)
-    print("Price gbr: ", pred_gbr)
+    print("Price gbr: ", price_gbr)
 
     # XGBoost
     X1_xgb = X1.values

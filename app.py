@@ -244,6 +244,7 @@ def map():
     # Data
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
+    print("Offers with renovation: ", data[data.renovation==1].shape)
 
     kmeans = load(SETTINGS.MODEL + '/KMEAN_CLUSTERIZATION.joblib')
     current_label = kmeans.predict([[longitude, latitude]])

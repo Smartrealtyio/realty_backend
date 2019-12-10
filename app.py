@@ -336,7 +336,7 @@ def map():
     skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=1001)
 
     random_search = RandomizedSearchCV(xgb, param_distributions=params, n_iter=param_comb, scoring='roc_auc', n_jobs=4,
-                                       cv=skf.split(X, Y), verbose=3, random_state=1001)
+                                       cv=skf.split(X1_xgb, y1_xgb), verbose=3, random_state=1001)
 
     # Here we go
     start_time = timer(None)  # timing starts from this point for "start_time" variable

@@ -65,6 +65,8 @@ def main_preprocessing():
         time_to_metro.sort_values('time_to_metro', ascending=True).drop_duplicates(subset='building_id', keep="first").sort_index()
         time_to_metro = time_to_metro[time_to_metro['transport_type'] == "ON_FOOT"]
 
+        prices = prices.drop_duplicates(subset='flat_id',keep="last")
+
         # choose the shortest path on foot
         ds = pd.merge(prices, flats, left_on="flat_id", right_on="id")
 

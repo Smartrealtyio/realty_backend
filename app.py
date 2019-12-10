@@ -141,11 +141,9 @@ def mean():
     new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                    'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(
         lambda row:
-        int(((np.expm1(clf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+        int(np.expm1(clf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                                    row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, row.X, row.Y]]))[0])+(np.expm1(xgboost.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
-                                   row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, row.X, row.Y]]))[0]))/2), axis=1)
+                                   row.floor_first, row.X, row.Y]]))[0]), axis=1)
     #new_df["price"] = np.expm1(new_df["price"])
 
     # Check Profit Offers using Outliers algorithm detection

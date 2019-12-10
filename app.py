@@ -278,6 +278,7 @@ def map():
     y1 = df_for_current_label[['price']].values.ravel()
 
     # PRICE
+    '''
     # GBR
     gbr = GradientBoostingRegressor(n_estimators=350, max_depth=15, verbose=10, max_features=2)
     print(X1.shape, y1.shape)
@@ -304,12 +305,12 @@ def map():
     best_xgb_model.fit(X1_xgb, y1_xgb)
     price_xgb = np.expm1(best_xgb_model.predict(np.array(list_of_requested_params_price).reshape((1,-1))))
     print("XGB price: ", price_xgb)
-    price = (price_gbr+price_xgb)/2
-    '''
+    #price = (price_gbr+price_xgb)/2
+
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
 
 
-    price = price_gbr
+    price = price_xgb
     '''
     # Grid Search XGBoost
     # A parameter grid for XGBoost

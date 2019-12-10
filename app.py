@@ -287,7 +287,7 @@ def map():
     # XGBoost
     X1_xgb = X1.values
     y1_xgb = df_for_current_label[['price']].values
-    '''
+
     best_xgb_model = xgboost.XGBRegressor(colsample_bytree=0.4,
                                           gamma=0,
                                           learning_rate=0.1,
@@ -298,7 +298,7 @@ def map():
                                           reg_lambda=0.45,
                                           subsample=0.6,
                                           seed=42)
-
+    print("XGB start fitting: ")
     best_xgb_model.fit(X1_xgb, y1_xgb)
     price_xgb = np.expm1(best_xgb_model.predict(np.array(list_of_requested_params_price).reshape((1,-1))))
     print("XGB price: ", price_xgb)
@@ -348,8 +348,9 @@ def map():
     print(random_search.best_estimator_)
     print('\n Best normalized gini score for %d-fold search with %d parameter combinations:' % (folds, param_comb))
     print(random_search.best_score_ * 2 - 1)
-
+ 
     price = price_gbr
+    '''
     price = int(price[0])
     print("Predicted Price: ", price)
     price_meter_sq = price / full_sq
@@ -360,7 +361,7 @@ def map():
 
 
 
-    '''
+
     def remove_outlier(df_in, col_name):
         q1 = df_in[col_name].quantile(0.20)
         q3 = df_in[col_name].quantile(0.80)
@@ -369,7 +370,7 @@ def map():
         # fence_high = q3 + 1.5 * iqr
         df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
         return df_out
-    '''
+    
     df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
     # df = remove_outlier(df_for_current_label, 'price')
     ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 2.8)]

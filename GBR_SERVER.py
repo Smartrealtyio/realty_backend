@@ -20,15 +20,15 @@ PATH_TO_PRICE_MODEL_X = SETTINGS.MODEL + '/PriceModelXGBoost.joblib'
 def Model(data: pd.DataFrame):
     from scipy import stats
 
-    data = data[(np.abs(stats.zscore(data.price)) < 2.7)]
-    data = data[(np.abs(stats.zscore(data.term)) < 2.7)]
+    data = data[(np.abs(stats.zscore(data.price)) < 2.8)]
+    data = data[(np.abs(stats.zscore(data.term)) < 2.8)]
     X1 = data[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
     data["price"] = np.log1p(data["price"])
     y1 = data[['price']].values.ravel()
     print(X1.shape, y1.shape)
 
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=12, verbose=10, max_features=5)
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=5, max_features=2)
     clf.fit(X1, y1)
     dump(clf, PATH_TO_PRICE_MODEL)
 
@@ -37,14 +37,14 @@ def Model(data: pd.DataFrame):
     y1_xgb = data[['price']].values
 
     best_xgb_model = xgboost.XGBRegressor(colsample_bytree=0.4,
-                                          gamma=0,
-                                          learning_rate=0.07,
-                                          max_depth=3,
-                                          min_child_weight=1,
-                                          n_estimators=4000,
-                                          reg_alpha=0.75,
-                                          reg_lambda=0.45,
-                                          subsample=0.6,
+                                          gamma=0.5,
+                                          learning_rate=0.1,
+                                          max_depth=5,
+                                          min_child_weight=3,
+                                          n_estimators=300,
+                                          reg_alpha=0,
+                                          reg_lambda=0.6,
+                                          subsample=0.8,
                                           seed=42)
     print("XGB start fitting: ")
     best_xgb_model.fit(X1_xgb, y1_xgb)

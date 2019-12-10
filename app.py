@@ -281,7 +281,7 @@ def map():
 
     # PRICE
     # GBR
-    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10, max_features=5)
+    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=10, max_features=2)
     print(X1.shape, y1.shape)
     gbr.fit(X1, y1)
     pred_gbr = gbr.predict([list_of_requested_params_price])
@@ -293,14 +293,14 @@ def map():
     y1_xgb = df_for_current_label[['price']].values
 
     best_xgb_model = xgboost.XGBRegressor(colsample_bytree=0.4,
-                                          gamma=0,
+                                          gamma=0.5,
                                           learning_rate=0.1,
-                                          max_depth=3,
-                                          min_child_weight=1,
-                                          n_estimators=1000,
-                                          reg_alpha=0.75,
-                                          reg_lambda=0.45,
-                                          subsample=0.6,
+                                          max_depth=5,
+                                          min_child_weight=3,
+                                          n_estimators=300,
+                                          reg_alpha=0,
+                                          reg_lambda=0.6,
+                                          subsample=0.8,
                                           seed=42)
     print("XGB start fitting: ")
     best_xgb_model.fit(X1_xgb, y1_xgb)
@@ -389,7 +389,7 @@ def map():
                                                  (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
 
-    reg = GradientBoostingRegressor(n_estimators=350, max_depth=8, max_features=8)
+    reg = GradientBoostingRegressor(n_estimators=350, max_depth=6, max_features=3)
     reg.fit(df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']], df_for_current_label[['term']])
 

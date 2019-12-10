@@ -340,7 +340,7 @@ def map():
 
     # Here we go
     start_time = timer(None)  # timing starts from this point for "start_time" variable
-    random_search.fit(X1_xgb, y1_xgb)
+    random_search.fit(X1_xgb, y1_xgb.ravel())
     timer(start_time)  # timing ends here for "start_time" variable
     print('\n Best hyperparameters:')
     print(random_search.best_params_)

@@ -289,10 +289,10 @@ def map():
     y1_xgb = df_for_current_label[['price']].values
     best_xgb_model = xgboost.XGBRegressor(colsample_bytree=0.4,
                                           gamma=0,
-                                          learning_rate=0.07,
+                                          learning_rate=0.1,
                                           max_depth=3,
                                           min_child_weight=1,
-                                          n_estimators=10000,
+                                          n_estimators=1000,
                                           reg_alpha=0.75,
                                           reg_lambda=0.45,
                                           subsample=0.6,

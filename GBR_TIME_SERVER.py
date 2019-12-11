@@ -20,7 +20,7 @@ PATH_TO_TIME_MODEL = SETTINGS.MODEL
 
 
 def model():
-    data = pd.read_csv(prepared_data)
+    data = pd.read_csv(prepared_data+'/COORDINATES_Pred_Term.csv')
     X_term = data[
         ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
          'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]

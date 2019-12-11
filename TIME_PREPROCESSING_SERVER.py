@@ -141,12 +141,12 @@ def main_preprocessing():
             return df_out
 
         from scipy import stats
-        df = ds[(np.abs(stats.zscore(ds.price)) < 2.7)]
+        df = ds[(np.abs(stats.zscore(ds.price)) < 2.8)]
         #df = remove_outlier(ds, 'price')
         print("After removing price_outliers: ", df.shape)
 
 
-        df1 = ds[(np.abs(stats.zscore(ds.term)) < 2.7)]
+        df1 = ds[(np.abs(stats.zscore(ds.term)) < 2.8)]
         #df1 = remove_outlier(ds, 'term')
         print("After removing term_outliers: ", df1.shape)
 
@@ -158,7 +158,7 @@ def main_preprocessing():
         clean_data['clusters'] = labels
 
         print('Saving to new csv')
-        clean_data.to_csv(prepared_data+'/COORDINATES_Pred_Term.csv', index=None, header=True)
+        clean_data.to_csv(prepared_data+'/COORDINATES_MAin.csv', index=None, header=True)
 
 
 if __name__ == '__main__':

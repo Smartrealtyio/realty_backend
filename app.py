@@ -279,7 +279,7 @@ def map():
     price_gbr = np.expm1(gbr.predict([list_of_requested_params_price]))
 
     print("Price gbr: ", price_gbr)
-    '''
+
     from sklearn.model_selection import RandomizedSearchCV
     c = CatBoostRegressor()
     grid = {'depth': [4, 6, 10, 12],
@@ -296,7 +296,7 @@ def map():
               grid.best_params_, "\n The best score across ALL searched params:\n",
               grid.best_score_, file=f)
         f.close()
-    '''
+
 
     #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
     cat = CatBoostRegressor(random_state=42)

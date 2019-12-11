@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 from scipy import stats
-from catboost import CatBoostRegressor
+from catboost import CatBoostRegressor, Pool
 import xgboost
 import psycopg2
 import settings_local as SETTINGS
@@ -273,7 +273,7 @@ def map():
     # PRICE
 
     # GBR
-    gbr = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=5, max_features=3)
+    gbr = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=5, max_features=3, random_state=42)
     print(X1.shape, y1.shape)
     gbr.fit(X1, y1)
     price_gbr = np.expm1(gbr.predict([list_of_requested_params_price]))
@@ -299,8 +299,8 @@ def map():
     '''
 
     #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
-    cat = CatBoostRegressor()
-    cat.fit(X1,y1,verbose=5)
+    cat = CatBoostRegressor(random_state=42)
+    cat.fit(Pool(X1),Pool(y1),verbose=5)
     price_cat = np.expm1(cat.predict([list_of_requested_params_price]))
 
     print("Price cat: ", price_cat)

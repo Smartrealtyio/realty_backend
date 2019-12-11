@@ -285,14 +285,14 @@ def map():
     pred_cat = cat.predict([list_of_requested_params_price])
     price_cat = np.expm1(pred_cat)
     print("Price cat: ", price_cat)
-
+    '''
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
 
 
-    price = (price_gbr+pred_cat)/2
+    # price = (price_gbr+pred_cat)/2
 
 
-    '''
+
     price = pred_gbr
     price = int(price[0])
     print("Predicted Price: ", price)

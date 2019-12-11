@@ -293,7 +293,7 @@ def map():
 
 
 
-    price = pred_gbr
+    price = price_gbr
     price = int(price[0])
     print("Predicted Price: ", price)
     price_meter_sq = price / full_sq

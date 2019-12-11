@@ -280,6 +280,24 @@ def map():
 
     print("Price gbr: ", price_gbr)
 
+    from sklearn.model_selection import RandomizedSearchCV
+    m = CatBoostRegressor()
+    grid = {'depth': [4, 6, 10, 12],
+            'l2_leaf_reg': [0, 0.2, 0.5, 0.7, 1],
+            'iterations': [100, 200, 400]}
+
+    grid1 = {'depth': [6, 10],
+             'iterations': [200, 400]}
+
+    grid = RandomizedSearchCV(estimator=m, param_distributions=grid, n_iter=20, cv=2, n_jobs=-1, verbose=5)
+    grid.fit(X1, y1)
+    with open('out.txt', 'w') as f:
+        print("\n The best parameters across ALL searched params:\n",
+              grid.best_params_, "\n The best score across ALL searched params:\n",
+              grid.best_score_, file=f)
+        f.close()
+
+
     cat = CatBoostRegressor(iterations=400, max_depth=12, l2_leaf_reg=1)
     cat.fit(X1,y1,verbose=5)
     price_cat = np.expm1(cat.predict([list_of_requested_params_price]))

@@ -339,7 +339,7 @@ def map():
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
 
     print("Term gbr: ", term_gbr)
-    
+
     cat = CatBoostRegressor(iterations=400, max_depth=12, l2_leaf_reg=1)
     cat.fit(X1, y1, verbose=5)
     term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
@@ -349,10 +349,10 @@ def map():
 
     term = (term_cat+term_gbr)/2
     print("Predicted term: ", term)
-    '''
-    term = term_gbr
+
+    # term = term_gbr
     term = int(term.item(0))
-    print(term)
+
 
 
     #df_for_current_label = remove_outlier(df_for_current_label, 'price')
@@ -366,6 +366,7 @@ def map():
             i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id'])
         else:
             i['link'] = 'https://www.cian.ru/sale/flat/' + str(i['offer_id'])
+
 
     '''
     filter1 = (((data.full_sq <= full_sq + 3) & (data.full_sq >= full_sq - 3)) & (

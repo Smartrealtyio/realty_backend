@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from catboost import CatBoostRegressor, Pool
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.preprocessing import StandardScaler, PowerTransformer
@@ -15,6 +16,7 @@ prepared_data = SETTINGS.DATA
 
 PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModelGBR.joblib'
 PATH_TO_PRICE_MODEL_X = SETTINGS.MODEL + '/PriceModelXGBoost.joblib'
+PATH_TO_PRICE_MODEL_CAT = SETTINGS.MODEL + '/PriceModelCatGradient.joblib'
 
 
 def Model(data: pd.DataFrame):
@@ -28,11 +30,12 @@ def Model(data: pd.DataFrame):
     y1 = data[['price']].values.ravel()
     print(X1.shape, y1.shape)
 
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=15, verbose=5, max_features=2)
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=5, max_features=2)
     clf.fit(X1, y1)
     dump(clf, PATH_TO_PRICE_MODEL)
 
     # XGBoost
+    '''
     X1_xgb = X1.values
     y1_xgb = data[['price']].values
 
@@ -49,6 +52,12 @@ def Model(data: pd.DataFrame):
     print("XGB start fitting: ")
     best_xgb_model.fit(X1_xgb, y1_xgb)
     dump(best_xgb_model, PATH_TO_PRICE_MODEL_X)
+    '''
+    # Cat Gradient
+    cat = CatBoostRegressor(random_state=42, iterations=2000, max_depth=5, learning_rate=0.05)
+    train = Pool(X1, y1)
+    cat.fit(train, verbose=5)
+    dump(clf, PATH_TO_PRICE_MODEL_CAT)
 
 def model():
     data = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')

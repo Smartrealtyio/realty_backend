@@ -279,7 +279,7 @@ def map():
     price_gbr = np.expm1(gbr.predict([list_of_requested_params_price]))
 
     print("Price gbr: ", price_gbr)
-
+    '''
     from sklearn.model_selection import RandomizedSearchCV
     c = CatBoostRegressor()
     grid = {'depth': [4, 6, 10, 12],
@@ -305,6 +305,8 @@ def map():
     price_cat = np.expm1(cat.predict([list_of_requested_params_price]))
 
     print("Price cat: ", price_cat)
+    '''
+
 
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
 

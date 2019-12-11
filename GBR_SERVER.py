@@ -54,7 +54,7 @@ def Model(data: pd.DataFrame):
     dump(best_xgb_model, PATH_TO_PRICE_MODEL_X)
     '''
     # Cat Gradient
-    cat = CatBoostRegressor(random_state=42, learning_rate=0.1, iterations=1000, random_seed=0)
+    cat = CatBoostRegressor(random_state=42, learning_rate=0.1, iterations=1000)
     train = Pool(X1, y1)
     cat.fit(train, verbose=5)
     dump(clf, PATH_TO_PRICE_MODEL_CAT)

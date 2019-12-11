@@ -359,7 +359,7 @@ def map():
             i['link'] = 'https://www.cian.ru/sale/flat/' + str(i['offer_id'])
 
 
-
+    df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= term+100]
 
     # Create list of term values from subsample of "same" flats

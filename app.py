@@ -219,7 +219,7 @@ def map():
 
 
     # Data
-    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_MAIN.csv')
+    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
 
     # Load KMean Clustering model

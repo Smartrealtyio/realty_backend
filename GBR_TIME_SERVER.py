@@ -20,14 +20,14 @@ PATH_TO_TIME_MODEL = SETTINGS.MODEL
 
 
 def model():
-    data = pd.read_csv(prepared_data+'/COORDINATES_MAIN.csv')
+    data = pd.read_csv(prepared_data+'/COORDINATES_Pred_Term.csv')
     X_term = data[
         ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
          'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
     y_term = data[['term']]
 
     # Cat Gradient
-    cat = CatBoostRegressor(random_state=42, iterations=2000, max_depth=5, learning_rate=0.1)
+    cat = CatBoostRegressor(random_state=42, iterations=2000, max_depth=5, learning_rate=0.05)
     train = Pool(X_term,y_term)
     cat.fit(train, verbose=5)
     dump(cat, PATH_TO_TIME_MODEL+'/CAT_TIME_MODEL.joblib')

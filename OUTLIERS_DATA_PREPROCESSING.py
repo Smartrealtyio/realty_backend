@@ -61,7 +61,7 @@ def main_preprocessing():
                                                      'transport_type', 'created_at', 'updated_at'],
                                               usecols=["building_id", "time_to_metro", "transport_type"], header=0)
 
-    time_to_metro = time_to_metro.sort_values('time_to_metro', ascending=True).drop_duplicates(subset='building_id', keep="first").sort_index()
+    time_to_metro.sort_values('time_to_metro', ascending=True).drop_duplicates(subset='building_id', keep="first").sort_index()
     time_to_metro = time_to_metro[time_to_metro['transport_type'] == "ON_FOOT"]
 
     # choose the shortest path on foot
@@ -147,7 +147,7 @@ def main_preprocessing():
     print("After removing term_outliers: ", df1.shape)
 
     clean_data = pd.merge(df, df1, on=list(ds.columns))
-    kmeans = KMeans(n_clusters=80, random_state=42).fit(clean_data[['longitude', 'latitude']])
+    kmeans = KMeans(n_clusters=100, random_state=42).fit(clean_data[['longitude', 'latitude']])
 
     dump(kmeans, PATH_TO_TIME_MODEL + '/KMEAN_CLUSTERIZATION_OPEN.joblib')
     labels = kmeans.labels_

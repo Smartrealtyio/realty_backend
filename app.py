@@ -276,24 +276,24 @@ def map():
     gbr = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=5, max_features=3)
     print(X1.shape, y1.shape)
     gbr.fit(X1, y1)
-    pred_gbr = gbr.predict([list_of_requested_params_price])
-    price_gbr = np.expm1(pred_gbr)
+    price_gbr = np.expm1(gbr.predict([list_of_requested_params_price]))
+
     print("Price gbr: ", price_gbr)
-    '''
-    cat = CatBoostRegressor(iterations=150, max_depth=6, learning_rate=0.1)
+
+    cat = CatBoostRegressor(iterations=400, max_depth=12, l2_leaf_reg=1)
     cat.fit(X1,y1,verbose=5)
-    pred_cat = cat.predict([list_of_requested_params_price])
-    price_cat = np.expm1(pred_cat)
+    price_cat = np.expm1(cat.predict([list_of_requested_params_price]))
+
     print("Price cat: ", price_cat)
-    '''
+
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
 
 
-    # price = (price_gbr+pred_cat)/2
+    price = (price_gbr+price_cat)/2
 
 
 
-    price = price_gbr
+    # price = price_gbr
     price = int(price[0])
     print("Predicted Price: ", price)
     price_meter_sq = price / full_sq
@@ -339,8 +339,8 @@ def map():
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
 
     print("Term gbr: ", term_gbr)
-    '''
-    cat = CatBoostRegressor(iterations=150, max_depth=6, learning_rate=0.1)
+    
+    cat = CatBoostRegressor(iterations=400, max_depth=12, l2_leaf_reg=1)
     cat.fit(X1, y1, verbose=5)
     term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])

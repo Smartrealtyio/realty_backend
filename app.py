@@ -349,8 +349,8 @@ def map():
     term = (term_cat+term_gbr)/2
     print("Predicted term: ", term)
 
-    #term = int(term.item(0))
-    #print(term)
+    term = int(term.item(0))
+    print(term)
 
 
     #df_for_current_label = remove_outlier(df_for_current_label, 'price')

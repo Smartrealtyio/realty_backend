@@ -53,129 +53,97 @@ def mean():
     sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 0
 
     print(latitude_from, latitude_to, longitude_from, longitude_to, flush=True)
-    '''
-    DATA_OUTLIERS = SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv'
-    MODEL_OUTLIERS = SETTINGS.MODEL + '/models.joblib'
-
-    data = pd.read_csv(DATA_OUTLIERS)
-    data = data[['price_meter_sq', 'full_sq']]
-    data = data[data.price_meter_sq < data.price_meter_sq.quantile(0.2)]
-
-    print('data', data.shape, flush=True)
-
-    model = load(MODEL_OUTLIERS)
-    # outliers = model.predict(data)
-    outliers_it = data[model.predict(data) == -1]
-    print('Outliers: ', outliers_it.shape[0], flush=True)
-    outliers_it['flat_id'] = outliers_it.index
-    new_data = pd.read_csv(DATA_OUTLIERS)
-    print(new_data.shape)
-    new_data['flat_id'] = new_data.index
-    #ds = pd.merge(new_data, outliers_it, left_on="flat_id", right_on="flat_id", suffixes=['', 'double'])
-    #ds = ds.drop(['flat_id', 'full_sqdouble', 'price_meter_sqdouble'], axis=1)
-    full_data_outliers = new_data[new_data.flat_id.isin(outliers_it.flat_id)]
-    sklearn_score_anomalies = model.score_samples(full_data_outliers[['price_meter_sq', 'full_sq']])
-    original_paper_score = np.array([(((-1 * s + 0.5) - 1) * 100) for s in sklearn_score_anomalies])
-    print(original_paper_score)
-    df_f = pd.DataFrame({'profit': original_paper_score}, index=full_data_outliers.index)
-    print(df_f.head())
-    new_df = pd.concat([full_data_outliers, df_f], axis=1)
-    new_df = new_df.sort_values(by=['profit'], ascending=False)
 
 
-    print('ds shape', new_df.shape, flush=True)
-    
-    '''
+    data_offers = pd.read_csv(SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv')
 
+    filter = (((data_offers.full_sq >= full_sq_from)&(data_offers.full_sq <= full_sq_to))&(data_offers.rooms == rooms) &
+              ((data_offers.latitude >= latitude_from) & (data_offers.latitude <= latitude_to))
+              & ((data_offers.longitude >= longitude_from) & (data_offers.longitude <= longitude_to)))
+    data_offers = data_offers[filter]
 
-    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv')
-    new_df = data
-    filter = (((new_df.full_sq >= full_sq_from)&(new_df.full_sq <= full_sq_to))&(new_df.rooms == rooms) &
-              ((new_df.latitude >= latitude_from) & (new_df.latitude <= latitude_to))
-              & ((new_df.longitude >= longitude_from) & (new_df.longitude <= longitude_to)))
-    new_df = new_df[filter]
-
-    print('ds', new_df.shape, flush=True)
+    print('ds', data_offers.shape, flush=True)
 
     if time_to_metro != None:
-        new_df = new_df[(new_df.time_to_metro <= time_to_metro)]
+        data_offers = data_offers[(data_offers.time_to_metro <= time_to_metro)]
     if rooms != None:
-        new_df = new_df[new_df.rooms == rooms]
+        data_offers = data_offers[data_offers.rooms == rooms]
     if building_type_str != None:
-        new_df = new_df[new_df.building_type_str == building_type_str]
+        data_offers = data_offers[data_offers.building_type_str == building_type_str]
     if kitchen_sq != None:
-        new_df = new_df[(new_df.kitchen_sq >= kitchen_sq - 1) & (new_df.kitchen_sq <= kitchen_sq + 1)]
+        data_offers = data_offers[(data_offers.kitchen_sq >= kitchen_sq - 1) & (data_offers.kitchen_sq <= kitchen_sq + 1)]
     if life_sq != None:
-        new_df = new_df[(new_df.life_sq >= life_sq - 5) & (new_df.life_sq <= life_sq + 5)]
+        data_offers = data_offers[(data_offers.life_sq >= life_sq - 5) & (data_offers.life_sq <= life_sq + 5)]
     if renovation != None:
-        new_df = new_df[new_df.renovation == renovation]
+        data_offers = data_offers[data_offers.renovation == renovation]
     if has_elevator != None:
-        new_df = new_df[new_df.has_elevator == has_elevator]
+        data_offers = data_offers[data_offers.has_elevator == has_elevator]
     if floor_first != None:
-        new_df = new_df[new_df.floor_first == 0]
+        data_offers = data_offers[data_offers.floor_first == 0]
     if floor_last != None:
-        new_df = new_df[new_df.floor_last == 0]
+        data_offers = data_offers[data_offers.floor_last == 0]
     if price_from != None:
-        new_df = new_df[new_df.price >= price_from]
+        data_offers = data_offers[data_offers.price >= price_from]
     if price_to != None:
-        new_df = new_df[new_df.price <= price_to]
+        data_offers = data_offers[data_offers.price <= price_to]
 
     # PRICE
     '''
 
-    X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+    X1 = data_offers[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                  'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
-    new_df["price"] = np.log1p(new_df["price"])
-    y1 = new_df[['price']].values.ravel()
+    data_offers["price"] = np.log1p(data_offers["price"])
+    y1 = data_offers[['price']].values.ravel()
     print(X1.shape, y1.shape)
 
     clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
     clf.fit(X1, y1)
     '''
-    clf = load(PATH_TO_PRICE_MODEL)
+    gbr = load(PATH_TO_PRICE_MODEL)
     cat = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
 
     xgboost = load(PATH_TO_PRICE_MODEL_X)
 
-    X1 = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+    X1 = data_offers[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
-    feat_imp = pd.Series(clf.feature_importances_, X1.columns).sort_values(ascending=False)
-    print(feat_imp)
-    #new_df["price"] = np.log1p(new_df["price"])
-    new_df['pred_price'] = new_df[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+
+    # Print GradientBoosting Regression features importance
+    # feat_imp = pd.Series(gbr.feature_importances_, X1.columns).sort_values(ascending=False)
+    # print(feat_imp)
+
+
+    data_offers['pred_price'] = data_offers[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                    'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(
         lambda row:
-        int(((np.expm1(clf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+        int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                                    row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
                                    row.floor_first, row.X, row.Y]]))+np.expm1(cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                                    row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
                                    row.floor_first, row.X, row.Y]])))[0]/2)), axis=1)
-    #new_df["price"] = np.expm1(new_df["price"])
 
-    # Check Profit Offers using Outliers algorithm detection
+
+    # Get Profit Offers using Outliers algorithm detection
     outliers_alg = IsolationForest(contamination=0.2)
-    outliers_alg.fit(new_df[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']])
-    outliers_it = new_df[outliers_alg.predict(new_df[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']]) == -1]
+
+
+    outliers_alg.fit(data_offers[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']])
+    outliers_it = data_offers[outliers_alg.predict(data_offers[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']]) == -1]
     print('Outliers: ', outliers_it.shape[0], flush=True)
     outliers_it['flat_id'] = outliers_it.index
 
 
-    new_df = new_df[new_df.price < new_df.pred_price]
-    new_df['flat_id'] = new_df.index
-    print('Profitable offers using price prediction model: ', new_df.shape[0])
+    data_offers = data_offers[data_offers.price < data_offers.pred_price]
+    data_offers['flat_id'] = data_offers.index
+    print('Profitable offers using price prediction model: ', data_offers.shape[0])
 
-    new_df = new_df[new_df.flat_id.isin(outliers_it.flat_id)]
-    print('After concat: ', new_df.shape[0])
-    new_df['profit'] = new_df[['pred_price', 'price']].apply(lambda row: ((row.pred_price*100/row.price)-100), axis=1)
-    new_df = new_df.sort_values(by=['profit'], ascending=False)
-    print(new_df[['pred_price', "price"]].head())
+    data_offers = data_offers[data_offers.flat_id.isin(outliers_it.flat_id)]
+    print('After concat: ', data_offers.shape[0])
+    data_offers['profit'] = data_offers[['pred_price', 'price']].apply(lambda row: ((row.pred_price*100/row.price)-100), axis=1)
+    data_offers = data_offers.sort_values(by=['profit'], ascending=False)
+    print(data_offers[['pred_price', "price"]].head())
 
 
-
-    # price = np.expm1(pred)
-    # price = int(price[0])
-    # print("Predicted Price: ", price)
-    flats = new_df.to_dict('record')
+    flats = data_offers.to_dict('record')
 
 
     flats_count = len(flats)
@@ -253,28 +221,36 @@ def map():
     # Data
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
     print("Initial shape: ", data.shape)
-    print("Offers with renovation: ", data[data.renovation==1].shape)
 
-    kmeans = load(SETTINGS.MODEL + '/KMEAN_CLUSTERIZATION.joblib')
+    # Load KMean Clustering model
+    kmeans = load(SETTINGS.MODEL + '/KMEAN_CLUSTERING.joblib')
+
+    # Predict Cluster for current flat
     current_label = kmeans.predict([[longitude, latitude]])
     print("Current label: ", current_label)
 
+    # Create subsample of flats with same cluster label value (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_label[0]]
-    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-2)&(df_for_current_label.full_sq <= full_sq+2))]
+
+    # Drop Price and Term Outliers using Z-Score
+    df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
+    ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 2.8)]
+
+    df_for_current_label = pd.merge(df, ds, on=list(ds.columns))
+
+    # Create subsample according to the same(+-) size of the full_sq
+    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-2)&(df_for_current_label.full_sq <= full_sq+1))]
 
 
-
-    df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
-
-
+    # Flats Features for GBR fitting
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
 
-
+    # Log Transformation for target label (price) to reduce skew of value
     df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
     y1 = df_for_current_label[['price']].values.ravel()
 
-    # PRICE
+    # PRICE PREDICTION
 
     # GBR
     gbr = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=5, max_features=3, random_state=42)
@@ -315,40 +291,23 @@ def map():
 
     print("Price cat: ", price_cat)
 
+    # Return real value of price (reverse Log Transformation)
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
 
-
+    # Count mean of Cat and GBR algorithms prediction
     price = (price_gbr+price_cat)/2
 
-
-
-    # price = price_gbr
     price = int(price[0])
     print("Predicted Price: ", price)
-    price_meter_sq = price / full_sq
-    #list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+
+    # price_meter_sq = price / full_sq
+    # list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
     #                                  is_apartment, time_to_metro,
     #                                 floor_last, floor_first, X, Y]
-    term = 0
+    # term = 0
 
 
 
-
-    def remove_outlier(df_in, col_name):
-        q1 = df_in[col_name].quantile(0.20)
-        q3 = df_in[col_name].quantile(0.80)
-        # iqr = q3 - q1  # Interquartile range
-        # fence_low = q1 - 1.5 * iqr
-        # fence_high = q3 + 1.5 * iqr
-        df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
-        return df_out
-    
-    df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
-    # df = remove_outlier(df_for_current_label, 'price')
-    ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 2.8)]
-    # ds = remove_outlier(df_for_current_label, 'term')
-    clean_data = pd.merge(df, ds, on=list(ds.columns))
-    df_for_current_label = clean_data
 
 
     # TERM
@@ -356,7 +315,7 @@ def map():
                                                  (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
 
-    X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
+    X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
     y_term = df_for_current_label[['term']]
     '''
@@ -367,7 +326,7 @@ def map():
     print("Term cat: ", term_cat)
     '''
     # GBR
-    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=5, max_features=2, random_state=42)
+    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=5, max_features=3, random_state=42)
     print(X_term.shape, y_term.shape)
     gbr.fit(X_term, y_term)
     term_gbr = gbr.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
@@ -391,10 +350,6 @@ def map():
 
 
 
-    #df_for_current_label = remove_outlier(df_for_current_label, 'price')
-    #print("After removing price_outliers: ", df_for_current_label.shape)
-
-
     # Add links to flats
     term_links = df_for_current_label.to_dict('record')
     for i in term_links:
@@ -404,32 +359,24 @@ def map():
             i['link'] = 'https://www.cian.ru/sale/flat/' + str(i['offer_id'])
 
 
-    '''
-    filter1 = (((data.full_sq <= full_sq + 3) & (data.full_sq >= full_sq - 3)) & (
-            (data.longitude >= longitude - 0.05) & (data.longitude <= longitude + 0.05) &
-            (data.latitude >= latitude - 0.05) & (data.latitude <= latitude + 0.05)) &
-               (data.term <= term) & ((data.price_meter_sq <= price_meter_sq + 20000) & (
-                           data.price_meter_sq >= price_meter_sq - 20000)) & ((data.time_to_metro >= time_to_metro - 2) & (
-                        data.time_to_metro <= time_to_metro + 2)))
 
-    ds = data[filter1]
-    print(ds.shape)
-    '''
     df_for_current_label = df_for_current_label[df_for_current_label.term <= term+100]
 
-    # df_for_current_label = df_for_current_label[((df_for_current_label.price <= price+1500000)& (df_for_current_label.price >= price-1500000))]
+    # Create list of term values from subsample of "same" flats
     x = df_for_current_label.term
     x = x.tolist()
     x += [term]
 
+    # Create list of price values from subsample of "same" flats
     y = df_for_current_label.price
     y = y.tolist()
     y += [price]
 
 
+    # Create list of dictionaries
     a = []
     a += ({'x': x, 'y': y} for x, y in zip(x, y))
-    # Sort Dictionary
+    # Sort list by term 
     a = sorted(a, key=lambda i: i['x'], reverse=False)
     print(a)
 

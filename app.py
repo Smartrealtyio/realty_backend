@@ -362,7 +362,8 @@ def map():
 
     cat = CatBoostRegressor(random_state=42)
     #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
-    cat.fit(X1, y1, verbose=5)
+    train_time = Pool(X_term, y_term)
+    cat.fit(Pool, verbose=5)
     term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
 

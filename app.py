@@ -369,6 +369,8 @@ def map():
     #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
     train_time = Pool(X_term, y_term)
     cat.fit(train_time, verbose=5)
+    '''
+    cat = load(SETTINGS.MODEL + '/CAT_TIME_MODEL.joblib')
     term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
 
@@ -376,8 +378,9 @@ def map():
 
     term = (term_cat+term_gbr)/2
     print("Predicted term: ", term)
-    '''
-    term = term_gbr
+
+
+    # term = term_gbr
     term = int(term.item(0))
 
 

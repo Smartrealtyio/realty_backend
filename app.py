@@ -306,7 +306,7 @@ def map():
 
     print("Price cat: ", price_cat)
     '''
-    cat = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib.joblib')
+    cat = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
     price_cat = np.expm1(cat.predict([list_of_requested_params_price]))
 
     print("Price cat: ", price_cat)

@@ -279,7 +279,7 @@ def map():
     pred_gbr = gbr.predict([list_of_requested_params_price])
     price_gbr = np.expm1(pred_gbr)
     print("Price gbr: ", price_gbr)
-
+    '''
     cat = CatBoostRegressor(iterations=150, max_depth=6, learning_rate=0.1)
     cat.fit(X1,y1,verbose=5)
     pred_cat = cat.predict([list_of_requested_params_price])
@@ -292,7 +292,8 @@ def map():
     price = (price_gbr+pred_cat)/2
 
 
-
+    '''
+    price = pred_gbr
     price = int(price[0])
     print("Predicted Price: ", price)
     price_meter_sq = price / full_sq
@@ -338,7 +339,7 @@ def map():
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
 
     print("Term gbr: ", term_gbr)
-
+    '''
     cat = CatBoostRegressor(iterations=150, max_depth=6, learning_rate=0.1)
     cat.fit(X1, y1, verbose=5)
     term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
@@ -348,7 +349,8 @@ def map():
 
     term = (term_cat+term_gbr)/2
     print("Predicted term: ", term)
-
+    '''
+    term = term_gbr
     term = int(term.item(0))
     print(term)
 

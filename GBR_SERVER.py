@@ -60,7 +60,7 @@ def Model(data: pd.DataFrame):
     dump(clf, PATH_TO_PRICE_MODEL_CAT)
 
 def model():
-    data = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')
+    data = pd.read_csv(prepared_data + '/COORDINATES_MAIN.csv')
     Model(data)
 
 

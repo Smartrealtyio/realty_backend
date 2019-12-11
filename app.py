@@ -251,7 +251,7 @@ def map():
     y1 = df_for_current_label[['price']].values.ravel()
 
     # PRICE PREDICTION
-
+    '''
     # GBR
     gbr = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=5, max_features=3, random_state=42)
     print(X1.shape, y1.shape)
@@ -259,6 +259,7 @@ def map():
     price_gbr = np.expm1(gbr.predict([list_of_requested_params_price]))
 
     print("Price gbr: ", price_gbr)
+    '''
     '''
     from sklearn.model_selection import RandomizedSearchCV
     c = CatBoostRegressor()
@@ -295,8 +296,8 @@ def map():
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
 
     # Count mean of Cat and GBR algorithms prediction
-    price = (price_gbr+price_cat)/2
-
+    #price = (price_gbr+price_cat)/2
+    price = price_cat
     price = int(price[0])
     print("Predicted Price: ", price)
 
@@ -311,8 +312,8 @@ def map():
 
 
     # TERM
-    #df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq+1)&
-    #                                             (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
+    df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq+1)&
+                                                 (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
 
     X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
@@ -325,6 +326,7 @@ def map():
 
     print("Term cat: ", term_cat)
     '''
+
     # GBR
     gbr = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=5, max_features=3, random_state=42)
     print(X_term.shape, y_term.shape)

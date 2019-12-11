@@ -239,7 +239,7 @@ def map():
     df_for_current_label = pd.merge(df, ds, on=list(ds.columns))
 
     # Create subsample according to the same(+-) size of the full_sq
-    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-1)&(df_for_current_label.full_sq <= full_sq))]
+    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-2)&(df_for_current_label.full_sq <= full_sq))]
 
 
     # Flats Features for GBR fitting

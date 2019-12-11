@@ -281,7 +281,7 @@ def map():
     print("Price gbr: ", price_gbr)
 
     from sklearn.model_selection import RandomizedSearchCV
-    m = CatBoostRegressor()
+    c = CatBoostRegressor()
     grid = {'depth': [4, 6, 10, 12],
             'l2_leaf_reg': [0, 0.2, 0.5, 0.7, 1],
             'iterations': [100, 200, 400]}
@@ -289,7 +289,7 @@ def map():
     grid1 = {'depth': [6, 10],
              'iterations': [200, 400]}
 
-    grid = RandomizedSearchCV(estimator=m, param_distributions=grid, n_iter=20, cv=2, n_jobs=-1, verbose=5)
+    grid = RandomizedSearchCV(estimator=c, param_distributions=grid, n_iter=20, cv=2, n_jobs=-1, verbose=5)
     grid.fit(X1, y1)
     with open('out.txt', 'w') as f:
         print("\n The best parameters across ALL searched params:\n",

@@ -300,7 +300,8 @@ def map():
 
     #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
     cat = CatBoostRegressor(random_state=42)
-    cat.fit(Pool(X1),Pool(y1),verbose=5)
+    train = Pool(X1, y1)
+    cat.fit(train,verbose=5)
     price_cat = np.expm1(cat.predict([list_of_requested_params_price]))
 
     print("Price cat: ", price_cat)
@@ -351,7 +352,7 @@ def map():
     y_term = df_for_current_label[['term']]
 
     # GBR
-    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=5, max_features=2)
+    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=5, max_features=2, random_state=42)
     print(X_term.shape, y_term.shape)
     gbr.fit(X_term, y_term)
     term_gbr = gbr.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
@@ -359,7 +360,8 @@ def map():
 
     print("Term gbr: ", term_gbr)
 
-    cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
+    cat = CatBoostRegressor(random_state=42)
+    #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
     cat.fit(X1, y1, verbose=5)
     term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])

@@ -356,6 +356,12 @@ def map():
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
     y_term = df_for_current_label[['term']]
 
+    cat = load(SETTINGS.MODEL + '/CAT_TIME_MODEL.joblib')
+    term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+                             is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
+
+    print("Term cat: ", term_cat)
+
     # GBR
     gbr = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=5, max_features=2, random_state=42)
     print(X_term.shape, y_term.shape)
@@ -370,11 +376,7 @@ def map():
     train_time = Pool(X_term, y_term)
     cat.fit(train_time, verbose=5)
     '''
-    cat = load(SETTINGS.MODEL + '/CAT_TIME_MODEL.joblib')
-    term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                         is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
 
-    print("Term cat: ", term_cat)
 
     term = (term_cat+term_gbr)/2
     print("Predicted term: ", term)

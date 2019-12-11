@@ -307,12 +307,12 @@ def map():
     price_xgb = np.expm1(best_xgb_model.predict(np.array(list_of_requested_params_price).reshape((1,-1))))
     print("XGB price: ", price_xgb)
     #price = (price_gbr+price_xgb)/2
-
+    '''
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
 
 
-    price = price_xgb
-    '''
+    price = price_gbr
+
     '''
     # Grid Search XGBoost
     # A parameter grid for XGBoost
@@ -358,7 +358,7 @@ def map():
     print('\n Best normalized gini score for %d-fold search with %d parameter combinations:' % (folds, param_comb))
     print(random_search.best_score_ * 2 - 1)
     '''
-    price = price_gbr
+
 
     price = int(price[0])
     print("Predicted Price: ", price)

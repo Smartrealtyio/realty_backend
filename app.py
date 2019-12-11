@@ -298,7 +298,7 @@ def map():
         f.close()
 
 
-    cat = CatBoostRegressor(iterations=400, max_depth=12, l2_leaf_reg=1)
+    cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
     cat.fit(X1,y1,verbose=5)
     price_cat = np.expm1(cat.predict([list_of_requested_params_price]))
 
@@ -358,7 +358,7 @@ def map():
 
     print("Term gbr: ", term_gbr)
 
-    cat = CatBoostRegressor(iterations=400, max_depth=12, l2_leaf_reg=1)
+    cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
     cat.fit(X1, y1, verbose=5)
     term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])

@@ -105,6 +105,7 @@ def main_preprocessing():
     print('HEADERS NAME FINALY: ', list(ds.columns))
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     print("All data: ", ds.shape)
     ds = ds[ds.resource_id == 0]
     print('Just Yandex: ', ds.shape)
@@ -135,6 +136,8 @@ def main_preprocessing():
     labels = kmeans.labels_
     clean_data['clusters'] = labels
 
+=======
+>>>>>>> parent of 355993e... Catboost params tunning
 =======
 >>>>>>> parent of 355993e... Catboost params tunning
     print('Saving to new csv')

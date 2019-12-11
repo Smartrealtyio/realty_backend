@@ -332,7 +332,7 @@ def map():
     y_term = df_for_current_label[['term']]
 
     # GBR
-    gbr = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=5, max_features=3)
+    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=5, max_features=2)
     print(X_term.shape, y_term.shape)
     gbr.fit(X_term, y_term)
     term_gbr = gbr.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,

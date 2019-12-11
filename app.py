@@ -239,7 +239,7 @@ def map():
     df_for_current_label = pd.merge(df, ds, on=list(ds.columns))
 
     # Create subsample according to the same(+-) size of the full_sq
-    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-2)&(df_for_current_label.full_sq <= full_sq+1))]
+    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-1)&(df_for_current_label.full_sq <= full_sq))]
 
 
     # Flats Features for GBR fitting
@@ -311,7 +311,7 @@ def map():
 
 
     # TERM
-    df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq+1)&
+    df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq)&
                                                  (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
 
@@ -376,7 +376,7 @@ def map():
     # Create list of dictionaries
     a = []
     a += ({'x': x, 'y': y} for x, y in zip(x, y))
-    # Sort list by term 
+    # Sort list by term
     a = sorted(a, key=lambda i: i['x'], reverse=False)
     print(a)
 

@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify, render_template
 from scipy import stats
+from catboost import CatBoostRegressor
 import xgboost
 import psycopg2
 import settings_local as SETTINGS
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import IsolationForest
 from sklearn.ensemble import GradientBoostingRegressor
+#from catboost import Pool, CatBoostRegressor
 from joblib import dump, load
 import math as m
 import math
@@ -255,24 +257,15 @@ def map():
 
     df_for_current_label = data[data.clusters == current_label[0]]
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-2)&(df_for_current_label.full_sq <= full_sq+2))]
-    def remove_outlier(df_in, col_name):
-        q1 = df_in[col_name].quantile(0.15)
-        q3 = df_in[col_name].quantile(0.85)
-        # iqr = q3 - q1  # Interquartile range
-        # fence_low = q1 - 1.5 * iqr
-        # fence_high = q3 + 1.5 * iqr
-        df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
-        return df_out
+
 
 
     df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
-    # df_for_current_label = remove_outlier(df_for_current_label, 'price')
+
 
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
 
-    # sc = StandardScaler()
-    # X1 = sc.fit_transform(X1)
 
     df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
     y1 = df_for_current_label[['price']].values.ravel()
@@ -280,84 +273,24 @@ def map():
     # PRICE
 
     # GBR
-    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=15, verbose=10, max_features=2)
+    gbr = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=5, max_features=3)
     print(X1.shape, y1.shape)
     gbr.fit(X1, y1)
     pred_gbr = gbr.predict([list_of_requested_params_price])
     price_gbr = np.expm1(pred_gbr)
     print("Price gbr: ", price_gbr)
 
-    '''
-    # XGBoost
-    X1_xgb = X1.values
-    y1_xgb = df_for_current_label[['price']].values
+    cat = CatBoostRegressor(iterations=300, max_depth=12, learning_rate=0.1)
+    cat.fit(X1,y1,verbose=5)
+    pred_cat = cat.predict([list_of_requested_params_price])
+    price_cat = np.expm1(pred_cat)
+    print("Price cat: ", price_cat)
 
-    best_xgb_model = xgboost.XGBRegressor(colsample_bytree=0.4,
-                                          gamma=0.5,
-                                          learning_rate=0.1,
-                                          max_depth=5,
-                                          min_child_weight=3,
-                                          n_estimators=300,
-                                          reg_alpha=0,
-                                          reg_lambda=0.6,
-                                          subsample=0.8,
-                                          seed=42)
-    print("XGB start fitting: ")
-    best_xgb_model.fit(X1_xgb, y1_xgb)
-    price_xgb = np.expm1(best_xgb_model.predict(np.array(list_of_requested_params_price).reshape((1,-1))))
-    print("XGB price: ", price_xgb)
-    #price = (price_gbr+price_xgb)/2
-    '''
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
 
 
-    price = price_gbr
+    price = (price_gbr+pred_cat)/2
 
-    '''
-    # Grid Search XGBoost
-    # A parameter grid for XGBoost
-    from datetime import datetime
-    from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
-    from sklearn.metrics import roc_auc_score
-    from sklearn.model_selection import StratifiedKFold
-    def timer(start_time=None):
-        if not start_time:
-            start_time = datetime.now()
-            return start_time
-        elif start_time:
-            thour, temp_sec = divmod((datetime.now() - start_time).total_seconds(), 3600)
-            tmin, tsec = divmod(temp_sec, 60)
-            print('\n Time taken: %i hours %i minutes and %s seconds.' % (thour, tmin, round(tsec, 2)))
-    params = {
-        'min_child_weight': [1, 3, 5],
-        'gamma': [0, 0.2, 0.3, 0.5, 1, 1.2],
-        'subsample': [0.6, 0.8, 1.0],
-        'max_depth': [3, 4, 5],
-        'colsample_bytree': [0.3, 0.4, 0.5, 0.6],
-        'reg_lambda': [0, 0.2, 0.4, 0.6, 0.8],
-        'reg_alpha': [0, 0.1, 0.3, 0.5, 0.7]
-    }
-    xgb = xgboost.XGBRegressor(n_estimators=600, learning_rate=0.1)
-
-    folds = 3
-    param_comb = 5
-
-
-
-    random_search = RandomizedSearchCV(xgb, param_distributions=params, n_iter=param_comb, n_jobs=4,
-                                       cv=folds, verbose=3, random_state=1001)
-
-    # Here we go
-    start_time = timer(None)  # timing starts from this point for "start_time" variable
-    random_search.fit(X1_xgb, y1_xgb)
-    timer(start_time)  # timing ends here for "start_time" variable
-    print('\n Best hyperparameters:')
-    print(random_search.best_params_)
-    print('\n Best estimator:')
-    print(random_search.best_estimator_)
-    print('\n Best normalized gini score for %d-fold search with %d parameter combinations:' % (folds, param_comb))
-    print(random_search.best_score_ * 2 - 1)
-    '''
 
 
     price = int(price[0])
@@ -387,22 +320,37 @@ def map():
     clean_data = pd.merge(df, ds, on=list(ds.columns))
     df_for_current_label = clean_data
 
-    sc = StandardScaler()
 
     # TERM
     df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq+1)&
                                                  (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
 
-    reg = GradientBoostingRegressor(n_estimators=350, max_depth=12, max_features=3)
-    reg.fit(df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
-                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']], df_for_current_label[['term']])
+    X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude','price', 'full_sq', 'kitchen_sq',
+                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
+    y_term = df_for_current_label[['term']]
 
-
-    term = reg.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+    # GBR
+    gbr = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=5, max_features=3)
+    print(X_term.shape, y_term.shape)
+    gbr.fit(X_term, y_term)
+    term_gbr = gbr.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
-    term = int(term.item(0))
-    print(term)
+
+    print("Term gbr: ", term_gbr)
+
+    cat = CatBoostRegressor(iterations=300, max_depth=12, learning_rate=0.1)
+    cat.fit(X1, y1, verbose=5)
+    term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+                         is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
+
+    print("Term cat: ", term_cat)
+
+    term = (term_cat+term_gbr)/2
+    print("Predicted term: ", term)
+
+    #term = int(term.item(0))
+    #print(term)
 
 
     #df_for_current_label = remove_outlier(df_for_current_label, 'price')

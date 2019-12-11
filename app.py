@@ -364,7 +364,7 @@ def map():
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
 
     print("Term gbr: ", term_gbr)
-
+    '''
     cat = CatBoostRegressor(random_state=42)
     #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
     train_time = Pool(X_term, y_term)
@@ -376,8 +376,8 @@ def map():
 
     term = (term_cat+term_gbr)/2
     print("Predicted term: ", term)
-
-    # term = term_gbr
+    '''
+    term = term_gbr
     term = int(term.item(0))
 
 

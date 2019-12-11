@@ -280,7 +280,7 @@ def map():
     price_gbr = np.expm1(pred_gbr)
     print("Price gbr: ", price_gbr)
 
-    cat = CatBoostRegressor(iterations=300, max_depth=12, learning_rate=0.1)
+    cat = CatBoostRegressor(iterations=150, max_depth=4)
     cat.fit(X1,y1,verbose=5)
     pred_cat = cat.predict([list_of_requested_params_price])
     price_cat = np.expm1(pred_cat)

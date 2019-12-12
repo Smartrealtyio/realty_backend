@@ -330,7 +330,7 @@ def map():
     '''
 
     # GBR
-    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=7, verbose=5, max_features=2, random_state=42)
+    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=5, max_features=3, random_state=42)
     print(X_term.shape, y_term.shape)
     GBR_TERM.fit(X_term, y_term)
     term_gbr_pred = GBR_TERM.predict([[longitude, latitude, float(price), full_sq, X, Y]])

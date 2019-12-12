@@ -158,7 +158,7 @@ def main_preprocessing():
         clean_data['clusters'] = labels
 
         print('Saving to new csv')
-        clean_data.to_csv(prepared_data+'/COORDINATES_MAin.csv', index=None, header=True)
+        clean_data.to_csv(prepared_data+'/COORDINATES_Pred_Term.csv', index=None, header=True)
 
 
 if __name__ == '__main__':

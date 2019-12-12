@@ -104,8 +104,6 @@ def main_preprocessing():
     print(ds.shape)
     print('HEADERS NAME FINALY: ', list(ds.columns))
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     print("All data: ", ds.shape)
     ds = ds[ds.resource_id == 0]
     print('Just Yandex: ', ds.shape)
@@ -136,10 +134,7 @@ def main_preprocessing():
     labels = kmeans.labels_
     clean_data['clusters'] = labels
 
-=======
->>>>>>> parent of 355993e... Catboost params tunning
-=======
->>>>>>> parent of 355993e... Catboost params tunning
+
     print('Saving to new csv')
     print(ds.building_type_str[:3])
     ds.to_csv(SETTINGS.DATA+'/COORDINATES_MEAN_PRICE.csv', index=None, header=True)

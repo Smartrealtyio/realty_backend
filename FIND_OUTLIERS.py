@@ -12,6 +12,7 @@ PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModel.joblib'
 MODEL_OUTLIERS = SETTINGS.MODEL + '/models.joblib'
 
 
+
 def OutliersSearch():
 
     data = pd.read_csv(DATA_OUTLIERS)

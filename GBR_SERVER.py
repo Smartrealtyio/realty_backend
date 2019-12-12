@@ -19,6 +19,7 @@ PATH_TO_PRICE_MODEL_X = SETTINGS.MODEL + '/PriceModelXGBoost.joblib'
 PATH_TO_PRICE_MODEL_CAT = SETTINGS.MODEL + '/PriceModelCatGradient.joblib'
 
 
+
 def Model(data: pd.DataFrame):
     from scipy import stats
 

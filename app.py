@@ -87,7 +87,10 @@ def mean():
     if price_to != None:
         data_offers = data_offers[data_offers.price <= price_to]
 
+
+
     # PRICE
+
     '''
 
     X1 = data_offers[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',

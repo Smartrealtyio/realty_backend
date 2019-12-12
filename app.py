@@ -331,7 +331,7 @@ def map():
     '''
 
     # GBR
-    gbr = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=5, max_features=3, random_state=42)
+    gbr = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=5, max_features=3, random_state=42)
     print(X_term.shape, y_term.shape)
     gbr.fit(X_term, y_term)
     term_gbr = gbr.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,

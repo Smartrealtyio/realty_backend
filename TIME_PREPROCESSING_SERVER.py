@@ -152,7 +152,7 @@ def main_preprocessing():
         print("After removing term_outliers: ", df1.shape)
 
         clean_data = pd.merge(df, df1, on=list(ds.columns))
-        kmeans = KMeans(n_clusters=100, random_state=42).fit(clean_data[['longitude', 'latitude']])
+        kmeans = KMeans(n_clusters=80, random_state=42).fit(clean_data[['longitude', 'latitude']])
 
         dump(kmeans, PATH_TO_TIME_MODEL + '/KMEAN_CLUSTERING.joblib')
         labels = kmeans.labels_

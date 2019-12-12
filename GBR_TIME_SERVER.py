@@ -26,7 +26,7 @@ def model():
     y_term = data[['term']]
 
     # Cat Gradient
-    cat = CatBoostRegressor(random_state=42, iterations=2000, max_depth=5, learning_rate=0.05)
+    cat = CatBoostRegressor(random_state=42, iterations=2000, max_depth=4, learning_rate=0.05)
     train = Pool(X_term,y_term)
     cat.fit(train, verbose=5)
     dump(cat, PATH_TO_TIME_MODEL+'/CAT_TIME_MODEL.joblib')

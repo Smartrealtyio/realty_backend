@@ -256,12 +256,12 @@ def map():
     # PRICE PREDICTION
 
     # GBR
-    gbr = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=5, max_features=3, random_state=42)
+    GBR_PRCIE = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=5, max_features=3, random_state=42)
     print(X1.shape, y1.shape)
-    gbr.fit(X1, y1)
-    price_gbr = np.expm1(gbr.predict([list_of_requested_params_price]))
+    GBR_PRCIE.fit(X1, y1)
+    price_gbr_pred = np.expm1(GBR_PRCIE.predict([list_of_requested_params_price]))
 
-    print("Price gbr: ", price_gbr)
+    print("Price gbr: ", price_gbr_pred)
 
     '''
     from sklearn.model_selection import RandomizedSearchCV
@@ -290,16 +290,16 @@ def map():
 
     print("Price cat: ", price_cat)
     '''
-    cat = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
-    price_cat = np.expm1(cat.predict([list_of_requested_params_price]))
+    CAT_PRICE = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
+    price_cat_pred = np.expm1(CAT_PRICE.predict([list_of_requested_params_price]))
 
-    print("Price cat: ", price_cat)
+    print("Price cat: ", price_cat_pred)
 
     # Return real value of price (reverse Log Transformation)
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
 
     # Count mean of Cat and GBR algorithms prediction
-    price = (price_gbr+price_cat)/2
+    price = (price_gbr_pred+price_cat_pred)/2
     #price = price_cat
     price = int(price[0])
     print("Predicted Price: ", price)
@@ -331,13 +331,13 @@ def map():
     '''
 
     # GBR
-    gbr = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=5, max_features=3, random_state=42)
+    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=5, max_features=3, random_state=42)
     print(X_term.shape, y_term.shape)
-    gbr.fit(X_term, y_term)
-    term_gbr = gbr.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+    GBR_TERM.fit(X_term, y_term)
+    term_gbr_pred = GBR_TERM.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                          is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
 
-    print("Term gbr: ", term_gbr)
+    print("Term gbr: ", term_gbr_pred)
     '''
     cat = CatBoostRegressor(random_state=42)
     #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
@@ -350,7 +350,7 @@ def map():
     #print("Predicted term: ", term)
 
 
-    term = term_gbr
+    term = term_gbr_pred
     term = int(term.item(0))
 
 

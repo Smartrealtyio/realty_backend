@@ -250,7 +250,7 @@ def map():
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
 
     # Log Transformation for target label (price) to reduce skew of value
-    df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
+    # df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
     y1 = df_for_current_label[['price']].values.ravel()
 
     # PRICE PREDICTION
@@ -331,7 +331,7 @@ def map():
     '''
 
     # GBR
-    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=5, verbose=5, max_features=2, random_state=42)
+    GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=7, verbose=5, max_features=2, random_state=42)
     print(X_term.shape, y_term.shape)
     GBR_TERM.fit(X_term, y_term)
     term_gbr_pred = GBR_TERM.predict([[renovation, has_elevator, longitude, latitude, float(price), full_sq, kitchen_sq,

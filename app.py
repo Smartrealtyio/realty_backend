@@ -254,7 +254,7 @@ def map():
     y1 = df_for_current_label[['price']].values.ravel()
 
     # PRICE PREDICTION
-    '''
+
     # GBR
     gbr = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=5, max_features=3, random_state=42)
     print(X1.shape, y1.shape)
@@ -262,7 +262,7 @@ def map():
     price_gbr = np.expm1(gbr.predict([list_of_requested_params_price]))
 
     print("Price gbr: ", price_gbr)
-    '''
+    
     '''
     from sklearn.model_selection import RandomizedSearchCV
     c = CatBoostRegressor()

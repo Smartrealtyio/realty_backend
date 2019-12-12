@@ -250,7 +250,7 @@ def map():
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
 
     # Log Transformation for target label (price) to reduce skew of value
-    # df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
+    df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
     y1 = df_for_current_label[['price']].values.ravel()
 
     # PRICE PREDICTION

@@ -18,7 +18,6 @@ prepared_data = SETTINGS.DATA
 PATH_TO_TIME_MODEL = SETTINGS.MODEL
 
 
-
 def model():
     data = pd.read_csv(prepared_data+'/COORDINATES_Pred_Term.csv')
     X_term = data[

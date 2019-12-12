@@ -5,7 +5,6 @@ import settings_local as SETTINGS
 import backports.datetime_fromisoformat as bck
 
 
-
 # FINAL PARAMETERS ORDER:
 # ['building_type_str', 'renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'term', 'full_sq', 'kitchen_sq',
 # 'life_sq', 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first']

@@ -88,6 +88,7 @@ def mean():
         data_offers = data_offers[data_offers.price <= price_to]
 
 
+
     # PRICE
 
     '''

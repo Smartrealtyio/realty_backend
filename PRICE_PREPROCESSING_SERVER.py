@@ -6,7 +6,6 @@ import math as m
 raw_data = SETTINGS.PATH_TO_SINGLE_CSV_FILES
 prepared_data = SETTINGS.DATA
 
-
 # FINAL PARAMETERS ORDER:
 # ['building_type_str', 'renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
 #   'life_sq', 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first']

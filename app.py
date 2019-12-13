@@ -334,8 +334,9 @@ def map():
     list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, current_label]
 
-    df_for_current_label_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'term', 'full_sq', 'kitchen_sq',
-                                                      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'price_meter_sq', 'clusters']]
+    df_for_current_label_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price',
+                                                      'term', 'full_sq', 'resource_id', 'offer_id', 'kitchen_sq', 'is_apartment', 'time_to_metro',
+                                                      'floor_last', 'floor_first', 'X', 'Y', 'price_meter_sq', 'clusters']]
 
     most_important_features = list(df_for_current_label_term.corr().term.sort_values(ascending=False).index)[1:4]
     print("Most important features for term prediction: ", most_important_features)

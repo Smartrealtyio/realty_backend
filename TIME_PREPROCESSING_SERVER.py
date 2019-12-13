@@ -169,7 +169,7 @@ def main_preprocessing():
         labels = kmeans.labels_
         clean_data['clusters'] = labels
 
-        print('Saving to new csv')
+        print('Saving to new csv', clean_data.shape[0])
         clean_data.to_csv(prepared_data+'/COORDINATES_Pred_Term.csv', index=None, header=True)
 
 

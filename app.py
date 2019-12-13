@@ -385,7 +385,9 @@ def map():
     X_term = df_for_current_label_term[['price']]
     y_term = df_for_current_label_term[['term']].values.ravel()
 
-    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
+    #GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
+    from sklearn.linear_model import LinearRegression
+    GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape)
     GBR_TERM.fit(X_term, y_term)
     '''

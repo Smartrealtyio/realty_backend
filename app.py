@@ -432,7 +432,8 @@ def map():
 
     print("Before concat: 1 ", df_for_current_label_term.shape, flush=True)
     print("Before concat: 2 ", df_for_current_label.shape, flush=True)
-    df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, on='term')
+    df_for_links = pd.concat([df_for_current_label_term, df_for_current_label], axis=1, join='inner')
+    # df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, on='term')
     print("After concat: ", df_for_links.shape, flush=True)
 
     # Add links to flats

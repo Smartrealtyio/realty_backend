@@ -223,14 +223,14 @@ def map():
 
     # Data
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
-    print("Initial shape: ", data.shape)
+    print("Initial shape: ", data.shape, flush=True)
 
     # Load KMean Clustering model
     kmeans = load(SETTINGS.MODEL + '/KMEAN_CLUSTERING.joblib')
 
     # Predict Cluster for current flat
     current_label = kmeans.predict([[longitude, latitude]])
-    print("Current label: ", current_label)
+    print("Current label: ", current_label, flush=True)
 
     # Create subsample of flats with same cluster label value (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_label[0]]
@@ -243,7 +243,7 @@ def map():
 
     # Create subsample according to the same(+-) size of the full_sq
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-2)&(df_for_current_label.full_sq <= full_sq+1))]
-    print("Current label dataframe shape: ", df_for_current_label.shape)
+    print("Current label dataframe shape: ", df_for_current_label.shape, flush=True)
 
     # Flats Features for GBR PRICE fitting
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
@@ -257,11 +257,11 @@ def map():
 
     # GBR
     GBR_PRCIE = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=5, max_features=3, random_state=42)
-    print(X1.shape, y1.shape)
+    print(X1.shape, y1.shape, flush=True)
     GBR_PRCIE.fit(X1, y1)
     price_gbr_pred = np.expm1(GBR_PRCIE.predict([list_of_requested_params_price]))
 
-    print("Price gbr: ", price_gbr_pred)
+    print("Price gbr: ", price_gbr_pred, flush=True)
 
     '''
     from sklearn.model_selection import RandomizedSearchCV
@@ -293,7 +293,7 @@ def map():
     CAT_PRICE = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
     price_cat_pred = np.expm1(CAT_PRICE.predict([list_of_requested_params_price]))
 
-    print("Price cat: ", price_cat_pred)
+    print("Price cat: ", price_cat_pred, flush=True)
 
     # Return real value of price (reverse Log Transformation)
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
@@ -302,7 +302,7 @@ def map():
     price = (price_gbr_pred+price_cat_pred)/2
     #price = price_cat
     price = int(price[0])
-    print("Predicted Price: ", price)
+    print("Predicted Price: ", price, flush=True)
 
     price_meter_sq = price / full_sq
     # list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
@@ -352,7 +352,7 @@ def map():
     '''
     df_for_current_label_term = df_for_current_label[['price', 'term']]
     df_for_current_label_term = df_for_current_label_term.sort_values(by=['term'])
-    print("Df_for_current label term: ", df_for_current_label_term.head())
+    print("Df_for_current label term: ", df_for_current_label_term.head(), flush=True)
 
 
 
@@ -380,17 +380,24 @@ def map():
 
     new_a.insert(0, a[0])
     df_for_current_label_term = pd.DataFrame(new_a)
-    print("DataFrame from dictionary: ", df_for_current_label_term.head())
+    print("DataFrame from dictionary: ", df_for_current_label_term.head(), flush=True)
 
     X_term = df_for_current_label_term[['price']]
     print(X_term.head())
     y_term = df_for_current_label_term[['term']].values.ravel()
     print(y_term.head())
 
+
     GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
     #from sklearn.linear_model import LinearRegression
     #GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape)
+
+    #GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
+    from sklearn.linear_model import LinearRegression
+    GBR_TERM = LinearRegression()
+    print(X_term.shape, y_term.shape, flush=True)
+
     GBR_TERM.fit(X_term, y_term)
     '''
     new_params = []
@@ -400,7 +407,7 @@ def map():
 
     term_gbr_pred = GBR_TERM.predict([[price]])
 
-    print("Term gbr: ", term_gbr_pred)
+    print("Term gbr: ", term_gbr_pred, flush=True)
     '''
     cat = CatBoostRegressor(random_state=42)
     #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
@@ -420,10 +427,17 @@ def map():
 
     # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
     df_for_current_label_term = df_for_current_label_term[(df_for_current_label_term.term <= term+200)]
+
     print("Before concat: 1 ", df_for_current_label_term.shape)
     print("Before concat: 2 ", df_for_current_label.shape)
     df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, on='term')
     print("After concat: ", df_for_links.shape, df_for_links.head())
+
+    print("Before concat: 1 ", df_for_current_label_term.shape, flush=True)
+    print("Before concat: 2 ", df_for_current_label.shape, flush=True)
+    df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, on='term')
+    print("After concat: ", df_for_links.shape, df_for_links.head(), flush=True)
+
     # Add links to flats
     term_links = df_for_links.to_dict('record')
     for i in term_links:
@@ -449,7 +463,7 @@ def map():
     a = []
     a += ({'x': x, 'y': y} for x, y in zip(x, y))
     # Sort list by term
-    a = sorted(a, key=lambda i: i['x'], reverse=False)
+    a = sorted(a, key=lambda z: z['x'], reverse=False)
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     '''

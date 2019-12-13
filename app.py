@@ -351,7 +351,7 @@ def map():
         curr_index.append(name)
     '''
     df_for_current_label_term = df_for_current_label_term.sort_values(by=['term'])
-    print(df_for_current_label_term.head())
+    # print(df_for_current_label_term.head())
 
     # X_term = df_for_current_label_term[most_important_features]
     # Create list of term values from subsample of "same" flats

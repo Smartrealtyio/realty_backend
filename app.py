@@ -371,6 +371,7 @@ def map():
     a += ({'term': x, 'price': y} for x, y in zip(x, y))
     # Sort list by term
     a = sorted(a, key=lambda z: z['term'], reverse=False)
+    print(a, flush=True)
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     new_a = []
@@ -428,7 +429,7 @@ def map():
     print("Before concat: 1 ", df_for_current_label_term.shape, flush=True)
     print("Before concat: 2 ", df_for_current_label.shape, flush=True)
     df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, on='term')
-    print("After concat: ", df_for_links.shape, df_for_links.head(), flush=True)
+    # print("After concat: ", df_for_links.shape, df_for_links.head(), flush=True)
 
     # Add links to flats
     term_links = df_for_links.to_dict('record')

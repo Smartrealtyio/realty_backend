@@ -349,6 +349,8 @@ def map():
         name = features_dict.get(i)
         curr_index.append(name)
 
+    df_for_current_label_term = df_for_current_label_term.sort_values(by=['term'])
+
     # X_term = df_for_current_label_term[most_important_features]
     # Create list of term values from subsample of "same" flats
     x = df_for_current_label_term.term

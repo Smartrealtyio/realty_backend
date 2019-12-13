@@ -245,7 +245,7 @@ def map():
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-2)&(df_for_current_label.full_sq <= full_sq+1))]
     print("Current label dataframe shape: ", df_for_current_label.shape)
 
-    # Flats Features for GBR fitting
+    # Flats Features for GBR PRICE fitting
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
 
@@ -315,8 +315,8 @@ def map():
 
 
     # TERM
-    df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq+1)&
-                                                 (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
+    #df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq+1)&
+    #                                             (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
     df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
 
@@ -334,9 +334,9 @@ def map():
     list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, current_label]
 
-    df_for_current_label_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price',
-                                                      'term', 'full_sq', 'resource_id', 'offer_id', 'kitchen_sq', 'is_apartment', 'time_to_metro',
-                                                      'floor_last', 'floor_first', 'X', 'Y', 'price_meter_sq', 'clusters']]
+    # df_for_current_label_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price',
+    #                                                   'term', 'full_sq', 'resource_id', 'offer_id', 'kitchen_sq', 'is_apartment', 'time_to_metro',
+    #                                                   'floor_last', 'floor_first', 'X', 'Y', 'price_meter_sq', 'clusters']]
 
     '''
     most_important_features = list(df_for_current_label_term.corr().term.sort_values(ascending=False).index)[1:4]
@@ -350,8 +350,11 @@ def map():
         name = features_dict.get(i)
         curr_index.append(name)
     '''
+    df_for_current_label_term = df_for_current_label[['price', 'term']]
     df_for_current_label_term = df_for_current_label_term.sort_values(by=['term'])
-    # print(df_for_current_label_term.head())
+    print("Df_for_current label term: ", df_for_current_label_term.head())
+
+
 
     # X_term = df_for_current_label_term[most_important_features]
     # Create list of term values from subsample of "same" flats
@@ -372,9 +375,9 @@ def map():
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     new_a = []
     for i in list(range(1, len(a))):
-
         if a[i].get('price') > a[i - 1].get('price'):
             new_a.append(a[i])
+
     new_a.insert(0, a[0])
     df_for_current_label_term = pd.DataFrame(new_a)
     print("DataFrame from dictionary: ", df_for_current_label_term.head())
@@ -413,9 +416,12 @@ def map():
 
     # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
     df_for_current_label_term = df_for_current_label_term[(df_for_current_label_term.term <= term+200)]
-    df_for_current_label_term  = pd.merge(df_for_current_label_term, df_for_current_label, on=list(df_for_current_label_term.columns))
+    print("Before concat: 1 ", df_for_current_label_term.shape)
+    print("Before concat: 2 ", df_for_current_label.shape)
+    df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, on=list(df_for_current_label_term.columns))
+    print("After concat: ", df_for_links.shape)
     # Add links to flats
-    term_links = df_for_current_label_term.to_dict('record')
+    term_links = df_for_links.to_dict('record')
     for i in term_links:
         if i['resource_id'] == 0:
             i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id'])
@@ -425,12 +431,12 @@ def map():
 
 
     # Create list of term values from subsample of "same" flats
-    x = df_for_current_label_term.term
+    x = df_for_links.term
     x = x.tolist()
     x += [term]
 
     # Create list of price values from subsample of "same" flats
-    y = df_for_current_label_term.price
+    y = df_for_links.price
     y = y.tolist()
     y += [price]
 

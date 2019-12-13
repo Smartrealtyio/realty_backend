@@ -387,7 +387,7 @@ def map():
         new_params.append(list_of_requested_params_term[i])
     '''
 
-    term_gbr_pred = GBR_TERM.predict([price])
+    term_gbr_pred = GBR_TERM.predict([[price]])
 
     print("Term gbr: ", term_gbr_pred)
     '''

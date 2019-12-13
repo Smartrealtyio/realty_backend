@@ -349,18 +349,45 @@ def map():
         name = features_dict.get(i)
         curr_index.append(name)
 
-    X_term = df_for_current_label_term[most_important_features]
+    # X_term = df_for_current_label_term[most_important_features]
+    # Create list of term values from subsample of "same" flats
+    x = df_for_current_label_term.term
+    x = x.tolist()
+
+    # Create list of price values from subsample of "same" flats
+    y = df_for_current_label_term.price
+    y = y.tolist()
+
+
+    # Create list of dictionaries
+    a = []
+    a += ({'term': x, 'price': y} for x, y in zip(x, y))
+    # Sort list by term
+    a = sorted(a, key=lambda i: i['term'], reverse=False)
+
+    # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
+    new_a = []
+    for i in list(range(1, len(a))):
+
+        if a[i].get('price') > a[i - 1].get('price'):
+            new_a.append(a[i])
+    new_a.insert(0, a[0])
+    df_for_current_label_term = pd.DataFrame(new_a)
+    print("DataFrame from dictionary: ", df_for_current_label_term.head())
+
+    X_term = df_for_current_label_term[['price']]
     y_term = df_for_current_label_term[['term']].values.ravel()
 
-    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, max_features=3, random_state=42)
+    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
     print(X_term.shape, y_term.shape)
     GBR_TERM.fit(X_term, y_term)
+    '''
     new_params = []
     for i in curr_index:
         new_params.append(list_of_requested_params_term[i])
+    '''
 
-
-    term_gbr_pred = GBR_TERM.predict([new_params])
+    term_gbr_pred = GBR_TERM.predict([price])
 
     print("Term gbr: ", term_gbr_pred)
     '''
@@ -381,8 +408,7 @@ def map():
 
 
     # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
-    df_for_current_label_term = df_for_current_label_term[((df_for_current_label_term.term <= term+100)&
-                                                           (df_for_current_label_term.renovation == renovation))]
+    df_for_current_label_term = df_for_current_label_term[(df_for_current_label_term.term <= term+200)]
     # Add links to flats
     term_links = df_for_current_label_term.to_dict('record')
     for i in term_links:
@@ -409,6 +435,8 @@ def map():
     a += ({'x': x, 'y': y} for x, y in zip(x, y))
     # Sort list by term
     a = sorted(a, key=lambda i: i['x'], reverse=False)
+
+    # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     new_a = []
     for i in list(range(1, len(a))):
 

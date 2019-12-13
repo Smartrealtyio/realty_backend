@@ -338,6 +338,7 @@ def map():
                                                       'term', 'full_sq', 'resource_id', 'offer_id', 'kitchen_sq', 'is_apartment', 'time_to_metro',
                                                       'floor_last', 'floor_first', 'X', 'Y', 'price_meter_sq', 'clusters']]
 
+    '''
     most_important_features = list(df_for_current_label_term.corr().term.sort_values(ascending=False).index)[1:4]
     print("Most important features for term prediction: ", most_important_features)
     names_list = list(df_for_current_label_term.corr().term.index)
@@ -348,7 +349,7 @@ def map():
     for i in most_important_features:
         name = features_dict.get(i)
         curr_index.append(name)
-
+    '''
     df_for_current_label_term = df_for_current_label_term.sort_values(by=['term'])
     print(df_for_current_label_term.head())
 
@@ -366,7 +367,7 @@ def map():
     a = []
     a += ({'term': x, 'price': y} for x, y in zip(x, y))
     # Sort list by term
-    a = sorted(a, key=lambda i: i['term'], reverse=False)
+    # a = sorted(a, key=lambda i: i['term'], reverse=False)
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     new_a = []
@@ -441,6 +442,7 @@ def map():
     a = sorted(a, key=lambda i: i['x'], reverse=False)
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
+    '''
     new_a = []
     for i in list(range(1, len(a))):
 
@@ -448,8 +450,8 @@ def map():
             new_a.append(a[i])
     new_a.insert(0, a[0])
     print(new_a)
-
-    return jsonify({'Price': price, 'Duration': term, 'PLot': list(new_a), 'FlatsTerm': term_links})
+    '''
+    return jsonify({'Price': price, 'Duration': term, 'PLot': list(a), 'FlatsTerm': term_links})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

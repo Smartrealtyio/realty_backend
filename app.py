@@ -365,10 +365,12 @@ def map():
     y = df_for_current_label_term.price
     y = y.tolist()
 
+    ind = df_for_current_label_term.index
+    ind = ind.tolist()
 
     # Create list of dictionaries
     a = []
-    a += ({'term': l, 'price': n} for l, n in zip(x, y))
+    a += ({'term': l, 'price': n, 'ind': b} for l, n, b in zip(x, y, ind))
     # Sort list by term
     # a = sorted(a, key=lambda z: z['term'], reverse=False)
 
@@ -385,6 +387,7 @@ def map():
     new_a.insert(0, a[0])
     print(new_a, flush=True)
     df_for_current_label_term = pd.DataFrame(new_a)
+    df_for_current_label_term.index = list(df_for_current_label_term.ind)
     print("DataFrame from dictionary: ", df_for_current_label_term.head(), flush=True)
 
     X_term = df_for_current_label_term[['price']]

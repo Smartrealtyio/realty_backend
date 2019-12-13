@@ -319,8 +319,8 @@ def map():
                                                  (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
 
-    X_term = df_for_current_label[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']]
-    y_term = df_for_current_label[['term']]
+    # X_term = df_for_current_label[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']]
+    # y_term = df_for_current_label[['term']]
     '''
     cat = load(SETTINGS.MODEL + '/CAT_TIME_MODEL.joblib')
     term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
@@ -388,7 +388,7 @@ def map():
 
 
     # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
-    df_for_current_label = df_for_current_label[df_for_current_label.term <= term+100]
+    df_for_current_label_term = df_for_current_label[df_for_current_label_term.term <= term+100]
 
     # Create list of term values from subsample of "same" flats
     x = df_for_current_label_term.term

@@ -391,11 +391,6 @@ def map():
     GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
     #from sklearn.linear_model import LinearRegression
     #GBR_TERM = LinearRegression()
-    print(X_term.shape, y_term.shape)
-
-    #GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
-    from sklearn.linear_model import LinearRegression
-    GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape, flush=True)
 
     GBR_TERM.fit(X_term, y_term)
@@ -428,10 +423,7 @@ def map():
     # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
     df_for_current_label_term = df_for_current_label_term[(df_for_current_label_term.term <= term+200)]
 
-    print("Before concat: 1 ", df_for_current_label_term.shape)
-    print("Before concat: 2 ", df_for_current_label.shape)
-    df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, on='term')
-    print("After concat: ", df_for_links.shape, df_for_links.head())
+
 
     print("Before concat: 1 ", df_for_current_label_term.shape, flush=True)
     print("Before concat: 2 ", df_for_current_label.shape, flush=True)

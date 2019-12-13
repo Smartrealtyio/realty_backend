@@ -243,7 +243,7 @@ def map():
 
     # Create subsample according to the same(+-) size of the full_sq
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-2)&(df_for_current_label.full_sq <= full_sq+1))]
-
+    print("Current label dataframe shape: ", df_for_current_label.shape)
 
     # Flats Features for GBR fitting
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
@@ -391,12 +391,12 @@ def map():
     df_for_current_label = df_for_current_label[df_for_current_label.term <= term+100]
 
     # Create list of term values from subsample of "same" flats
-    x = df_for_current_label.term
+    x = df_for_current_label_term.term
     x = x.tolist()
     x += [term]
 
     # Create list of price values from subsample of "same" flats
-    y = df_for_current_label.price
+    y = df_for_current_label_term.price
     y = y.tolist()
     y += [price]
 

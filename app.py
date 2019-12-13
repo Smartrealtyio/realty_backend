@@ -454,7 +454,7 @@ def map():
     x += [term]
 
     # Create list of price values from subsample of "same" flats
-    y = df_for_links.price
+    y = df_for_links.price_x
     y = y.tolist()
     y += [price]
 

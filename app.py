@@ -334,7 +334,7 @@ def map():
                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, current_label]
 
     df_for_current_label_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'term', 'full_sq', 'kitchen_sq',
-                              'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'price_meter_sq', 'clusters']]
+                                                      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'price_meter_sq', 'clusters']]
 
     most_important_features = list(df_for_current_label_term.corr().term.sort_values(ascending=False).index)[1:4]
     print("Most important features for term prediction: ", most_important_features)
@@ -378,8 +378,10 @@ def map():
 
 
 
+    # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
+    df_for_current_label_term = df_for_current_label[df_for_current_label_term.term <= term+100]
     # Add links to flats
-    term_links = df_for_current_label.to_dict('record')
+    term_links = df_for_current_label_term.to_dict('record')
     for i in term_links:
         if i['resource_id'] == 0:
             i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id'])
@@ -387,8 +389,6 @@ def map():
             i['link'] = 'https://www.cian.ru/sale/flat/' + str(i['offer_id'])
 
 
-    # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
-    df_for_current_label_term = df_for_current_label[df_for_current_label_term.term <= term+100]
 
     # Create list of term values from subsample of "same" flats
     x = df_for_current_label_term.term

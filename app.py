@@ -351,7 +351,7 @@ def map():
     y_term = df_for_current_label_term[['term']].values.ravel()
 
     GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, max_features=3, random_state=42)
-    # print(X.shape, y.shape)
+    print(X_term.shape, y_term.shape)
     GBR_TERM.fit(X_term, y_term)
     new_params = []
     for i in curr_index:

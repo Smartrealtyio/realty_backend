@@ -409,6 +409,7 @@ def map():
 
     # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
     df_for_current_label_term = df_for_current_label_term[(df_for_current_label_term.term <= term+200)]
+    df_for_current_label_term  = pd.merge(df_for_current_label_term, df_for_current_label, on=list(df_for_current_label_term.columns))
     # Add links to flats
     term_links = df_for_current_label_term.to_dict('record')
     for i in term_links:

@@ -371,7 +371,7 @@ def map():
     a += ({'term': x, 'price': y} for x, y in zip(x, y))
     # Sort list by term
     # a = sorted(a, key=lambda z: z['term'], reverse=False)
-    print(a, flush=True)
+
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     new_a = []

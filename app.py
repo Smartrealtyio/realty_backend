@@ -385,7 +385,7 @@ def map():
     X_term = df_for_current_label_term[['price']]
     print(X_term.head())
     y_term = df_for_current_label_term[['term']].values.ravel()
-    print(y_term.head())
+    print(y_term)
 
 
     GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)

@@ -370,7 +370,7 @@ def map():
     a = []
     a += ({'term': x, 'price': y} for x, y in zip(x, y))
     # Sort list by term
-    a = sorted(a, key=lambda z: z['term'], reverse=False)
+    # a = sorted(a, key=lambda z: z['term'], reverse=False)
     print(a, flush=True)
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
@@ -380,6 +380,7 @@ def map():
             new_a.append(a[i])
 
     new_a.insert(0, a[0])
+    print(new_a, flush=True)
     df_for_current_label_term = pd.DataFrame(new_a)
     print("DataFrame from dictionary: ", df_for_current_label_term.head(), flush=True)
 

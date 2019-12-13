@@ -370,7 +370,7 @@ def map():
     a = []
     a += ({'term': x, 'price': y} for x, y in zip(x, y))
     # Sort list by term
-    # a = sorted(a, key=lambda i: i['term'], reverse=False)
+    a = sorted(a, key=lambda z: z['term'], reverse=False)
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     new_a = []
@@ -383,11 +383,13 @@ def map():
     print("DataFrame from dictionary: ", df_for_current_label_term.head())
 
     X_term = df_for_current_label_term[['price']]
+    print(X_term.head())
     y_term = df_for_current_label_term[['term']].values.ravel()
+    print(y_term.head())
 
-    #GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
-    from sklearn.linear_model import LinearRegression
-    GBR_TERM = LinearRegression()
+    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
+    #from sklearn.linear_model import LinearRegression
+    #GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape)
     GBR_TERM.fit(X_term, y_term)
     '''
@@ -420,8 +422,8 @@ def map():
     df_for_current_label_term = df_for_current_label_term[(df_for_current_label_term.term <= term+200)]
     print("Before concat: 1 ", df_for_current_label_term.shape)
     print("Before concat: 2 ", df_for_current_label.shape)
-    df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, on=list(df_for_current_label_term.columns))
-    print("After concat: ", df_for_links.shape)
+    df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, on='term')
+    print("After concat: ", df_for_links.shape, df_for_links.head())
     # Add links to flats
     term_links = df_for_links.to_dict('record')
     for i in term_links:

@@ -151,6 +151,7 @@ def main_preprocessing():
         #df1 = remove_outlier(ds, 'term')
         print("After removing term_outliers: ", df1.shape)
         clean_data = pd.merge(df, df1, on=list(ds.columns))
+        '''
         print("Find optimal number of K means: ")
         Sum_of_squared_distances = []
         k_list = []
@@ -163,6 +164,7 @@ def main_preprocessing():
             k_list.append(k)
 
         print(list(zip(k_list, Sum_of_squared_distances)))
+        '''
         kmeans = KMeans(n_clusters=110, random_state=42).fit(clean_data[['longitude', 'latitude']])
 
         dump(kmeans, PATH_TO_TIME_MODEL + '/KMEAN_CLUSTERING.joblib')

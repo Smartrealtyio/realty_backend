@@ -318,6 +318,7 @@ def map():
     df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq+1)&
                                                  (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
+    df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
 
     # X_term = df_for_current_label[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']]
     # y_term = df_for_current_label[['term']]
@@ -379,7 +380,8 @@ def map():
 
 
     # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
-    df_for_current_label_term = df_for_current_label[df_for_current_label_term.term <= term+100]
+    df_for_current_label_term = df_for_current_label_term[((df_for_current_label_term.term <= term+100)&
+                                                           (df_for_current_label_term.renovation == renovation))]
     # Add links to flats
     term_links = df_for_current_label_term.to_dict('record')
     for i in term_links:

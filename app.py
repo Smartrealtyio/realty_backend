@@ -450,7 +450,7 @@ def map():
 
 
     # Create list of term values from subsample of "same" flats
-    x = df_for_links.term
+    x = df_for_links.term_x
     x = x.tolist()
     x += [term]
 

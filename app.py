@@ -389,13 +389,14 @@ def map():
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     print(a, flush=True)
     new_a = []
+    new_a.insert(0, a[0])
     print(len(a), flush=True)
     for i in list(range(1, len(a))):
 
-        if a[i].get('price') > a[i - 1].get('price'):
+        if a[i].get('price') > new_a[-1]:
             new_a.append(a[i])
 
-    new_a.insert(0, a[0])
+
     print(new_a, flush=True)
     df_for_current_label_term = pd.DataFrame(new_a)
     df_for_current_label_term.index = list(df_for_current_label_term.ind)

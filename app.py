@@ -320,8 +320,10 @@ def map():
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
     df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
 
-    # X_term = df_for_current_label[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']]
-    # y_term = df_for_current_label[['term']]
+    X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
+                                  'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
+                                   'price_meter_sq', 'clusters']]
+    y_term = df_for_current_label[['term']]
     '''
     cat = load(SETTINGS.MODEL + '/CAT_TIME_MODEL.joblib')
     term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
@@ -349,6 +351,8 @@ def map():
     for i in most_important_features:
         name = features_dict.get(i)
         curr_index.append(name)
+    '''
+
     '''
     df_for_current_label_term = df_for_current_label[['price', 'term', 'resource_id', 'offer_id']]
     df_for_current_label_term = df_for_current_label_term.sort_values(by=['term'])
@@ -406,9 +410,10 @@ def map():
     print(X_term.head(), flush=True)
     y_term = df_for_current_label_term[['term']].values.ravel()
     #print(y_term)
+    
+    '''
 
-
-    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
+    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=10, random_state=42)
     # from sklearn.linear_model import LinearRegression
     # GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape, flush=True)
@@ -420,7 +425,7 @@ def map():
         new_params.append(list_of_requested_params_term[i])
     '''
 
-    term_gbr_pred = GBR_TERM.predict([[price]])
+    term_gbr_pred = GBR_TERM.predict([list_of_requested_params_term])
 
     print("Term gbr: ", term_gbr_pred, flush=True)
     '''
@@ -441,18 +446,19 @@ def map():
 
 
     # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
-    df_for_current_label_term = df_for_current_label_term[(df_for_current_label_term.term <= term+200)]
+    df_for_current_label = df_for_current_label[(df_for_current_label.term <= term+200)]
 
 
-
+    '''
     print("Before concat: 1 ", df_for_current_label_term.shape, flush=True)
     print("Before concat: 2 ", df_for_current_label.shape, flush=True)
 
     df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, left_index=True, right_index=True)
     print("After concat: ", df_for_links.shape, flush=True)
+    '''
 
     # Add links to flats
-    term_links = df_for_links.to_dict('record')
+    term_links = df_for_current_label.to_dict('record')
     #for i in term_links:
     #    if i['resource_id_x'] == 0:
     #        i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id_x'])
@@ -462,13 +468,13 @@ def map():
 
 
     # Create list of term values from subsample of "same" flats
-    terms = df_for_links.term_x
+    terms = df_for_current_label.term
     # terms = df_for_current_label_term.term
     terms = terms.tolist()
     terms += [term]
 
     # Create list of price values from subsample of "same" flats
-    prices = df_for_links.price_x
+    prices = df_for_current_label.price
     # prices = df_for_current_label_term.price
     prices = prices.tolist()
     prices += [price]

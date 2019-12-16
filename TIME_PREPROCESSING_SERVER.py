@@ -165,7 +165,7 @@ def main_preprocessing():
 
         print(list(zip(k_list, Sum_of_squared_distances)))
         '''
-        kmeans = KMeans(n_clusters=80, random_state=42).fit(clean_data[['longitude', 'latitude']])
+        kmeans = KMeans(n_clusters=110, random_state=42).fit(clean_data[['longitude', 'latitude']])
 
         dump(kmeans, PATH_TO_TIME_MODEL + '/KMEAN_CLUSTERING.joblib')
         labels = kmeans.labels_

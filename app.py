@@ -479,6 +479,13 @@ def map():
     a += ({'x': trm, 'y': prc} for trm, prc in zip(terms, prices))
     # Sort list by term
     a = sorted(a, key=lambda z: z['x'], reverse=False)
+    seen = set()
+    new_l = []
+    for d in a:
+        t = tuple(d.items())
+        if t not in seen:
+            seen.add(t)
+            new_l.append(d)
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     '''
@@ -490,7 +497,7 @@ def map():
     new_a.insert(0, a[0])
     print(new_a)
     '''
-    return jsonify({'Price': price, 'Duration': term, 'PLot': list(a), 'FlatsTerm': term_links})
+    return jsonify({'Price': price, 'Duration': term, 'PLot': list(new_l), 'FlatsTerm': term_links})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

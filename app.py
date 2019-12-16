@@ -452,7 +452,7 @@ def map():
     print("After concat: ", df_for_links.shape, flush=True)
 
     # Add links to flats
-    term_links = df_for_current_label_term.to_dict('record')
+    term_links = df_for_links.to_dict('record')
     for i in term_links:
         if i['resource_id'] == 0:
             i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id'])

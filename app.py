@@ -365,12 +365,23 @@ def map():
     flats_subsample_price = df_for_current_label_term.price
     flats_subsample_price = flats_subsample_price.tolist()
 
+    # Create list of resource_id values from subsample of "same" flats
+    flats_subsample_resource_id = df_for_current_label_term.resource_id
+    flats_subsample_resource_id = flats_subsample_resource_id.tolist()
+
+    # Create list of offer_id values from subsample of "same" flats
+    flats_subsample_offer_id = df_for_current_label_term.offer_id
+    flats_subsample_offer_id = flats_subsample_offer_id.tolist()
+
+
     ind = df_for_current_label_term.index
     
 
     # Create list of dictionaries
     a = []
-    a += ({'term': l, 'price': n, 'ind': b} for l, n, b in zip(flats_subsample_term, flats_subsample_price, ind))
+    a += ({'term': l, 'price': n, 'ind': b, 'resource_id': id, 'offer_id': offer} for l, n, b, id, offer in zip(flats_subsample_term,
+                                                                                  flats_subsample_price, ind,
+                                                                                  flats_subsample_resource_id, flats_subsample_offer_id))
     # Sort list by term
     a = sorted(a, key=lambda z: z['term'], reverse=False)
 

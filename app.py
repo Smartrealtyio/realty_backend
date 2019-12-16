@@ -408,9 +408,9 @@ def map():
     #print(y_term)
 
 
-    # GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
-    from sklearn.linear_model import LinearRegression
-    GBR_TERM = LinearRegression()
+    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=2, verbose=10, random_state=42)
+    # from sklearn.linear_model import LinearRegression
+    # GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape, flush=True)
 
     GBR_TERM.fit(X_term, y_term)

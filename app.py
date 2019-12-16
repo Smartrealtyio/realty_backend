@@ -453,11 +453,11 @@ def map():
 
     # Add links to flats
     term_links = df_for_links.to_dict('record')
-    for i in term_links:
-        if i['resource_id'] == 0:
-            i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id'])
-        else:
-            i['link'] = 'https://www.cian.ru/sale/flat/' + str(i['offer_id'])
+    #for i in term_links:
+    #    if i['resource_id_x'] == 0:
+    #        i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id_x'])
+    #    else:
+    #        i['link'] = 'https://www.cian.ru/sale/flat/' + str(i['offer_id'])
 
 
 

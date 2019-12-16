@@ -445,11 +445,11 @@ def map():
 
 
 
-    # print("Before concat: 1 ", df_for_current_label_term.shape, flush=True)
-    # print("Before concat: 2 ", df_for_current_label.shape, flush=True)
+    print("Before concat: 1 ", df_for_current_label_term.shape, flush=True)
+    print("Before concat: 2 ", df_for_current_label.shape, flush=True)
 
-    # df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, left_index=True, right_index=True)
-    # print("After concat: ", df_for_links.shape, flush=True)
+    df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, left_index=True, right_index=True)
+    print("After concat: ", df_for_links.shape, flush=True)
 
     # Add links to flats
     term_links = df_for_current_label_term.to_dict('record')
@@ -462,14 +462,14 @@ def map():
 
 
     # Create list of term values from subsample of "same" flats
-    # terms = df_for_links.term_x
-    terms = df_for_current_label_term.term
+    terms = df_for_links.term_x
+    # terms = df_for_current_label_term.term
     terms = terms.tolist()
     terms += [term]
 
     # Create list of price values from subsample of "same" flats
-    # prices = df_for_links.price_x
-    prices = df_for_current_label_term.price
+    prices = df_for_links.price_x
+    # prices = df_for_current_label_term.price
     prices = prices.tolist()
     prices += [price]
 

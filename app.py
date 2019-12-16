@@ -350,7 +350,7 @@ def map():
         name = features_dict.get(i)
         curr_index.append(name)
     '''
-    df_for_current_label_term = df_for_current_label[['price', 'term']]
+    df_for_current_label_term = df_for_current_label[['price', 'term', 'resource_id', 'offer_id']]
     df_for_current_label_term = df_for_current_label_term.sort_values(by=['term'])
     print("Df_for_current label term: ", df_for_current_label_term.head(), flush=True)
 
@@ -358,21 +358,21 @@ def map():
 
     # X_term = df_for_current_label_term[most_important_features]
     # Create list of term values from subsample of "same" flats
-    x = df_for_current_label_term.term
-    x = x.tolist()
+    flats_subsample_term = df_for_current_label_term.term
+    flats_subsample_term = flats_subsample_term.tolist()
 
     # Create list of price values from subsample of "same" flats
-    y = df_for_current_label_term.price
-    y = y.tolist()
+    flats_subsample_price = df_for_current_label_term.price
+    flats_subsample_price = flats_subsample_price.tolist()
 
     ind = df_for_current_label_term.index
-    ind = ind.tolist()
+    
 
     # Create list of dictionaries
     a = []
-    a += ({'term': l, 'price': n, 'ind': b} for l, n, b in zip(x, y, ind))
+    a += ({'term': l, 'price': n, 'ind': b} for l, n, b in zip(flats_subsample_term, flats_subsample_price, ind))
     # Sort list by term
-    # a = sorted(a, key=lambda z: z['term'], reverse=False)
+    a = sorted(a, key=lambda z: z['term'], reverse=False)
 
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
@@ -433,14 +433,14 @@ def map():
 
 
 
-    print("Before concat: 1 ", df_for_current_label_term.shape, flush=True)
-    print("Before concat: 2 ", df_for_current_label.shape, flush=True)
+    # print("Before concat: 1 ", df_for_current_label_term.shape, flush=True)
+    # print("Before concat: 2 ", df_for_current_label.shape, flush=True)
 
-    df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, left_index=True, right_index=True)
-    print("After concat: ", df_for_links.shape, flush=True)
+    # df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, left_index=True, right_index=True)
+    # print("After concat: ", df_for_links.shape, flush=True)
 
     # Add links to flats
-    term_links = df_for_links.to_dict('record')
+    term_links = df_for_current_label_term.to_dict('record')
     for i in term_links:
         if i['resource_id'] == 0:
             i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id'])
@@ -450,19 +450,19 @@ def map():
 
 
     # Create list of term values from subsample of "same" flats
-    x = df_for_links.term_x
-    x = x.tolist()
-    x += [term]
+    terms = df_for_links.term_x
+    terms = terms.tolist()
+    terms += [term]
 
     # Create list of price values from subsample of "same" flats
-    y = df_for_links.price_x
-    y = y.tolist()
-    y += [price]
+    prices = df_for_links.price_x
+    prices = prices.tolist()
+    prices += [price]
 
 
     # Create list of dictionaries
     a = []
-    a += ({'x': x, 'y': y} for x, y in zip(x, y))
+    a += ({'x': trm, 'y': prc} for trm, prc in zip(terms, prices))
     # Sort list by term
     a = sorted(a, key=lambda z: z['x'], reverse=False)
 

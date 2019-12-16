@@ -393,7 +393,7 @@ def map():
     print(len(a), flush=True)
     for i in list(range(1, len(a))):
 
-        if a[i].get('price') > new_a[-1]:
+        if a[i].get('price') > new_a[-1].get('price'):
             new_a.append(a[i])
 
 

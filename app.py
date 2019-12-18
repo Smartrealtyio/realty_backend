@@ -256,7 +256,7 @@ def map():
     # PRICE PREDICTION
 
     # GBR
-    GBR_PRCIE = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=5, max_features=3, random_state=42)
+    GBR_PRCIE = GradientBoostingRegressor(n_estimators=150, max_depth=4, verbose=5, max_features=3, random_state=42)
     print(X1.shape, y1.shape, flush=True)
     GBR_PRCIE.fit(X1, y1)
     price_gbr_pred = np.expm1(GBR_PRCIE.predict([list_of_requested_params_price]))

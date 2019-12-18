@@ -104,8 +104,8 @@ def main_preprocessing():
         ds.building_type_str.replace(buildings_types, inplace=True)
 
         # ONLY CLOSED DEAL
-        ds = ds.loc[ds['closed'] == True]
-        print(ds.closed.value_counts())
+        # ds = ds.loc[ds['closed'] == True]
+        # print(ds.closed.value_counts())
         ds = ds.drop(['closed'], axis=1)
         print('HEADERS NAME: ', list(ds.columns))
 

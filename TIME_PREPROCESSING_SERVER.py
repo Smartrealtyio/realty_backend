@@ -21,7 +21,9 @@ def main_preprocessing():
             'id', 'price', 'changed_date', 'flat_id', 'created_at', 'updated_at'
         ], usecols=["price", "flat_id", 'changed_date', 'updated_at'])
         print(prices.shape)
-        prices = prices.iloc[:-3]
+        print("Prices all years: ", prices.shape)
+        prices = prices[((prices['changed_date'].str.contains('2018')) | (prices['changed_date'].str.contains('2019')))]
+        print("Prices just 2018 year: ", prices.shape)
 
         # Calculating selling term. TIME UNIT: DAYS
         prices['term'] = prices[['updated_at', 'changed_date']].apply(

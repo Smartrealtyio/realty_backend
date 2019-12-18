@@ -317,7 +317,7 @@ def map():
     # TERM
     #df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq+1)&
     #                                             (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
-    df_for_current_label = df_for_current_label[df_for_current_label.term <= 800]
+    df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
     df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
 
     X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',

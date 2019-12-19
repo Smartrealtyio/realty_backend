@@ -126,21 +126,21 @@ def mean():
 
 
     # Get Profit Offers using Outliers algorithm detection
-    outliers_alg = IsolationForest(contamination=0.2)
+    # outliers_alg = IsolationForest(contamination=0.2)
 
 
-    outliers_alg.fit(data_offers[['price', 'full_sq', 'clusters']])
-    outliers_it = data_offers[outliers_alg.predict(data_offers[['price', 'full_sq', 'clusters']]) == -1]
-    print('Outliers: ', outliers_it.shape[0], flush=True)
-    outliers_it['flat_id'] = outliers_it.index
+    # outliers_alg.fit(data_offers[['price', 'full_sq', 'clusters']])
+    # outliers_it = data_offers[outliers_alg.predict(data_offers[['price', 'full_sq', 'clusters']]) == -1]
+    # print('Outliers: ', outliers_it.shape[0], flush=True)
+    # outliers_it['flat_id'] = outliers_it.index
 
 
-    data_offers = data_offers[data_offers.price < data_offers.pred_price]
-    data_offers['flat_id'] = data_offers.index
+    # data_offers = data_offers[data_offers.price < data_offers.pred_price]
+    # data_offers['flat_id'] = data_offers.index
     print('Profitable offers using price prediction model: ', data_offers.shape[0])
 
-    data_offers = data_offers[data_offers.flat_id.isin(outliers_it.flat_id)]
-    print('After concat: ', data_offers.shape[0])
+    # data_offers = data_offers[data_offers.flat_id.isin(outliers_it.flat_id)]
+    # print('After concat: ', data_offers.shape[0])
     data_offers['profit'] = data_offers[['pred_price', 'price']].apply(lambda row: ((row.pred_price*100/row.price)-100), axis=1)
     data_offers = data_offers.sort_values(by=['profit'], ascending=False)
     print(data_offers[['pred_price', "price"]].head())

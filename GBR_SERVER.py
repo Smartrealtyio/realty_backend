@@ -31,7 +31,7 @@ def Model(data: pd.DataFrame):
     y1 = data[['price']].values.ravel()
     print(X1.shape, y1.shape)
 
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=5, max_features=2, learning_rate=0.05)
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=10, verbose=5, learning_rate=0.05)
     clf.fit(X1, y1)
     dump(clf, PATH_TO_PRICE_MODEL)
 

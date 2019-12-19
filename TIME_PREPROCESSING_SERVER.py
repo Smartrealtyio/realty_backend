@@ -144,12 +144,12 @@ def main_preprocessing():
             return df_out
 
         from scipy import stats
-        df = ds[(np.abs(stats.zscore(ds.price)) < 2.8)]
+        df = ds[(np.abs(stats.zscore(ds.price)) < 2.9)]
         #df = remove_outlier(ds, 'price')
         print("After removing price_outliers: ", df.shape)
 
 
-        df1 = ds[(np.abs(stats.zscore(ds.term)) < 2.8)]
+        df1 = ds[(np.abs(stats.zscore(ds.term)) < 2.9)]
         #df1 = remove_outlier(ds, 'term')
         print("After removing term_outliers: ", df1.shape)
         clean_data = pd.merge(df, df1, on=list(ds.columns))

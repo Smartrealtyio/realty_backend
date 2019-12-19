@@ -23,10 +23,10 @@ PATH_TO_PRICE_MODEL_CAT = SETTINGS.MODEL + '/PriceModelCatGradient.joblib'
 def Model(data: pd.DataFrame):
     from scipy import stats
 
-    data = data[(np.abs(stats.zscore(data.price)) < 2.8)]
-    data = data[(np.abs(stats.zscore(data.term)) < 2.8)]
+    data = data[(np.abs(stats.zscore(data.price)) < 3)]
+    data = data[(np.abs(stats.zscore(data.term)) < 3)]
     X1 = data[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
+               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']]
     data["price"] = np.log1p(data["price"])
     y1 = data[['price']].values.ravel()
     print(X1.shape, y1.shape)

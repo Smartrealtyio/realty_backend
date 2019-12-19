@@ -116,21 +116,21 @@ def mean():
 
 
     data_offers['pred_price'] = data_offers[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']].apply(
+                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']].apply(
         lambda row:
         int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                                    row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, row.X, row.Y]]))+np.expm1(cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                                   row.floor_first, row.X, row.Y, row.clusters]]))+np.expm1(cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                                    row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, row.X, row.Y]])))[0]/2)), axis=1)
+                                   row.floor_first, row.X, row.Y, row.clusters]])))[0]/2)), axis=1)
 
 
     # Get Profit Offers using Outliers algorithm detection
     outliers_alg = IsolationForest(contamination=0.2)
 
 
-    outliers_alg.fit(data_offers[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']])
-    outliers_it = data_offers[outliers_alg.predict(data_offers[['longitude', 'latitude', 'price', 'full_sq', 'X', 'Y']]) == -1]
+    outliers_alg.fit(data_offers[['price', 'full_sq', 'clusters']])
+    outliers_it = data_offers[outliers_alg.predict(data_offers[['price', 'full_sq', 'clusters']]) == -1]
     print('Outliers: ', outliers_it.shape[0], flush=True)
     outliers_it['flat_id'] = outliers_it.index
 
@@ -322,7 +322,7 @@ def map():
 
     X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
-                                   'price_meter_sq', 'clusters']]
+                                   'price_meter_sq']]
     y_term = df_for_current_label[['term']]
     '''
     cat = load(SETTINGS.MODEL + '/CAT_TIME_MODEL.joblib')
@@ -334,7 +334,7 @@ def map():
 
     # GBR
     list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                     is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, current_label]
+                                     is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq]
 
     # df_for_current_label_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price',
     #                                                   'term', 'full_sq', 'resource_id', 'offer_id', 'kitchen_sq', 'is_apartment', 'time_to_metro',

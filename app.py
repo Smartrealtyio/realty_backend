@@ -216,10 +216,6 @@ def map():
     X = (m.cos(latitude) * m.cos(longitude))
     Y = (m.cos(latitude) * m.sin(longitude))
 
-    list_of_requested_params_price = [renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
-                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y]
-
-
 
     # Data
     data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
@@ -231,6 +227,9 @@ def map():
     # Predict Cluster for current flat
     current_label = kmeans.predict([[longitude, latitude]])
     print("Current label: ", current_label, flush=True)
+
+    list_of_requested_params_price = [renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
+                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, current_label]
 
     # Create subsample of flats with same cluster label value (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_label[0]]
@@ -247,7 +246,7 @@ def map():
 
     # Flats Features for GBR PRICE fitting
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
+                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']]
 
     # Log Transformation for target label (price) to reduce skew of value
     df_for_current_label["price"] = np.log1p(df_for_current_label["price"])

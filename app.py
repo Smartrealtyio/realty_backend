@@ -437,6 +437,7 @@ def map():
 
     #term = (term_cat+term_gbr_pred)/2
     term = term_cat
+    
     print("Predicted term: ", term)
 
 

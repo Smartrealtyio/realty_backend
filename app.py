@@ -518,14 +518,14 @@ def map():
     # terms = terms.tolist()
     terms = list_of_terms
     terms += [term]
-    print(terms)
+    print(terms, flush=True)
 
     # Create list of price values from subsample of "same" flats
     # prices = df_for_current_label.price
     # prices = prices.tolist()
     prices = list_of_prices
     prices += [price]
-    print(prices)
+    print(prices, flush=True)
 
 
     # Create list of dictionaries

@@ -495,11 +495,16 @@ def map():
 
     list_of_prices = list_of_smaller_prices+list_of_larger_prices
     list_of_terms = []
-    for i in range(1, len(list_of_prices)+1):
-        profit = (price * 100 / i) - 100
-        pred_term_profit = GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])
-        list_of_terms.append(pred_term_profit).tolist()
+    def fn(l: list):
+        for i in range(1, len(list_of_prices)+1):
+            profit = (price * 100 / i) - 100
+            pred_term_profit = GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])
+            l.append(pred_term_profit)
+        return l
+    list_of_terms = fn(list_of_terms)
+    list_of_terms = list_of_terms.tolist()
+
 
 
 

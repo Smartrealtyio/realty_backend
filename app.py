@@ -489,7 +489,8 @@ def map():
         for _ in range(7):
             p-=250000
             smaller_prices.append(p)
-        return smaller_prices.reverse()
+        smaller_prices = smaller_prices[::-1]
+        return smaller_prices
     list_of_smaller_prices = smaller(price)
 
 

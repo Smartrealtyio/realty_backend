@@ -477,7 +477,7 @@ def map():
     def larger(p=0):
         larger_prices = []
         for _ in range(5):
-            p+=150000
+            p+=350000
             larger_prices.append(p)
         return larger_prices
     list_of_larger_prices = larger(price)
@@ -485,7 +485,7 @@ def map():
     def smaller(p=0):
         smaller_prices = []
         for _ in range(5):
-            p-=150000
+            p-=350000
             smaller_prices.append(p)
         return smaller_prices
     list_of_smaller_prices = smaller(price)

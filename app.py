@@ -426,19 +426,20 @@ def map():
     term_gbr_pred = GBR_TERM.predict([list_of_requested_params_term])
 
     print("Term gbr: ", term_gbr_pred, flush=True)
-    '''
+
     cat = CatBoostRegressor(random_state=42)
-    #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
+    #cat = CatBoostRegressor(iterations=100, max_depth=8, l2_leaf_reg=1)
     train_time = Pool(X_term, y_term)
     cat.fit(train_time, verbose=5)
-    '''
+    term_cat = cat.predict([list_of_requested_params_term])
+    print("Term cat: ", term_cat, flush=True)
 
 
-    #term = (term_cat+term_gbr)/2
-    #print("Predicted term: ", term)
+    term = (term_cat+term_gbr)/2
+    print("Predicted term: ", term)
 
 
-    term = term_gbr_pred
+    # term = term_gbr_pred
     term = int(term.item(0))
 
 
@@ -480,6 +481,14 @@ def map():
     GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=150, max_depth=8, verbose=10, random_state=42, learning_rate=0.01)
     GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
+    cat_new = CatBoostRegressor(random_state=42)
+    train_time = Pool(X_term_new, y_term_new)
+    cat_new.fit(train_time, verbose=5)
+
+
+    # term = term_gbr_pred
+    term = int(term.item(0))
+
     # Create list of N prices: which are larger and smaller than predicted
     def larger(p=0):
         larger_prices = []
@@ -512,7 +521,13 @@ def map():
             print(i, profit)
             pred_term_profit = GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                   is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])
-            l.append(pred_term_profit)
+            term_cat_profit = cat_new.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])
+
+
+            term_profit = (pred_term_profit + term_cat_profit) / 2
+            print("Predicted term: ", term)
+            l.append(term_profit)
         return l
     list_of_terms = fn(list_of_terms)
 

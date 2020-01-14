@@ -495,7 +495,7 @@ def map():
 
     list_of_prices = list_of_smaller_prices+list_of_larger_prices
     list_of_terms = []
-    for i in range(len(list_of_prices)):
+    for i in range(1, len(list_of_prices)+1):
         profit = (price * 100 / i) - 100
         pred_term_profit = GBR_TERM_NEW.predict([list_of_params_plus_profit.append(profit)])
         list_of_terms.append(pred_term_profit)

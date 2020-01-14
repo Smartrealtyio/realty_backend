@@ -286,7 +286,8 @@ def map():
     print("Price cat: ", price_cat)
     '''
     CAT_PRICE = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
-    price_cat_pred = np.expm1(CAT_PRICE.predict([list_of_requested_params_price]))
+    price_cat_pred = np.expm1(CAT_PRICE.predict([[renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
+                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, current_label]]))
 
     print("Price cat: ", price_cat_pred, flush=True)
 

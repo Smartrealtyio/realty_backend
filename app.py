@@ -522,7 +522,7 @@ def map():
     # terms = df_for_current_label.term
     # terms = terms.tolist()
 
-    terms.append(term)
+    list_of_terms.append(term[0])
     print(terms, flush=True)
 
     # Create list of price values from subsample of "same" flats

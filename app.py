@@ -498,6 +498,7 @@ def map():
     def fn(l: list):
         for i in range(1, len(list_of_prices)+1):
             profit = (price * 100 / i) - 100
+            print(profit)
             pred_term_profit = GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])
             l.append(pred_term_profit)
@@ -522,7 +523,7 @@ def map():
     # terms = df_for_current_label.term
     # terms = terms.tolist()
     print(list_of_terms, term)
-    list_of_terms = list_of_terms.append(term[0])
+    list_of_terms +=[term]
     print(list_of_terms, flush=True)
 
     # Create list of price values from subsample of "same" flats

@@ -494,7 +494,7 @@ def map():
     # Create list of N prices: which are larger and smaller than predicted
     def larger(p=0):
         larger_prices = []
-        for _ in range(15):
+        for _ in range(25):
             p+=50000
             larger_prices.append(p)
         return larger_prices
@@ -502,7 +502,7 @@ def map():
 
     def smaller(p=0):
         smaller_prices = []
-        for _ in range(15):
+        for _ in range(25):
             p-=50000
             smaller_prices.append(p)
         smaller_prices = smaller_prices[::-1]
@@ -529,7 +529,7 @@ def map():
 
             term_profit = (pred_term_profit + term_cat_profit) / 2
             print("GBR & Cat: ", pred_term_profit, term_cat_profit, flush=True)
-            print("Predicted term: ", term)
+            print("Predicted term: ", term_profit)
             l.append(term_profit)
         return l
     list_of_terms = fn(list_of_terms)

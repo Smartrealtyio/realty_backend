@@ -319,8 +319,7 @@ def map():
     X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
                                    'price_meter_sq']]
-    sc = StandardScaler()
-    # X_term = sc.fit_transform(X_term)
+
     y_term = df_for_current_label[['term']]
     '''
     cat = load(SETTINGS.MODEL + '/CAT_TIME_MODEL.joblib')
@@ -455,9 +454,9 @@ def map():
         ['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
          'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']].apply(
         lambda row:
-        int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+        int(((np.expm1(GBR_PRCIE.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                                      row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                     row.floor_first, row.X, row.Y, row.clusters]])) + np.expm1(
+                                     row.floor_first, row.X, row.Y]])) + np.expm1(
             cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                           row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
                           row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)

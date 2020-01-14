@@ -487,7 +487,7 @@ def map():
 
 
     # term = term_gbr_pred
-    term = int(term.item(0))
+    # term = int(term.item(0))
 
     # Create list of N prices: which are larger and smaller than predicted
     def larger(p=0):

@@ -411,7 +411,7 @@ def map():
     
     '''
 
-    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=10, random_state=42)
+    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=5, verbose=10, random_state=42, learning_rate=0.01)
     # from sklearn.linear_model import LinearRegression
     # GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape, flush=True)

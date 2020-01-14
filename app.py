@@ -411,7 +411,7 @@ def map():
     
     '''
 
-    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=8, verbose=10, random_state=42, learning_rate=0.01)
+    GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=10, random_state=42, learning_rate=0.01)
     # from sklearn.linear_model import LinearRegression
     # GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape, flush=True)
@@ -526,6 +526,7 @@ def map():
 
 
             term_profit = (pred_term_profit + term_cat_profit) / 2
+            print("GBR & Cat: ", pred_term_profit, term_cat_profit, flush=True)
             print("Predicted term: ", term)
             l.append(term_profit)
         return l

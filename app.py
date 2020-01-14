@@ -503,7 +503,7 @@ def map():
             l.append(pred_term_profit)
         return l
     list_of_terms = fn(list_of_terms)
-    list_of_terms = list_of_terms.tolist()
+    
 
 
 

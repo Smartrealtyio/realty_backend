@@ -549,7 +549,7 @@ def map():
         if t not in seen:
             seen.add(t)
             new_l.append(d)
-
+    print(list(new_l), flush=True)
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     '''
     new_a = []

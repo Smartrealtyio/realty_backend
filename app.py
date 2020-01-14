@@ -502,7 +502,7 @@ def map():
                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])
             l.append(pred_term_profit)
         return l
-    list_of_terms = fn(list_of_prices)
+    list_of_terms = fn(list_of_terms)
 
 
 
@@ -524,14 +524,14 @@ def map():
     # list_of_terms = [i.tolist()[0] for i in list_of_terms]
 
     list_of_terms +=[term]
-    print(list_of_terms, flush=True)
+    print("Terms: ", list_of_terms, flush=True)
 
     # Create list of price values from subsample of "same" flats
     # prices = df_for_current_label.price
     # prices = prices.tolist()
     prices = list_of_prices
     prices += [price]
-    print(prices, flush=True)
+    print("Prices: ", prices, flush=True)
 
 
     # Create list of dictionaries

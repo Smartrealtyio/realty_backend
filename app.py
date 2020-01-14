@@ -319,6 +319,8 @@ def map():
     X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
                                    'price_meter_sq']]
+    sc = StandardScaler()
+    X_term = sc.fit_transform(X_term)
     y_term = df_for_current_label[['term']]
     '''
     cat = load(SETTINGS.MODEL + '/CAT_TIME_MODEL.joblib')
@@ -469,7 +471,10 @@ def map():
     #      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
     #      'price_meter_sq', 'profit']]
     X_term_new = df_for_current_label[
-        ['price_meter_sq', 'profit']]
+        ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
+             'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
+             'price_meter_sq', 'profit']]
+    X_term_new = sc.fit_transform(X_term_new)
     y_term_new = df_for_current_label[['term']]
 
     GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=10, random_state=42)
@@ -505,15 +510,11 @@ def map():
         for i in list_of_prices:
             profit = (price * 100 / i) - 100
             print(i, profit)
-            pred_term_profit = GBR_TERM_NEW.predict([[price_meter_sq, profit]])
+            pred_term_profit = GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])
             l.append(pred_term_profit)
         return l
     list_of_terms = fn(list_of_terms)
-
-
-
-
-
 
 
 

@@ -503,7 +503,7 @@ def map():
             l.append(pred_term_profit)
         return l
     list_of_terms = fn(list_of_terms)
-    
+
 
 
 
@@ -521,8 +521,8 @@ def map():
     # Create list of term values from subsample of "same" flats
     # terms = df_for_current_label.term
     # terms = terms.tolist()
-    terms = list_of_terms.tolist()
-    terms += [term]
+
+    terms.append(term)
     print(terms, flush=True)
 
     # Create list of price values from subsample of "same" flats

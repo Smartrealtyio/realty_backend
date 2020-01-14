@@ -20,7 +20,7 @@ import numpy as np
 import math
 
 PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModelGBR.joblib'
-PATH_TO_PRICE_MODEL_X = SETTINGS.MODEL + '/PriceModelXGBoost.joblib'
+
 app = Flask(__name__)
 
 
@@ -105,10 +105,6 @@ def mean():
     gbr = load(PATH_TO_PRICE_MODEL)
     cat = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
 
-    xgboost = load(PATH_TO_PRICE_MODEL_X)
-
-    X1 = data_offers[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
 
     # Print GradientBoosting Regression features importance
     # feat_imp = pd.Series(gbr.feature_importances_, X1.columns).sort_values(ascending=False)
@@ -444,38 +440,88 @@ def map():
 
 
 
-    # df_for_current_label = df_for_current_label[df_for_current_label.price <= price+1000000]
-    df_for_current_label = df_for_current_label[(df_for_current_label.term <= term+200)]
+
+    # df_for_current_label = df_for_current_label[(df_for_current_label.term <= term+200)]
+
+    # DATA FOR BUILDING PRICE-TIME CORRELATION GRAPHICS
+    # Add new parameters: PREDICTED_PRICE and PROFIT
+    gbr = load(PATH_TO_PRICE_MODEL)
+    cat = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
+
+    df_for_current_label['pred_price'] = df_for_current_label[
+        ['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+         'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']].apply(
+        lambda row:
+        int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                                     row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
+                                     row.floor_first, row.X, row.Y, row.clusters]])) + np.expm1(
+            cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                          row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
+                          row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)
+
+    df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
+        lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)
+
+    # Build new term prediction model, using one new parameter - profit
+    X_term_new = df_for_current_label[
+        ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
+         'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
+         'price_meter_sq', 'profit']]
+    y_term_new = df_for_current_label[['term']]
+
+    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=10, random_state=42)
+    print(X_term.shape, y_term.shape, flush=True)
+    GBR_TERM_NEW.fit(X_term_new, y_term_new)
+
+    # Create list of N prices: which are larger and smaller than predicted
+    def larger(p=0):
+        larger_prices = []
+        for _ in range(5):
+            p+=150000
+            larger_prices.append(p)
+        return larger_prices
+    list_of_larger_prices = larger(price)
+
+    def smaller(p=0):
+        smaller_prices = []
+        for _ in range(5):
+            p-=150000
+            smaller_prices.append(p)
+        return smaller_prices
+    list_of_smaller_prices = smaller(price)
+
+    list_of_params_plus_profit = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq]
+
+    list_of_prices = list_of_smaller_prices+list_of_larger_prices
+    list_of_terms = []
+    for i in range(list_of_prices):
+        profit = (price * 100 / i) - 100
+        pred_term_profit = GBR_TERM_NEW.predict([list_of_params_plus_profit.append(profit)])
+        list_of_terms.append(pred_term_profit)
 
 
-    '''
-    print("Before concat: 1 ", df_for_current_label_term.shape, flush=True)
-    print("Before concat: 2 ", df_for_current_label.shape, flush=True)
 
-    df_for_links= pd.merge(df_for_current_label_term, df_for_current_label, left_index=True, right_index=True)
-    print("After concat: ", df_for_links.shape, flush=True)
-    '''
+
+
+
+
+    # Count profit for different prices
 
     # Add links to flats
     term_links = df_for_current_label.to_dict('record')
-    #for i in term_links:
-    #    if i['resource_id_x'] == 0:
-    #        i['link'] = 'https://realty.yandex.ru/offer/' + str(i['offer_id_x'])
-    #    else:
-    #        i['link'] = 'https://www.cian.ru/sale/flat/' + str(i['offer_id'])
-
 
 
     # Create list of term values from subsample of "same" flats
-    terms = df_for_current_label.term
-    # terms = df_for_current_label_term.term
-    terms = terms.tolist()
+    # terms = df_for_current_label.term
+    # terms = terms.tolist()
+    terms = list_of_terms
     terms += [term]
 
     # Create list of price values from subsample of "same" flats
-    prices = df_for_current_label.price
-    # prices = df_for_current_label_term.price
-    prices = prices.tolist()
+    # prices = df_for_current_label.price
+    # prices = prices.tolist()
+    prices = list_of_prices
     prices += [price]
 
 

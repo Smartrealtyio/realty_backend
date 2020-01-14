@@ -496,8 +496,8 @@ def map():
     list_of_prices = list_of_smaller_prices+list_of_larger_prices
     list_of_terms = []
     def fn(l: list):
-        for i in range(list_of_prices):
-            profit = (price * 100 / i[0]) - 100
+        for i in list_of_prices:
+            profit = (price * 100 / i) - 100
             print(i)
             pred_term_profit = GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])

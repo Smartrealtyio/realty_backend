@@ -411,7 +411,7 @@ def map():
     
     '''
 
-    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=5, verbose=10, random_state=42, learning_rate=0.01)
+    GBR_TERM = GradientBoostingRegressor(n_estimators=150, max_depth=8, verbose=10, random_state=42, learning_rate=0.01)
     # from sklearn.linear_model import LinearRegression
     # GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape, flush=True)
@@ -477,7 +477,7 @@ def map():
     # X_term_new = sc.fit_transform(X_term_new)
     y_term_new = df_for_current_label[['term']]
 
-    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
+    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=150, max_depth=8, verbose=10, random_state=42, learning_rate=0.01)
     GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
     # Create list of N prices: which are larger and smaller than predicted

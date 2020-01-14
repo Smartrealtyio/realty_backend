@@ -464,7 +464,7 @@ def map():
                           row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)
 
     df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
-        lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)
+        lambda row: (((row.pred_price * 100 / row.price) - 100)*100), axis=1)
 
     # Build new term prediction model, using one new parameter - profit
     # X_term_new = df_for_current_label[

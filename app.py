@@ -225,7 +225,7 @@ def map():
     print("Current label: ", current_label, flush=True)
 
     list_of_requested_params_price = [renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
-                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, current_label]
+                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y]
 
     # Create subsample of flats with same cluster label value (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_label[0]]
@@ -242,7 +242,7 @@ def map():
 
     # Flats Features for GBR PRICE fitting
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']]
+                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
 
     # Log Transformation for target label (price) to reduce skew of value
     df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
@@ -472,7 +472,6 @@ def map():
     y_term_new = df_for_current_label[['term']]
 
     GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=10, random_state=42)
-    print(X_term.shape, y_term.shape, flush=True)
     GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
     # Create list of N prices: which are larger and smaller than predicted
@@ -487,16 +486,18 @@ def map():
     def smaller(p=0):
         smaller_prices = []
         for _ in range(7):
-            p-=350000
+            p-=250000
             smaller_prices.append(p)
-        return smaller_prices
+        return smaller_prices.reverse()
     list_of_smaller_prices = smaller(price)
+
 
     list_of_params_plus_profit = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                   is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq]
     # renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
     #                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y,
     list_of_prices = list_of_smaller_prices+list_of_larger_prices
+
     list_of_terms = []
     def fn(l: list):
         for i in list_of_prices:
@@ -527,7 +528,6 @@ def map():
     list_of_terms = [i.tolist()[0] for i in list_of_terms]
 
     list_of_terms +=[term]
-    list_of_terms = [e for e in list_of_terms if e < 500]
     print("Terms: ", list_of_terms, flush=True)
 
     # Create list of price values from subsample of "same" flats
@@ -542,6 +542,7 @@ def map():
     a = []
     a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
     # Sort list by term
+    a = sorted(a, key=lambda z: z['x'] < 500)
     a = sorted(a, key=lambda z: z['x'], reverse=False)
     seen = set()
     new_l = []

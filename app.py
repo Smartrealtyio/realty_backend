@@ -477,7 +477,7 @@ def map():
     # X_term_new = sc.fit_transform(X_term_new)
     y_term_new = df_for_current_label[['term']]
 
-    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=10, random_state=42)
+    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=150, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
     GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
     # Create list of N prices: which are larger and smaller than predicted

@@ -527,7 +527,7 @@ def map():
     list_of_terms = [i.tolist()[0] for i in list_of_terms]
 
     list_of_terms +=[term]
-    list_of_terms = [e for e in item_list if e < 500]
+    list_of_terms = [e for e in list_of_terms if e < 500]
     print("Terms: ", list_of_terms, flush=True)
 
     # Create list of price values from subsample of "same" flats

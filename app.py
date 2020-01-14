@@ -539,7 +539,7 @@ def map():
 
     # Create list of dictionaries
     a = []
-    a += ({'x': trm, 'y': prc} for trm, prc in zip(list_of_terms, prices))
+    a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
     # Sort list by term
     a = sorted(a, key=lambda z: z['x'], reverse=False)
     seen = set()

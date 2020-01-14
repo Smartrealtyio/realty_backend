@@ -478,7 +478,7 @@ def map():
     # X_term_new = sc.fit_transform(X_term_new)
     y_term_new = df_for_current_label[['term']]
 
-    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=150, max_depth=8, verbose=10, random_state=42, learning_rate=0.01)
+    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=10, random_state=42, learning_rate=0.01)
     GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
     cat_new = CatBoostRegressor(random_state=42)

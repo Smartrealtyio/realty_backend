@@ -523,7 +523,7 @@ def map():
     # terms = terms.tolist()
     list_of_terms = [i.tolist() for i in list_of_terms]
     print(list_of_terms, type(term))
-    list_of_terms +=[term]
+    list_of_terms +=[[term]]
     print(list_of_terms, flush=True)
 
     # Create list of price values from subsample of "same" flats

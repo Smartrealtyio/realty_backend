@@ -456,7 +456,7 @@ def map():
         lambda row:
         int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                                      row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                     row.floor_first, row.X, row.Y]])) + np.expm1(
+                                     row.floor_first, row.X, row.Y], row.clusters])) + np.expm1(
             cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                           row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
                           row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)

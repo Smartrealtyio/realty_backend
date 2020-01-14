@@ -435,7 +435,7 @@ def map():
     print("Term cat: ", term_cat, flush=True)
 
 
-    term = (term_cat+term_gbr)/2
+    term = (term_cat+term_gbr_pred)/2
     print("Predicted term: ", term)
 
 

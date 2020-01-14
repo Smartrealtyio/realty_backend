@@ -329,6 +329,7 @@ def map():
     print("Term cat: ", term_cat)
     '''
 
+
     # GBR
     list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq]
@@ -482,16 +483,16 @@ def map():
     # Create list of N prices: which are larger and smaller than predicted
     def larger(p=0):
         larger_prices = []
-        for _ in range(7):
-            p+=250000
+        for _ in range(15):
+            p+=50000
             larger_prices.append(p)
         return larger_prices
     list_of_larger_prices = larger(price)
 
     def smaller(p=0):
         smaller_prices = []
-        for _ in range(7):
-            p-=250000
+        for _ in range(15):
+            p-=50000
             smaller_prices.append(p)
         smaller_prices = smaller_prices[::-1]
         return smaller_prices

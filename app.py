@@ -319,6 +319,7 @@ def map():
     X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
                                    'price_meter_sq']]
+    df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
 
     y_term = df_for_current_label[['term']]
     '''
@@ -411,7 +412,7 @@ def map():
     
     '''
 
-    GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10, random_state=42, learning_rate=0.01)
+    GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
     # from sklearn.linear_model import LinearRegression
     # GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape, flush=True)
@@ -423,7 +424,7 @@ def map():
         new_params.append(list_of_requested_params_term[i])
     '''
 
-    term_gbr_pred = GBR_TERM.predict([list_of_requested_params_term])
+    term_gbr_pred = np.expm1(GBR_TERM.predict([list_of_requested_params_term]))
 
     print("Term gbr: ", term_gbr_pred, flush=True)
 
@@ -431,7 +432,7 @@ def map():
     #cat = CatBoostRegressor(iterations=100, max_depth=8, l2_leaf_reg=1)
     train_time = Pool(X_term, y_term)
     cat.fit(train_time, verbose=5)
-    term_cat = cat.predict([list_of_requested_params_term])
+    term_cat = np.expm1(cat.predict([list_of_requested_params_term]))
     print("Term cat: ", term_cat, flush=True)
 
 
@@ -481,9 +482,10 @@ def map():
              'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
              'price_meter_sq', 'profit']]
     # X_term_new = sc.fit_transform(X_term_new)
+    df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
     y_term_new = df_for_current_label[['term']]
 
-    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=10, random_state=42, learning_rate=0.01)
+    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
     GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
     cat_new = CatBoostRegressor(random_state=42)
@@ -532,10 +534,10 @@ def map():
             profit = ((price * 100 / i) - 100)*100
             profit+=min_profit
             print(i, profit)
-            pred_term_profit = GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])
-            term_cat_profit = cat_new.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])
+            pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]]))
+            term_cat_profit = np.expm1(cat_new.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
+                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]]))
 
 
             term_profit = (pred_term_profit + term_cat_profit) / 2

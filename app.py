@@ -474,7 +474,7 @@ def map():
         new_l = []
         for d in l:
             t = tuple(d)
-            print("t: ", t[0][1])
+            print("t: ", t[0])
             if t[0].get('x') not in seen:
                 seen.add(t[0][1])
 

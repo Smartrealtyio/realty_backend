@@ -518,17 +518,19 @@ def map():
     # renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
     #                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y,
     list_of_prices = list_of_smaller_prices+list_of_larger_prices
-    min_profit_from_list = min(list_of_prices)
-
-    print("Min: ", min_profit_from_list)
-    list_of_prices_new = []
-    for i in list_of_prices:
-        list_of_prices_new.append(i + min_profit_from_list)
-    list_of_prices = list_of_prices_new
+    min_price_from_list = min(list_of_prices)
+    #
+    # print("Min: ", min_profit_from_list)
+    # list_of_prices_new = []
+    # for i in list_of_prices:
+    #     list_of_prices_new.append(i + min_profit_from_list)
+    # list_of_prices = list_of_prices_new
     list_of_terms = []
+    min_profit = ((price * 100 / min_price_from_list) - 100)*100
     def fn(l: list):
         for i in list_of_prices:
             profit = ((price * 100 / i) - 100)*100
+            profit+=min_price_from_list
             print(i, profit)
             pred_term_profit = GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                   is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]])

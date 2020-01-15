@@ -497,16 +497,16 @@ def map():
     # Create list of N prices: which are larger and smaller than predicted
     def larger(p=0):
         larger_prices = []
-        for _ in range(25):
-            p+=50000
+        for _ in range(10):
+            p+=100000
             larger_prices.append(p)
         return larger_prices
     list_of_larger_prices = larger(price)
 
     def smaller(p=0):
         smaller_prices = []
-        for _ in range(25):
-            p-=50000
+        for _ in range(10):
+            p-=100000
             smaller_prices.append(p)
         smaller_prices = smaller_prices[::-1]
         return smaller_prices

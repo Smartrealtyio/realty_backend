@@ -15,7 +15,7 @@ from datetime import datetime
 import requests
 import json
 import pandas as pd
-
+from statistics import *
 import numpy as np
 import math
 
@@ -448,7 +448,7 @@ def map():
     # terms = terms.tolist()
     list_of_terms = [i.tolist()[0] for i in list_of_terms]
     list_of_terms = list_of_terms[::-1]
-    list_of_terms +=[term]
+    # list_of_terms +=[term]
 
     print("Terms: ", list_of_terms, flush=True)
 
@@ -456,7 +456,7 @@ def map():
     # prices = df_for_current_label.price
     # prices = prices.tolist()
     prices = list_of_prices
-    prices += [price]
+    # prices += [price]
     print("Prices: ", prices, flush=True)
 
 
@@ -465,8 +465,14 @@ def map():
     a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
     # Sort list by term
     a = [i for i in a if 0 < i.get('x') <600]
-
+    b = {'x': int(term), 'y': int(price)}
+    for i in enumerate(a):
+        print(i[0])
+        if a[i[0]].get('y') < b.get('y') <= a[i[0] + 1].get('y'):
+            b['x'] = int(statistics.mean([a[i[0]].get('x'), a[i[0] + 1].get('x')]))
+    a.append(b)
     a = sorted(a, key=lambda z: z['x'], reverse=False)
+
     print("Sorted; ", a, flush=True)
 
     def drop_duplicat(l: list):

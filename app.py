@@ -483,17 +483,18 @@ def map():
     new_l = drop_duplicat(a)
     b = {'x': int(term), 'y': int(price)}
     print("b: ", b, flush=True)
-    for i in enumerate(a):
+    for i in enumerate(new_l):
         print(i[0])
-        if a[i[0]].get('y') < b.get('y') < a[i[0] + 1].get('y'):
-            b['x'] = int((a[i[0]].get('x')+a[i[0] + 1].get('x'))/2)
-            term = int((a[i[0]].get('x')+a[i[0] + 1].get('x'))/2)
+        if new_l[i[0]].get('y') < b.get('y') < new_l[i[0] + 1].get('y'):
+            b['x'] = int((new_l[i[0]].get('x')+[new_li[0] + 1].get('x'))/2)
+            term = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
             break
-    print("B_new: ", b , flush=True)
-    a += [b]
-    a = sorted(a, key=lambda z: z['x'], reverse=False)
 
-    print("Sorted; ", a, flush=True)
+    print("B_new: ", b , flush=True)
+    new_l += [b]
+    new_l = sorted(new_l, key=lambda z: z['x'], reverse=False)
+
+    print("Sorted; ", new_l, flush=True)
 
 
     print(list(new_l), flush=True)
@@ -502,8 +503,8 @@ def map():
     new_a = []
     for i in list(range(len(new_l))):
 
-        if a[i].get('y') > a[i - 1].get('y'):
-            new_a.append(a[i])
+        if new_l[i].get('y') > new_l[i - 1].get('y'):
+            new_a.append(new_l[i])
     # new_a.insert(0, a[0])
     print(new_a)
 

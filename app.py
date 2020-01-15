@@ -485,16 +485,16 @@ def map():
     new_l = drop_duplicat(a)
     print(list(new_l), flush=True)
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
-    '''
+
     new_a = []
-    for i in list(range(1, len(a))):
+    for i in list(range(len(new_l))):
 
         if a[i].get('y') > a[i - 1].get('y'):
             new_a.append(a[i])
-    new_a.insert(0, a[0])
+    # new_a.insert(0, a[0])
     print(new_a)
-    '''
-    return jsonify({'Price': price, 'Duration': term, 'PLot': list(new_l), 'FlatsTerm': term_links})
+
+    return jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

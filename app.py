@@ -486,12 +486,12 @@ def map():
         if new_l[i].get('y') > new_l[i - 1].get('y'):
             new_a.append(new_l[i])
     b = {'x': int(term), 'y': int(price)}
-    
+
     print("b: ", b, flush=True)
     for i in enumerate(new_l):
         print(i[0])
         if new_l[i[0]].get('y') < b.get('y') < new_l[i[0] + 1].get('y'):
-            b['x'] = int((new_l[i[0]].get('x')+[new_li[0] + 1].get('x'))/2)
+            b['x'] = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
             term = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
             break
 

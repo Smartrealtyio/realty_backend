@@ -577,15 +577,15 @@ def map():
     a = [i for i in a if 0 < i.get('x') <500]
 
     a = sorted(a, key=lambda z: z['x'], reverse=False)
-    seen = set()
-    new_l = []
-    for d in a[:-1]:
-        t = tuple(d.items())
-        if t not in seen:
-            seen.add(t)
-            new_l.append(d)
-    new_l.append(a[-1])
-    print(list(new_l), flush=True)
+    # seen = set()
+    # new_l = []
+    # for d in a[:-1]:
+    #     t = tuple(d.items())
+    #     if t not in seen:
+    #         seen.add(t)
+    #         new_l.append(d)
+    # new_l.append(a[-1])
+    # print(list(new_l), flush=True)
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     '''
     new_a = []

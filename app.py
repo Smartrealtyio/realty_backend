@@ -470,9 +470,9 @@ def map():
     print("b: ", b, flush=True)
     for i in enumerate(a):
         print(i[0])
-        if a[i[0]].get('y') < b.get('y') <= a[i[0] + 1].get('y'):
-            b['x'] = int(statistics.mean([a[i[0]].get('x'), a[i[0] + 1].get('x')]))
-            term = int(statistics.mean([a[i[0]].get('x'), a[i[0] + 1].get('x')]))
+        if a[i[0]].get('y') < b.get('y') < a[i[0] + 1].get('y'):
+            b['x'] = int(([a[i[0]].get('x')+a[i[0] + 1].get('x')])/2)
+            term = int(([a[i[0]].get('x')+a[i[0] + 1].get('x')])/2)
             break
     print("B_new: ", b , flush=True)
     a += [b]

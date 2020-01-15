@@ -585,12 +585,12 @@ def map():
     a = []
     a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
     # Sort list by term
-    a = [i for i in a if 0 < i.get('x') <500]
+    a = [i for i in a if 0 < i.get('x') <600]
 
     a = sorted(a, key=lambda z: z['x'], reverse=False)
     seen = set()
     new_l = []
-    for d in a[:-1]:
+    for d in a:
         t = tuple(d.items())
         if t[0][1] not in seen:
             seen.add(t)

@@ -588,16 +588,16 @@ def map():
     a = [i for i in a if 0 < i.get('x') <600]
 
     a = sorted(a, key=lambda z: z['x'], reverse=False)
-    seen = set()
-    new_l = []
-    for d in a:
-        t = tuple(d.items())
-        if t[0][1] not in seen:
-            seen.add(t)
-            new_l.append(d)
-    new_l.append(a[-1])
-    print(list(new_l), flush=True)
-    # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
+    # seen = set()
+    # new_l = []
+    # for d in a:
+    #     t = tuple(d.items())
+    #     if t[0][1] not in seen:
+    #         seen.add(t)
+    #         new_l.append(d)
+    # new_l.append(a[-1])
+    # print(list(new_l), flush=True)
+    # # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     '''
     new_a = []
     for i in list(range(1, len(a))):
@@ -607,7 +607,7 @@ def map():
     new_a.insert(0, a[0])
     print(new_a)
     '''
-    return jsonify({'Price': price, 'Duration': term, 'PLot': list(new_l), 'FlatsTerm': term_links})
+    return jsonify({'Price': price, 'Duration': term, 'PLot': a, 'FlatsTerm': term_links})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

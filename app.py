@@ -15,7 +15,7 @@ from datetime import datetime
 import requests
 import json
 import pandas as pd
-from statistics import *
+import statistics
 import numpy as np
 import math
 
@@ -469,7 +469,7 @@ def map():
     for i in enumerate(a):
         print(i[0])
         if a[i[0]].get('y') < b.get('y') <= a[i[0] + 1].get('y'):
-            b['x'] = int(mean([a[i[0]].get('x'), a[i[0] + 1].get('x')]))
+            b['x'] = int(statistics.mean([a[i[0]].get('x'), a[i[0] + 1].get('x')]))
     a.append(b)
     a = sorted(a, key=lambda z: z['x'], reverse=False)
 

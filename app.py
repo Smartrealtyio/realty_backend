@@ -258,33 +258,6 @@ def map():
 
     print("Price gbr: ", price_gbr_pred, flush=True)
 
-    '''
-    from sklearn.model_selection import RandomizedSearchCV
-    c = CatBoostRegressor()
-    grid = {'depth': [4, 6, 10, 12],
-            'l2_leaf_reg': [0, 0.2, 0.5, 0.7, 1],
-            'iterations': [100, 200, 400]}
-
-    grid1 = {'depth': [6, 10],
-             'iterations': [200, 400]}
-
-    grid = RandomizedSearchCV(estimator=c, param_distributions=grid, n_iter=80, cv=2, n_jobs=-1, verbose=5)
-    grid.fit(X1, y1)
-    with open('out.txt', 'w') as f:
-        print("\n The best parameters across ALL searched params:\n",
-              grid.best_params_, "\n The best score across ALL searched params:\n",
-              grid.best_score_, file=f)
-        f.close()
-
-
-    #cat = CatBoostRegressor(iterations=100, max_depth=12, l2_leaf_reg=1)
-    cat = CatBoostRegressor(random_state=42)
-    train = Pool(X1, y1)
-    cat.fit(train,verbose=5)
-    price_cat = np.expm1(cat.predict([list_of_requested_params_price]))
-
-    print("Price cat: ", price_cat)
-    '''
     CAT_PRICE = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
     price_cat_pred = np.expm1(CAT_PRICE.predict([[renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y, current_label]]))
@@ -301,20 +274,14 @@ def map():
     print("Predicted Price: ", price, flush=True)
 
     price_meter_sq = price / full_sq
-    # list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-    #                                  is_apartment, time_to_metro,
-    #                                 floor_last, floor_first, X, Y]
-    # term = 0
 
 
 
 
 
     # TERM
-    #df_for_current_label = df_for_current_label[((df_for_current_label.kitchen_sq <= kitchen_sq+1)&
-    #                                             (df_for_current_label.kitchen_sq >= kitchen_sq-1))]
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
-    df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
+    df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
 
     X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
@@ -323,94 +290,16 @@ def map():
     df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
 
     y_term = df_for_current_label[['term']]
-    '''
-    cat = load(SETTINGS.MODEL + '/CAT_TIME_MODEL.joblib')
-    term_cat = cat.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                             is_apartment, time_to_metro, floor_last, floor_first, X, Y]])
-
-    print("Term cat: ", term_cat)
-    '''
 
 
     # GBR
     list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq)]
 
-    # df_for_current_label_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price',
-    #                                                   'term', 'full_sq', 'resource_id', 'offer_id', 'kitchen_sq', 'is_apartment', 'time_to_metro',
-    #                                                   'floor_last', 'floor_first', 'X', 'Y', 'price_meter_sq', 'clusters']]
 
     '''
     most_important_features = list(df_for_current_label_term.corr().term.sort_values(ascending=False).index)[1:4]
     print("Most important features for term prediction: ", most_important_features)
-    names_list = list(df_for_current_label_term.corr().term.index)
-    names_list.pop(5)
-    print(names_list)
-    features_dict = dict(zip(names_list, list(range(len(names_list)))))
-    curr_index = []
-    for i in most_important_features:
-        name = features_dict.get(i)
-        curr_index.append(name)
-    '''
-
-    '''
-    df_for_current_label_term = df_for_current_label[['price', 'term', 'resource_id', 'offer_id']]
-    df_for_current_label_term = df_for_current_label_term.sort_values(by=['term'])
-    print("Df_for_current label term: ", df_for_current_label_term.head(), flush=True)
-
-
-
-    # X_term = df_for_current_label_term[most_important_features]
-    # Create list of term values from subsample of "same" flats
-    flats_subsample_term = df_for_current_label_term.term
-    flats_subsample_term = flats_subsample_term.tolist()
-
-    # Create list of price values from subsample of "same" flats
-    flats_subsample_price = df_for_current_label_term.price
-    flats_subsample_price = flats_subsample_price.tolist()
-
-    # Create list of resource_id values from subsample of "same" flats
-    flats_subsample_resource_id = df_for_current_label_term.resource_id
-    flats_subsample_resource_id = flats_subsample_resource_id.tolist()
-
-    # Create list of offer_id values from subsample of "same" flats
-    flats_subsample_offer_id = df_for_current_label_term.offer_id
-    flats_subsample_offer_id = flats_subsample_offer_id.tolist()
-
-
-    ind = df_for_current_label_term.index
-    
-
-    # Create list of dictionaries
-    a = []
-    a += ({'term': l, 'price': n, 'ind': b, 'resource_id': id, 'offer_id': offer} for l, n, b, id, offer in zip(flats_subsample_term,
-                                                                                  flats_subsample_price, ind,
-                                                                                  flats_subsample_resource_id, flats_subsample_offer_id))
-    # Sort list by term
-    a = sorted(a, key=lambda z: z['term'], reverse=False)
-
-
-    # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
-    print(a, flush=True)
-    new_a = []
-    new_a.insert(0, a[0])
-    print(len(a), flush=True)
-    for i in list(range(1, len(a))):
-
-        if a[i].get('price') > new_a[-1].get('price')-1000000:
-            new_a.append(a[i])
-
-
-    print(new_a, flush=True)
-    df_for_current_label_term = pd.DataFrame(new_a)
-    df_for_current_label_term.index = list(df_for_current_label_term.ind)
-    print("DataFrame from dictionary: ", df_for_current_label_term.head(), flush=True)
-
-    X_term = df_for_current_label_term[['price']]
-    print(X_term.head(), flush=True)
-    y_term = df_for_current_label_term[['term']].values.ravel()
-    #print(y_term)
-    
     '''
 
     GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05, subsample=0.5)
@@ -419,21 +308,16 @@ def map():
     print(X_term.shape, y_term.shape, flush=True)
 
     GBR_TERM.fit(X_term, y_term)
-    '''
-    new_params = []
-    for i in curr_index:
-        new_params.append(list_of_requested_params_term[i])
-    '''
 
     term_gbr_pred = np.expm1(GBR_TERM.predict([list_of_requested_params_term]))
 
     print("Term gbr: ", term_gbr_pred, flush=True)
 
-    cat = CatBoostRegressor(random_state=42, l2_leaf_reg=1, learning_rate=0.05)
+    cat_term = CatBoostRegressor(random_state=42, l2_leaf_reg=1, learning_rate=0.05)
     #cat = CatBoostRegressor(iterations=100, max_depth=8, l2_leaf_reg=1)
     train_time = Pool(X_term, y_term)
-    cat.fit(train_time, verbose=5)
-    term_cat = np.expm1(cat.predict([list_of_requested_params_term]))
+    cat_term.fit(train_time, verbose=5)
+    term_cat = np.expm1(cat_term.predict([list_of_requested_params_term]))
     print("Term cat: ", term_cat, flush=True)
 
 
@@ -468,11 +352,11 @@ def map():
                           row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)
 
     df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
-        lambda row: (((row.pred_price * 100 / row.price) - 100)*100), axis=1)
+        lambda row: (((row.pred_price * 100 / row.price) - 100)), axis=1)
     mean_price = df_for_current_label['price'].mean()
     max_price = df_for_current_label['price'].max()
-    min_profit_train = ((mean_price * 100 / max_price) - 100) * 100
-    df_for_current_label['profit'] = df_for_current_label['profit'].apply(lambda x: x + min_profit_train)
+    min_profit_train = ((mean_price * 100 / max_price) - 100)
+    df_for_current_label['profit'] = df_for_current_label['profit'].apply(lambda x: x + abs(min_profit_train))
 
     # Build new term prediction model, using one new parameter - profit
     # X_term_new = df_for_current_label[
@@ -530,12 +414,12 @@ def map():
     #     list_of_prices_new.append(i + min_profit_from_list)
     # list_of_prices = list_of_prices_new
 
-    min_profit = ((price * 100 /max_price_from_list) - 100)*100
+    min_profit = ((price * 100 /max_price_from_list) - 100)
     def fn(l: list):
         list_of_terms = []
         for i in l:
-            profit = ((price * 100 / i) - 100)*100
-            profit+=min_profit
+            profit = ((price * 100 / i) - 100)
+            profit+=abs(min_profit)
             print(i, profit)
             pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
                                   is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq), profit]]))
@@ -593,7 +477,7 @@ def map():
             print("t: ", t[0][1])
             if t[0][1] not in seen:
                 seen.add(t[0][1])
-    
+
                 print(seen)
                 new_l.append(d)
         return new_l

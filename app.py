@@ -481,7 +481,12 @@ def map():
         return new_l
 
     new_l = drop_duplicat(a)
+    new_a = []
+    for i in list(range(len(new_l))):
+        if new_l[i].get('y') > new_l[i - 1].get('y'):
+            new_a.append(new_l[i])
     b = {'x': int(term), 'y': int(price)}
+    
     print("b: ", b, flush=True)
     for i in enumerate(new_l):
         print(i[0])
@@ -500,11 +505,7 @@ def map():
     print(list(new_l), flush=True)
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
 
-    new_a = []
-    for i in list(range(len(new_l))):
 
-        if new_l[i].get('y') > new_l[i - 1].get('y'):
-            new_a.append(new_l[i])
     # new_a.insert(0, a[0])
     print(new_a)
 

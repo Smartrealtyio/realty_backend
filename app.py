@@ -231,13 +231,13 @@ def map():
     df_for_current_label = data[data.clusters == current_label[0]]
 
     # Drop Price and Term Outliers using Z-Score
-    df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 2.8)]
-    ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 2.8)]
+    df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
+    ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 3)]
 
     df_for_current_label = pd.merge(df, ds, on=list(ds.columns))
 
     # Create subsample according to the same(+-) size of the full_sq
-    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-2)&(df_for_current_label.full_sq <= full_sq+1))]
+    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-1)&(df_for_current_label.full_sq <= full_sq+1))]
     print("Current label dataframe shape: ", df_for_current_label.shape, flush=True)
 
     # Flats Features for GBR PRICE fitting
@@ -413,7 +413,7 @@ def map():
     
     '''
 
-    GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
+    GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05, subsample=0.5)
     # from sklearn.linear_model import LinearRegression
     # GBR_TERM = LinearRegression()
     print(X_term.shape, y_term.shape, flush=True)
@@ -429,7 +429,7 @@ def map():
 
     print("Term gbr: ", term_gbr_pred, flush=True)
 
-    cat = CatBoostRegressor(random_state=42)
+    cat = CatBoostRegressor(random_state=42, l2_leaf_reg=1, learning_rate=0.05)
     #cat = CatBoostRegressor(iterations=100, max_depth=8, l2_leaf_reg=1)
     train_time = Pool(X_term, y_term)
     cat.fit(train_time, verbose=5)
@@ -487,7 +487,7 @@ def map():
     # df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
     y_term_new = df_for_current_label[['term']]
 
-    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42)
+    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
     GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
     cat_new = CatBoostRegressor(random_state=42)
@@ -529,10 +529,11 @@ def map():
     # for i in list_of_prices:
     #     list_of_prices_new.append(i + min_profit_from_list)
     # list_of_prices = list_of_prices_new
-    list_of_terms = []
+
     min_profit = ((price * 100 /max_price_from_list) - 100)*100
     def fn(l: list):
-        for i in list_of_prices:
+        list_of_terms = []
+        for i in l:
             profit = ((price * 100 / i) - 100)*100
             profit+=min_profit
             print(i, profit)
@@ -545,9 +546,9 @@ def map():
             term_profit = (pred_term_profit + term_cat_profit) / 2
             print("GBR & Cat: ", pred_term_profit, term_cat_profit, flush=True)
             print("Predicted term: ", term_profit, flush=True)
-            l.append(term_profit)
-        return l
-    list_of_terms = fn(list_of_terms)
+            list_of_terms.append(term_profit)
+        return list_of_terms
+    list_of_terms = fn(list_of_prices)
 
 
 

@@ -563,7 +563,7 @@ def map():
     # terms = df_for_current_label.term
     # terms = terms.tolist()
     list_of_terms = [i.tolist()[0] for i in list_of_terms]
-    list_of_terms = list_of_terms[::-1]
+    # list_of_terms = list_of_terms[::-1]
     if len(set(list_of_terms)) == 1:
         list_of_terms = [list_of_terms[0]]
     list_of_terms +=[term]

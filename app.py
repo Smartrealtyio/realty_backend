@@ -467,6 +467,7 @@ def map():
     a = [i for i in a if 0 < i.get('x') <600]
 
     a = sorted(a, key=lambda z: z['x'], reverse=False)
+    print("Sorted; ", a, flush=True)
 
     def drop_duplicat(l: list):
         seen = set()
@@ -474,11 +475,11 @@ def map():
         new_l = []
         for d in l:
             # t = tuple(d)
-            print("d: ", d)
+            # print("d: ", d)
             if d.get('x') not in seen:
                 seen.add(d.get('x'))
 
-                print(seen)
+                # print(seen)
                 new_l.append(d)
         return new_l
 

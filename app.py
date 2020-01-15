@@ -468,6 +468,9 @@ def map():
     df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
         lambda row: (((row.pred_price * 100 / row.price) - 100)*100), axis=1)
 
+    min_profit = df_for_current_label['profit'].min()
+    df_for_current_label['profit'] = df_for_current_label['profit'].apply(lambda x: x + min_profit)
+
     # Build new term prediction model, using one new parameter - profit
     # X_term_new = df_for_current_label[
     #     ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
@@ -515,7 +518,9 @@ def map():
     # renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
     #                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y,
     list_of_prices = list_of_smaller_prices+list_of_larger_prices
-
+    min_profit_from_list = min(list_of_prices)
+    list_of_prices_new = list(map(lambda x: x+min_profit_from_list, list_of_prices))
+    list_of_prices = list_of_prices_new
     list_of_terms = []
     def fn(l: list):
         for i in list_of_prices:

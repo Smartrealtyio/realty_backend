@@ -587,7 +587,8 @@ def map():
     new_l = []
     for d in a:
         t = tuple(d.items())
-        if t[1][1] not in seen:
+        print("t: ", t[0][1])
+        if t[0][1] not in seen:
             seen.add(t)
             new_l.append(d)
     #new_l.append(a[-1])

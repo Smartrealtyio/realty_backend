@@ -528,7 +528,7 @@ def map():
     #     list_of_prices_new.append(i + min_profit_from_list)
     # list_of_prices = list_of_prices_new
     list_of_terms = []
-    min_profit = ((price * 100 / min_price_from_list) - 100)*100
+    min_profit = ((price * 100 /max_price_from_list) - 100)*100
     def fn(l: list):
         for i in list_of_prices:
             profit = ((price * 100 / i) - 100)*100
@@ -542,7 +542,7 @@ def map():
 
             term_profit = (pred_term_profit + term_cat_profit) / 2
             print("GBR & Cat: ", pred_term_profit, term_cat_profit, flush=True)
-            print("Predicted term: ", term_profit)
+            print("Predicted term: ", term_profit, flush=True)
             l.append(term_profit)
         return l
     list_of_terms = fn(list_of_terms)

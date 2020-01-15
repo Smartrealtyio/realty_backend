@@ -473,10 +473,10 @@ def map():
 
         new_l = []
         for d in l:
-            t = tuple(d)
-            print("t: ", t[0])
-            if t[0].get('x') not in seen:
-                seen.add(t[0][1])
+            # t = tuple(d)
+            print("d: ", d)
+            if d.get('x') not in seen:
+                seen.add(d.get('x'))
 
                 print(seen)
                 new_l.append(d)

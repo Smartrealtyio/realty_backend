@@ -590,6 +590,7 @@ def map():
         print("t: ", t[0][1])
         if t[0][1] not in seen:
             seen.add(t)
+            print(seen)
             new_l.append(d)
     #new_l.append(a[-1])
     print(list(new_l), flush=True)

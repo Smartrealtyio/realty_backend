@@ -468,12 +468,12 @@ def map():
                           row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)
 
     df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
-        lambda row: (((row.pred_price * 100 / row.price) - 100)), axis=1)
+        lambda row: (((row.pred_price * 100 / row.price) - 100)*100), axis=1)
     mean_price = df_for_current_label['price'].mean()
     max_price = df_for_current_label['price'].max()
-    min_profit_train = ((mean_price * 100 / max_price) - 100)
+    min_profit_train = ((mean_price * 100 / max_price) - 100) * 100
     df_for_current_label['profit'] = df_for_current_label['profit'].apply(lambda x: x + min_profit_train)
-    df_for_current_label['profit'] = np.log1p(df_for_current_label['profit'])
+
     # Build new term prediction model, using one new parameter - profit
     # X_term_new = df_for_current_label[
     #     ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
@@ -487,7 +487,7 @@ def map():
     # df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
     y_term_new = df_for_current_label[['term']]
 
-    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.1)
+    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42)
     GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
     cat_new = CatBoostRegressor(random_state=42)
@@ -530,16 +530,16 @@ def map():
     #     list_of_prices_new.append(i + min_profit_from_list)
     # list_of_prices = list_of_prices_new
     list_of_terms = []
-    min_profit = ((price * 100 /max_price_from_list) - 100)
+    min_profit = ((price * 100 /max_price_from_list) - 100)*100
     def fn(l: list):
         for i in list_of_prices:
-            profit = ((price * 100 / i) - 100)
+            profit = ((price * 100 / i) - 100)*100
             profit+=min_profit
-            print(i, np.log1p(profit))
+            print(i, profit)
             pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq), np.log1p(profit)]]))
+                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq), profit]]))
             term_cat_profit = np.expm1(cat_new.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq), np.log1p(profit)]]))
+                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq), profit]]))
 
 
             term_profit = (pred_term_profit + term_cat_profit) / 2

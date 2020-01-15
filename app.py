@@ -596,7 +596,7 @@ def map():
     new_a.insert(0, a[0])
     print(new_a)
     '''
-    return jsonify({'Price': price, 'Duration': term, 'PLot': list(new_l), 'FlatsTerm': term_links})
+    return jsonify({'Price': price, 'Duration': term, 'PLot': a, 'FlatsTerm': term_links})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

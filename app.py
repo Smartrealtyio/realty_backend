@@ -565,7 +565,7 @@ def map():
     list_of_terms = [i.tolist()[0] for i in list_of_terms]
     list_of_terms = list_of_terms[::-1]
     if len(set(list_of_terms)) == 1:
-        list_of_terms = list(list_of_terms[0])
+        list_of_terms = [list_of_terms[0]]
     list_of_terms +=[term]
 
     print("Terms: ", list_of_terms, flush=True)
@@ -576,7 +576,7 @@ def map():
 
     prices = list_of_prices
     if len(list_of_terms) == 2:
-        prices = list(list_of_prices[0])
+        prices = [list_of_prices[0]]
     prices += [price]
     print("Prices: ", prices, flush=True)
 

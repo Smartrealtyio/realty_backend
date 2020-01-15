@@ -520,7 +520,7 @@ def map():
     # renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
     #                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y,
     list_of_prices = list_of_smaller_prices+list_of_larger_prices
-    min_price_from_list = min(list_of_prices)
+    max_price_from_list = max(list_of_prices)
     #
     # print("Min: ", min_profit_from_list)
     # list_of_prices_new = []

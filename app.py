@@ -586,12 +586,14 @@ def map():
 
     def drop_duplicat(l: list):
         seen = set()
+
         new_l = []
         for d in l:
             t = tuple(d.items())
             print("t: ", t[0][1])
             if t[0][1] not in seen:
-                seen.add(t)
+                seen.add(t[0][1])
+    
                 print(seen)
                 new_l.append(d)
         return new_l

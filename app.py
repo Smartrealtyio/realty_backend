@@ -466,20 +466,6 @@ def map():
     # Sort list by term
     a = [i for i in a if 0 < i.get('x') <600]
     a = sorted(a, key=lambda z: z['x'], reverse=False)
-    b = {'x': int(term), 'y': int(price)}
-    print("b: ", b, flush=True)
-    for i in enumerate(a):
-        print(i[0])
-        if a[i[0]].get('y') < b.get('y') < a[i[0] + 1].get('y'):
-            b['x'] = int((a[i[0]].get('x')+a[i[0] + 1].get('x'))/2)
-            term = int((a[i[0]].get('x')+a[i[0] + 1].get('x'))/2)
-            break
-    print("B_new: ", b , flush=True)
-    a += [b]
-    a = sorted(a, key=lambda z: z['x'], reverse=False)
-
-    print("Sorted; ", a, flush=True)
-
     def drop_duplicat(l: list):
         seen = set()
 
@@ -495,6 +481,21 @@ def map():
         return new_l
 
     new_l = drop_duplicat(a)
+    b = {'x': int(term), 'y': int(price)}
+    print("b: ", b, flush=True)
+    for i in enumerate(a):
+        print(i[0])
+        if a[i[0]].get('y') < b.get('y') < a[i[0] + 1].get('y'):
+            b['x'] = int((a[i[0]].get('x')+a[i[0] + 1].get('x'))/2)
+            term = int((a[i[0]].get('x')+a[i[0] + 1].get('x'))/2)
+            break
+    print("B_new: ", b , flush=True)
+    a += [b]
+    a = sorted(a, key=lambda z: z['x'], reverse=False)
+
+    print("Sorted; ", a, flush=True)
+
+
     print(list(new_l), flush=True)
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
 

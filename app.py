@@ -319,6 +319,7 @@ def map():
     X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
                                    'price_meter_sq']]
+    df_for_current_label['price_meter_sq'] = np.log1p(df_for_current_label['price_meter_sq'])
     df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
 
     y_term = df_for_current_label[['term']]
@@ -333,7 +334,7 @@ def map():
 
     # GBR
     list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                     is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq]
+                                     is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq)]
 
     # df_for_current_label_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price',
     #                                                   'term', 'full_sq', 'resource_id', 'offer_id', 'kitchen_sq', 'is_apartment', 'time_to_metro',
@@ -536,9 +537,9 @@ def map():
             profit+=min_profit
             print(i, profit)
             pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]]))
+                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq), profit]]))
             term_cat_profit = np.expm1(cat_new.predict([[renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq, profit]]))
+                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq), profit]]))
 
 
             term_profit = (pred_term_profit + term_cat_profit) / 2

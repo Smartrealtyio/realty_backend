@@ -520,8 +520,10 @@ def map():
     list_of_prices = list_of_smaller_prices+list_of_larger_prices
     min_profit_from_list = min(list_of_prices)
 
-    add_min = lambda x: x+min_profit_from_list
-    list_of_prices_new = list(map(add_min, list_of_prices))
+    print("Min: ", min_profit_from_list)
+    list_of_prices_new = []
+    for i in list_of_prices:
+        list_of_prices_new.append(i + min_profit_from_list)
     list_of_prices = list_of_prices_new
     list_of_terms = []
     def fn(l: list):

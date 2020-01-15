@@ -471,7 +471,7 @@ def map():
         print(i[0])
         if a[i[0]].get('y') < b.get('y') <= a[i[0] + 1].get('y'):
             b['x'] = int(statistics.mean([a[i[0]].get('x'), a[i[0] + 1].get('x')]))
-    a = a.append(b)
+    a += [b]
     a = sorted(a, key=lambda z: z['x'], reverse=False)
 
     print("Sorted; ", a, flush=True)

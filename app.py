@@ -482,7 +482,7 @@ def map():
              'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
              'price_meter_sq', 'profit']]
     # X_term_new = sc.fit_transform(X_term_new)
-    df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
+    # df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
     y_term_new = df_for_current_label[['term']]
 
     GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)

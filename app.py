@@ -585,12 +585,12 @@ def map():
     a = sorted(a, key=lambda z: z['x'], reverse=False)
     seen = set()
     new_l = []
-    for d in a[:-1]:
+    for d in a:
         t = tuple(d.items())
-        if t[0][1] not in seen:
+        if t[1][1] not in seen:
             seen.add(t)
             new_l.append(d)
-    new_l.append(a[-1])
+    #new_l.append(a[-1])
     print(list(new_l), flush=True)
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
     '''

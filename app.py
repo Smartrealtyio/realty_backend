@@ -468,9 +468,10 @@ def map():
 
     df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
         lambda row: (((row.pred_price * 100 / row.price) - 100)*100), axis=1)
-
-    min_profit = df_for_current_label['profit'].min()
-    df_for_current_label['profit'] = df_for_current_label['profit'].apply(lambda x: x + min_profit)
+    mean_price = df_for_current_label['price'].mean()
+    max_price = df_for_current_label['price'].max()
+    min_profit_train = ((mean_price * 100 / max_price) - 100) * 100
+    df_for_current_label['profit'] = df_for_current_label['profit'].apply(lambda x: x + min_profit_train)
 
     # Build new term prediction model, using one new parameter - profit
     # X_term_new = df_for_current_label[

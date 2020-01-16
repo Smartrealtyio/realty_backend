@@ -549,11 +549,14 @@ def map():
 
     new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
 
+    # Check if enough data for plotting
+    oops = 1 if len(new_a)<=1 else 0
+
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
 
 
 
-    return jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links})
+    return jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

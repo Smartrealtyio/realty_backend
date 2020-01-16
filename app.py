@@ -520,8 +520,8 @@ def map():
     print("Sorted; ", new_a, flush=True)
     """
     # Sort list by price
-    a = [i for i in a if 0 < i.get('y') < 600]
-    a = sorted(a, key=lambda z: z['x'], reverse=False)
+    a = [i for i in a if 0 < i.get('x') < 600]
+    a = sorted(a, key=lambda z: z['y'], reverse=False)
 
     def range_plot(l: list):
         new_a = [l[0]]

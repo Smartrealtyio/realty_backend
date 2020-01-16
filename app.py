@@ -487,7 +487,7 @@ def map():
 
     new_l = drop_duplicat(a)
     new_a = []
-    for i in list(range(len(new_l))):
+    for i in list(range(1, len(new_l))):
         if new_l[i].get('y') > new_l[i - 1].get('y'):
             new_a.append(new_l[i])
     b = {'x': int(term), 'y': int(price)}

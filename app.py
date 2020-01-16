@@ -486,10 +486,16 @@ def map():
         return new_l
 
     new_l = drop_duplicat(a)
-    new_a = []
-    for i in list(range(1, len(new_l)+1)):
-        if new_l[i].get('y') > new_l[i - 1].get('y'):
-            new_a.append(new_l[i])
+
+    def range_plot(l: list):
+        new_a = []
+        for i in list(range(1, len(l))):
+            if l[i].get('y') > l[i - 1].get('y'):
+                new_a.append(l[i])
+        return new_a
+    new_a = range_plot(new_l)
+    print("Ranged; ", new_a)
+
     b = {'x': int(term), 'y': int(price)}
 
     print("b: ", b, flush=True)

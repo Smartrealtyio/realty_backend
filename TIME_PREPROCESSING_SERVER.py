@@ -20,6 +20,7 @@ def main_preprocessing():
         prices = pd.read_csv(raw_data+ "prices.csv", names=[
             'id', 'price', 'changed_date', 'flat_id', 'created_at', 'updated_at'
         ], usecols=["price", "flat_id", 'changed_date', 'updated_at'])
+        prices = prices.drop_duplicates(subset='flat_id', keep="last")
         print(prices.shape)
         print("Prices all years: ", prices.shape)
         prices = prices[((prices['changed_date'].str.contains('2018')) | (prices['changed_date'].str.contains('2019')))]
@@ -68,7 +69,6 @@ def main_preprocessing():
         time_to_metro.sort_values('time_to_metro', ascending=True).drop_duplicates(subset='building_id', keep="first").sort_index()
         time_to_metro = time_to_metro[time_to_metro['transport_type'] == "ON_FOOT"]
 
-        prices = prices.drop_duplicates(subset='flat_id',keep="last")
 
         # choose the shortest path on foot
         ds = pd.merge(prices, flats, left_on="flat_id", right_on="id")
@@ -167,11 +167,13 @@ def main_preprocessing():
 
         print(list(zip(k_list, Sum_of_squared_distances)))
         '''
-        kmeans = KMeans(n_clusters=110, random_state=42).fit(clean_data[['longitude', 'latitude']])
+        kmeans = KMeans(n_clusters=150, random_state=42).fit(clean_data[['longitude', 'latitude']])
 
         dump(kmeans, PATH_TO_TIME_MODEL + '/KMEAN_CLUSTERING.joblib')
         labels = kmeans.labels_
         clean_data['clusters'] = labels
+
+
 
         print('Saving to new csv', clean_data.shape[0])
         clean_data.to_csv(prepared_data+'/COORDINATES_Pred_Term.csv', index=None, header=True)

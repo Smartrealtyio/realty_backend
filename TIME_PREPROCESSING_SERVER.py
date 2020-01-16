@@ -39,7 +39,7 @@ def main_preprocessing():
                                                    "life_sq",
                                                    "floor", "is_apartment",
                                                    "building_id",
-                                                   "closed", 'rooms', 'offer_id'
+                                                   "closed", 'rooms', 'offer_id', 'resource_id'
                                                    ],
                                           true_values="t", false_values="f", header=0)
         buildings = pd.read_csv(raw_data+ "buildings.csv",
@@ -129,7 +129,7 @@ def main_preprocessing():
         print('HEADERS NAME FINALY: ', list(ds.columns))
 
         print("All data: ", ds.shape)
-        # ds = ds[ds.resource_id == 0]
+        ds = ds[ds.resource_id == 0]
         print('Just Yandex: ', ds.shape)
 
 

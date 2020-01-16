@@ -489,15 +489,12 @@ def map():
 
     def range_plot(l: list):
         new_a = []
-        new_a2 = []
         for i in list(range(1, len(l))):
             if l[i].get('y') > l[i - 1].get('y'):
                 new_a.append(l[i])
-                for x in list(range(1, len(new_a))):
-                    if new_a[x].get('y') > new_a[x - 1].get('y'):
-                        new_a2.append(l[i])
-        return new_a2
+        return new_a
     new_a = range_plot(new_l)
+    new_a = range_plot(new_a)
     print("Ranged; ", new_a)
 
     b = {'x': int(term), 'y': int(price)}

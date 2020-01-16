@@ -539,10 +539,10 @@ def map():
     print("b: ", b, flush=True)
 
     for i in range(1, len(new_a)):
-        if new_a[i[0]].get('y') < b.get('y') < new_a[i[0] - 1].get('y'):
-            b['x'] = int((new_a[i[0]].get('x') + new_a[i[0] -1].get('x')) / 2)
-            print(new_a[i[0]], new_a[i[0] - 1])
-            term = int((new_a[i[0]].get('x') + new_a[i[0] - 1].get('x')) / 2)
+        if new_a[i].get('y') < b.get('y') < new_a[i - 1].get('y'):
+            b['x'] = int((new_a[i].get('x') + new_a[i -1].get('x')) / 2)
+            print(new_a[i], new_a[i - 1])
+            term = int((new_a[i].get('x') + new_a[i - 1].get('x')) / 2)
             break
 
     new_a += [b]

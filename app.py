@@ -527,8 +527,8 @@ def map():
         new_a = [l[0]]
         for i in list(range(1, len(l))):
             print(l[i])
-            if l[i].get('y') > l[i - 1].get('y'):
-                if l[i].get('y') > new_a[-1].get('y'):
+            if l[i].get('x') > l[i - 1].get('x'):
+                if l[i].get('x') > new_a[-1].get('x'):
                     new_a.append(l[i])
         return new_a
 

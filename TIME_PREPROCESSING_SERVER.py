@@ -129,7 +129,7 @@ def main_preprocessing():
         print('HEADERS NAME FINALY: ', list(ds.columns))
 
         print("All data: ", ds.shape)
-        ds = ds[ds.resource_id == 0]
+        # ds = ds[ds.resource_id == 0]
         print('Just Yandex: ', ds.shape)
 
 

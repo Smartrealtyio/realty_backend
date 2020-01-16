@@ -494,8 +494,6 @@ def map():
                 new_a.append(l[i])
         return new_a
     new_a = range_plot(new_l)
-    new_a = range_plot(new_a)
-    print("Ranged; ", new_a)
 
     b = {'x': int(term), 'y': int(price)}
 

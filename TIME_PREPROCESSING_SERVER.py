@@ -39,7 +39,7 @@ def main_preprocessing():
                                                    "life_sq",
                                                    "floor", "is_apartment",
                                                    "building_id",
-                                                   "closed", 'rooms', 'offer_id', 'resource_id'
+                                                   "closed", 'rooms', 'offer_id'
                                                    ],
                                           true_values="t", false_values="f", header=0)
         buildings = pd.read_csv(raw_data+ "buildings.csv",

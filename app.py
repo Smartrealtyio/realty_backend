@@ -486,7 +486,7 @@ def map():
         return new_l
 
     new_l = drop_duplicat(a)
-    print('Sorted 0 :', new_l)
+
     def range_plot(l: list):
         new_a = [l[0]]
         for i in list(range(1, len(l))):
@@ -496,7 +496,7 @@ def map():
                     new_a.append(l[i])
         return new_a
     new_a = range_plot(new_l)
-
+    print('Sorted 0 :', new_l)
     b = {'x': int(term), 'y': int(price)}
 
     print("b: ", b, flush=True)

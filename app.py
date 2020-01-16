@@ -385,19 +385,24 @@ def map():
     # Create list of N prices: which are larger and smaller than predicted
     def larger(p=0):
         larger_prices = []
-        for _ in range(20):
-            p+=50000
-            larger_prices.append(p)
+        percent = 2.5
+        for _ in range(10):
+            new_p = 0
+            new_p = p + p * percent / 100
+            larger_prices.append(new_p)
+            percent += 2.5
         return larger_prices
     list_of_larger_prices = larger(price)
 
     def smaller(p=0):
         smaller_prices = []
-        for _ in range(20):
-            p-=50000
-            smaller_prices.append(p)
-        smaller_prices = smaller_prices[::-1]
-        return smaller_prices
+        percent = 2.5
+        for _ in range(10):
+            new_p = 0
+            new_p = p - p * percent / 100
+            smaller_prices.append(new_p)
+            percent += 2.5
+        return smaller_prices[::-1]
     list_of_smaller_prices = smaller(price)
 
 
@@ -488,28 +493,26 @@ def map():
     b = {'x': int(term), 'y': int(price)}
 
     print("b: ", b, flush=True)
-    for i in enumerate(new_l):
+    for i in enumerate(new_a):
         print(i[0])
-        if new_l[i[0]].get('y') < b.get('y') < new_l[i[0] + 1].get('y'):
-            b['x'] = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
-            term = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
+        if new_a[i[0]].get('y') < b.get('y') < new_a[i[0] + 1].get('y'):
+            b['x'] = int((new_a[i[0]].get('x')+new_a[i[0] + 1].get('x'))/2)
+            term = int((new_a[i[0]].get('x')+new_a[i[0] + 1].get('x'))/2)
             break
 
     print("B_new: ", b , flush=True)
-    new_l += [b]
-    new_l = sorted(new_l, key=lambda z: z['x'], reverse=False)
+    new_a += [b]
+    new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
 
-    print("Sorted; ", new_l, flush=True)
+    print("Sorted; ", new_a, flush=True)
 
 
-    print(list(new_l), flush=True)
+
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
 
 
-    # new_a.insert(0, a[0])
-    print(new_a)
 
-    return jsonify({'Price': price, 'Duration': term, 'PLot': new_l, 'FlatsTerm': term_links})
+    return jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links})
     # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 

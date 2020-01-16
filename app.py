@@ -546,7 +546,7 @@ def map():
             break
 
     new_a += [b]
-
+    print(new_a, flush=True)
     new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
 
     # Check if enough data for plotting

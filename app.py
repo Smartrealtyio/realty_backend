@@ -468,6 +468,7 @@ def map():
     # Create list of dictionaries
     a = []
     a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
+    """
     # Sort list by term
     a = [i for i in a if 0 < i.get('x') <600]
     a = sorted(a, key=lambda z: z['x'], reverse=False)
@@ -498,7 +499,7 @@ def map():
             term = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
             break
     print("B_new: ", b, flush=True)
-    
+
     def range_plot(l: list):
         new_a = [l[0]]
         for i in list(range(1, len(l))):
@@ -517,8 +518,36 @@ def map():
     new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
 
     print("Sorted; ", new_a, flush=True)
+    """
+    # Sort list by price
+    a = [i for i in a if 0 < i.get('y') < 600]
+    a = sorted(a, key=lambda z: z['x'], reverse=False)
 
+    def range_plot(l: list):
+        new_a = [l[0]]
+        for i in list(range(1, len(l))):
+            print(l[i])
+            if l[i].get('y') > l[i - 1].get('y'):
+                if l[i].get('y') > new_a[-1].get('y'):
+                    new_a.append(l[i])
+        return new_a
 
+    new_a = range_plot(a)
+    print('Sorted 0 :', new_a)
+
+    b = {'x': int(term), 'y': int(price)}
+    print("b: ", b, flush=True)
+
+    for i in enumerate(new_a):
+        if new_a[i[0]].get('y') < b.get('y') < new_a[i[0] + 1].get('y'):
+            b['x'] = int((new_a[i[0]].get('x') + new_a[i[0] + 1].get('x')) / 2)
+            print(new_a[i[0]], new_a[i[0] + 1])
+            term = int((new_a[i[0]].get('x') + new_a[i[0] + 1].get('x')) / 2)
+            break
+
+    new_a += [b]
+
+    new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
 

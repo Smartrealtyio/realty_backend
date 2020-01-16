@@ -488,10 +488,12 @@ def map():
     new_l = drop_duplicat(a)
     print('Sorted 0 :', new_l)
     def range_plot(l: list):
-        new_a = []
+        new_a = [l[0]]
         for i in list(range(1, len(l))):
+            print(l[i])
             if l[i].get('y') > l[i - 1].get('y'):
-                new_a.append(l[i])
+                if l[i].get('y') > new_a[-1].get('y'):
+                    new_a.append(l[i])
         return new_a
     new_a = range_plot(new_l)
 

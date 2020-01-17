@@ -282,8 +282,8 @@ def map():
     # TERM
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
     df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
-    df_for_current_label = df_for_current_label[((df_for_current_label.price_meter_sq <= price_meter_sq+price_meter_sq*0.1)&
-                                                 (df_for_current_label.price_meter_sq >= price_meter_sq-price_meter_sq*0.1))]
+    # df_for_current_label = df_for_current_label[((df_for_current_label.price_meter_sq <= price_meter_sq+price_meter_sq*0.1)&
+    #                                              (df_for_current_label.price_meter_sq >= price_meter_sq-price_meter_sq*0.1))]
 
     X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',

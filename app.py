@@ -550,6 +550,8 @@ def map():
     new_a += [b]
     print(new_a, flush=True)
     new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
+    if new_a[-1].get('y') == price:
+        new_a.append({'x': term+2, 'y': price})
     print(new_a, flush=True)
     # Check if enough data for plotting
     oops = 1 if len(new_a)<=1 else 0

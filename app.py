@@ -588,7 +588,7 @@ def map():
         new_a.append({'x': term+2, 'y': price})
     print(new_a, flush=True)
     new_point = new_a[-1]
-    new_a.append(new_point)
+    new_a = new_a+[new_point]
     # Check if enough data for plotting
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices

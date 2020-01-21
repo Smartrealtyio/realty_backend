@@ -561,7 +561,7 @@ def map():
     def range_plot(l: list):
         new_a = [l[0]]
         for i in list(range(1, len(l))):
-            print(l[i], flush=True)
+            print("\n", l[i], flush=True)
             if l[i].get('y') > l[i - 1].get('y'):
                 if l[i].get('y') > new_a[-1].get('y'):
                     new_a.append(l[i])
@@ -576,8 +576,16 @@ def map():
 
     new_a += [b]
     print(new_a, flush=True)
-    new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
-
+    def range_plot(l: list):
+        new_a = [l[0]]
+        for i in list(range(1, len(l))):
+            print("\n", l[i], flush=True)
+            if l[i].get('x') > l[i - 1].get('x'):
+                if l[i].get('x') > new_a[-1].get('x'):
+                    new_a.append(l[i])
+        return new_a
+    new_a = sorted(new_a, key=lambda z: z['y'], reverse=False)
+    new_a = range_plot(new_a)
 
     oops = 1 if len(new_a)<=1 else 0
 

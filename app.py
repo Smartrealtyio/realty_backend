@@ -422,7 +422,7 @@ def map():
         smaller_prices = []
         percent = 2.5
         for _ in range(10):
-            new_p = 0
+
             new_p = p - p * percent / 100
             smaller_prices.append(new_p)
             percent += 2.5
@@ -474,7 +474,7 @@ def map():
     # terms = df_for_current_label.term
     # terms = terms.tolist()
     list_of_terms = [i.tolist()[0] for i in list_of_terms]
-    list_of_terms = list_of_terms[::-1]
+    # list_of_terms = list_of_terms[::-1]
     # list_of_terms +=[term]
 
     print("Terms: ", list_of_terms, flush=True)

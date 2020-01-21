@@ -27,6 +27,12 @@ def Model(data: pd.DataFrame):
     data = data[(np.abs(stats.zscore(data.term)) < 3)]
     X1 = data[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']]
+    data["longitude"] = np.log1p(data["longitude"])
+    data["latitude"] = np.log1p(data["latitude"])
+    data["full_sq"] = np.log1p(data["full_sq"])
+    data["kitchen_sq"] = np.log1p(data["kitchen_sq"])
+    data["X"] = np.log1p(data["X"])
+    data["Y"] = np.log1p(data["Y"])
     data["price"] = np.log1p(data["price"])
     y1 = data[['price']].values.ravel()
     print(X1.shape, y1.shape)

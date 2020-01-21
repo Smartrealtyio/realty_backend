@@ -240,6 +240,14 @@ def map():
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-full_sq*0.018)&(df_for_current_label.full_sq <= full_sq+full_sq*0.018))]
     print("Current label dataframe shape: ", df_for_current_label.shape, flush=True)
 
+    # Reducing skew in data using LogTransformation
+    df_for_current_label["longitude"] = np.log1p(df_for_current_label["longitude"])
+    df_for_current_label["latitude"] = np.log1p(df_for_current_label["latitude"])
+    df_for_current_label["full_sq"] = np.log1p(df_for_current_label["full_sq"])
+    df_for_current_label["kitchen_sq"] = np.log1p(df_for_current_label["kitchen_sq"])
+    df_for_current_label["X"] = np.log1p(df_for_current_label["X"])
+    df_for_current_label["Y"] = np.log1p(df_for_current_label["Y"])
+
     # Flats Features for GBR PRICE fitting
     X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
@@ -259,13 +267,20 @@ def map():
     print("Price gbr: ", price_gbr_pred, flush=True)
 
     CAT_PRICE = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
-    price_cat_pred = np.expm1(CAT_PRICE.predict([[renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
-                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, current_label]]))
+    price_cat_pred = np.expm1(CAT_PRICE.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
+                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))
 
     print("Price cat: ", price_cat_pred, flush=True)
 
     # Return real value of price (reverse Log Transformation)
     df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
+
+    df_for_current_label["longitude"] = np.expm1(df_for_current_label["longitude"])
+    df_for_current_label["latitude"] = np.expm1(df_for_current_label["latitude"])
+    df_for_current_label["full_sq"] = np.expm1(df_for_current_label["full_sq"])
+    df_for_current_label["kitchen_sq"] = np.expm1(df_for_current_label["kitchen_sq"])
+    df_for_current_label["X"] = np.expm1(df_for_current_label["X"])
+    df_for_current_label["Y"] = np.expm1(df_for_current_label["Y"])
 
     # Count mean of Cat and GBR algorithms prediction
     price = (price_gbr_pred+price_cat_pred)/2
@@ -295,8 +310,8 @@ def map():
 
 
     # GBR
-    list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                     is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq)]
+    list_of_requested_params_term = [renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
+                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), np.log1p(price_meter_sq)]
 
 
     '''

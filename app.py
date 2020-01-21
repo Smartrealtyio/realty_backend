@@ -138,7 +138,7 @@ def mean():
     # data_offers = data_offers[data_offers.flat_id.isin(outliers_it.flat_id)]
     # print('After concat: ', data_offers.shape[0])
     data_offers['profit'] = data_offers[['pred_price', 'price']].apply(lambda row: ((row.pred_price*100/row.price)-100), axis=1)
-    data_offers = data_offers[(data_offers.profit => 5)]
+    data_offers = data_offers[(data_offers.profit >= 5)]
     data_offers = data_offers.sort_values(by=['profit'], ascending=False)
     print(data_offers[['pred_price', "price"]].head())
 

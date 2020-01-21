@@ -460,6 +460,8 @@ def map():
             list_of_terms.append(term_profit)
         return list_of_terms
     list_of_terms = fn(list_of_prices)
+    min_term = min(list_of_terms)
+    min_index = min_term.index(min_term)
 
 
 
@@ -548,7 +550,7 @@ def map():
     b = {'x': int(term), 'y': int(price)}
     print("b: ", b, flush=True)
 
-    for i in range(1, len(a)):
+    for i in range(min_index, len(a)):
         if a[i - 1].get('y') < b.get('y') < a[i].get('y'):
             b['x'] = int((a[i].get('x') + a[i - 1].get('x')) / 2)
             print(a[i], a[i - 1], flush=True)
@@ -574,7 +576,7 @@ def map():
     print(new_a, flush=True)
     new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
 
-    
+
     oops = 1 if len(new_a)<=1 else 0
 
 

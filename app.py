@@ -588,6 +588,8 @@ def map():
         new_a.append({'x': term+2, 'y': price})
     print(new_a, flush=True)
     new_point = new_a[-1]
+    new_point_x = int(new_point.get('x'))
+    new_point['x'] = new_point_x+2
     new_a = new_a+[new_point]
     # Check if enough data for plotting
 

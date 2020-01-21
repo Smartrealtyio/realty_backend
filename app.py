@@ -540,6 +540,16 @@ def map():
     a = [i for i in a if 0 < i.get('x') < 600]
     a = sorted(a, key=lambda z: z['y'], reverse=False)
 
+    b = {'x': int(term), 'y': int(price)}
+    print("b: ", b, flush=True)
+
+    for i in range(1, len(a)):
+        if a[i - 1].get('y') < b.get('y') < a[i].get('y'):
+            b['x'] = int((a[i].get('x') + a[i - 1].get('x')) / 2)
+            print(a[i], a[i - 1], flush=True)
+            term = int((a[i].get('x') + a[i - 1].get('x')) / 2)
+            break
+
     def range_plot(l: list):
         new_a = [l[0]]
         for i in list(range(1, len(l))):
@@ -552,15 +562,7 @@ def map():
     new_a = range_plot(a)
     print('Sorted 0 :', new_a)
 
-    b = {'x': int(term), 'y': int(price)}
-    print("b: ", b, flush=True)
 
-    for i in range(1, len(new_a)):
-        if new_a[i-1].get('y') < b.get('y') < new_a[i].get('y'):
-            b['x'] = int((new_a[i].get('x') + new_a[i -1].get('x')) / 2)
-            print(new_a[i], new_a[i - 1], flush=True)
-            term = int((new_a[i].get('x') + new_a[i - 1].get('x')) / 2)
-            break
 
     new_a += [b]
     print(new_a, flush=True)

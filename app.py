@@ -444,7 +444,7 @@ def map():
         for i in l:
             #profit = ((price * 100 / i) - 100)
             #profit+=abs(min_profit)
-            profit = price/i
+            profit = i/price
             print(i, profit)
             pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
                                                                np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),

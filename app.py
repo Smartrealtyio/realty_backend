@@ -368,14 +368,12 @@ def map():
         ['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
          'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']].apply(
         lambda row:
-        int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, np.log1p(row.longitude), np.log1p(row.latitude),
-                                     np.log1p(row.full_sq),
-                                     np.log1p(row.kitchen_sq), row.is_apartment, row.time_to_metro, row.floor_last,
-                                     row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]])) + np.expm1(
-            cat.predict([[row.renovation, row.has_elevator, np.log1p(row.longitude), np.log1p(row.latitude),
-                          np.log1p(row.full_sq), np.log1p(row.kitchen_sq), row.is_apartment,
-                          row.time_to_metro, row.floor_last,
-                          row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]])))[0] / 2)), axis=1)
+        int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                                     row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
+                                     row.floor_first, row.X, row.Y, row.clusters]])) + np.expm1(
+            cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                          row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
+                          row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)
 
     df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
         lambda row: (((row.pred_price * 100 / row.price) - 100)), axis=1)
@@ -432,10 +430,6 @@ def map():
     list_of_smaller_prices = smaller(price)
 
 
-    list_of_params_plus_profit = [renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-                                  is_apartment, time_to_metro, floor_last, floor_first, X, Y, price_meter_sq]
-    # renovation, has_elevator, longitude, latitude, price, full_sq, kitchen_sq,
-    #                                       is_apartment, time_to_metro, floor_last, floor_first, X, Y,
     list_of_prices = list_of_smaller_prices+list_of_larger_prices
     max_price_from_list = max(list_of_prices)
     #
@@ -452,10 +446,11 @@ def map():
             profit = ((price * 100 / i) - 100)
             profit+=abs(min_profit)
             print(i, profit)
-            pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-                                                               price, np.log1p(full_sq), np.log1p(kitchen_sq),
+            pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
+                                                               np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
                                   is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), np.log1p(price_meter_sq), profit]]))
-            term_cat_profit = np.expm1(cat_new.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
+            term_cat_profit = np.expm1(cat_new.predict([[renovation, has_elevator, np.log1p(longitude),
+                                                               np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
                                   is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), np.log1p(price_meter_sq), profit]]))
 
 

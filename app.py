@@ -268,7 +268,7 @@ def map():
 
     CAT_PRICE = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
     price_cat_pred = np.expm1(CAT_PRICE.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))
+                                                  is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))
 
     print("Price cat: ", price_cat_pred, flush=True)
 
@@ -303,7 +303,7 @@ def map():
 
 
     X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-                                  'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
+                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
                                    'price_meter_sq']]
 
     # Reducing skew in data using LogTransformation
@@ -389,8 +389,8 @@ def map():
     #      'price_meter_sq', 'profit']]
     X_term_new = df_for_current_label[
         ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-             'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
-             'price_meter_sq', 'profit']]
+         'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
+         'price_meter_sq', 'profit']]
     # X_term_new = sc.fit_transform(X_term_new)
     # df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
     y_term_new = df_for_current_label[['term']]
@@ -448,10 +448,10 @@ def map():
             print(i, profit)
             pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
                                                                np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
-                                  is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), np.log1p(price_meter_sq), profit]]))
+                                                               is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), np.log1p(price_meter_sq), profit]]))
             term_cat_profit = np.expm1(cat_new.predict([[renovation, has_elevator, np.log1p(longitude),
-                                                               np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
-                                  is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), np.log1p(price_meter_sq), profit]]))
+                                                         np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                         is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), np.log1p(price_meter_sq), profit]]))
 
 
             term_profit = (pred_term_profit + term_cat_profit) / 2
@@ -570,11 +570,11 @@ def map():
     new_a += [b]
     print(new_a, flush=True)
     new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
+    oops = 1 if len(new_a)<=1 else 0
     if new_a[-1].get('y') == price:
         new_a.append({'x': term+2, 'y': price})
     print(new_a, flush=True)
     # Check if enough data for plotting
-    oops = 1 if len(new_a)<=1 else 0
 
     # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
 

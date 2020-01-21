@@ -114,11 +114,11 @@ def mean():
     data_offers['pred_price'] = data_offers[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                    'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']].apply(
         lambda row:
-        int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
-                                   row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, row.X, row.Y, row.clusters]]))+np.expm1(cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
-                                   row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, row.X, row.Y, row.clusters]])))[0]/2)), axis=1)
+        int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
+                                   np.log1p(row.kitchen_sq), row.is_apartment, row.time_to_metro, row.floor_last,
+                                   row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]]))+np.expm1(cat.predict([[row.renovation, row.has_elevator, np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
+                                   np.log1p(row.kitchen_sq), row.is_apartment, row.time_to_metro, row.floor_last,
+                                   row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]])))[0]/2)), axis=1)
 
 
     # Get Profit Offers using Outliers algorithm detection

@@ -379,12 +379,7 @@ def map():
     df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
         lambda row: ((row.pred_price / row.price)), axis=1)
 
-    # df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
-    #     lambda row: (((row.pred_price * 100 / row.price) - 100)), axis=1)
-    # mean_price = df_for_current_label['price'].mean()
-    # max_price = df_for_current_label['price'].max()
-    # min_profit_train = ((mean_price * 100 / max_price) - 100)
-    # df_for_current_label['profit'] = df_for_current_label['profit'].apply(lambda x: x + abs(min_profit_train))
+
 
 
     X_term_new = df_for_current_label[
@@ -442,8 +437,6 @@ def map():
     def fn(l: list):
         list_of_terms = []
         for i in l:
-            #profit = ((price * 100 / i) - 100)
-            #profit+=abs(min_profit)
             profit = i/price
             print(i, profit)
             pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
@@ -492,13 +485,13 @@ def map():
     # Create list of dictionaries
     a = []
     a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
-    """
+
+
     # Sort list by term
     a = [i for i in a if 0 < i.get('x') <600]
     a = sorted(a, key=lambda z: z['x'], reverse=False)
     def drop_duplicat(l: list):
         seen = set()
-
         new_l = []
         for d in l:
             # t = tuple(d)
@@ -542,7 +535,9 @@ def map():
     new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
 
     print("Sorted; ", new_a, flush=True)
-    """
+
+
+    '''
     # Sort list by price
     a = [i for i in a if 0 < i.get('x') < 600]
     a = sorted(a, key=lambda z: z['y'], reverse=False)
@@ -585,7 +580,7 @@ def map():
         return new_a
     new_a = sorted(new_a, key=lambda z: z['y'], reverse=False)
     new_a = range_plot(new_a)
-
+    '''
     oops = 1 if len(new_a)<=1 else 0
 
 

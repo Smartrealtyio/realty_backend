@@ -461,7 +461,7 @@ def map():
         return list_of_terms
     list_of_terms = fn(list_of_prices)
     min_term = min(list_of_terms)
-    min_index = min_term.index(min_term)
+    min_index = list_of_terms.index(min_term)
 
 
 

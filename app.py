@@ -310,8 +310,8 @@ def map():
 
 
     # GBR
-    list_of_requested_params_term = [renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), np.log1p(price_meter_sq)]
+    list_of_requested_params_term = [renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
+                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y, np.log1p(price_meter_sq), current_label]
 
 
     '''

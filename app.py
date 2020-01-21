@@ -592,7 +592,8 @@ def map():
     new_point_x = int(new_point.get('x'))
     new_point_y = int(new_point.get('y'))
     print("x from last item: ", new_point_x, flush=True)
-    new_point['x'], new_point['y'] = new_point_x+2, new_point_y+new_point*0.02
+    new_point['x'] = new_point_x+2
+    new_point['y'] = new_point_y+new_point*0.02
     print('new x: ', new_point, flush=True)
     new_a = new_a+[new_point]
     print("Finally new_a: ", new_a, flush=True)

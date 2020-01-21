@@ -509,32 +509,37 @@ def map():
     b = {'x': int(term), 'y': int(price)}
     print("b: ", b, flush=True)
 
-    for i in enumerate(new_l):
-        print(i[0])
-        if new_l[i[0]].get('y') < b.get('y') < new_l[i[0] + 1].get('y'):
-            b['x'] = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
-            term = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
-            break
-    print("B_new: ", b, flush=True)
-
-    def range_plot(l: list):
-        new_a = [l[0]]
-        for i in list(range(1, len(l))):
-            print(l[i])
-            if l[i].get('y') > l[i - 1].get('y'):
-                if l[i].get('y') > new_a[-1].get('y'):
-                    new_a.append(l[i])
-        return new_a
-    new_a = range_plot(new_l)
-    print('Sorted 0 :', new_a)
+    if price > new_l[0].get('y'):
+        for i in enumerate(new_l):
+            print(i[0])
+            if new_l[i[0]].get('y') < b.get('y') < new_l[i[0] + 1].get('y'):
+                b['x'] = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
+                term = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
+                break
+        print("B_new: ", b, flush=True)
 
 
+        def range_plot(l: list):
+            new_a = [l[0]]
+            for i in list(range(1, len(l))):
+                print(l[i])
+                if l[i].get('y') > l[i - 1].get('y'):
+                    if l[i].get('y') > new_a[-1].get('y'):
+                        new_a.append(l[i])
+            return new_a
+        new_a = range_plot(new_l)
+        print('Sorted 0 :', new_a)
 
-    print("B_new: ", b , flush=True)
-    new_a += [b]
-    new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
 
-    print("Sorted; ", new_a, flush=True)
+
+        print("B_new: ", b , flush=True)
+        new_a += [b]
+        new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
+
+        print("Sorted; ", new_a, flush=True)
+    else:
+        new_a = [{'x': 0, 'y': 0}]
+        
 
 
     '''
@@ -593,7 +598,7 @@ def map():
     new_point_y = int(new_point.get('y'))
     print("x from last item: ", new_point_x, flush=True)
 
-   
+
     print('new x: ', new_point, flush=True)
     new_a.append({"x": new_point_x+2, 'y': new_point_y+new_point_y*0.02})
     print("Finally new_a: ", new_a, flush=True)

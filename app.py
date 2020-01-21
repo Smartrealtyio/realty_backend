@@ -559,9 +559,9 @@ def map():
 
 
     def range_plot(l: list):
-        new_a = [l[0]]
+        new_a = [l[min_index]]
         for i in list(range(min_index, len(l))):
-            print(l[i])
+            print(l[i], flush=True)
             if l[i].get('x') > l[i - 1].get('x'):
                 if l[i].get('x') > new_a[-1].get('x'):
                     new_a.append(l[i])

@@ -404,22 +404,22 @@ def map():
     # Create list of N prices: which are larger and smaller than predicted
     def larger(p=0):
         larger_prices = []
-        percent = 2.5
-        for _ in range(10):
+        percent = 2
+        for _ in range(15):
             new_p = p + p * percent / 100
             larger_prices.append(new_p)
-            percent += 2.5
+            percent += 2
         return larger_prices
     list_of_larger_prices = larger(price)
 
     def smaller(p=0):
         smaller_prices = []
-        percent = 2.5
-        for _ in range(10):
+        percent = 2
+        for _ in range(15):
 
             new_p = p - p * percent / 100
             smaller_prices.append(new_p)
-            percent += 2.5
+            percent += 2
         return smaller_prices[::-1]
     list_of_smaller_prices = smaller(price)
 

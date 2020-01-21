@@ -377,17 +377,16 @@ def map():
                           row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)
 
     df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
-        lambda row: (((row.pred_price * 100 / row.price) - 100)), axis=1)
-    mean_price = df_for_current_label['price'].mean()
-    max_price = df_for_current_label['price'].max()
-    min_profit_train = ((mean_price * 100 / max_price) - 100)
-    df_for_current_label['profit'] = df_for_current_label['profit'].apply(lambda x: x + abs(min_profit_train))
+        lambda row: ((row.pred_price / row.price)), axis=1)
 
-    # Build new term prediction model, using one new parameter - profit
-    # X_term_new = df_for_current_label[
-    #     ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-    #      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
-    #      'price_meter_sq', 'profit']]
+    # df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
+    #     lambda row: (((row.pred_price * 100 / row.price) - 100)), axis=1)
+    # mean_price = df_for_current_label['price'].mean()
+    # max_price = df_for_current_label['price'].max()
+    # min_profit_train = ((mean_price * 100 / max_price) - 100)
+    # df_for_current_label['profit'] = df_for_current_label['profit'].apply(lambda x: x + abs(min_profit_train))
+
+
     X_term_new = df_for_current_label[
         ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
          'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
@@ -412,7 +411,6 @@ def map():
         larger_prices = []
         percent = 2.5
         for _ in range(10):
-            new_p = 0
             new_p = p + p * percent / 100
             larger_prices.append(new_p)
             percent += 2.5
@@ -444,15 +442,16 @@ def map():
     def fn(l: list):
         list_of_terms = []
         for i in l:
-            profit = ((price * 100 / i) - 100)
-            profit+=abs(min_profit)
+            #profit = ((price * 100 / i) - 100)
+            #profit+=abs(min_profit)
+            profit = price/i
             print(i, profit)
             pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
                                                                np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                               is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), np.log1p(price_meter_sq), profit]]))
+                                                               is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), price_meter_sq, profit]]))
             term_cat_profit = np.expm1(cat_new.predict([[renovation, has_elevator, np.log1p(longitude),
                                                          np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                         is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), np.log1p(price_meter_sq), profit]]))
+                                                         is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), price_meter_sq, profit]]))
 
 
             term_profit = (pred_term_profit + term_cat_profit) / 2
@@ -562,7 +561,7 @@ def map():
     def range_plot(l: list):
         new_a = [l[0]]
         for i in list(range(1, len(l))):
-            print("\n", l[i], flush=True)
+            print(l[i], flush=True)
             if l[i].get('y') > l[i - 1].get('y'):
                 if l[i].get('y') > new_a[-1].get('y'):
                     new_a.append(l[i])

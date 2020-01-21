@@ -550,7 +550,7 @@ def map():
     b = {'x': int(term), 'y': int(price)}
     print("b: ", b, flush=True)
 
-    for i in range(min_index, len(a)):
+    for i in range(1, len(a)):
         if a[i - 1].get('y') < b.get('y') < a[i].get('y'):
             b['x'] = int((a[i].get('x') + a[i - 1].get('x')) / 2)
             print(a[i], a[i - 1], flush=True)
@@ -560,7 +560,7 @@ def map():
 
     def range_plot(l: list):
         new_a = [l[0]]
-        for i in list(range(1, len(l))):
+        for i in list(range(min_index, len(l))):
             print(l[i])
             if l[i].get('x') > l[i - 1].get('x'):
                 if l[i].get('x') > new_a[-1].get('x'):

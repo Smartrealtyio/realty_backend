@@ -31,5 +31,5 @@ def model():
     cat.fit(train, verbose=5)
     dump(cat, PATH_TO_TIME_MODEL+'/CAT_TIME_MODEL.joblib')
 
-if __name__ == '__main__':
-    model()
+# if __name__ == '__main__':
+#     model()

@@ -158,6 +158,6 @@ def main_preprocessing():
     clean_data.to_csv(prepared_data + '/COORDINATES_OUTLIERS.csv', index=None, header=True)
 
 
-if __name__ == '__main__':
-    main_preprocessing()
+# if __name__ == '__main__':
+#     main_preprocessing()
 

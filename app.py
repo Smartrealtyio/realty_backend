@@ -569,7 +569,8 @@ def map():
 
     a = sorted(a, key=lambda z: z['x'], reverse=False)
     new_a = range_plot(a)
-    print('Sorted 0 :', new_a)
+    print("Minimum: ", a[min_index])
+    print('Sorted 0 :', new_a, flush=True)
 
 
 

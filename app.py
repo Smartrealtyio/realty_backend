@@ -554,7 +554,8 @@ def map():
             print(a[i], a[i - 1], flush=True)
             term = int((a[i].get('x') + a[i - 1].get('x')) / 2)
             break
-    print("Before sorting: ", a, flush=True)
+
+
     def range_plot(l: list):
         new_a = [l[0]]
         for i in list(range(1, len(l))):
@@ -564,6 +565,7 @@ def map():
                     new_a.append(l[i])
         return new_a
 
+    a = sorted(a, key=lambda z: z['x'], reverse=False)
     new_a = range_plot(a)
     print('Sorted 0 :', new_a)
 

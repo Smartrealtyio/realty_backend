@@ -554,7 +554,7 @@ def map():
             print(a[i], a[i - 1], flush=True)
             term = int((a[i].get('x') + a[i - 1].get('x')) / 2)
             break
-
+    print("Before sorting: ", a, flush=True)
     def range_plot(l: list):
         new_a = [l[0]]
         for i in list(range(1, len(l))):

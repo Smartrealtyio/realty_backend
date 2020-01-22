@@ -607,7 +607,6 @@ def map():
     print("Finally new_a: ", new_a, flush=True)
     # Check if enough data for plotting
 
-    # Drop items(flats) from list of dictionaries if price breaks out of ascending order of prices
 
 
 

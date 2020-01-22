@@ -230,17 +230,19 @@ def map():
 
     # Create subsample of flats with same cluster label value (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_label[0]]
+    # Drop Price and Term Outliers using Z-Score
+    df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
+    ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 3)]
+
+    df_for_current_label = pd.merge(df, ds, on=list(ds.columns))
+
+    # Create subsample according to the same(+-) size of the full_sq
+    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq - full_sq * 0.018) & (
+    df_for_current_label.full_sq <= full_sq + full_sq * 0.018))]
+
     if df_for_current_label.shape[0] > 1:
 
 
-        # Drop Price and Term Outliers using Z-Score
-        df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
-        ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 3)]
-
-        df_for_current_label = pd.merge(df, ds, on=list(ds.columns))
-
-        # Create subsample according to the same(+-) size of the full_sq
-        df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-full_sq*0.018)&(df_for_current_label.full_sq <= full_sq+full_sq*0.018))]
         print("Current label dataframe shape: ", df_for_current_label.shape, flush=True)
 
         # Reducing skew in data using LogTransformation

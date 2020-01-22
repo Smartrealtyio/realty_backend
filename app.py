@@ -588,7 +588,8 @@ def map():
     new_a = sorted(new_a, key=lambda z: z['y'], reverse=False)
     new_a = range_plot(new_a)
     '''
-    oops, term = 1, 0 if len(new_a)<=1 else 0
+    oops = 1 if len(new_a)<=1 else 0
+    term = 0 if len(new_a)<=1 else term
 
 
     if new_a[-1].get('y') == price:

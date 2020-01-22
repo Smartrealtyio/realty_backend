@@ -614,7 +614,7 @@ def map():
 
         answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
     else:
-        answ = jsonify({'Price': 0, 'Duration': 0, 'PLot': 0, 'FlatsTerm': 0, "OOPS":1})
+        answ = jsonify({'Price': 0, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS":1})
     return answ
         # , 'Term': term})
     # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)

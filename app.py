@@ -230,6 +230,8 @@ def map():
 
     # Create subsample of flats with same cluster label value (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_label[0]]
+    if len(df_for_current_label) < 1:
+        return jsonify({'Price': 0, 'Duration': 0, 'PLot': 0, 'FlatsTerm': 0, "OOPS": 1})
 
     # Drop Price and Term Outliers using Z-Score
     df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
@@ -539,7 +541,7 @@ def map():
         print("Sorted; ", new_a, flush=True)
     else:
         new_a = [{'x': 0, 'y': 0}]
-        
+
 
 
     '''
@@ -586,7 +588,7 @@ def map():
     new_a = sorted(new_a, key=lambda z: z['y'], reverse=False)
     new_a = range_plot(new_a)
     '''
-    oops = 1 if len(new_a)<=1 else 0
+    oops, term = 1, 0 if len(new_a)<=1 else 0
 
 
     if new_a[-1].get('y') == price:

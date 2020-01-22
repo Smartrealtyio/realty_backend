@@ -231,7 +231,7 @@ def map():
     # Create subsample of flats with same cluster label value (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_label[0]]
     if df_for_current_label.shape[0] < 1:
-        return jsonify({'Price': 0, 'Duration': 0, 'PLot': 0, 'FlatsTerm': 0, "OOPS": 1})
+        return # jsonify({'Price': 0, 'Duration': 0, 'PLot': 0, 'FlatsTerm': 0, "OOPS": 1})
 
     # Drop Price and Term Outliers using Z-Score
     df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]

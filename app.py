@@ -233,7 +233,6 @@ def map():
     if df_for_current_label.shape[0] > 1:
 
 
-
         # Drop Price and Term Outliers using Z-Score
         df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
         ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 3)]
@@ -611,11 +610,13 @@ def map():
 
 
 
-        return jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
-        # , 'Term': term})
-        # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
+        answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
     else:
-        return jsonify({'Price': 0, 'Duration': 0, 'PLot': 0, 'FlatsTerm': 0, "OOPS": 1})
+        answ = jsonify({'Price': 0, 'Duration': 0, 'PLot': 0, 'FlatsTerm': 0, "OOPS":1})
+    return answ
+        # , 'Term': term})
+    # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
+
 
 if __name__ == '__main__':
     app.run()

@@ -230,390 +230,392 @@ def map():
 
     # Create subsample of flats with same cluster label value (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_label[0]]
-    if df_for_current_label.shape[0] < 1:
-        return # jsonify({'Price': 0, 'Duration': 0, 'PLot': 0, 'FlatsTerm': 0, "OOPS": 1})
+    if df_for_current_label.shape[0] > 1:
 
-    # Drop Price and Term Outliers using Z-Score
-    df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
-    ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 3)]
 
-    df_for_current_label = pd.merge(df, ds, on=list(ds.columns))
 
-    # Create subsample according to the same(+-) size of the full_sq
-    df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-full_sq*0.018)&(df_for_current_label.full_sq <= full_sq+full_sq*0.018))]
-    print("Current label dataframe shape: ", df_for_current_label.shape, flush=True)
+        # Drop Price and Term Outliers using Z-Score
+        df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
+        ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 3)]
 
-    # Reducing skew in data using LogTransformation
-    df_for_current_label["longitude"] = np.log1p(df_for_current_label["longitude"])
-    df_for_current_label["latitude"] = np.log1p(df_for_current_label["latitude"])
-    df_for_current_label["full_sq"] = np.log1p(df_for_current_label["full_sq"])
-    df_for_current_label["kitchen_sq"] = np.log1p(df_for_current_label["kitchen_sq"])
-    df_for_current_label["X"] = np.log1p(df_for_current_label["X"])
-    df_for_current_label["Y"] = np.log1p(df_for_current_label["Y"])
+        df_for_current_label = pd.merge(df, ds, on=list(ds.columns))
 
-    # Flats Features for GBR PRICE fitting
-    X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                               'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
+        # Create subsample according to the same(+-) size of the full_sq
+        df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq-full_sq*0.018)&(df_for_current_label.full_sq <= full_sq+full_sq*0.018))]
+        print("Current label dataframe shape: ", df_for_current_label.shape, flush=True)
 
-    # Log Transformation for target label (price) to reduce skew of value
-    df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
-    y1 = df_for_current_label[['price']].values.ravel()
+        # Reducing skew in data using LogTransformation
+        df_for_current_label["longitude"] = np.log1p(df_for_current_label["longitude"])
+        df_for_current_label["latitude"] = np.log1p(df_for_current_label["latitude"])
+        df_for_current_label["full_sq"] = np.log1p(df_for_current_label["full_sq"])
+        df_for_current_label["kitchen_sq"] = np.log1p(df_for_current_label["kitchen_sq"])
+        df_for_current_label["X"] = np.log1p(df_for_current_label["X"])
+        df_for_current_label["Y"] = np.log1p(df_for_current_label["Y"])
 
-    # PRICE PREDICTION
+        # Flats Features for GBR PRICE fitting
+        X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
 
-    # GBR
-    GBR_PRCIE = GradientBoostingRegressor(n_estimators=250, max_depth=8, verbose=5, max_features=3, random_state=42, learning_rate=0.07)
-    print(X1.shape, y1.shape, flush=True)
-    GBR_PRCIE.fit(X1, y1)
-    price_gbr_pred = np.expm1(GBR_PRCIE.predict([list_of_requested_params_price]))
+        # Log Transformation for target label (price) to reduce skew of value
+        df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
+        y1 = df_for_current_label[['price']].values.ravel()
 
-    print("Price gbr: ", price_gbr_pred, flush=True)
+        # PRICE PREDICTION
 
-    CAT_PRICE = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
-    price_cat_pred = np.expm1(CAT_PRICE.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                  is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))
+        # GBR
+        GBR_PRCIE = GradientBoostingRegressor(n_estimators=250, max_depth=8, verbose=5, max_features=3, random_state=42, learning_rate=0.07)
+        print(X1.shape, y1.shape, flush=True)
+        GBR_PRCIE.fit(X1, y1)
+        price_gbr_pred = np.expm1(GBR_PRCIE.predict([list_of_requested_params_price]))
 
-    print("Price cat: ", price_cat_pred, flush=True)
+        print("Price gbr: ", price_gbr_pred, flush=True)
 
-    # Return real value of price (reverse Log Transformation)
-    df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
+        CAT_PRICE = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
+        price_cat_pred = np.expm1(CAT_PRICE.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))
 
-    # df_for_current_label["longitude"] = np.expm1(df_for_current_label["longitude"])
-    # df_for_current_label["latitude"] = np.expm1(df_for_current_label["latitude"])
-    # df_for_current_label["full_sq"] = np.expm1(df_for_current_label["full_sq"])
-    # df_for_current_label["kitchen_sq"] = np.expm1(df_for_current_label["kitchen_sq"])
-    # df_for_current_label["X"] = np.expm1(df_for_current_label["X"])
-    # df_for_current_label["Y"] = np.expm1(df_for_current_label["Y"])
+        print("Price cat: ", price_cat_pred, flush=True)
 
-    # Count mean of Cat and GBR algorithms prediction
-    price = (price_gbr_pred+price_cat_pred)/2
-    #price = price_cat
-    price = int(price[0])
-    print("Predicted Price: ", price, flush=True)
+        # Return real value of price (reverse Log Transformation)
+        df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
 
-    price_meter_sq = price / full_sq
+        # df_for_current_label["longitude"] = np.expm1(df_for_current_label["longitude"])
+        # df_for_current_label["latitude"] = np.expm1(df_for_current_label["latitude"])
+        # df_for_current_label["full_sq"] = np.expm1(df_for_current_label["full_sq"])
+        # df_for_current_label["kitchen_sq"] = np.expm1(df_for_current_label["kitchen_sq"])
+        # df_for_current_label["X"] = np.expm1(df_for_current_label["X"])
+        # df_for_current_label["Y"] = np.expm1(df_for_current_label["Y"])
 
+        # Count mean of Cat and GBR algorithms prediction
+        price = (price_gbr_pred+price_cat_pred)/2
+        #price = price_cat
+        price = int(price[0])
+        print("Predicted Price: ", price, flush=True)
 
+        price_meter_sq = price / full_sq
 
 
 
-    # TERM
-    df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
-    df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
-    # df_for_current_label = df_for_current_label[((df_for_current_label.price_meter_sq <= price_meter_sq+price_meter_sq*0.1)&
-    #                                              (df_for_current_label.price_meter_sq >= price_meter_sq-price_meter_sq*0.1))]
 
 
+        # TERM
+        df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
+        df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
+        # df_for_current_label = df_for_current_label[((df_for_current_label.price_meter_sq <= price_meter_sq+price_meter_sq*0.1)&
+        #                                              (df_for_current_label.price_meter_sq >= price_meter_sq-price_meter_sq*0.1))]
 
-    X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
-                                   'price_meter_sq']]
 
-    # Reducing skew in data using LogTransformation
 
-    df_for_current_label['price_meter_sq'] = np.log1p(df_for_current_label['price_meter_sq'])
-    df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
+        X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
+                                       'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
+                                       'price_meter_sq']]
 
-    y_term = df_for_current_label[['term']]
+        # Reducing skew in data using LogTransformation
 
+        df_for_current_label['price_meter_sq'] = np.log1p(df_for_current_label['price_meter_sq'])
+        df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
 
-    # GBR
-    list_of_requested_params_term = [renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-                                     np.log1p(full_sq), np.log1p(kitchen_sq), is_apartment, time_to_metro, floor_last,
-                                     floor_first, np.log1p(X), np.log1p(Y),
-                                     np.log1p(price_meter_sq), current_label]
+        y_term = df_for_current_label[['term']]
 
 
-    '''
-    most_important_features = list(df_for_current_label_term.corr().term.sort_values(ascending=False).index)[1:4]
-    print("Most important features for term prediction: ", most_important_features)
-    '''
+        # GBR
+        list_of_requested_params_term = [renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+                                         np.log1p(full_sq), np.log1p(kitchen_sq), is_apartment, time_to_metro, floor_last,
+                                         floor_first, np.log1p(X), np.log1p(Y),
+                                         np.log1p(price_meter_sq), current_label]
 
-    GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
-    # from sklearn.linear_model import LinearRegression
-    # GBR_TERM = LinearRegression()
-    print(X_term.shape, y_term.shape, flush=True)
 
-    GBR_TERM.fit(X_term, y_term)
+        '''
+        most_important_features = list(df_for_current_label_term.corr().term.sort_values(ascending=False).index)[1:4]
+        print("Most important features for term prediction: ", most_important_features)
+        '''
 
-    term_gbr_pred = np.expm1(GBR_TERM.predict([list_of_requested_params_term]))
+        GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
+        # from sklearn.linear_model import LinearRegression
+        # GBR_TERM = LinearRegression()
+        print(X_term.shape, y_term.shape, flush=True)
 
-    print("Term gbr: ", term_gbr_pred, flush=True)
+        GBR_TERM.fit(X_term, y_term)
 
-    cat_term = CatBoostRegressor(random_state=42, l2_leaf_reg=1, learning_rate=0.05)
-    #cat = CatBoostRegressor(iterations=100, max_depth=8, l2_leaf_reg=1)
-    train_time = Pool(X_term, y_term)
-    cat_term.fit(train_time, verbose=5)
-    term_cat = np.expm1(cat_term.predict([list_of_requested_params_term]))
-    print("Term cat: ", term_cat, flush=True)
+        term_gbr_pred = np.expm1(GBR_TERM.predict([list_of_requested_params_term]))
 
+        print("Term gbr: ", term_gbr_pred, flush=True)
 
-    term = (term_cat+term_gbr_pred)/2
-    # term = term_cat
+        cat_term = CatBoostRegressor(random_state=42, l2_leaf_reg=1, learning_rate=0.05)
+        #cat = CatBoostRegressor(iterations=100, max_depth=8, l2_leaf_reg=1)
+        train_time = Pool(X_term, y_term)
+        cat_term.fit(train_time, verbose=5)
+        term_cat = np.expm1(cat_term.predict([list_of_requested_params_term]))
+        print("Term cat: ", term_cat, flush=True)
 
-    print("Predicted term: ", term)
 
+        term = (term_cat+term_gbr_pred)/2
+        # term = term_cat
 
-    # term = term_gbr_pred
-    term = int(term.item(0))
+        print("Predicted term: ", term)
 
 
+        # term = term_gbr_pred
+        term = int(term.item(0))
 
 
-    # df_for_current_label = df_for_current_label[(df_for_current_label.term <= term+200)]
 
-    # DATA FOR BUILDING PRICE-TIME CORRELATION GRAPHICS
-    # Add new parameters: PREDICTED_PRICE and PROFIT
-    gbr = load(PATH_TO_PRICE_MODEL)
-    cat = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
 
-    df_for_current_label['pred_price'] = df_for_current_label[
-        ['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-         'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']].apply(
-        lambda row:
-        int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
-                                     row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                     row.floor_first, row.X, row.Y, row.clusters]])) + np.expm1(
-            cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
-                          row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                          row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)
+        # df_for_current_label = df_for_current_label[(df_for_current_label.term <= term+200)]
 
-    df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
-        lambda row: ((row.pred_price / row.price)), axis=1)
+        # DATA FOR BUILDING PRICE-TIME CORRELATION GRAPHICS
+        # Add new parameters: PREDICTED_PRICE and PROFIT
+        gbr = load(PATH_TO_PRICE_MODEL)
+        cat = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
 
+        df_for_current_label['pred_price'] = df_for_current_label[
+            ['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+             'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']].apply(
+            lambda row:
+            int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                                         row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
+                                         row.floor_first, row.X, row.Y, row.clusters]])) + np.expm1(
+                cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                              row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
+                              row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)
 
+        df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
+            lambda row: ((row.pred_price / row.price)), axis=1)
 
 
-    X_term_new = df_for_current_label[
-        ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-         'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
-         'price_meter_sq', 'profit']]
-    # X_term_new = sc.fit_transform(X_term_new)
-    # df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
-    y_term_new = df_for_current_label[['term']]
 
-    GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
-    GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
-    cat_new = CatBoostRegressor(random_state=42)
-    train_time = Pool(X_term_new, y_term_new)
-    cat_new.fit(train_time, verbose=5)
+        X_term_new = df_for_current_label[
+            ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
+             'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
+             'price_meter_sq', 'profit']]
+        # X_term_new = sc.fit_transform(X_term_new)
+        # df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
+        y_term_new = df_for_current_label[['term']]
 
+        GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
+        GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
-    # term = term_gbr_pred
-    # term = int(term.item(0))
+        cat_new = CatBoostRegressor(random_state=42)
+        train_time = Pool(X_term_new, y_term_new)
+        cat_new.fit(train_time, verbose=5)
 
-    # Create list of N prices: which are larger and smaller than predicted
-    def larger(p=0):
-        larger_prices = []
-        percent = 2
-        for _ in range(15):
-            new_p = p + p * percent / 100
-            larger_prices.append(new_p)
-            percent += 2
-        return larger_prices
-    list_of_larger_prices = larger(price)
 
-    def smaller(p=0):
-        smaller_prices = []
-        percent = 2
-        for _ in range(15):
+        # term = term_gbr_pred
+        # term = int(term.item(0))
 
-            new_p = p - p * percent / 100
-            smaller_prices.append(new_p)
-            percent += 2
-        return smaller_prices[::-1]
-    list_of_smaller_prices = smaller(price)
+        # Create list of N prices: which are larger and smaller than predicted
+        def larger(p=0):
+            larger_prices = []
+            percent = 2
+            for _ in range(15):
+                new_p = p + p * percent / 100
+                larger_prices.append(new_p)
+                percent += 2
+            return larger_prices
+        list_of_larger_prices = larger(price)
 
+        def smaller(p=0):
+            smaller_prices = []
+            percent = 2
+            for _ in range(15):
 
-    list_of_prices = list_of_smaller_prices+list_of_larger_prices
-    max_price_from_list = max(list_of_prices)
-    #
-    # print("Min: ", min_profit_from_list)
-    # list_of_prices_new = []
-    # for i in list_of_prices:
-    #     list_of_prices_new.append(i + min_profit_from_list)
-    # list_of_prices = list_of_prices_new
+                new_p = p - p * percent / 100
+                smaller_prices.append(new_p)
+                percent += 2
+            return smaller_prices[::-1]
+        list_of_smaller_prices = smaller(price)
 
-    min_profit = ((price * 100 /max_price_from_list) - 100)
-    def fn(l: list):
-        list_of_terms = []
-        for i in l:
-            profit = i/price
-            print(i, profit)
-            pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
-                                                               np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                               is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), price_meter_sq, profit]]))
-            term_cat_profit = np.expm1(cat_new.predict([[renovation, has_elevator, np.log1p(longitude),
-                                                         np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                         is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), price_meter_sq, profit]]))
 
+        list_of_prices = list_of_smaller_prices+list_of_larger_prices
+        max_price_from_list = max(list_of_prices)
+        #
+        # print("Min: ", min_profit_from_list)
+        # list_of_prices_new = []
+        # for i in list_of_prices:
+        #     list_of_prices_new.append(i + min_profit_from_list)
+        # list_of_prices = list_of_prices_new
 
-            term_profit = (pred_term_profit + term_cat_profit) / 2
-            print("GBR & Cat: ", pred_term_profit, term_cat_profit, flush=True)
-            print("Predicted term: ", term_profit, flush=True)
-            list_of_terms.append(term_profit)
-        return list_of_terms
-    list_of_terms = fn(list_of_prices)
-    min_term = min(list_of_terms)
-    min_index = list_of_terms.index(min_term)
+        min_profit = ((price * 100 /max_price_from_list) - 100)
+        def fn(l: list):
+            list_of_terms = []
+            for i in l:
+                profit = i/price
+                print(i, profit)
+                pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
+                                                                   np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                                   is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), price_meter_sq, profit]]))
+                term_cat_profit = np.expm1(cat_new.predict([[renovation, has_elevator, np.log1p(longitude),
+                                                             np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                             is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), price_meter_sq, profit]]))
 
 
+                term_profit = (pred_term_profit + term_cat_profit) / 2
+                print("GBR & Cat: ", pred_term_profit, term_cat_profit, flush=True)
+                print("Predicted term: ", term_profit, flush=True)
+                list_of_terms.append(term_profit)
+            return list_of_terms
+        list_of_terms = fn(list_of_prices)
+        min_term = min(list_of_terms)
+        min_index = list_of_terms.index(min_term)
 
 
-    # Count profit for different prices
 
-    # Add links to flats
-    term_links = df_for_current_label.to_dict('record')
 
+        # Count profit for different prices
 
-    # Create list of term values from subsample of "same" flats
-    # terms = df_for_current_label.term
-    # terms = terms.tolist()
-    list_of_terms = [i.tolist()[0] for i in list_of_terms]
-    # list_of_terms = list_of_terms[::-1]
-    # list_of_terms +=[term]
+        # Add links to flats
+        term_links = df_for_current_label.to_dict('record')
 
-    print("Terms: ", list_of_terms, flush=True)
 
-    # Create list of price values from subsample of "same" flats
-    # prices = df_for_current_label.price
-    # prices = prices.tolist()
-    prices = list_of_prices
-    # prices += [price]
-    print("Prices: ", prices, flush=True)
+        # Create list of term values from subsample of "same" flats
+        # terms = df_for_current_label.term
+        # terms = terms.tolist()
+        list_of_terms = [i.tolist()[0] for i in list_of_terms]
+        # list_of_terms = list_of_terms[::-1]
+        # list_of_terms +=[term]
 
+        print("Terms: ", list_of_terms, flush=True)
 
-    # Create list of dictionaries
-    a = []
-    a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
+        # Create list of price values from subsample of "same" flats
+        # prices = df_for_current_label.price
+        # prices = prices.tolist()
+        prices = list_of_prices
+        # prices += [price]
+        print("Prices: ", prices, flush=True)
 
 
-    # Sort list by term
-    a = [i for i in a if 0 < i.get('x') <600]
-    a = sorted(a, key=lambda z: z['x'], reverse=False)
-    def drop_duplicat(l: list):
-        seen = set()
-        new_l = []
-        for d in l:
-            # t = tuple(d)
-            # print("d: ", d)
-            if d.get('x') not in seen:
-                seen.add(d.get('x'))
+        # Create list of dictionaries
+        a = []
+        a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
 
-                # print(seen)
-                new_l.append(d)
-        return new_l
 
-    new_l = drop_duplicat(a)
-    print("After drop duplicates: ", new_l, flush=True)
+        # Sort list by term
+        a = [i for i in a if 0 < i.get('x') <600]
+        a = sorted(a, key=lambda z: z['x'], reverse=False)
+        def drop_duplicat(l: list):
+            seen = set()
+            new_l = []
+            for d in l:
+                # t = tuple(d)
+                # print("d: ", d)
+                if d.get('x') not in seen:
+                    seen.add(d.get('x'))
 
-    b = {'x': int(term), 'y': int(price)}
-    print("b: ", b, flush=True)
+                    # print(seen)
+                    new_l.append(d)
+            return new_l
 
-    if price > new_l[0].get('y'):
-        for i in enumerate(new_l):
-            print(i[0])
-            if new_l[i[0]].get('y') < b.get('y') < new_l[i[0] + 1].get('y'):
-                b['x'] = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
-                term = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
+        new_l = drop_duplicat(a)
+        print("After drop duplicates: ", new_l, flush=True)
+
+        b = {'x': int(term), 'y': int(price)}
+        print("b: ", b, flush=True)
+
+        if price > new_l[0].get('y'):
+            for i in enumerate(new_l):
+                print(i[0])
+                if new_l[i[0]].get('y') < b.get('y') < new_l[i[0] + 1].get('y'):
+                    b['x'] = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
+                    term = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
+                    break
+            print("B_new: ", b, flush=True)
+
+
+            def range_plot(l: list):
+                new_a = [l[0]]
+                for i in list(range(1, len(l))):
+                    print(l[i])
+                    if l[i].get('y') > l[i - 1].get('y'):
+                        if l[i].get('y') > new_a[-1].get('y'):
+                            new_a.append(l[i])
+                return new_a
+            new_a = range_plot(new_l)
+            print('Sorted 0 :', new_a)
+
+
+
+            print("B_new: ", b , flush=True)
+            new_a += [b]
+            new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
+
+            print("Sorted; ", new_a, flush=True)
+        else:
+            new_a = [{'x': 0, 'y': 0}]
+
+
+
+        '''
+        # Sort list by price
+        a = [i for i in a if 0 < i.get('x') < 600]
+        a = sorted(a, key=lambda z: z['y'], reverse=False)
+    
+        b = {'x': int(term), 'y': int(price)}
+        print("b: ", b, flush=True)
+    
+        for i in range(1, len(a)):
+            if a[i - 1].get('y') < b.get('y') < a[i].get('y'):
+                b['x'] = int((a[i].get('x') + a[i - 1].get('x')) / 2)
+                print(a[i], a[i - 1], flush=True)
+                term = int((a[i].get('x') + a[i - 1].get('x')) / 2)
                 break
-        print("B_new: ", b, flush=True)
-
-
+    
+    
         def range_plot(l: list):
             new_a = [l[0]]
             for i in list(range(1, len(l))):
-                print(l[i])
+                print(l[i], flush=True)
                 if l[i].get('y') > l[i - 1].get('y'):
                     if l[i].get('y') > new_a[-1].get('y'):
                         new_a.append(l[i])
             return new_a
-        new_a = range_plot(new_l)
-        print('Sorted 0 :', new_a)
-
-
-
-        print("B_new: ", b , flush=True)
+    
+        a = sorted(a, key=lambda z: z['x'], reverse=False)
+        new_a = range_plot(a)
+        print('Sorted 0 :', new_a, flush=True)
+    
+    
+    
         new_a += [b]
-        new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
+        print(new_a, flush=True)
+        def range_plot(l: list):
+            new_a = [l[0]]
+            for i in list(range(1, len(l))):
+                print("\n", l[i], flush=True)
+                if l[i].get('x') > l[i - 1].get('x'):
+                    if l[i].get('x') > new_a[-1].get('x'):
+                        new_a.append(l[i])
+            return new_a
+        new_a = sorted(new_a, key=lambda z: z['y'], reverse=False)
+        new_a = range_plot(new_a)
+        '''
+        oops = 1 if len(new_a)<=1 else 0
+        term = 0 if len(new_a)<=1 else term
 
-        print("Sorted; ", new_a, flush=True)
+
+        if new_a[-1].get('y') == price:
+            new_a.append({'x': term+2, 'y': price})
+        print(new_a, flush=True)
+        new_point = new_a[-1]
+        print('last item: ', new_point, flush=True)
+        new_point_x = int(new_point.get('x'))
+        new_point_y = int(new_point.get('y'))
+        print("x from last item: ", new_point_x, flush=True)
+
+
+        print('new x: ', new_point, flush=True)
+        new_a.append({"x": new_point_x+2, 'y': new_point_y+new_point_y*0.02})
+        print("Finally new_a: ", new_a, flush=True)
+        # Check if enough data for plotting
+
+
+
+
+        return jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
+        # , 'Term': term})
+        # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
     else:
-        new_a = [{'x': 0, 'y': 0}]
-
-
-
-    '''
-    # Sort list by price
-    a = [i for i in a if 0 < i.get('x') < 600]
-    a = sorted(a, key=lambda z: z['y'], reverse=False)
-
-    b = {'x': int(term), 'y': int(price)}
-    print("b: ", b, flush=True)
-
-    for i in range(1, len(a)):
-        if a[i - 1].get('y') < b.get('y') < a[i].get('y'):
-            b['x'] = int((a[i].get('x') + a[i - 1].get('x')) / 2)
-            print(a[i], a[i - 1], flush=True)
-            term = int((a[i].get('x') + a[i - 1].get('x')) / 2)
-            break
-
-
-    def range_plot(l: list):
-        new_a = [l[0]]
-        for i in list(range(1, len(l))):
-            print(l[i], flush=True)
-            if l[i].get('y') > l[i - 1].get('y'):
-                if l[i].get('y') > new_a[-1].get('y'):
-                    new_a.append(l[i])
-        return new_a
-
-    a = sorted(a, key=lambda z: z['x'], reverse=False)
-    new_a = range_plot(a)
-    print('Sorted 0 :', new_a, flush=True)
-
-
-
-    new_a += [b]
-    print(new_a, flush=True)
-    def range_plot(l: list):
-        new_a = [l[0]]
-        for i in list(range(1, len(l))):
-            print("\n", l[i], flush=True)
-            if l[i].get('x') > l[i - 1].get('x'):
-                if l[i].get('x') > new_a[-1].get('x'):
-                    new_a.append(l[i])
-        return new_a
-    new_a = sorted(new_a, key=lambda z: z['y'], reverse=False)
-    new_a = range_plot(new_a)
-    '''
-    oops = 1 if len(new_a)<=1 else 0
-    term = 0 if len(new_a)<=1 else term
-
-
-    if new_a[-1].get('y') == price:
-        new_a.append({'x': term+2, 'y': price})
-    print(new_a, flush=True)
-    new_point = new_a[-1]
-    print('last item: ', new_point, flush=True)
-    new_point_x = int(new_point.get('x'))
-    new_point_y = int(new_point.get('y'))
-    print("x from last item: ", new_point_x, flush=True)
-
-
-    print('new x: ', new_point, flush=True)
-    new_a.append({"x": new_point_x+2, 'y': new_point_y+new_point_y*0.02})
-    print("Finally new_a: ", new_a, flush=True)
-    # Check if enough data for plotting
-
-
-
-
-    return jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
-    # , 'Term': term})
-    # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
-
+        return jsonify({'Price': 0, 'Duration': 0, 'PLot': 0, 'FlatsTerm': 0, "OOPS": 1})
 
 if __name__ == '__main__':
     app.run()

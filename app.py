@@ -51,6 +51,7 @@ def mean():
     time_to_metro = float(request.args.get('time_to_metro')) if request.args.get('time_to_metro') is not None else None
     page = int(request.args.get('page')) if request.args.get('page') is not None else 1
     sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 0
+    city_id = int(request.args.get('city_id')) if request.args.get('city_id') is not None else 0
 
     print(latitude_from, latitude_to, longitude_from, longitude_to, flush=True)
 
@@ -212,6 +213,7 @@ def map():
     time_to_metro = int(request.args.get('time_to_metro'))
     X = (m.cos(latitude) * m.cos(longitude))
     Y = (m.cos(latitude) * m.sin(longitude))
+    city_id = int(request.args.get('city_id')) if request.args.get('city_id') is not None else 0
 
 
     # Data

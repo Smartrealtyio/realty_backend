@@ -220,7 +220,7 @@ def map():
     city_id = int(request.args.get('city_id')) if request.args.get('city_id') is not None else 0
 
     # initialize dataframe
-    data = pd.Dataframe()
+    data = pd.DataFrame()
     kmeans = 0
 
     # 0 = Moscow, 1 = Spb

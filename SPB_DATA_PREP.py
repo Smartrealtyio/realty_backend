@@ -154,7 +154,7 @@ def main_preprocessing():
 
     dump(kmeans, PATH_TO_MODELS + 'KMEAN_CLUSTERING_SPB.joblib')
     labels = kmeans.labels_
-    clean_data['clusters'] = labels 
+    clean_data['clusters'] = labels
 
     print('Saving to new csv', clean_data.shape[0])
     clean_data.to_csv(PREPARED_DATA + 'PREPARED_SPB.csv', index=None, header=True)

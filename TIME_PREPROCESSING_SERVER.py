@@ -169,14 +169,14 @@ def main_preprocessing():
         '''
         kmeans = KMeans(n_clusters=150, random_state=42).fit(clean_data[['longitude', 'latitude']])
 
-        dump(kmeans, PATH_TO_TIME_MODEL + '/KMEAN_CLUSTERING.joblib')
+        dump(kmeans, PATH_TO_TIME_MODEL + '/KMEAN_CLUSTERING_MOSCOW.joblib')
         labels = kmeans.labels_
         clean_data['clusters'] = labels
 
 
 
         print('Saving to new csv', clean_data.shape[0])
-        clean_data.to_csv(prepared_data+'/COORDINATES_Pred_Term.csv', index=None, header=True)
+        clean_data.to_csv(prepared_data+'/MOSCOW.csv', index=None, header=True)
 
 
 if __name__ == '__main__':

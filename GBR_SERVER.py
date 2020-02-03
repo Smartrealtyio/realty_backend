@@ -12,11 +12,11 @@ import xgboost
 import os
 import settings_local as SETTINGS
 
-prepared_data = SETTINGS.DATA
+prepared_data = SETTINGS.DATA_MOSCOW
 
-PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModelGBR.joblib'
-PATH_TO_PRICE_MODEL_X = SETTINGS.MODEL + '/PriceModelXGBoost.joblib'
-PATH_TO_PRICE_MODEL_CAT = SETTINGS.MODEL + '/PriceModelCatGradient.joblib'
+PATH_TO_PRICE_MODEL = SETTINGS.MODEL_MOSCOW + '/PriceModelGBR.joblib'
+PATH_TO_PRICE_MODEL_X = SETTINGS.MODEL_MOSCOW + '/PriceModelXGBoost.joblib'
+PATH_TO_PRICE_MODEL_CAT = SETTINGS.MODEL_MOSCOW + '/PriceModelCatGradient.joblib'
 
 
 
@@ -67,7 +67,7 @@ def Model(data: pd.DataFrame):
     dump(clf, PATH_TO_PRICE_MODEL_CAT)
 
 def model():
-    data = pd.read_csv(prepared_data + '/COORDINATES_Pred_Term.csv')
+    data = pd.read_csv(prepared_data + '/MOSCOW.csv')
     Model(data)
 
 

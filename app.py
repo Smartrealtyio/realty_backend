@@ -19,7 +19,7 @@ import statistics
 import numpy as np
 import math
 
-PATH_TO_PRICE_MODEL = SETTINGS.MODEL + '/PriceModelGBR.joblib'
+PATH_TO_PRICE_MODEL = SETTINGS.MODEL_MOSCOW + '/PriceModelGBR.joblib'
 
 app = Flask(__name__)
 
@@ -55,9 +55,13 @@ def mean():
 
     print(latitude_from, latitude_to, longitude_from, longitude_to, flush=True)
 
-
-    data_offers = pd.read_csv(SETTINGS.DATA + '/COORDINATES_OUTLIERS.csv')
-
+    # Initialize DF
+    data_offers = pd.Dataframe()
+    # 0 = Moscow, 1 = Spb
+    if city_id == 0:
+        data_offers = pd.read_csv(SETTINGS.DATA_MOSCOW + '/COORDINATES_Pred_Term.csv')
+    elif city_id == 1:
+        data_offers = pd.read_csv(SETTINGS.DATA_SPB + '/COORDINATES_Pred_Term.csv')
     filter = (((data_offers.full_sq >= full_sq_from)&(data_offers.full_sq <= full_sq_to))&(data_offers.rooms == rooms) &
               ((data_offers.latitude >= latitude_from) & (data_offers.latitude <= latitude_to))
               & ((data_offers.longitude >= longitude_from) & (data_offers.longitude <= longitude_to)))
@@ -104,7 +108,7 @@ def mean():
     clf.fit(X1, y1)
     '''
     gbr = load(PATH_TO_PRICE_MODEL)
-    cat = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
+    cat = load(SETTINGS.MODEL_MOSCOW + '/PriceModelCatGradient.joblib')
 
 
     # Print GradientBoosting Regression features importance
@@ -215,13 +219,24 @@ def map():
     Y = (m.cos(latitude) * m.sin(longitude))
     city_id = int(request.args.get('city_id')) if request.args.get('city_id') is not None else 0
 
+    # initialize dataframe
+    data = pd.Dataframe()
+    kmeans = 0
 
-    # Data
-    data = pd.read_csv(SETTINGS.DATA + '/COORDINATES_Pred_Term.csv')
+    # 0 = Moscow, 1 = Spb
+    if city_id == 0:
+        data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW.csv')
+        # Load KMean Clustering model
+        kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW.joblib')
+    elif city_id == 1:
+        data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
+        # Load KMean Clustering model
+        kmeans = load(SETTINGS.MODEL_SPB + '/KMEAN_CLUSTERING_SPB.joblib')
+
+
     print("Initial shape: ", data.shape, flush=True)
 
-    # Load KMean Clustering model
-    kmeans = load(SETTINGS.MODEL + '/KMEAN_CLUSTERING.joblib')
+
 
     # Predict Cluster for current flat
     current_label = kmeans.predict([[longitude, latitude]])
@@ -273,7 +288,7 @@ def map():
 
         print("Price gbr: ", price_gbr_pred, flush=True)
 
-        CAT_PRICE = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
+        CAT_PRICE = load(SETTINGS.MODEL_MOSCOW + '/PriceModelCatGradient.joblib')
         price_cat_pred = np.expm1(CAT_PRICE.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
                                                       is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))
 
@@ -364,7 +379,7 @@ def map():
         # DATA FOR BUILDING PRICE-TIME CORRELATION GRAPHICS
         # Add new parameters: PREDICTED_PRICE and PROFIT
         gbr = load(PATH_TO_PRICE_MODEL)
-        cat = load(SETTINGS.MODEL + '/PriceModelCatGradient.joblib')
+        cat = load(SETTINGS.MODEL_MOSCOW + '/PriceModelCatGradient.joblib')
 
         df_for_current_label['pred_price'] = df_for_current_label[
             ['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',

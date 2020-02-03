@@ -29,15 +29,15 @@ def main_preprocessing():
                      - bck.date_fromisoformat(row['changed_date'][:-9])).days, axis=1)
     flats = pd.read_csv(RAW_DATA + "flats.csv",
                         names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
-                               'building_id', 'created_at',
-                               'updated_at', 'offer_id', 'closed', 'rooms', 'image', 'resource_id', 'flat_type'],
+                                                 'building_id', 'created_at',
+                                                 'updated_at','offer_id', 'closed', 'rooms', 'image', 'resource_id', 'flat_type'],
                         usecols=["id", "full_sq",
-                                 "kitchen_sq",
-                                 "life_sq",
-                                 "floor", "is_apartment",
-                                 "building_id",
-                                 "closed", 'rooms', 'resource_id'
-                                 ],
+                                                   "kitchen_sq",
+                                                   "life_sq",
+                                                   "floor", "is_apartment",
+                                                   "building_id",
+                                                   "closed", 'rooms', 'resource_id', 'offer_id', 'image'
+                                                   ],
                         true_values="t", false_values="f", header=0)
     flats = flats.rename(columns={"id": "flat_id"})
     print("flats: ", flats.shape)

@@ -69,7 +69,7 @@ def mean():
     # data_offers = data_offers[filter]
     print("data offers: ", data_offers.shape)
     # Uses only open offers
-    data_offers = data_offers.loc[data_offers['closed'] == False]
+    data_offers = data_offers[data_offers['closed'] == False]
 
     print('ds', data_offers.shape, flush=True)
 

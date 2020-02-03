@@ -56,7 +56,7 @@ def mean():
     print(latitude_from, latitude_to, longitude_from, longitude_to, flush=True)
 
     # Initialize DF
-    data_offers = pd.Dataframe()
+    data_offers = pd.DataFrame()
     # 0 = Moscow, 1 = Spb
     if city_id == 0:
         data_offers = pd.read_csv(SETTINGS.DATA_MOSCOW + '/COORDINATES_Pred_Term.csv')

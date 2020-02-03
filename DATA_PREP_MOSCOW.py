@@ -130,27 +130,19 @@ def main_preprocessing():
 
         print("All data: ", ds.shape)
         # ds = ds[ds.resource_id == 0]
-        print('Just Yandex: ', ds.shape)
+        # print('Just Yandex: ', ds.shape)
 
 
         ''''''
-        def remove_outlier(df_in, col_name):
-            q1 = df_in[col_name].quantile(0.10)
-            q3 = df_in[col_name].quantile(0.90)
-            #iqr = q3 - q1  # Interquartile range
-            #fence_low = q1 - 1.5 * iqr
-            #fence_high = q3 + 1.5 * iqr
-            df_out = df_in.loc[(df_in[col_name] > q1) & (df_in[col_name] < q3)]
-            return df_out
 
         from scipy import stats
-        df = ds[(np.abs(stats.zscore(ds.price)) < 2.9)]
-        #df = remove_outlier(ds, 'price')
+        df = ds[(np.abs(stats.zscore(ds.price)) < 3)]
+
         print("After removing price_outliers: ", df.shape)
 
 
-        df1 = ds[(np.abs(stats.zscore(ds.term)) < 2.9)]
-        #df1 = remove_outlier(ds, 'term')
+        df1 = ds[(np.abs(stats.zscore(ds.term)) < 3)]
+
         print("After removing term_outliers: ", df1.shape)
         clean_data = pd.merge(df, df1, on=list(ds.columns))
         '''

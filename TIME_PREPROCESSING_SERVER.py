@@ -106,7 +106,7 @@ def main_preprocessing():
         # ONLY CLOSED DEAL
         # ds = ds.loc[ds['closed'] == True]
         # print(ds.closed.value_counts())
-        ds = ds.drop(['closed'], axis=1)
+        # ds = ds.drop(['closed'], axis=1)
         print('HEADERS NAME: ', list(ds.columns))
 
         # REPLACE -1 WITH 0

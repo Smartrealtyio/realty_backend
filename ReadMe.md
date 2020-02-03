@@ -1,15 +1,10 @@
 TODO:
-1. StandardScaling all features for price and term prediction
 
+Убрать файлы: 
 
+1. FIND_OUTLIERS.py
+2. MainPreprocessing.py
+3. OUTLIERS_DATA_PREPROCESSING.py
+4. PRICE_PREPROCESSING_SERVER.py
 
-1. Только два файла препроцессинга данных:
- - MAIN_PREPOCESSING.py
- - PROFITABLE_PREPROCESSING.py
-
-2. Необходимые файлы:
- - app.py
- - GBR_SERVER.py
- - OUTLIERS_DATA_PREPROCESSING.py
- - TIME_PREPROCESSING.py
  

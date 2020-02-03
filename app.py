@@ -238,7 +238,7 @@ def map():
 
     df_for_current_label = pd.merge(df, ds, on=list(ds.columns))
 
-    # Create subsample according to the same(+-) size of the full_sq
+    # Create subsample according to the same(+-) python3 -m venv tutorial-envpython -m flask runsize of the full_sq
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq - full_sq * 0.018) & (
     df_for_current_label.full_sq <= full_sq + full_sq * 0.018))]
 

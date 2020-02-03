@@ -304,7 +304,7 @@ def map():
         # TERM
         df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
         df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
-        # df_for_current_label = df_for_current_label.loc[df_for_current_label['closed'] == True]
+        # яdf_for_current_label = df_for_current_label.loc[df_for_current_label['closed'] == True]
         # df_for_current_label = df_for_current_label[((df_for_current_label.price_meter_sq <= price_meter_sq+price_meter_sq*0.1)&
         #                                              (df_for_current_label.price_meter_sq >= price_meter_sq-price_meter_sq*0.1))]
 
@@ -335,8 +335,6 @@ def map():
         '''
 
         GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
-        # from sklearn.linear_model import LinearRegression
-        # GBR_TERM = LinearRegression()
         print(X_term.shape, y_term.shape, flush=True)
 
         GBR_TERM.fit(X_term, y_term)
@@ -346,7 +344,7 @@ def map():
         print("Term gbr: ", term_gbr_pred, flush=True)
 
         cat_term = CatBoostRegressor(random_state=42, l2_leaf_reg=1, learning_rate=0.05)
-        #cat = CatBoostRegressor(iterations=100, max_depth=8, l2_leaf_reg=1)
+
         train_time = Pool(X_term, y_term)
         cat_term.fit(train_time, verbose=5)
         term_cat = np.expm1(cat_term.predict([list_of_requested_params_term]))
@@ -359,13 +357,9 @@ def map():
         print("Predicted term: ", term)
 
 
-        # term = term_gbr_pred
         term = int(term.item(0))
 
 
-
-
-        # df_for_current_label = df_for_current_label[(df_for_current_label.term <= term+200)]
 
         # DATA FOR BUILDING PRICE-TIME CORRELATION GRAPHICS
         # Add new parameters: PREDICTED_PRICE and PROFIT
@@ -405,9 +399,6 @@ def map():
         cat_new.fit(train_time, verbose=5)
 
 
-        # term = term_gbr_pred
-        # term = int(term.item(0))
-
         # Create list of N prices: which are larger and smaller than predicted
         def larger(p=0):
             larger_prices = []
@@ -433,14 +424,8 @@ def map():
 
         list_of_prices = list_of_smaller_prices+list_of_larger_prices
         max_price_from_list = max(list_of_prices)
-        #
-        # print("Min: ", min_profit_from_list)
-        # list_of_prices_new = []
-        # for i in list_of_prices:
-        #     list_of_prices_new.append(i + min_profit_from_list)
-        # list_of_prices = list_of_prices_new
 
-        min_profit = ((price * 100 /max_price_from_list) - 100)
+
         def fn(l: list):
             list_of_terms = []
             for i in l:

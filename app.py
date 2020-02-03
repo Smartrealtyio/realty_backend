@@ -174,7 +174,7 @@ def mean():
     for flat in flats:
         # print(flat.keys(), flush=True)
         cur.execute("select metro_id, time_to_metro from time_metro_buildings where building_id=%s",
-                    (flat['id_building'],))
+                    (flat['building_id'],))
         metros_info = cur.fetchall()
         flat['metros'] = []
         for metro in metros_info:

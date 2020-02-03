@@ -56,12 +56,13 @@ def mean():
     print(latitude_from, latitude_to, longitude_from, longitude_to, flush=True)
 
     # Initialize DF
-    data_offers = pd.DataFrame()
+    # data_offers = pd.DataFrame()
+    data_offers = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW.csv')
     # 0 = Moscow, 1 = Spb
     if city_id == 0:
-        data_offers = pd.read_csv(SETTINGS.DATA_MOSCOW + '/COORDINATES_Pred_Term.csv')
+        data_offers = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW.csv')
     elif city_id == 1:
-        data_offers = pd.read_csv(SETTINGS.DATA_SPB + '/COORDINATES_Pred_Term.csv')
+        data_offers = pd.read_csv(SETTINGS.DATA_SPB + '/MOSCOW.csv')
     filter = (((data_offers.full_sq >= full_sq_from)&(data_offers.full_sq <= full_sq_to))&(data_offers.rooms == rooms) &
               ((data_offers.latitude >= latitude_from) & (data_offers.latitude <= latitude_to))
               & ((data_offers.longitude >= longitude_from) & (data_offers.longitude <= longitude_to)))

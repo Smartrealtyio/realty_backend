@@ -174,7 +174,7 @@ def mean():
     for flat in flats:
         # print(flat.keys(), flush=True)
         cur.execute("select metro_id, time_to_metro from time_metro_buildings where building_id=%s",
-                    (flat['building_id'],))
+                    (flat['id_building'],))
         metros_info = cur.fetchall()
         flat['metros'] = []
         for metro in metros_info:
@@ -187,7 +187,7 @@ def mean():
             flat['link'] = 'https://www.cian.ru/sale/flat/' + str(flat['offer_id'])
 
         cur.execute("select address from buildings where id=%s",
-                    (flat['building_id'],))
+                    (flat['id_building'],))
         flat['address'] = cur.fetchone()[0]
 
         # print(flat['image'], flush=True)
@@ -195,7 +195,7 @@ def mean():
         if type(flat['image']) != str:
             flat['image'] = None
         del flat['offer_id']
-        del flat['building_id']
+        del flat['id_building']
         del flat['time_to_metro']
         # print(flat, flush=True)
 

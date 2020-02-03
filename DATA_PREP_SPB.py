@@ -159,3 +159,5 @@ def main_preprocessing():
     print('Saving to new csv', clean_data.shape[0])
     clean_data.to_csv(PREPARED_DATA + '/SPB.csv', index=None, header=True)
 
+if __name__ == '__main__':
+    main_preprocessing()

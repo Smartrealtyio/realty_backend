@@ -157,5 +157,5 @@ def main_preprocessing():
     clean_data['clusters'] = labels
 
     print('Saving to new csv', clean_data.shape[0])
-    clean_data.to_csv(PREPARED_DATA + 'SPB.csv', index=None, header=True)
+    clean_data.to_csv(PREPARED_DATA + '/SPB.csv', index=None, header=True)
 

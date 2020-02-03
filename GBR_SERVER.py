@@ -64,7 +64,7 @@ def Model(data: pd.DataFrame):
     cat = CatBoostRegressor(random_state=42, learning_rate=0.1, iterations=1000)
     train = Pool(X1, y1)
     cat.fit(train, verbose=5)
-    dump(clf, PATH_TO_PRICE_MODEL_CAT)
+    dump(cat, PATH_TO_PRICE_MODEL_CAT)
 
 def model():
     data = pd.read_csv(prepared_data + '/MOSCOW.csv')

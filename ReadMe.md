@@ -12,7 +12,9 @@ __Настроить пути в setting_local.py для SPB:__
 
 __Поменять названия уже существующих переменных в settings_local.py__
 PATH_TO_SINGLE_CSV_FILES --> PATH_TO_SINGLE_CSV_FILES_MOSCOW
+
 DATA --> DATA_MOSCOW
+
 MODEL --> MODEL_MOSCOW
 
 

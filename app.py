@@ -187,7 +187,7 @@ def mean():
             flat['link'] = 'https://www.cian.ru/sale/flat/' + str(flat['offer_id'])
 
         cur.execute("select address from buildings where id=%s",
-                    (flat['id_building'],))
+                    (flat['building_id'],))
         flat['address'] = cur.fetchone()[0]
 
         # print(flat['image'], flush=True)
@@ -195,7 +195,7 @@ def mean():
         if type(flat['image']) != str:
             flat['image'] = None
         del flat['offer_id']
-        del flat['id_building']
+        del flat['building_id']
         del flat['time_to_metro']
         # print(flat, flush=True)
 

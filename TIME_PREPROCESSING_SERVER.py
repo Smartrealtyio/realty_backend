@@ -9,9 +9,9 @@ from sklearn.cluster import KMeans
 # FINAL PARAMETERS ORDER:
 # ['building_type_str', 'renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'term', 'full_sq', 'kitchen_sq',
 # 'life_sq', 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first']
-raw_data = SETTINGS.PATH_TO_SINGLE_CSV_FILES
-prepared_data = SETTINGS.DATA
-PATH_TO_TIME_MODEL = SETTINGS.MODEL
+raw_data = SETTINGS.PATH_TO_SINGLE_CSV_FILES_MOSCOW
+prepared_data = SETTINGS.DATA_MOSCOW
+PATH_TO_TIME_MODEL = SETTINGS.MODEL_MOSCOW
 
 
 def main_preprocessing():

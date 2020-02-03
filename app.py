@@ -67,11 +67,11 @@ def mean():
               ((data_offers.latitude >= latitude_from) & (data_offers.latitude <= latitude_to))
               & ((data_offers.longitude >= longitude_from) & (data_offers.longitude <= longitude_to)))
     # data_offers = data_offers[filter]
-    print("data offers: ", data_offers.shape)
+    print("data offers: ", data_offers.shape, flush=True)
     # Uses only open offers
-    data_offers = data_offers[data_offers['closed'] == False]
+    # data_offers = data_offers[data_offers['closed'] == False]
 
-    print('ds', data_offers.shape, flush=True)
+    print('ds: ', data_offers.closed.value_counts(), flush=True)
 
     if time_to_metro != None:
         data_offers = data_offers[(data_offers.time_to_metro <= time_to_metro)]

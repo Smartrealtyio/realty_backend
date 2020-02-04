@@ -35,9 +35,9 @@ def Model(data: pd.DataFrame):
     X1 = data[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']]
     y1 = data[['price']].values.ravel()
-    print(X1.shape, y1.shape)
+    print(X1.shape, y1.shape, flush=True)
 
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=5, learning_rate=0.05)
+    clf = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=1, learning_rate=0.05)
     clf.fit(X1, y1)
     dump(clf, PATH_TO_PRICE_MODEL)
 

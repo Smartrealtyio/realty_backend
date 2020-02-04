@@ -21,10 +21,10 @@ def main_preprocessing():
             'id', 'price', 'changed_date', 'flat_id', 'created_at', 'updated_at'
         ], usecols=["price", "flat_id", 'changed_date', 'updated_at'])
         prices = prices.drop_duplicates(subset='flat_id', keep="last")
-        print(prices.shape)
-        print("Prices all years: ", prices.shape)
+
+        print("Prices all years: ", prices.shape, flush=True)
         prices = prices[((prices['changed_date'].str.contains('2020'))|(prices['changed_date'].str.contains('2018')) | (prices['changed_date'].str.contains('2019')))]
-        print("Prices just 2018 year: ", prices.shape)
+        print("Prices 2018/2019/2020 years: ", prices.shape, flush=True)
 
         # Calculating selling term. TIME UNIT: DAYS
         prices['term'] = prices[['updated_at', 'changed_date']].apply(
@@ -78,19 +78,18 @@ def main_preprocessing():
         # Merage prices and flats on flat_id
         prices_and_flats = pd.merge(prices, flats, on="flat_id")
 
-        print("Prices + Flats: ", prices_and_flats.shape)
+
 
         # Merge districts and buildings on district_id
         districts_and_buildings = pd.merge(districts, buildings, on='district_id')
-        print("districts + buildings: ", districts_and_buildings.shape)
 
         # Merge to one main DF on building_id
         df = pd.merge(prices_and_flats, districts_and_buildings, on='building_id')
-        print("Without metro: ", df.shape)
+
         # Merge main DF and time_to_metro on building_id, fill the zero value with the mean value
         df = pd.merge(df, time_to_metro, on="building_id", how='left')
         df[['time_to_metro']] = df[['time_to_metro']].apply(lambda x: x.fillna(x.mean()), axis=0)
-        print('plus metro: ', df.shape)
+
 
         # Drop categorical column
         df = df.drop(['transport_type'], axis=1)
@@ -106,9 +105,9 @@ def main_preprocessing():
         df['floor_last'] = np.where(df['max_floor'] == df['floor'], 1, 0)
         df['floor_first'] = np.where(df['floor'] == 1, 1, 0)
 
-        print("Check if there are duplicates in dataframe: ", df.shape)
+        # print("Check if there are duplicates in dataframe: ", df.shape)
         df = df.drop_duplicates(subset='flat_id', keep="last")
-        print("Check if there are duplicates in dataframe: ", df.shape)
+        # print("Check if there are duplicates in dataframe: ", df.shape)
 
         num = df._get_numeric_data()
 
@@ -117,7 +116,7 @@ def main_preprocessing():
         # ds = ds.loc[ds['closed'] == True]
         # print(ds.closed.value_counts())
         # ds = ds.drop(['closed'], axis=1)
-        print('HEADERS NAME: ', list(df.columns))
+
 
         import math as m
         df['X'] = df[['latitude', 'longitude']].apply(
@@ -129,14 +128,14 @@ def main_preprocessing():
         df['price_meter_sq'] = df[['price', 'full_sq']].apply(
             lambda row: (row['price'] /
                          row['full_sq']), axis=1)
-        print(df.columns)
+
 
         df1 = df[(np.abs(stats.zscore(df.price)) < 3)]
 
         df2 = df[(np.abs(stats.zscore(df.term)) < 3)]
 
-        print("After removing term_outliers: ", df2.shape)
-        print("After removing price_outliers: ", df1.shape)
+        print("After removing term_outliers: ", df2.shape, flush=True)
+        print("After removing price_outliers: ", df1.shape, flush=True)
         clean_data = pd.merge(df1, df2, on=list(df.columns))
         '''
         print("Find optimal number of K means: ")
@@ -159,8 +158,8 @@ def main_preprocessing():
         clean_data['clusters'] = labels
 
 
-
-        print('Saving to new csv', clean_data.shape[0])
+        print("MOSCOW headers finally: ", list(clean_data.columns), flush=True)
+        print('Saving to new csv', clean_data.shape[0], flush=True)
         clean_data.to_csv(prepared_data+'/MOSCOW.csv', index=None, header=True)
 
 

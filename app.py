@@ -71,7 +71,7 @@ def mean():
     # Uses only open offers
     data_offers = data_offers[data_offers['closed'] == False]
 
-    print('ds: ', data_offers.head()    , flush=True)
+    print('ds: ', data_offers.head(), flush=True)
 
     if time_to_metro != None:
         data_offers = data_offers[(data_offers.time_to_metro <= time_to_metro)]

@@ -21,7 +21,7 @@ def main_preprocessing():
 
     print("Prices all years: ", prices.shape, flush=True)
     prices = prices[((prices['changed_date'].str.contains('2020') | (prices['changed_date'].str.contains('2019')) | (prices['changed_date'].str.contains('2018'))))]
-    print("Prices just 2020 year: ", prices.shape, flush=True)
+    print("Prices 2018/2019/2020 year: ", prices.shape, flush=True)
 
     # Calculating selling term. TIME UNIT: DAYS
     prices['term'] = prices[['updated_at', 'changed_date']].apply(

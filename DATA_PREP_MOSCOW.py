@@ -4,6 +4,7 @@ from sklearn import preprocessing
 import backports.datetime_fromisoformat as bck
 from joblib import dump
 import settings_local as SETTINGS
+from scipy import stats
 from sklearn.cluster import KMeans
 
 # FINAL PARAMETERS ORDER:

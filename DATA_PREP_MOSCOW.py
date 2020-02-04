@@ -23,7 +23,7 @@ def main_preprocessing():
         prices = prices.drop_duplicates(subset='flat_id', keep="last")
         print(prices.shape)
         print("Prices all years: ", prices.shape)
-        prices = prices[((prices['changed_date'].str.contains('2018')) | (prices['changed_date'].str.contains('2019')))]
+        prices = prices[((prices['changed_date'].str.contains('2020'))|(prices['changed_date'].str.contains('2018')) | (prices['changed_date'].str.contains('2019')))]
         print("Prices just 2018 year: ", prices.shape)
 
         # Calculating selling term. TIME UNIT: DAYS
@@ -42,6 +42,8 @@ def main_preprocessing():
                                                    "closed", 'rooms', 'resource_id', 'offer_id', 'image'
                                                    ],
                                           true_values="t", false_values="f", header=0)
+        flats = flats.rename(columns={"id": "flat_id"})
+        flats = flats.drop_duplicates(subset='flat_id', keep="last")
         buildings = pd.read_csv(raw_data+ "buildings.csv",
                                               names=["id", "max_floor", 'building_type_str', "built_year", "flats_count",
                                                                                                   "address", "renovation",
@@ -61,90 +63,81 @@ def main_preprocessing():
                                                      'created_at', 'updated_at', 'prefix'],
                                               usecols=["name", 'id'],
                                               true_values="t", false_values="f", header=0)
+        districts = districts.rename(columns={"id": "district_id"})
+        buildings = buildings.rename(columns={"id": "building_id"})
         time_to_metro = pd.read_csv(raw_data+ "time_metro_buildings.csv",
                                                   names=['id', 'building_id', 'metro_id', 'time_to_metro',
                                                          'transport_type', 'created_at', 'updated_at'],
                                                   usecols=["building_id", "time_to_metro", "transport_type"], header=0)
 
-        time_to_metro = time_to_metro[time_to_metro['transport_type'] == "ON_FOOT"]
-        time_to_metro.sort_values('time_to_metro', ascending=True).drop_duplicates(subset='building_id', keep="first")
+        time_to_metro = time_to_metro[time_to_metro['transport_type'] == "ON_FOOT"].sort_values('time_to_metro',
+                                                                                                ascending=True)
+        # Keep just shortest time to metro
+        time_to_metro = time_to_metro.drop_duplicates(subset='building_id', keep="first")
 
+        # Merage prices and flats on flat_id
+        prices_and_flats = pd.merge(prices, flats, on="flat_id")
 
-        # choose the shortest path on foot
-        ds = pd.merge(prices, flats, left_on="flat_id", right_on="id")
+        print("Prices + Flats: ", prices_and_flats.shape)
 
-        print('HEADERS NAME: ', list(ds.columns))
-        print('merge#1: ', ds.shape)
-        new_ds = pd.merge(districts, buildings, left_on='id', right_on='district_id',
-                                        suffixes=['_district', '_building'])
-        print('HEADERS NAME: ', list(new_ds.columns))
+        # Merge districts and buildings on district_id
+        districts_and_buildings = pd.merge(districts, buildings, on='district_id')
+        print("districts + buildings: ", districts_and_buildings.shape)
 
-        ds = pd.merge(new_ds, ds, left_on='id_building', right_on='building_id')
-        print('HEADERS NAME: ', list(ds.columns))
-        # ds = pd.merge(ds, buildings, left_on="building_id", right_on="id_")
-        ds = pd.merge(ds, time_to_metro, left_on="id_building", right_on="building_id")
-        # ds = pd.get_dummies(ds, columns=["transport_type"])
+        # Merge to one main DF on building_id
+        df = pd.merge(prices_and_flats, districts_and_buildings, on='building_id')
+        print("Without metro: ", df.shape)
+        # Merge main DF and time_to_metro on building_id, fill the zero value with the mean value
+        df = pd.merge(df, time_to_metro, on="building_id", how='left')
+        df[['time_to_metro']] = df[['time_to_metro']].apply(lambda x: x.fillna(x.mean()), axis=0)
+        print('plus metro: ', df.shape)
 
-        # ds = pd.get_dummies(ds, columns=["max_floor"])
+        # Drop categorical column
+        df = df.drop(['transport_type'], axis=1)
 
-        ds = ds.drop(['id', 'built_year', 'flats_count', 'id_district', 'name', 'building_id_x', 'building_id_y'], axis=1)
-        ds.has_elevator = ds.has_elevator.astype(int)
-        ds.renovation = ds.renovation.astype(int)
-        ds.is_apartment = ds.is_apartment.astype(int)
-        print('HEADERS NAME: ', list(ds.columns))
-        max_floor_list = ds['max_floor'].tolist()
+        df = df.drop(['built_year', 'flats_count', 'district_id', 'name'], axis=1)
 
-        ds['floor_last'] = np.where(ds['max_floor']==ds['floor'], 1, 0)
-        ds['floor_first'] = np.where(ds['floor']==1, 1, 0)
-        ds = ds.drop_duplicates(subset='flat_id', keep="last")
+        # Transform bool values to int
+        df.has_elevator = df.has_elevator.astype(int)
+        df.renovation = df.renovation.astype(int)
+        df.is_apartment = df.is_apartment.astype(int)
+        # Set values for floor_last/floor_first column: if floor_last/floor_first set 1, otherwise 0
+        max_floor_list = df['max_floor'].tolist()
+        df['floor_last'] = np.where(df['max_floor'] == df['floor'], 1, 0)
+        df['floor_first'] = np.where(df['floor'] == 1, 1, 0)
 
-        # Building_type Labels encoding
-        buildings_types = dict(PANEL=2, BLOCK=3, BRICK=4, MONOLIT=6,
-                               UNKNOWN=0, MONOLIT_BRICK=5, WOOD=1)
-        ds.building_type_str.replace(buildings_types, inplace=True)
+        print("Check if there are duplicates in dataframe: ", df.shape)
+        df = df.drop_duplicates(subset='flat_id', keep="last")
+        print("Check if there are duplicates in dataframe: ", df.shape)
 
+        num = df._get_numeric_data()
+
+        num[num < 0] = 0
         # ONLY CLOSED DEAL
         # ds = ds.loc[ds['closed'] == True]
         # print(ds.closed.value_counts())
         # ds = ds.drop(['closed'], axis=1)
-        print('HEADERS NAME: ', list(ds.columns))
+        print('HEADERS NAME: ', list(df.columns))
 
-        # REPLACE -1 WITH 0
-        num = ds._get_numeric_data()
-
-        num[num < 0] = 0
         import math as m
-        ds['X'] = ds[['latitude', 'longitude']].apply(
+        df['X'] = df[['latitude', 'longitude']].apply(
             lambda row: (m.cos(row['latitude']) *
                          m.cos(row['longitude'])), axis=1)
-        ds['Y'] = ds[['latitude', 'longitude']].apply(
+        df['Y'] = df[['latitude', 'longitude']].apply(
             lambda row: (m.cos(row['latitude']) *
                          m.sin(row['longitude'])), axis=1)
-        ds['price_meter_sq'] = ds[['price', 'full_sq']].apply(
+        df['price_meter_sq'] = df[['price', 'full_sq']].apply(
             lambda row: (row['price'] /
                          row['full_sq']), axis=1)
-        ds = ds.drop(['max_floor', "flat_id", 'floor','building_type_str', 'life_sq', 'updated_at', 'changed_date',
-                      'district_id', 'transport_type'], axis=1)
+        print(df.columns)
 
-        print('HEADERS NAME FINALY: ', list(ds.columns))
+        df1 = df[(np.abs(stats.zscore(df.price)) < 3)]
 
-        print("All data: ", ds.shape)
-        # ds = ds[ds.resource_id == 0]
-        # print('Just Yandex: ', ds.shape)
+        df2 = df[(np.abs(stats.zscore(df.term)) < 3)]
 
-
-        ''''''
-
-        from scipy import stats
-        df = ds[(np.abs(stats.zscore(ds.price)) < 3)]
-
-        print("After removing price_outliers: ", df.shape)
-
-
-        df1 = ds[(np.abs(stats.zscore(ds.term)) < 3)]
-
-        print("After removing term_outliers: ", df1.shape)
-        clean_data = pd.merge(df, df1, on=list(ds.columns))
+        print("After removing term_outliers: ", df2.shape)
+        print("After removing price_outliers: ", df1.shape)
+        clean_data = pd.merge(df1, df2, on=list(df.columns))
         '''
         print("Find optimal number of K means: ")
         Sum_of_squared_distances = []

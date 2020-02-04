@@ -20,7 +20,7 @@ def main_preprocessing():
     prices = prices.drop_duplicates(subset='flat_id', keep="last")
     print(prices.shape)
     print("Prices all years: ", prices.shape)
-    prices = prices[((prices['changed_date'].str.contains('2020')) | (prices['changed_date'].str.contains('2019')))]
+    prices = prices[((prices['changed_date'].str.contains('2020') | (prices['changed_date'].str.contains('2019')) | (prices['changed_date'].str.contains('2018'))))]
     print("Prices just 2020 year: ", prices.shape)
 
     # Calculating selling term. TIME UNIT: DAYS
@@ -150,7 +150,7 @@ def main_preprocessing():
         k_list.append(k)
     print(list(zip(k_list, Sum_of_squared_distances)))
     '''
-    kmeans = KMeans(n_clusters=150, random_state=42).fit(clean_data[['longitude', 'latitude']])
+    kmeans = KMeans(n_clusters=100, random_state=42).fit(clean_data[['longitude', 'latitude']])
 
     dump(kmeans, PATH_TO_MODELS + 'KMEAN_CLUSTERING_SPB.joblib')
     labels = kmeans.labels_

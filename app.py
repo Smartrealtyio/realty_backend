@@ -66,10 +66,10 @@ def mean():
     filter = (((data_offers.full_sq >= full_sq_from)&(data_offers.full_sq <= full_sq_to))&(data_offers.rooms == rooms) &
               ((data_offers.latitude >= latitude_from) & (data_offers.latitude <= latitude_to))
               & ((data_offers.longitude >= longitude_from) & (data_offers.longitude <= longitude_to)))
-    # data_offers = data_offers[filter]
+    data_offers = data_offers[filter]
     print("data offers: ", data_offers.shape, flush=True)
     # Uses only open offers
-    # data_offers = data_offers[data_offers['closed'] == False]
+    data_offers = data_offers[data_offers['closed'] == False]
 
     print('ds: ', data_offers.head()    , flush=True)
 

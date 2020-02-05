@@ -34,15 +34,17 @@ def main_preprocessing():
         flats = pd.read_csv(raw_data+ "flats.csv",
                                           names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
                                                  'building_id', 'created_at',
-                                                 'updated_at','offer_id', 'closed', 'rooms', 'image', 'resource_id', 'flat_type'],
+                                                 'updated_at','offer_id', 'closed', 'rooms', 'image', 'resource_id'],
                                           usecols=["id", "full_sq",
                                                    "kitchen_sq",
                                                    "life_sq",
                                                    "floor", "is_apartment",
                                                    "building_id",
-                                                   "closed", 'rooms', 'resource_id', 'offer_id', 'image'
+                                                   "closed", 'rooms', 'resource_id', 'offer_id', 'image', 'flat_type'
                                                    ],
                                           true_values="t", false_values="f", header=0)
+        # Leave only VTORICHKA
+        flats = flats[flats.flat_type == 'SECONDARY']
         flats = flats.rename(columns={"id": "flat_id"})
         flats = flats.drop_duplicates(subset='flat_id', keep="last")
         buildings = pd.read_csv(raw_data+ "buildings.csv",

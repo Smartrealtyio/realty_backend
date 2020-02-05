@@ -39,6 +39,8 @@ def main_preprocessing():
                                                    "closed", 'rooms', 'resource_id', 'offer_id', 'image'
                                                    ],
                         true_values="t", false_values="f", header=0)
+    # Leave only VTORICHKA
+    flats = flats[flats.flat_type == 'SECONDARY']
     flats = flats.rename(columns={"id": "flat_id"})
     print("flats: ", flats.shape, flush=True)
     flats = flats.drop_duplicates(subset='flat_id', keep="last")

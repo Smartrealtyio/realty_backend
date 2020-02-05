@@ -7,6 +7,7 @@ from sklearn.preprocessing import StandardScaler, PowerTransformer
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import r2_score, scorer, mean_squared_error
 # import Realty.config as cf
+from scipy import stats
 from joblib import dump, load
 import xgboost
 import os
@@ -20,7 +21,7 @@ PATH_TO_PRICE_MODEL_CAT = SETTINGS.MODEL_MOSCOW + '/PriceCat_SPB.joblib'
 
 
 def Model(data: pd.DataFrame):
-    from scipy import stats
+
 
     data = data[(np.abs(stats.zscore(data.price)) < 3)]
     data = data[(np.abs(stats.zscore(data.term)) < 3)]

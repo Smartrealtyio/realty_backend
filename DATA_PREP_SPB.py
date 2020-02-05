@@ -36,7 +36,7 @@ def main_preprocessing():
                                                    "life_sq",
                                                    "floor", "is_apartment",
                                                    "building_id",
-                                                   "closed", 'rooms', 'resource_id', 'offer_id', 'image'
+                                                   "closed", 'rooms', 'resource_id', 'offer_id', 'image', 'flat_type'
                                                    ],
                         true_values="t", false_values="f", header=0)
     # Leave only VTORICHKA

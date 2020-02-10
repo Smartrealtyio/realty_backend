@@ -467,8 +467,7 @@ def map():
                 list_of_terms.append(term_profit)
             return list_of_terms
         list_of_terms = fn(list_of_prices)
-        min_term = min(list_of_terms)
-        min_index = list_of_terms.index(min_term)
+
 
 
 
@@ -523,17 +522,14 @@ def map():
         b = {'x': int(term), 'y': int(price)}
         print("b: ", b, flush=True)
 
-        try:
-            if price > new_l[0].get('y'):
-                for i in enumerate(new_l):
-                    print(i[0])
-                    if new_l[i[0]].get('y') < b.get('y') < new_l[i[0] + 1].get('y'):
-                        b['x'] = int((new_l[i[0]].get('x') + new_l[i[0] + 1].get('x')) / 2)
-                        term = int((new_l[i[0]].get('x') + new_l[i[0] + 1].get('x')) / 2)
-                        break
-                print("B_new: ", b, flush=True)
-        except:
-            b['x'] = new_l[-1].get('x') - new_l[-2].get('x')
+        if price > new_l[0].get('y'):
+            for i in enumerate(new_l):
+                print(i[0])
+                if new_l[i[0]].get('y') < b.get('y') < new_l[i[0] + 1].get('y'):
+                    b['x'] = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
+                    term = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
+                    break
+            print("B_new: ", b, flush=True)
 
             def range_plot(l: list):
                 new_a = [l[0]]

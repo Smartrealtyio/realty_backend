@@ -45,8 +45,6 @@ def main_preprocessing():
                                      ],
                             true_values="t", false_values="f", header=0)
 
-        # Leave only VTORICHKA
-        flats = flats[flats.flat_type == 'SECONDARY']
         flats = flats.rename(columns={"id": "flat_id"})
         print("flats: ", flats.shape)
         flats = flats.drop_duplicates(subset='flat_id', keep="last")

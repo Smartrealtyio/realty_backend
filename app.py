@@ -49,7 +49,7 @@ def mean():
     kitchen_sq = float(request.args.get('kitchen_sq')) if request.args.get('kitchen_sq') is not None else None
     life_sq = float(request.args.get('life_sq')) if request.args.get('life_sq') is not None else None
     renovation = float(request.args.get('renovation')) if request.args.get('renovation') is not None else None
-    has_elevator = float(request.args.get('has_elevator')) if request.args.get('has_elevator') is not None else None
+    has_elevator = float(request.args.get('elevator')) if request.args.get('elevator') is not None else None
     floor_first = float(request.args.get('floor_first')) if request.args.get('floor_first') is not None else None
     floor_last = float(request.args.get('floor_last')) if request.args.get('floor_last') is not None else None
     time_to_metro = float(request.args.get('time_to_metro')) if request.args.get('time_to_metro') is not None else None
@@ -215,7 +215,7 @@ def map():
     gbr = 0
     lgbm = 0
     rf = 0
-
+    print("PArams: ", city_id, secondary, flush=True)
     # 0 = Moscow, 1 = Spb
     # Москва новостройки
     if city_id == 0 and secondary ==0:

@@ -69,7 +69,7 @@ def Model(data: pd.DataFrame):
     print('The accuracy of the lgbm Regressor is', r2_score(y_test, lgbm_preds), flush=True)
     print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
 
-    print('Train on full dataset: '), flush=True
+    print('Train on full dataset: ', flush=True)
     lgbm_model.fit(X, y)
 
     print('Save model: ')

@@ -508,7 +508,7 @@ def map():
                     new_list_of_prices.append(item)
             return new_list_of_prices
 
-        if price > new_list_of_dicts[0].get('y'):
+        if price > new_list_of_dicts[0].get('y') and len(new_list_of_dicts) > 1:
             for i in enumerate(new_list_of_dicts):
                 print(i[0])
                 if new_list_of_dicts[i[0]].get('y') < b.get('y') < new_list_of_dicts[i[0] + 1].get('y'):

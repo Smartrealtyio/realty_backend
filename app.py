@@ -200,10 +200,9 @@ def map():
     full_sq = float(request.args.get('full_sq'))
     kitchen_sq = float(request.args.get('kitchen_sq'))
     life_sq = float(request.args.get('life_sq'))
-
     renovation = int(request.args.get('renovation'))
     secondary = int(request.args.get('secondary'))
-    has_elevator = int(request.args.get('has_elevator'))
+    has_elevator = int(request.args.get('elevator'))
     floor_first = int(request.args.get('floor_first'))
     floor_last = int(request.args.get('floor_last'))
     time_to_metro = int(request.args.get('time_to_metro'))

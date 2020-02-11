@@ -559,10 +559,11 @@ def map():
             print("B_new: ", b , flush=True)
             new_a += [b]
             new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
-
+            new_a = drop_duplicat(new_a)
             print("Sorted; ", new_a, flush=True)
         else:
             new_a = [{'x': 0, 'y': 0}]
+
 
 
 

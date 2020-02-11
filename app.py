@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from scipy import stats
 from catboost import CatBoostRegressor, Pool
-import xgboost
+from sklearn.linear_model import LogisticRegression
 import psycopg2
 import settings_local as SETTINGS
 from sklearn.preprocessing import StandardScaler
@@ -350,7 +350,7 @@ def map():
 
 
 
-
+        print("Print current shape for TERM_NEW prediction", df_for_current_label.shape, flush=True)
         X_term_new = df_for_current_label[
             ['price', 'full_sq', 'kitchen_sq',
              'price_meter_sq', 'profit']]
@@ -365,6 +365,7 @@ def map():
         train_time = Pool(X_term_new, y_term_new)
         CAT_TERM_NEW.fit(train_time, verbose=3)
 
+        # logreg = LogisticRegression()
         # names = ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
         #      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
         #      'price_meter_sq', 'profit']
@@ -402,8 +403,6 @@ def map():
             list_of_terms = []
             for i in l:
                 profit = price/i
-                print("Price from continuum: ", i)
-                print("Profit: ", profit)
                 pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
                                                                    np.log1p(price_meter_sq), profit]]))
                 term_cat_profit = np.expm1(CAT_TERM_NEW.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),

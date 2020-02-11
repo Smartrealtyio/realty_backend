@@ -293,12 +293,12 @@ def map():
         # PRICE PREDICTION
 
         # GBR
-        GBR_PRICE = GradientBoostingRegressor(n_estimators=250, max_depth=8, verbose=5, max_features=3, random_state=42, learning_rate=0.07)
-        print(X1.shape, y1.shape, flush=True)
-        GBR_PRICE.fit(X1, y1)
-        price_gbr_pred = np.expm1(GBR_PRICE.predict([list_of_requested_params_price]))
-
-        print("Price gbr: ", price_gbr_pred, flush=True)
+        # GBR_PRICE = GradientBoostingRegressor(n_estimators=250, max_depth=8, verbose=5, max_features=3, random_state=42, learning_rate=0.07)
+        # print(X1.shape, y1.shape, flush=True)
+        # GBR_PRICE.fit(X1, y1)
+        # price_gbr_pred = np.expm1(GBR_PRICE.predict([list_of_requested_params_price]))
+        #
+        # print("Price gbr: ", price_gbr_pred, flush=True)
 
         gbr = load(PATH_TO_PRICE_MODEL_GBR)
         rf = load(PATH_TO_PRICE_MODEL_RF)
@@ -322,8 +322,8 @@ def map():
         # df_for_current_label["Y"] = np.expm1(df_for_current_label["Y"])
 
         # Count mean of Cat and GBR algorithms prediction
-        price = (price_gbr_pred+price_cat_pred)/2
-        #price = price_cat
+        # price = (price_gbr_pred+price_cat_pred)/2
+        price = price_cat_pred
         price = int(price[0])
         print("Predicted Price: ", price, flush=True)
 

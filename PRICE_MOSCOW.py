@@ -46,7 +46,7 @@ def Model(data: pd.DataFrame):
     print('RMSE is: \n', mean_squared_error(y_test, gbr_preds), flush=True)
 
     print('Train on full dataset: ', flush=True)
-    gbr_model.fit(X, y)
+    gbr_model.fit(X1, y1)
     print('Save model: ')
     dump(gbr_model, PATH_TO_PRICE_MODEL_GBR)
 
@@ -58,7 +58,7 @@ def Model(data: pd.DataFrame):
     print('RMSE is: \n', mean_squared_error(y_test, rf_predicts), flush=True)
 
     print('Train on full dataset: ', flush=True)
-    RF.fit(X, y)
+    RF.fit(X1, y1)
     dump(RF, PATH_TO_PRICE_MODEL_RF)
 
     # LGBM model
@@ -70,7 +70,7 @@ def Model(data: pd.DataFrame):
     print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
 
     print('Train on full dataset: ', flush=True)
-    lgbm_model.fit(X, y)
+    lgbm_model.fit(X1, y1)
 
     print('Save model: ')
     dump(lgbm_model, PATH_TO_PRICE_MODEL_LGBM)

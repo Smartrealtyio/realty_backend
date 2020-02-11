@@ -38,7 +38,7 @@ def Model(data: pd.DataFrame):
     y1 = data[['price']].values.ravel()
     print(X1.shape, y1.shape, flush=True)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+    X_train, X_test, y_train, y_test = train_test_split(X1, y1, test_size=0.2, random_state=1)
     gbr_model = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=5, max_features=4, random_state=42,
                                           learning_rate=0.07).fit(X_train, y_train)
     gbr_preds = gbr_model.predict(X_test)

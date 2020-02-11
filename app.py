@@ -402,13 +402,18 @@ def map():
         # df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
         y_term_new = df_for_current_label[['term']]
 
-        GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
+        GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=3, random_state=42, learning_rate=0.05)
         GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
         CAT_TERM_NEW = CatBoostRegressor(random_state=42)
         train_time = Pool(X_term_new, y_term_new)
-        CAT_TERM_NEW.fit(train_time, verbose=5)
+        CAT_TERM_NEW.fit(train_time, verbose=3)
 
+        names = ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
+             'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
+             'price_meter_sq', 'profit']
+        print("Features importances GBR Term: ", sorted(zip(GBR_TERM_NEW.feature_importances_.tolist(), names)), flush=True)
+        print("Features importances Cat Term: ",sorted(zip(CAT_TERM_NEW.feature_importances_.tolist(), names)), flush=True)
 
         # Create list of N prices: which are larger and smaller than predicted
         def larger(p=0):

@@ -101,17 +101,6 @@ def mean():
 
     # PRICE
 
-    '''
-
-    X1 = data_offers[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                 'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
-    data_offers["price"] = np.log1p(data_offers["price"])
-    y1 = data_offers[['price']].values.ravel()
-    print(X1.shape, y1.shape)
-
-    clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
-    clf.fit(X1, y1)
-    '''
     gbr = load(PATH_TO_PRICE_MODEL_GBR)
     rf = load(PATH_TO_PRICE_MODEL_RF)
     lgbm = load(PATH_TO_PRICE_MODEL_LGBM)
@@ -138,22 +127,9 @@ def mean():
                                    row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]])))[0]/3), axis=1)
 
 
-    # Get Profit Offers using Outliers algorithm detection
-    # outliers_alg = IsolationForest(contamination=0.2)
-
-
-    # outliers_alg.fit(data_offers[['price', 'full_sq', 'clusters']])
-    # outliers_it = data_offers[outliers_alg.predict(data_offers[['price', 'full_sq', 'clusters']]) == -1]
-    # print('Outliers: ', outliers_it.shape[0], flush=True)
-    # outliers_it['flat_id'] = outliers_it.index
-
-
-    # data_offers = data_offers[data_offers.price < data_offers.pred_price]
-    # data_offers['flat_id'] = data_offers.index
     print('Profitable offers using price prediction model: ', data_offers.shape[0])
 
-    # data_offers = data_offers[data_offers.flat_id.isin(outliers_it.flat_id)]
-    # print('After concat: ', data_offers.shape[0])
+
     data_offers['profit'] = data_offers[['pred_price', 'price']].apply(lambda row: ((row.pred_price*100/row.price)-100), axis=1)
     data_offers = data_offers[(data_offers.profit >= 5)]
     data_offers = data_offers.sort_values(by=['profit'], ascending=False)
@@ -336,9 +312,6 @@ def map():
         # TERM
         df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
         df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
-        # яdf_for_current_label = df_for_current_label.loc[df_for_current_label['closed'] == True]
-        # df_for_current_label = df_for_current_label[((df_for_current_label.price_meter_sq <= price_meter_sq+price_meter_sq*0.1)&
-        #                                              (df_for_current_label.price_meter_sq >= price_meter_sq-price_meter_sq*0.1))]
 
 
 
@@ -350,6 +323,7 @@ def map():
 
         df_for_current_label['price_meter_sq'] = np.log1p(df_for_current_label['price_meter_sq'])
         df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
+        df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
 
         y_term = df_for_current_label[['term']]
 
@@ -428,9 +402,9 @@ def map():
         GBR_TERM_NEW = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
         GBR_TERM_NEW.fit(X_term_new, y_term_new)
 
-        cat_new = CatBoostRegressor(random_state=42)
+        CAT_TERM_NEW = CatBoostRegressor(random_state=42)
         train_time = Pool(X_term_new, y_term_new)
-        cat_new.fit(train_time, verbose=5)
+        CAT_TERM_NEW.fit(train_time, verbose=5)
 
 
         # Create list of N prices: which are larger and smaller than predicted
@@ -457,19 +431,20 @@ def map():
 
 
         list_of_prices = list_of_smaller_prices+list_of_larger_prices
-        max_price_from_list = max(list_of_prices)
+
 
 
         def fn(l: list):
             list_of_terms = []
             for i in l:
-                profit = i/price
-                print(i, profit)
+                profit = price/i
+                print("Price from continuum: ", i)
+                print("Profit: ", profit)
                 pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
-                                                                   np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                                   np.log1p(latitude), np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
                                                                    is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), price_meter_sq, profit]]))
-                term_cat_profit = np.expm1(cat_new.predict([[renovation, has_elevator, np.log1p(longitude),
-                                                             np.log1p(latitude), price, np.log1p(full_sq), np.log1p(kitchen_sq),
+                term_cat_profit = np.expm1(CAT_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
+                                                             np.log1p(latitude), np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
                                                              is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), price_meter_sq, profit]]))
 
 
@@ -490,20 +465,12 @@ def map():
         term_links = df_for_current_label.to_dict('record')
 
 
-        # Create list of term values from subsample of "same" flats
-        # terms = df_for_current_label.term
-        # terms = terms.tolist()
-        list_of_terms = [i.tolist()[0] for i in list_of_terms]
-        # list_of_terms = list_of_terms[::-1]
-        # list_of_terms +=[term]
 
+        list_of_terms = [i.tolist()[0] for i in list_of_terms]
         print("Terms: ", list_of_terms, flush=True)
 
-        # Create list of price values from subsample of "same" flats
-        # prices = df_for_current_label.price
-        # prices = prices.tolist()
+
         prices = list_of_prices
-        # prices += [price]
         print("Prices: ", prices, flush=True)
 
 
@@ -515,133 +482,137 @@ def map():
         # Sort list by term
         a = [i for i in a if 0 < i.get('x') <600]
         a = sorted(a, key=lambda z: z['x'], reverse=False)
-        def drop_duplicat(l: list):
+        print("First sort by term: ", a, flush=True)
+
+        def drop_duplicates_term(l: list):
             seen = set()
             new_l = []
-            for d in l:
-                # t = tuple(d)
-                # print("d: ", d)
-                if d.get('x') not in seen:
-                    seen.add(d.get('x'))
-
-                    # print(seen)
-                    new_l.append(d)
+            for item in l:
+                if item.get('x') not in seen:
+                    seen.add(item.get('x'))
+                    new_l.append(item)
             return new_l
 
-        new_l = drop_duplicat(a)
-        print("After drop duplicates: ", new_l, flush=True)
-
+        new_list_of_dicts = drop_duplicates_term(a)
+        print("After drop term duplicates: ", new_list_of_dicts, flush=True)
+    
         b = {'x': int(term), 'y': int(price)}
-        print("b: ", b, flush=True)
+        print("Predicted raw term, and exact price: ", b, flush=True)
 
-        if price > new_l[0].get('y'):
-            for i in enumerate(new_l):
+        def drop_duplicates_price(l: list):
+            seen_prices = set()
+            new_list_of_prices = []
+            for item in l:
+                if item.get('y') not in seen_prices:
+                    seen_prices.add(item.get('y'))
+                    new_list_of_prices.append(item)
+            return new_list_of_prices
+
+        if price > new_list_of_dicts[0].get('y'):
+            for i in enumerate(new_list_of_dicts):
                 print(i[0])
-                if new_l[i[0]].get('y') < b.get('y') < new_l[i[0] + 1].get('y'):
-                    b['x'] = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
-                    term = int((new_l[i[0]].get('x')+new_l[i[0] + 1].get('x'))/2)
+                if new_list_of_dicts[i[0]].get('y') < b.get('y') < new_list_of_dicts[i[0] + 1].get('y'):
+                    b['x'] = int((new_list_of_dicts[i[0]].get('x')+new_list_of_dicts[i[0] + 1].get('x'))/2)
+                    term = int((new_list_of_dicts[i[0]].get('x')+new_list_of_dicts[i[0] + 1].get('x'))/2)
                     break
-            print("B_new: ", b, flush=True)
-
-            def range_plot(l: list):
-                new_a = [l[0]]
-                for i in list(range(1, len(l))):
-                    print(l[i])
-                    if l[i].get('y') > l[i - 1].get('y'):
-                        if l[i].get('y') > new_a[-1].get('y'):
-                            new_a.append(l[i])
-                return new_a
-            new_a = range_plot(new_l)
-            print('Sorted 0 :', new_a)
+            print("New term: ", b, flush=True)
 
 
+            # def range_plot(l: list):
+            #     new_a = [l[0]]
+            #     for i in list(range(1, len(l))):
+            #         print(l[i])
+            #         if l[i].get('y') > l[i - 1].get('y'):
+            #             if l[i].get('y') > new_a[-1].get('y'):
+            #                 new_a.append(l[i])
+            #     return new_a
+            new_a = drop_duplicates_price(new_list_of_dicts)
+            print('Drop price duplicates:', new_a, flush=True)
 
-            print("B_new: ", b , flush=True)
+
+
+
             new_a.insert(0, b)
-            new_a = drop_duplicat(new_a)
+
+            # new_a = drop_duplicates(new_a)
             # new_a += [b]
             new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
             # new_a = drop_duplicat(new_a)
 
-            print("Sorted; ", new_a, flush=True)
+            print("Sorted finally : ", new_a, flush=True)
+
+
+            '''
+            # Sort list by price
+            a = [i for i in a if 0 < i.get('x') < 600]
+            a = sorted(a, key=lambda z: z['y'], reverse=False)
+        
+            b = {'x': int(term), 'y': int(price)}
+            print("b: ", b, flush=True)
+        
+            for i in range(1, len(a)):
+                if a[i - 1].get('y') < b.get('y') < a[i].get('y'):
+                    b['x'] = int((a[i].get('x') + a[i - 1].get('x')) / 2)
+                    print(a[i], a[i - 1], flush=True)
+                    term = int((a[i].get('x') + a[i - 1].get('x')) / 2)
+                    break
+        
+        
+            def range_plot(l: list):
+                new_a = [l[0]]
+                for i in list(range(1, len(l))):
+                    print(l[i], flush=True)
+                    if l[i].get('y') > l[i - 1].get('y'):
+                        if l[i].get('y') > new_a[-1].get('y'):
+                            new_a.append(l[i])
+                return new_a
+        
+            a = sorted(a, key=lambda z: z['x'], reverse=False)
+            new_a = range_plot(a)
+            print('Sorted 0 :', new_a, flush=True)
+        
+        
+        
+            new_a += [b]
+            print(new_a, flush=True)
+            def range_plot(l: list):
+                new_a = [l[0]]
+                for i in list(range(1, len(l))):
+                    print("\n", l[i], flush=True)
+                    if l[i].get('x') > l[i - 1].get('x'):
+                        if l[i].get('x') > new_a[-1].get('x'):
+                            new_a.append(l[i])
+                return new_a
+            new_a = sorted(new_a, key=lambda z: z['y'], reverse=False)
+            new_a = range_plot(new_a)
+            '''
+            oops = 1 if len(new_a)<=1 else 0
+            term = 0 if len(new_a)<=1 else term
+
+
+            # if new_a[-1].get('y') == price:
+            #     new_a.append({'x': term+2, 'y': price})
+            # print(new_a, flush=True)
+            # new_point = new_a[-1]
+            # print('last item: ', new_point, flush=True)
+            # new_point_x = int(new_point.get('x'))
+            # new_point_y = int(new_point.get('y'))
+            # print("x from last item: ", new_point_x, flush=True)
+            #
+            #
+            # print('new x: ', new_point, flush=True)
+            # new_a.append({"x": new_point_x+2, 'y': new_point_y+new_point_y*0.02})
+            # print("Finally new_a: ", new_a, flush=True)
+            # # Check if enough data for plotting
+            #
+            #
+
+
+            answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
         else:
-            new_a = [{'x': 0, 'y': 0}]
+            answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS":1})
+        return answ
 
-
-
-
-        '''
-        # Sort list by price
-        a = [i for i in a if 0 < i.get('x') < 600]
-        a = sorted(a, key=lambda z: z['y'], reverse=False)
-    
-        b = {'x': int(term), 'y': int(price)}
-        print("b: ", b, flush=True)
-    
-        for i in range(1, len(a)):
-            if a[i - 1].get('y') < b.get('y') < a[i].get('y'):
-                b['x'] = int((a[i].get('x') + a[i - 1].get('x')) / 2)
-                print(a[i], a[i - 1], flush=True)
-                term = int((a[i].get('x') + a[i - 1].get('x')) / 2)
-                break
-    
-    
-        def range_plot(l: list):
-            new_a = [l[0]]
-            for i in list(range(1, len(l))):
-                print(l[i], flush=True)
-                if l[i].get('y') > l[i - 1].get('y'):
-                    if l[i].get('y') > new_a[-1].get('y'):
-                        new_a.append(l[i])
-            return new_a
-    
-        a = sorted(a, key=lambda z: z['x'], reverse=False)
-        new_a = range_plot(a)
-        print('Sorted 0 :', new_a, flush=True)
-    
-    
-    
-        new_a += [b]
-        print(new_a, flush=True)
-        def range_plot(l: list):
-            new_a = [l[0]]
-            for i in list(range(1, len(l))):
-                print("\n", l[i], flush=True)
-                if l[i].get('x') > l[i - 1].get('x'):
-                    if l[i].get('x') > new_a[-1].get('x'):
-                        new_a.append(l[i])
-            return new_a
-        new_a = sorted(new_a, key=lambda z: z['y'], reverse=False)
-        new_a = range_plot(new_a)
-        '''
-        oops = 1 if len(new_a)<=1 else 0
-        term = 0 if len(new_a)<=1 else term
-
-
-        if new_a[-1].get('y') == price:
-            new_a.append({'x': term+2, 'y': price})
-        print(new_a, flush=True)
-        new_point = new_a[-1]
-        print('last item: ', new_point, flush=True)
-        new_point_x = int(new_point.get('x'))
-        new_point_y = int(new_point.get('y'))
-        print("x from last item: ", new_point_x, flush=True)
-
-
-        print('new x: ', new_point, flush=True)
-        new_a.append({"x": new_point_x+2, 'y': new_point_y+new_point_y*0.02})
-        print("Finally new_a: ", new_a, flush=True)
-        # Check if enough data for plotting
-
-
-
-
-        answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
-    else:
-        answ = jsonify({'Price': 0, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS":1})
-    return answ
-        # , 'Term': term})
-    # return 'Price {0} \n Estimated Sale Time: {1} days'.format(price, term)
 
 
 if __name__ == '__main__':

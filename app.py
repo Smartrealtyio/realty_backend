@@ -19,8 +19,9 @@ import statistics
 import numpy as np
 import math
 
-PATH_TO_PRICE_MODEL = SETTINGS.MODEL_MOSCOW + '/PriceModelGBR.joblib'
-
+PATH_TO_PRICE_MODEL_GBR = SETTINGS.MODEL_MOSCOW + '/PriceModel_GBR.joblib'
+PATH_TO_PRICE_MODEL_RF = SETTINGS.MODEL_MOSCOW + '/PriceModel_RF.joblib'
+PATH_TO_PRICE_MODEL_LGBM = SETTINGS.MODEL_MOSCOW + '/PriceModel_LGBM.joblib'
 app = Flask(__name__)
 
 
@@ -111,8 +112,9 @@ def mean():
     clf = GradientBoostingRegressor(n_estimators=350, max_depth=4, verbose=10)
     clf.fit(X1, y1)
     '''
-    gbr = load(PATH_TO_PRICE_MODEL)
-    cat = load(SETTINGS.MODEL_MOSCOW + '/PriceModelCatGradient.joblib')
+    gbr = load(PATH_TO_PRICE_MODEL_GBR)
+    rf = load(PATH_TO_PRICE_MODEL_RF)
+    lgbm = load(PATH_TO_PRICE_MODEL_LGBM)
 
 
     # Print GradientBoosting Regression features importance
@@ -127,10 +129,13 @@ def mean():
                                      np.log1p(row.full_sq),
                                    np.log1p(row.kitchen_sq), row.is_apartment, row.time_to_metro, row.floor_last,
                                    row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]]))+
-              np.expm1(cat.predict([[row.renovation, row.has_elevator, np.log1p(row.longitude), np.log1p(row.latitude),
+              np.expm1(rf.predict([[row.renovation, row.has_elevator, np.log1p(row.longitude), np.log1p(row.latitude),
                                      np.log1p(row.full_sq),
                                    np.log1p(row.kitchen_sq), row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]])))[0]/2), axis=1)
+                                   row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]])) + np.expm1(lgbm.predict([[row.renovation, row.has_elevator, np.log1p(row.longitude), np.log1p(row.latitude),
+                                     np.log1p(row.full_sq),
+                                   np.log1p(row.kitchen_sq), row.is_apartment, row.time_to_metro, row.floor_last,
+                                   row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]])))[0]/3), axis=1)
 
 
     # Get Profit Offers using Outliers algorithm detection
@@ -288,18 +293,23 @@ def map():
         # PRICE PREDICTION
 
         # GBR
-        GBR_PRCIE = GradientBoostingRegressor(n_estimators=250, max_depth=8, verbose=5, max_features=3, random_state=42, learning_rate=0.07)
+        GBR_PRICE = GradientBoostingRegressor(n_estimators=250, max_depth=8, verbose=5, max_features=3, random_state=42, learning_rate=0.07)
         print(X1.shape, y1.shape, flush=True)
         GBR_PRCIE.fit(X1, y1)
-        price_gbr_pred = np.expm1(GBR_PRCIE.predict([list_of_requested_params_price]))
+        price_gbr_pred = np.expm1(GBR_PRICE.predict([list_of_requested_params_price]))
 
         print("Price gbr: ", price_gbr_pred, flush=True)
 
-        CAT_PRICE = load(SETTINGS.MODEL_MOSCOW + '/PriceModelCatGradient.joblib')
-        price_cat_pred = np.expm1(CAT_PRICE.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))
+        gbr = load(PATH_TO_PRICE_MODEL_GBR)
+        rf = load(PATH_TO_PRICE_MODEL_RF)
+        lgbm = load(PATH_TO_PRICE_MODEL_LGBM)
+        price_cat_pred = (np.expm1(gbr.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))+np.expm1(rf.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))+np.expm1(lgbm.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))) / 3
 
-        print("Price cat: ", price_cat_pred, flush=True)
+
+        print("Stacking_rf_gbr_lgbm: ", price_cat_pred, flush=True)
 
         # Return real value of price (reverse Log Transformation)
         df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
@@ -385,8 +395,7 @@ def map():
 
         # DATA FOR BUILDING PRICE-TIME CORRELATION GRAPHICS
         # Add new parameters: PREDICTED_PRICE and PROFIT
-        gbr = load(PATH_TO_PRICE_MODEL)
-        cat = load(SETTINGS.MODEL_MOSCOW + '/PriceModelCatGradient.joblib')
+
 
         df_for_current_label['pred_price'] = df_for_current_label[
             ['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
@@ -395,9 +404,12 @@ def map():
             int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                                          row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
                                          row.floor_first, row.X, row.Y, row.clusters]])) + np.expm1(
-                cat.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                rf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
                               row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                              row.floor_first, row.X, row.Y, row.clusters]])))[0] / 2)), axis=1)
+                              row.floor_first, row.X, row.Y, row.clusters]]))+np.expm1(
+                lgbm.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                              row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
+                              row.floor_first, row.X, row.Y, row.clusters]])))[0] / 3)), axis=1)
 
         df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
             lambda row: ((row.pred_price / row.price)), axis=1)

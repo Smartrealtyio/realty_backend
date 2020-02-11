@@ -19,9 +19,12 @@ import statistics
 import numpy as np
 import math
 
-PATH_TO_PRICE_MODEL_GBR = SETTINGS.MODEL_MOSCOW + '/PriceModel_GBR.joblib'
-PATH_TO_PRICE_MODEL_RF = SETTINGS.MODEL_MOSCOW + '/PriceModel_RF.joblib'
-PATH_TO_PRICE_MODEL_LGBM = SETTINGS.MODEL_MOSCOW + '/PriceModel_LGBM.joblib'
+PATH_PRICE_GBR_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_GBR.joblib'
+PATH_PRICE_RF_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_RF.joblib'
+PATH_PRICE_LGBM_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_LGBM.joblib'
+PATH_PRICE_GBR_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
+PATH_PRICE_RF_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF.joblib'
+PATH_PRICE_LGBM_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM.joblib'
 app = Flask(__name__)
 
 
@@ -101,9 +104,9 @@ def mean():
 
     # PRICE
 
-    gbr = load(PATH_TO_PRICE_MODEL_GBR)
-    rf = load(PATH_TO_PRICE_MODEL_RF)
-    lgbm = load(PATH_TO_PRICE_MODEL_LGBM)
+    gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+    rf = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+    lgbm = load(PATH_PRICE_GBR_MOSCOW_VTOR)
 
 
     # Print GradientBoosting Regression features importance
@@ -193,12 +196,14 @@ def mean():
 def map():
     # building_type_str = request.args.get('building_type_str')
     longitude = float(request.args.get('lng'))
+    rooms = int(request.args.get('rooms'))
     latitude = float(request.args.get('lat'))
     full_sq = float(request.args.get('full_sq'))
     kitchen_sq = float(request.args.get('kitchen_sq'))
-    # life_sq = request.args.get('life_sq')
-    is_apartment = int(request.args.get('is_apartment'))
+    life_sq = float(request.args.get('life_sq'))
+    # is_apartment = int(request.args.get('is_apartment'))
     renovation = int(request.args.get('renovation'))
+    secondary = int(request.args.get('secondary'))
     has_elevator = int(request.args.get('has_elevator'))
     floor_first = int(request.args.get('floor_first'))
     floor_last = int(request.args.get('floor_last'))
@@ -210,16 +215,39 @@ def map():
     # initialize dataframe
     data = pd.DataFrame()
     kmeans = 0
+    gbr = 0
+    lgbm = 0
+    rf = 0
 
     # 0 = Moscow, 1 = Spb
-    if city_id == 0:
-        data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW.csv')
+    # Москва новостройки
+    if city_id == 0 and secondary ==0:
+        data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv')
+        data = data[((data.flat_type == 'NEW_FLAT')|(data.flat_type == 'NEW_SECONDARY'))]
         # Load KMean Clustering model
-        kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW.joblib')
-    elif city_id == 1:
+        kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_NEW_FLAT.joblib')
+    # Москва вторичка
+    elif city_id == 0 and secondary == 1:
+        data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW.csv')
+        data = data[data.flat_type == 'SECONDARY']
+        # Load KMean Clustering model
+        kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_VTOR.joblib')
+        gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+        rf = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+        lgbm = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+    # Санкт-Петербург новостройки
+    elif city_id == 1 and secondary == 0:
         data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
         # Load KMean Clustering model
-        kmeans = load(SETTINGS.MODEL_SPB + '/KMEAN_CLUSTERING_SPB.joblib')
+        kmeans = load(SETTINGS.MODEL_SPB + '/KMEAN_CLUSTERING_SPB_NEW_FLAT.joblib')
+    # Санкт-Петербург вторичка
+    elif city_id == 1 and secondary == 1:
+        data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
+        # Load KMean Clustering model
+        kmeans = load(SETTINGS.MODEL_SPB + '/KMEAN_CLUSTERING_SPB_VTOR.joblib')
+        gbr = load(PATH_PRICE_GBR_SPB_VTOR)
+        rf = load(PATH_PRICE_RF_SPB_VTOR)
+        lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
 
 
     print("Initial shape: ", data.shape, flush=True)
@@ -230,8 +258,43 @@ def map():
     current_label = kmeans.predict([[longitude, latitude]])
     print("Current label: ", current_label, flush=True)
 
-    list_of_requested_params_price = [renovation, has_elevator, longitude, latitude, full_sq, kitchen_sq,
-                                      is_apartment, time_to_metro, floor_last, floor_first, X, Y]
+
+
+    # Reducing skew in data using LogTransformation
+    longitude = np.log1p(longitude)
+    latitude = np.log1p(latitude)
+    full_sq = np.log1p(full_sq)
+    kitchen_sq = np.log1p(kitchen_sq)
+    life_sq = np.log1p(life_sq)
+    rooms = np.log1p(rooms)
+
+    # PRICE PREDICTION
+
+
+    price_cat_pred = (np.expm1(gbr.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
+                                       kitchen_sq, time_to_metro, floor_first, floor_last, current_label]]))+np.expm1(rf.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
+                                       kitchen_sq, time_to_metro, floor_first, floor_last, current_label]]))+np.expm1(lgbm.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
+                                       kitchen_sq, time_to_metro, floor_first, floor_last, current_label]]))) / 3
+
+
+    print("Stacking_rf_gbr_lgbm: ", price_cat_pred, flush=True)
+
+
+
+    # Count mean of Cat and GBR algorithms prediction
+    # price = (price_gbr_pred+price_cat_pred)/2
+    price = price_cat_pred
+    price = int(price[0])
+    print("Predicted Price: ", price, flush=True)
+
+    price_meter_sq = price / full_sq
+
+
+
+
+
+    # TERm
+
 
     # Create subsample of flats with same cluster label value (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_label[0]]
@@ -243,79 +306,17 @@ def map():
 
     # Create subsample according to the same(+-) python3 -m venv tutorial-envpython -m flask runsize of the full_sq
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq - full_sq * 0.018) & (
-    df_for_current_label.full_sq <= full_sq + full_sq * 0.018))]
-
+                df_for_current_label.full_sq <= full_sq + full_sq * 0.018))]
+    answ = 0
     if df_for_current_label.shape[0] > 1:
+        # ONLY CLOSED OFFERS
+        df_for_current_label = df_for_current_label[df_for_current_label.closed == True]
 
-
-        print("Current label dataframe shape: ", df_for_current_label.shape, flush=True)
-
-        # Reducing skew in data using LogTransformation
-        df_for_current_label["longitude"] = np.log1p(df_for_current_label["longitude"])
-        df_for_current_label["latitude"] = np.log1p(df_for_current_label["latitude"])
-        df_for_current_label["full_sq"] = np.log1p(df_for_current_label["full_sq"])
-        df_for_current_label["kitchen_sq"] = np.log1p(df_for_current_label["kitchen_sq"])
-        df_for_current_label["X"] = np.log1p(df_for_current_label["X"])
-        df_for_current_label["Y"] = np.log1p(df_for_current_label["Y"])
-
-        # Flats Features for GBR PRICE fitting
-        X1 = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y']]
-
-        # Log Transformation for target label (price) to reduce skew of value
-        df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
-        y1 = df_for_current_label[['price']].values.ravel()
-
-        # PRICE PREDICTION
-
-        # GBR
-        # GBR_PRICE = GradientBoostingRegressor(n_estimators=250, max_depth=8, verbose=5, max_features=3, random_state=42, learning_rate=0.07)
-        # print(X1.shape, y1.shape, flush=True)
-        # GBR_PRICE.fit(X1, y1)
-        # price_gbr_pred = np.expm1(GBR_PRICE.predict([list_of_requested_params_price]))
-        #
-        # print("Price gbr: ", price_gbr_pred, flush=True)
-
-        gbr = load(PATH_TO_PRICE_MODEL_GBR)
-        rf = load(PATH_TO_PRICE_MODEL_RF)
-        lgbm = load(PATH_TO_PRICE_MODEL_LGBM)
-        price_cat_pred = (np.expm1(gbr.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))+np.expm1(rf.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))+np.expm1(lgbm.predict([[renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                      is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), current_label]]))) / 3
-
-
-        print("Stacking_rf_gbr_lgbm: ", price_cat_pred, flush=True)
-
-        # Return real value of price (reverse Log Transformation)
-        df_for_current_label["price"] = np.expm1(df_for_current_label["price"])
-
-        # df_for_current_label["longitude"] = np.expm1(df_for_current_label["longitude"])
-        # df_for_current_label["latitude"] = np.expm1(df_for_current_label["latitude"])
-        # df_for_current_label["full_sq"] = np.expm1(df_for_current_label["full_sq"])
-        # df_for_current_label["kitchen_sq"] = np.expm1(df_for_current_label["kitchen_sq"])
-        # df_for_current_label["X"] = np.expm1(df_for_current_label["X"])
-        # df_for_current_label["Y"] = np.expm1(df_for_current_label["Y"])
-
-        # Count mean of Cat and GBR algorithms prediction
-        # price = (price_gbr_pred+price_cat_pred)/2
-        price = price_cat_pred
-        price = int(price[0])
-        print("Predicted Price: ", price, flush=True)
-
-        price_meter_sq = price / full_sq
-
-
-
-
-
-        # TERM
         df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
         df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
 
 
         # Reducing skew in data using LogTransformation
-
         df_for_current_label['price_meter_sq'] = np.log1p(df_for_current_label['price_meter_sq'])
         df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
         df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
@@ -331,29 +332,25 @@ def map():
         # Add new parameters: PREDICTED_PRICE and PROFIT
 
 
-        df_for_current_label['pred_price'] = df_for_current_label[
-            ['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-             'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']].apply(
-            lambda row:
-            int(((np.expm1(gbr.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
-                                         row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                                         row.floor_first, row.X, row.Y, row.clusters]])) + np.expm1(
-                rf.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
-                              row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                              row.floor_first, row.X, row.Y, row.clusters]]))+np.expm1(
-                lgbm.predict([[row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
-                              row.kitchen_sq, row.is_apartment, row.time_to_metro, row.floor_last,
-                              row.floor_first, row.X, row.Y, row.clusters]])))[0] / 3)), axis=1)
+        data["price"] = np.expm1(data["price"])
+
+        df_for_current_label['pred_price'] = df_for_current_label[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                                          'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
+                lambda row:
+                int(((np.expm1(gbr.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
+                                           kitchen_sq, time_to_metro, floor_first, floor_last, current_label]])) + np.expm1(rf.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
+                                           kitchen_sq, time_to_metro, floor_first, floor_last, current_label]]))+np.expm1(lgbm.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
+                                           kitchen_sq, time_to_metro, floor_first, floor_last, current_label]])))[0] / 3)), axis=1)
 
         df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
-            lambda row: ((row.pred_price / row.price)), axis=1)
+                lambda row: ((row.pred_price / row.price)), axis=1)
 
 
 
         print("Print current shape for TERM_NEW prediction", df_for_current_label.shape, flush=True)
         X_term_new = df_for_current_label[
-            ['price', 'full_sq', 'kitchen_sq',
-             'price_meter_sq', 'profit']]
+                ['price', 'full_sq', 'kitchen_sq',
+                 'price_meter_sq', 'profit']]
         # X_term_new = sc.fit_transform(X_term_new)
         # df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
         y_term_new = df_for_current_label[['term']]
@@ -364,7 +361,6 @@ def map():
         CAT_TERM_NEW = CatBoostRegressor(random_state=42)
         train_time = Pool(X_term_new, y_term_new)
         CAT_TERM_NEW.fit(train_time, verbose=3)
-
         # logreg = LogisticRegression()
         # names = ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
         #      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
@@ -387,7 +383,6 @@ def map():
             smaller_prices = []
             percent = 2
             for _ in range(15):
-
                 new_p = p - p * percent / 100
                 smaller_prices.append(new_p)
                 percent += 2
@@ -404,9 +399,9 @@ def map():
             for i in l:
                 profit = price/i
                 pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                                   np.log1p(price_meter_sq), profit]]))
+                                                                       np.log1p(price_meter_sq), profit]]))
                 term_cat_profit = np.expm1(CAT_TERM_NEW.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                                   np.log1p(price_meter_sq), profit]]))
+                                                                       np.log1p(price_meter_sq), profit]]))
 
 
                 term_profit = (pred_term_profit + term_cat_profit) / 2
@@ -456,7 +451,7 @@ def map():
 
         new_list_of_dicts = drop_duplicates_term(a)
         print("After drop term duplicates: ", new_list_of_dicts, flush=True)
-    
+
         b = {'x': int(term), 'y': int(price)}
         print("Predicted raw term, and exact price: ", b, flush=True)
 
@@ -499,54 +494,10 @@ def map():
             # new_a += [b]
             new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
             # new_a = drop_duplicat(new_a)
-
             print("Sorted finally : ", new_a, flush=True)
 
 
-            '''
-            # Sort list by price
-            a = [i for i in a if 0 < i.get('x') < 600]
-            a = sorted(a, key=lambda z: z['y'], reverse=False)
-        
-            b = {'x': int(term), 'y': int(price)}
-            print("b: ", b, flush=True)
-        
-            for i in range(1, len(a)):
-                if a[i - 1].get('y') < b.get('y') < a[i].get('y'):
-                    b['x'] = int((a[i].get('x') + a[i - 1].get('x')) / 2)
-                    print(a[i], a[i - 1], flush=True)
-                    term = int((a[i].get('x') + a[i - 1].get('x')) / 2)
-                    break
-        
-        
-            def range_plot(l: list):
-                new_a = [l[0]]
-                for i in list(range(1, len(l))):
-                    print(l[i], flush=True)
-                    if l[i].get('y') > l[i - 1].get('y'):
-                        if l[i].get('y') > new_a[-1].get('y'):
-                            new_a.append(l[i])
-                return new_a
-        
-            a = sorted(a, key=lambda z: z['x'], reverse=False)
-            new_a = range_plot(a)
-            print('Sorted 0 :', new_a, flush=True)
-        
-        
-        
-            new_a += [b]
-            print(new_a, flush=True)
-            def range_plot(l: list):
-                new_a = [l[0]]
-                for i in list(range(1, len(l))):
-                    print("\n", l[i], flush=True)
-                    if l[i].get('x') > l[i - 1].get('x'):
-                        if l[i].get('x') > new_a[-1].get('x'):
-                            new_a.append(l[i])
-                return new_a
-            new_a = sorted(new_a, key=lambda z: z['y'], reverse=False)
-            new_a = range_plot(new_a)
-            '''
+
             oops = 1 if len(new_a)<=1 else 0
             term = 0 if len(new_a)<=1 else term
 
@@ -570,9 +521,9 @@ def map():
 
 
             answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
-        else:
-            answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS":1})
-        return answ
+    else:
+        answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS":1})
+    return answ
 
 
 

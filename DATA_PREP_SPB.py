@@ -40,7 +40,7 @@ def main_preprocessing():
                                                    ],
                         true_values="t", false_values="f", header=0)
     # Leave only VTORICHKA
-    flats = flats[flats.flat_type == 'SECONDARY']
+    # flats = flats[flats.flat_type == 'SECONDARY']
     flats = flats.rename(columns={"id": "flat_id"})
     print("flats: ", flats.shape, flush=True)
     flats = flats.drop_duplicates(subset='flat_id', keep="last")
@@ -151,15 +151,29 @@ def main_preprocessing():
         k_list.append(k)
     print(list(zip(k_list, Sum_of_squared_distances)))
     '''
-    kmeans = KMeans(n_clusters=100, random_state=42).fit(clean_data[['longitude', 'latitude']])
+    clean_data_vtor = clean_data[(clean_data.flat_type == 'SECONDARY')]
+    kmeans_vtor = KMeans(n_clusters=80, random_state=42).fit(clean_data_vtor[['longitude', 'latitude']])
 
-    dump(kmeans, PATH_TO_MODELS + 'KMEAN_CLUSTERING_SPB.joblib')
-    labels = kmeans.labels_
-    clean_data['clusters'] = labels
+    dump(kmeans_vtor, PATH_TO_MODELS + 'KMEAN_CLUSTERING_SPB_VTOR.joblib')
+    labels = kmeans_vtor.labels_
+    clean_data_vtor['clusters'] = labels
 
-    print("SPB headers finally: ", list(clean_data.columns), flush=True)
-    print('Saving to new csv', flush=True)
-    clean_data.to_csv(PREPARED_DATA + '/SPB.csv', index=None, header=True)
+    print("SPB headers finally: ", list(clean_data_vtor.columns), flush=True)
+    print('Saving clean_data_vtor to new csv', flush=True)
+    clean_data_vtor.to_csv(PREPARED_DATA + '/SPB_VTOR.csv', index=None, header=True)
+
+
+
+    clean_data_new_flats = clean_data[((clean_data.flat_type == 'NEW_FLAT') | (clean_data.flat_type == 'NEW_SECONDARY'))]
+    kmeans_NEW_FLAT = KMeans(n_clusters=20, random_state=42).fit(clean_data_new_flats[['longitude', 'latitude']])
+
+    dump(kmeans_NEW_FLAT, PATH_TO_MODELS + 'KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
+    labels = kmeans_NEW_FLAT.labels_
+    clean_data_new_flats['clusters'] = labels
+
+    print("SPB headers finally: ", list(clean_data_new_flats.columns), flush=True)
+    print('Saving clean_data_new_flats to new csv', flush=True)
+    clean_data_new_flats.to_csv(PREPARED_DATA + '/SPB_NEW_FLATS.csv', index=None, header=True)
 
 if __name__ == '__main__':
     main_preprocessing()

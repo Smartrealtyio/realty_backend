@@ -194,22 +194,20 @@ def mean():
 
 @app.route('/map')
 def map():
-    # building_type_str = request.args.get('building_type_str')
     longitude = float(request.args.get('lng'))
     rooms = int(request.args.get('rooms'))
     latitude = float(request.args.get('lat'))
     full_sq = float(request.args.get('full_sq'))
     kitchen_sq = float(request.args.get('kitchen_sq'))
     life_sq = float(request.args.get('life_sq'))
-    # is_apartment = int(request.args.get('is_apartment'))
+
     renovation = int(request.args.get('renovation'))
     secondary = int(request.args.get('secondary'))
     has_elevator = int(request.args.get('has_elevator'))
     floor_first = int(request.args.get('floor_first'))
     floor_last = int(request.args.get('floor_last'))
     time_to_metro = int(request.args.get('time_to_metro'))
-    X = (m.cos(latitude) * m.cos(longitude))
-    Y = (m.cos(latitude) * m.sin(longitude))
+
     city_id = int(request.args.get('city_id')) if request.args.get('city_id') is not None else 0
 
     # initialize dataframe

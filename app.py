@@ -340,6 +340,8 @@ def map():
         print("Most important features for term prediction: ", most_important_features)
         '''
 
+
+        '''
         GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
         print(X_term.shape, y_term.shape, flush=True)
 
@@ -362,9 +364,10 @@ def map():
 
         print("Predicted term: ", term)
 
-
+        
         term = int(term.item(0))
-
+        '''
+        term = 0
 
 
         # DATA FOR BUILDING PRICE-TIME CORRELATION GRAPHICS

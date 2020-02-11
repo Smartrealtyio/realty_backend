@@ -314,59 +314,16 @@ def map():
         df_for_current_label = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
 
 
-
-        X_term = df_for_current_label[['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-                                       'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
-                                       'price_meter_sq']]
-
         # Reducing skew in data using LogTransformation
 
         df_for_current_label['price_meter_sq'] = np.log1p(df_for_current_label['price_meter_sq'])
         df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
         df_for_current_label["price"] = np.log1p(df_for_current_label["price"])
 
-        y_term = df_for_current_label[['term']]
 
 
-        # GBR
-        list_of_requested_params_term = [renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-                                         np.log1p(full_sq), np.log1p(kitchen_sq), is_apartment, time_to_metro, floor_last,
-                                         floor_first, np.log1p(X), np.log1p(Y),
-                                         np.log1p(price_meter_sq), current_label]
 
 
-        '''
-        most_important_features = list(df_for_current_label_term.corr().term.sort_values(ascending=False).index)[1:4]
-        print("Most important features for term prediction: ", most_important_features)
-        '''
-
-
-        '''
-        GBR_TERM = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=10, random_state=42, learning_rate=0.05)
-        print(X_term.shape, y_term.shape, flush=True)
-
-        GBR_TERM.fit(X_term, y_term)
-
-        term_gbr_pred = np.expm1(GBR_TERM.predict([list_of_requested_params_term]))
-
-        print("Term gbr: ", term_gbr_pred, flush=True)
-
-        cat_term = CatBoostRegressor(random_state=42, l2_leaf_reg=1, learning_rate=0.05)
-
-        train_time = Pool(X_term, y_term)
-        cat_term.fit(train_time, verbose=5)
-        term_cat = np.expm1(cat_term.predict([list_of_requested_params_term]))
-        print("Term cat: ", term_cat, flush=True)
-
-
-        term = (term_cat+term_gbr_pred)/2
-        # term = term_cat
-
-        print("Predicted term: ", term)
-
-        
-        term = int(term.item(0))
-        '''
         term = 0
 
 
@@ -395,8 +352,7 @@ def map():
 
 
         X_term_new = df_for_current_label[
-            ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-             'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
+            ['price', 'full_sq', 'kitchen_sq',
              'price_meter_sq', 'profit']]
         # X_term_new = sc.fit_transform(X_term_new)
         # df_for_current_label['term'] = np.log1p(df_for_current_label['term'])
@@ -409,11 +365,11 @@ def map():
         train_time = Pool(X_term_new, y_term_new)
         CAT_TERM_NEW.fit(train_time, verbose=3)
 
-        names = ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-             'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
-             'price_meter_sq', 'profit']
-        print("Features importances GBR Term: ", sorted(zip(GBR_TERM_NEW.feature_importances_.tolist(), names)), flush=True)
-        print("Features importances Cat Term: ",sorted(zip(CAT_TERM_NEW.feature_importances_.tolist(), names)), flush=True)
+        # names = ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
+        #      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
+        #      'price_meter_sq', 'profit']
+        # print("Features importances GBR Term: ", sorted(zip(GBR_TERM_NEW.feature_importances_.tolist(), names)), flush=True)
+        # print("Features importances Cat Term: ",sorted(zip(CAT_TERM_NEW.feature_importances_.tolist(), names)), flush=True)
 
         # Create list of N prices: which are larger and smaller than predicted
         def larger(p=0):
@@ -448,12 +404,10 @@ def map():
                 profit = price/i
                 print("Price from continuum: ", i)
                 print("Profit: ", profit)
-                pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
-                                                                   np.log1p(latitude), np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                                   is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), price_meter_sq, profit]]))
-                term_cat_profit = np.expm1(CAT_TERM_NEW.predict([[renovation, has_elevator, np.log1p(longitude),
-                                                             np.log1p(latitude), np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
-                                                             is_apartment, time_to_metro, floor_last, floor_first, np.log1p(X), np.log1p(Y), price_meter_sq, profit]]))
+                pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                                   np.log1p(price_meter_sq), profit]]))
+                term_cat_profit = np.expm1(CAT_TERM_NEW.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                                   np.log1p(price_meter_sq), profit]]))
 
 
                 term_profit = (pred_term_profit + term_cat_profit) / 2

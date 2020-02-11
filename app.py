@@ -236,7 +236,7 @@ def map():
     elif city_id == 1 and secondary == 0:
         data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
         # Load KMean Clustering model
-        kmeans = load(SETTINGS.MODEL_SPB + '/KMEAN_CLUSTERING_SPB_NEW_FLAT.joblib')
+        kmeans = load(SETTINGS.MODEL_SPB + 'KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
     # Санкт-Петербург вторичка
     elif city_id == 1 and secondary == 1:
         data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')

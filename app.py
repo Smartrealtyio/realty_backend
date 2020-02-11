@@ -365,8 +365,7 @@ def map():
         train_time = Pool(X_term_new, y_term_new)
         CAT_TERM_NEW.fit(train_time, verbose=3)
 
-        logreg = LogisticRegression()
-        logreg.fit(X_term_new, y_term_new)
+        # logreg = LogisticRegression()
         # names = ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
         #      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
         #      'price_meter_sq', 'profit']
@@ -404,17 +403,15 @@ def map():
             list_of_terms = []
             for i in l:
                 profit = price/i
-                # pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
-                #                                                    np.log1p(price_meter_sq), profit]]))
-                # term_cat_profit = np.expm1(CAT_TERM_NEW.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
-                #                                                    np.log1p(price_meter_sq), profit]]))
-
-
-                # term_profit = (pred_term_profit + term_cat_profit) / 2
-                # print("GBR & Cat: ", pred_term_profit, term_cat_profit, flush=True)
-                # print("Predicted term: ", term_profit, flush=True)
-                term_profit = np.expm1(logreg.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
+                pred_term_profit = np.expm1(GBR_TERM_NEW.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
                                                                    np.log1p(price_meter_sq), profit]]))
+                term_cat_profit = np.expm1(CAT_TERM_NEW.predict([[np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
+                                                                   np.log1p(price_meter_sq), profit]]))
+
+
+                term_profit = (pred_term_profit + term_cat_profit) / 2
+                print("GBR & Cat: ", pred_term_profit, term_cat_profit, flush=True)
+                print("Predicted term: ", term_profit, flush=True)
                 list_of_terms.append(term_profit)
             return list_of_terms
         list_of_terms = fn(list_of_prices)

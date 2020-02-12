@@ -10,21 +10,25 @@ from sklearn.metrics import r2_score, scorer, mean_squared_error
 # import Realty.config as cf
 from scipy import stats
 from joblib import dump, load
-import xgboost
+
+from scipy import stats
 import os
 import settings_local as SETTINGS
 
-prepared_data = SETTINGS.DATA_SPB + '/SPB_VTOR.csv'
+prepared_data_VTOR = SETTINGS.DATA_SPB + '/SPB_VTOR.csv'
+prepared_data_NEW = SETTINGS.DATA_SPB + '/SPB_NEW.csv'
 
-PATH_TO_PRICE_MODEL_GBR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
-PATH_TO_PRICE_MODEL_RF = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF.joblib'
-PATH_TO_PRICE_MODEL_LGBM = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM.joblib'
+PATH_TO_PRICE_MODEL_GBR_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
+PATH_TO_PRICE_MODEL_RF_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF.joblib'
+PATH_TO_PRICE_MODEL_LGBM_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM.joblib'
+PATH_TO_PRICE_MODEL_GBR_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_GBR.joblib'
+PATH_TO_PRICE_MODEL_RF_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_RF.joblib'
+PATH_TO_PRICE_MODEL_LGBM_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_LGBM.joblib'
 
 
 
 
 def Price_Secondary(data: pd.DataFrame):
-    from scipy import stats
 
     data = data[(np.abs(stats.zscore(data.price)) < 3)]
     data = data[(np.abs(stats.zscore(data.term)) < 3)]
@@ -55,7 +59,7 @@ def Price_Secondary(data: pd.DataFrame):
     gbr_model.fit(X, y)
 
     print('Save model: ', flush=True)
-    dump(gbr_model, PATH_TO_PRICE_MODEL_GBR)
+    dump(gbr_model, PATH_TO_PRICE_MODEL_GBR_VTOR)
 
     RF = RandomForestRegressor(n_estimators=300, min_samples_leaf=3, verbose=3, n_jobs=-1)
 
@@ -70,7 +74,7 @@ def Price_Secondary(data: pd.DataFrame):
     RF.fit(X, y)
 
     print('Save model: ', flush=True)
-    dump(RF, PATH_TO_PRICE_MODEL_RF)
+    dump(RF, PATH_TO_PRICE_MODEL_RF_VTOR)
 
     # LGBM model
     lgbm_model = LGBMRegressor(objective='regression',
@@ -86,11 +90,11 @@ def Price_Secondary(data: pd.DataFrame):
     lgbm_model.fit(X, y)
 
     print('Save model: ', flush=True)
-    dump(lgbm_model, PATH_TO_PRICE_MODEL_LGBM)
+    dump(lgbm_model, PATH_TO_PRICE_MODEL_LGBM_VTOR)
 
 
 def Pirce_NewFlats(data: pd.DataFrame):
-    from scipy import stats
+
 
     data = data[(np.abs(stats.zscore(data.price)) < 3)]
     data = data[(np.abs(stats.zscore(data.term)) < 3)]
@@ -120,7 +124,7 @@ def Pirce_NewFlats(data: pd.DataFrame):
     gbr_model.fit(X, y)
 
     print('Save model: ', flush=True)
-    dump(gbr_model, PATH_TO_PRICE_MODEL_GBR)
+    dump(gbr_model, PATH_TO_PRICE_MODEL_GBR_NEW)
 
     RF = RandomForestRegressor(n_estimators=300, min_samples_leaf=3, verbose=3, n_jobs=-1).fit(X_train, y_train)
 
@@ -133,7 +137,7 @@ def Pirce_NewFlats(data: pd.DataFrame):
     RF.fit(X, y)
 
     print('Save model: ', flush=True)
-    dump(RF, PATH_TO_PRICE_MODEL_RF)
+    dump(RF, PATH_TO_PRICE_MODEL_RF_NEW)
 
     # LGBM model
     lgbm_model = LGBMRegressor(objective='regression',
@@ -148,13 +152,14 @@ def Pirce_NewFlats(data: pd.DataFrame):
     lgbm_model.fit(X, y)
 
     print('Save model: ', flush=True)
-    dump(lgbm_model, PATH_TO_PRICE_MODEL_LGBM)
+    dump(lgbm_model, PATH_TO_PRICE_MODEL_LGBM_NEW)
 
 
 def learner():
-    data = pd.read_csv(prepared_data)
+    data = pd.read_csv(prepared_data_VTOR)
     Price_Secondary(data)
-    # Price_NewFlats(data)
+    new_data = pd.read_csv(prepared_data_NEW)
+    Pirce_NewFlats(new_data)
 
 
 if __name__ == '__main__':

@@ -217,32 +217,44 @@ def map():
     lgbm = 0
     rf = 0
     print("PArams: ", city_id, secondary, flush=True)
+
     # 0 = Moscow, 1 = Spb
     # Москва новостройки
     if city_id == 0 and secondary ==0:
+        # Load data Moscow New flats
         data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv')
-        data = data[((data.flat_type == 'NEW_FLAT')|(data.flat_type == 'NEW_SECONDARY'))]
+
         # Load KMean Clustering model
         kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_NEW_FLAT.joblib')
+
     # Москва вторичка
     elif city_id == 0 and secondary == 1:
-        data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW.csv')
-        data = data[data.flat_type == 'SECONDARY']
+        # Load data Moscow secondary
+        data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv')
+
         # Load KMean Clustering model
         kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_VTOR.joblib')
+
+        # Load Price Models Moscow Secondary
         gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
         rf = load(PATH_PRICE_GBR_MOSCOW_VTOR)
         lgbm = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+
     # Санкт-Петербург новостройки
     elif city_id == 1 and secondary == 0:
-        data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
+        # Load data SPb New Flats
+        data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB_NEW_FLATS.csv')
+
         # Load KMean Clustering model
         kmeans = load(SETTINGS.MODEL_SPB + 'KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
+
     # Санкт-Петербург вторичка
     elif city_id == 1 and secondary == 1:
-        data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
+        data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB_VTOR.csv')
         # Load KMean Clustering model
         kmeans = load(SETTINGS.MODEL_SPB + '/KMEAN_CLUSTERING_SPB_VTOR.joblib')
+
+        # Load Price Models Spb Secondary
         gbr = load(PATH_PRICE_GBR_SPB_VTOR)
         rf = load(PATH_PRICE_RF_SPB_VTOR)
         lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)

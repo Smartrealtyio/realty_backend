@@ -16,7 +16,7 @@ import os
 import settings_local as SETTINGS
 
 prepared_data_VTOR = SETTINGS.DATA_SPB + '/SPB_VTOR.csv'
-prepared_data_NEW = SETTINGS.DATA_SPB + '/SPB_NEW.csv'
+prepared_data_NEW = SETTINGS.DATA_SPB + '/SPB_NEW_FLATS.csv'
 
 PATH_TO_PRICE_MODEL_GBR_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
 PATH_TO_PRICE_MODEL_RF_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF.joblib'

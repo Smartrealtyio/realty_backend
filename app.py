@@ -233,12 +233,12 @@ def map():
         rf = load(PATH_PRICE_GBR_MOSCOW_VTOR)
         lgbm = load(PATH_PRICE_GBR_MOSCOW_VTOR)
     # Санкт-Петербург новостройки
-    elif city_id == 0 and secondary == 0:
+    elif city_id == 1 and secondary == 0:
         data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
         # Load KMean Clustering model
         kmeans = load(SETTINGS.MODEL_SPB + 'KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
     # Санкт-Петербург вторичка
-    elif city_id == 0 and secondary == 1:
+    elif city_id == 1 and secondary == 1:
         data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
         # Load KMean Clustering model
         kmeans = load(SETTINGS.MODEL_SPB + '/KMEAN_CLUSTERING_SPB_VTOR.joblib')

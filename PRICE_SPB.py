@@ -17,8 +17,8 @@ import settings_local as SETTINGS
 prepared_data = SETTINGS.DATA_SPB + '/SPB_VTOR.csv'
 
 PATH_TO_PRICE_MODEL_GBR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
-PATH_TO_PRICE_MODEL_RF = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
-PATH_TO_PRICE_MODEL_LGBM = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
+PATH_TO_PRICE_MODEL_RF = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF.joblib'
+PATH_TO_PRICE_MODEL_LGBM = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM.joblib'
 
 
 

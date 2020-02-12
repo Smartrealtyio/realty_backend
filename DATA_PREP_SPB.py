@@ -48,7 +48,7 @@ def main_preprocessing():
     flats.closed = flats[['closed']].fillna(True)
 
     # Leave only VTORICHKA
-    flats = flats[flats.flat_type == 'SECONDARY']
+    # flats = flats[flats.flat_type == 'SECONDARY']
     flats = flats.rename(columns={"id": "flat_id"})
     print("flats only secondary: ", flats.shape)
 

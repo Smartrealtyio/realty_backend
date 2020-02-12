@@ -25,6 +25,13 @@ PATH_PRICE_LGBM_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_L
 PATH_PRICE_GBR_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
 PATH_PRICE_RF_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF.joblib'
 PATH_PRICE_LGBM_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM.joblib'
+
+PATH_PRICE_GBR_MOSCOW_NEW = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_GBR.joblib'
+PATH_PRICE_RF_MOSCOW_NEW = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_RF.joblib'
+PATH_PRICE_LGBM_MOSCOW_NEW = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_LGBM.joblib'
+PATH_PRICE_GBR_SPB_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_GBR.joblib'
+PATH_PRICE_RF_SPB_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_RF.joblib'
+PATH_PRICE_LGBM_SPB_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_LGBM.joblib'
 app = Flask(__name__)
 
 
@@ -227,6 +234,11 @@ def map():
         # Load KMean Clustering model
         kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_NEW_FLAT.joblib')
 
+        # Load Price Models Moscow Secondary
+        gbr = load(PATH_PRICE_GBR_MOSCOW_NEW)
+        rf = load(PATH_PRICE_RF_MOSCOW_NEW)
+        lgbm = load(PATH_PRICE_LGBM_MOSCOW_NEW)
+
     # Москва вторичка
     elif city_id == 0 and secondary == 1:
         # Load data Moscow secondary
@@ -247,6 +259,11 @@ def map():
 
         # Load KMean Clustering model
         kmeans = load(SETTINGS.MODEL_SPB + 'KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
+
+        # Load Price Models Spb Secondary
+        gbr = load(PATH_PRICE_GBR_SPB_NEW)
+        rf = load(PATH_PRICE_RF_SPB_NEW)
+        lgbm = load(PATH_PRICE_LGBM_SPB_NEW)
 
     # Санкт-Петербург вторичка
     elif city_id == 1 and secondary == 1:

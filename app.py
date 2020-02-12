@@ -347,9 +347,9 @@ def map():
         df_for_current_label['pred_price'] = df_for_current_label[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                           'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
                 lambda row:
-                int(((np.expm1(rf.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
-                                           kitchen_sq, time_to_metro, floor_first, floor_last, current_label]]))+np.expm1(lgbm.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
-                                           kitchen_sq, time_to_metro, floor_first, floor_last, current_label]])))[0] / 2)), axis=1)
+                int(((np.expm1(rf.predict([[row.life_sq, row.rooms, row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                                           row.kitchen_sq, row.time_to_metro, row.floor_first, row.floor_last, row.clusters]]))+np.expm1(lgbm.predict([[row.life_sq, row.rooms, row.renovation, row.has_elevator, row.longitude, row.latitude, row.full_sq,
+                                           row.kitchen_sq, row.time_to_metro, row.floor_first, row.floor_last, row.clusters]])))[0] / 2)), axis=1)
 
         df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
                 lambda row: ((row.pred_price / row.price)), axis=1)

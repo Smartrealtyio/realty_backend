@@ -77,29 +77,29 @@ def mean():
 
     print('ds: ', data_offers.head(), flush=True)
 
-    # if time_to_metro != None:
-    #     data_offers = data_offers[(data_offers.time_to_metro <= time_to_metro)]
-    # if rooms != None:
-    #     data_offers = data_offers[data_offers.rooms == rooms]
-    # if building_type_str != None:
-    #     data_offers = data_offers[data_offers.building_type_str == building_type_str]
-    # if kitchen_sq != None:
-    #     data_offers = data_offers[(data_offers.kitchen_sq >= kitchen_sq - 1) & (data_offers.kitchen_sq <= kitchen_sq + 1)]
-    # if life_sq != None:
-    #     data_offers = data_offers[(data_offers.life_sq >= life_sq - 5) & (data_offers.life_sq <= life_sq + 5)]
-    # if renovation != None:
-    #     data_offers = data_offers[data_offers.renovation == renovation]
-    # if has_elevator != None:
-    #     data_offers = data_offers[data_offers.has_elevator == has_elevator]
-    # if floor_first != None:
-    #     data_offers = data_offers[data_offers.floor_first == 0]
-    # if floor_last != None:
-    #     data_offers = data_offers[data_offers.floor_last == 0]
-    # if price_from != None:
-    #     data_offers = data_offers[data_offers.price >= price_from]
-    # if price_to != None:
-    #     data_offers = data_offers[data_offers.price <= price_to]
-    #
+    if time_to_metro != None:
+        data_offers = data_offers[(data_offers.time_to_metro <= time_to_metro)]
+    if rooms != None:
+        data_offers = data_offers[data_offers.rooms == rooms]
+    if building_type_str != None:
+        data_offers = data_offers[data_offers.building_type_str == building_type_str]
+    if kitchen_sq != None:
+        data_offers = data_offers[(data_offers.kitchen_sq >= kitchen_sq - 1) & (data_offers.kitchen_sq <= kitchen_sq + 1)]
+    if life_sq != None:
+        data_offers = data_offers[(data_offers.life_sq >= life_sq - 5) & (data_offers.life_sq <= life_sq + 5)]
+    if renovation != None:
+        data_offers = data_offers[data_offers.renovation == renovation]
+    if has_elevator != None:
+        data_offers = data_offers[data_offers.has_elevator == has_elevator]
+    if floor_first != None:
+        data_offers = data_offers[data_offers.floor_first == 0]
+    if floor_last != None:
+        data_offers = data_offers[data_offers.floor_last == 0]
+    if price_from != None:
+        data_offers = data_offers[data_offers.price >= price_from]
+    if price_to != None:
+        data_offers = data_offers[data_offers.price <= price_to]
+
 
 
     # PRICE

@@ -154,7 +154,7 @@ def main_preprocessing():
     clean_data_vtor = clean_data[(clean_data.flat_type == 'SECONDARY')]
     kmeans_vtor = KMeans(n_clusters=80, random_state=42).fit(clean_data_vtor[['longitude', 'latitude']])
 
-    dump(kmeans_vtor, PATH_TO_MODELS + 'KMEAN_CLUSTERING_SPB_VTOR.joblib')
+    dump(kmeans_vtor, PATH_TO_MODELS + '/KMEAN_CLUSTERING_SPB_VTOR.joblib')
     labels = kmeans_vtor.labels_
     clean_data_vtor['clusters'] = labels
 
@@ -167,7 +167,7 @@ def main_preprocessing():
     clean_data_new_flats = clean_data[((clean_data.flat_type == 'NEW_FLAT') | (clean_data.flat_type == 'NEW_SECONDARY'))]
     kmeans_NEW_FLAT = KMeans(n_clusters=20, random_state=42).fit(clean_data_new_flats[['longitude', 'latitude']])
 
-    dump(kmeans_NEW_FLAT, PATH_TO_MODELS + 'KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
+    dump(kmeans_NEW_FLAT, PATH_TO_MODELS + '/KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
     labels = kmeans_NEW_FLAT.labels_
     clean_data_new_flats['clusters'] = labels
 

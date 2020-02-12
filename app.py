@@ -218,13 +218,13 @@ def map():
     print("PArams: ", city_id, secondary, flush=True)
     # 0 = Moscow, 1 = Spb
     # Москва новостройки
-    if city_id == 1 and secondary ==1:
+    if city_id == 0 and secondary ==0:
         data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv')
         data = data[((data.flat_type == 'NEW_FLAT')|(data.flat_type == 'NEW_SECONDARY'))]
         # Load KMean Clustering model
         kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_NEW_FLAT.joblib')
     # Москва вторичка
-    elif city_id == 1 and secondary == 0:
+    elif city_id == 0 and secondary == 1:
         data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW.csv')
         data = data[data.flat_type == 'SECONDARY']
         # Load KMean Clustering model

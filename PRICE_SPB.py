@@ -45,9 +45,9 @@ def Model(data: pd.DataFrame):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
     gbr_model = GradientBoostingRegressor(n_estimators=350, max_depth=8, verbose=5, max_features=4, random_state=42,
                                           learning_rate=0.07).fit(X_train, y_train)
-    gbr_preds = gbr_model.predict(X_test)
-    print('The R2_score of the Gradient boost is', r2_score(y_test, gbr_preds), flush=True)
-    print('RMSE is: \n', mean_squared_error(y_test, gbr_preds), flush=True)
+    # gbr_preds = gbr_model.predict(X_test)
+    # print('The R2_score of the Gradient boost is', r2_score(y_test, gbr_preds), flush=True)
+    # print('RMSE is: \n', mean_squared_error(y_test, gbr_preds), flush=True)
 
     print('Train on full dataset: ', flush=True)
     gbr_model.fit(X, y)
@@ -57,10 +57,10 @@ def Model(data: pd.DataFrame):
 
     RF = RandomForestRegressor(n_estimators=300, min_samples_leaf=3, verbose=3, n_jobs=-1).fit(X_train, y_train)
 
-    rf_predicts = RF.predict(X_test)
-
-    print('The accuracy of the RandomForest is', r2_score(y_test, rf_predicts), flush=True)
-    print('RMSE is: \n', mean_squared_error(y_test, rf_predicts), flush=True)
+    # rf_predicts = RF.predict(X_test)
+    #
+    # print('The accuracy of the RandomForest is', r2_score(y_test, rf_predicts), flush=True)
+    # print('RMSE is: \n', mean_squared_error(y_test, rf_predicts), flush=True)
 
     print('Train on full dataset: ', flush=True)
     RF.fit(X, y)
@@ -72,9 +72,9 @@ def Model(data: pd.DataFrame):
     lgbm_model = LGBMRegressor(objective='regression',
                                learning_rate=0.1,
                                n_estimators=1250, max_depth=6, min_child_samples=1, verbose=3).fit(X_train, y_train)
-    lgbm_preds = lgbm_model.predict(X_test)
-    print('The accuracy of the lgbm Regressor is', r2_score(y_test, lgbm_preds), flush=True)
-    print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
+    # lgbm_preds = lgbm_model.predict(X_test)
+    # print('The accuracy of the lgbm Regressor is', r2_score(y_test, lgbm_preds), flush=True)
+    # print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
 
     print('Train on full dataset: ', flush=True)
     lgbm_model.fit(X, y)

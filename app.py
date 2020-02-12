@@ -124,13 +124,11 @@ def mean():
     data_offers['pred_price'] = data_offers[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                           'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
         lambda row:
-        int((np.expm1(gbr.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
-                                    np.log1p(row.latitude), np.log1p(row.latitude),
-                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last, row.clusters]]))+np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
+        int((np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
                                     np.log1p(row.latitude), np.log1p(row.latitude),
                                        np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last, row.clusters]]))+np.expm1(lgbm.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
                                     np.log1p(row.latitude), np.log1p(row.latitude),
-                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last, row.clusters]])))[0]/3), axis=1)
+                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last, row.clusters]])))[0]/2), axis=1)
 
 
     print('Profitable offers using price prediction model: ', data_offers.shape[0])
@@ -337,10 +335,9 @@ def map():
         df_for_current_label['pred_price'] = df_for_current_label[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                           'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
                 lambda row:
-                int(((np.expm1(gbr.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
-                                           kitchen_sq, time_to_metro, floor_first, floor_last, current_label]])) + np.expm1(rf.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
+                int(((np.expm1(rf.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
                                            kitchen_sq, time_to_metro, floor_first, floor_last, current_label]]))+np.expm1(lgbm.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude, full_sq,
-                                           kitchen_sq, time_to_metro, floor_first, floor_last, current_label]])))[0] / 3)), axis=1)
+                                           kitchen_sq, time_to_metro, floor_first, floor_last, current_label]])))[0] / 2)), axis=1)
 
         df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
                 lambda row: ((row.pred_price / row.price)), axis=1)

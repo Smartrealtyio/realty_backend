@@ -65,8 +65,17 @@ def mean():
     # 0 = Moscow, 1 = Spb
     if city_id == 0:
         data_offers = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW.csv')
+        data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
+        gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+        rf = load(PATH_PRICE_RF_MOSCOW_VTOR)
+        lgbm = load(PATH_PRICE_LGBM_MOSCOW_VTOR)
     elif city_id == 1:
         data_offers = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
+        data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
+        gbr = load(PATH_PRICE_GBR_SPB_VTOR)
+        rf = load(PATH_PRICE_RF_SPB_VTOR)
+        lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
+
     filter = (((data_offers.full_sq >= full_sq_from)&(data_offers.full_sq <= full_sq_to))&(data_offers.rooms == rooms) &
               ((data_offers.latitude >= latitude_from) & (data_offers.latitude <= latitude_to))
               & ((data_offers.longitude >= longitude_from) & (data_offers.longitude <= longitude_to)))
@@ -104,9 +113,7 @@ def mean():
 
     # PRICE
 
-    gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
-    rf = load(PATH_PRICE_GBR_MOSCOW_VTOR)
-    lgbm = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+
 
 
     # Print GradientBoosting Regression features importance
@@ -114,20 +121,16 @@ def mean():
     # print(feat_imp)
 
 
-    data_offers['pred_price'] = data_offers[['renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-                                   'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y', 'clusters']].apply(
+    data_offers['pred_price'] = data_offers[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+                                          'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
         lambda row:
-        int((np.expm1(gbr.predict([[row.renovation, row.has_elevator, np.log1p(row.longitude), np.log1p(row.latitude),
-                                     np.log1p(row.full_sq),
-                                   np.log1p(row.kitchen_sq), row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]]))+
-              np.expm1(rf.predict([[row.renovation, row.has_elevator, np.log1p(row.longitude), np.log1p(row.latitude),
-                                     np.log1p(row.full_sq),
-                                   np.log1p(row.kitchen_sq), row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]])) + np.expm1(lgbm.predict([[row.renovation, row.has_elevator, np.log1p(row.longitude), np.log1p(row.latitude),
-                                     np.log1p(row.full_sq),
-                                   np.log1p(row.kitchen_sq), row.is_apartment, row.time_to_metro, row.floor_last,
-                                   row.floor_first, np.log1p(row.X), np.log1p(row.Y), row.clusters]])))[0]/3), axis=1)
+        int((np.expm1(gbr.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
+                                    np.log1p(row.latitude), np.log1p(row.latitude),
+                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last, row.clusters]]))+np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
+                                    np.log1p(row.latitude), np.log1p(row.latitude),
+                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last, row.clusters]]))+np.expm1(lgbm.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
+                                    np.log1p(row.latitude), np.log1p(row.latitude),
+                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last, row.clusters]])))[0]/3), axis=1)
 
 
     print('Profitable offers using price prediction model: ', data_offers.shape[0])

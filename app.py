@@ -487,7 +487,7 @@ def map():
                     new_list_of_prices.append(item)
             return new_list_of_prices
 
-        if (price > new_list_of_dicts[0].get('y') and len(new_list_of_dicts) > 1):
+        if ((new_list_of_dicts[-1].get('y')>price > new_list_of_dicts[0].get('y')) and len(new_list_of_dicts) > 1):
             for i in enumerate(new_list_of_dicts):
                 print(i[0])
                 if new_list_of_dicts[i[0]].get('y') < b.get('y') < new_list_of_dicts[i[0] + 1].get('y'):
@@ -495,7 +495,7 @@ def map():
                     term = int((new_list_of_dicts[i[0]].get('x')+new_list_of_dicts[i[0] + 1].get('x'))/2)
                     break
             print("New term: ", b, flush=True)
-        elif price < new_list_of_dicts[-1].get('y'):
+        elif price > new_list_of_dicts[-1].get('y'):
             new_list_of_dicts = [b]
 
         new_a = drop_duplicates_price(new_list_of_dicts)

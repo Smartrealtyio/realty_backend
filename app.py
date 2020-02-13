@@ -309,18 +309,18 @@ def map():
                            np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
 
     print("Gbr predicted price: ", gbr_predicted_price, flush=True)
-    rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-                          np.log1p(full_sq),
-                          np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
-    print("Rf predicted price: ", rf_predicted_price, flush=True)
+    # rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+    #                       np.log1p(full_sq),
+    #                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
+    # print("Rf predicted price: ", rf_predicted_price, flush=True)
 
     lgbm_pedicted_price = np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
                                        np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
     print("Lgbm predicted price: ", lgbm_pedicted_price, flush=True)
 
-    price_main = (gbr_predicted_price+rf_predicted_price+lgbm_pedicted_price)/ 3
+    price_main = (gbr_predicted_price++lgbm_pedicted_price)/ 3
 
-    print("Stacking_rf_gbr_lgbm: ", price_main, flush=True)
+    print("Stacking gbr_lgbm: ", price_main, flush=True)
 
 
 

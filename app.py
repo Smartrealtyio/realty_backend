@@ -505,45 +505,30 @@ def map():
             #             if l[i].get('y') > new_a[-1].get('y'):
             #                 new_a.append(l[i])
             #     return new_a
-            new_a = drop_duplicates_price(new_list_of_dicts)
-            print('Drop price duplicates:', new_a, flush=True)
+        new_a = drop_duplicates_price(new_list_of_dicts)
+        print('Drop price duplicates:', new_a, flush=True)
 
 
 
 
-            new_a.insert(0, b)
+        new_a.insert(0, b)
 
-            # new_a = drop_duplicates(new_a)
-            # new_a += [b]
-            new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
-            # new_a = drop_duplicat(new_a)
-            print("Sorted finally : ", new_a, flush=True)
-
-
-
-            oops = 1 if len(new_a)<=1 else 0
-            term = 0 if len(new_a)<=1 else term
+        # new_a = drop_duplicates(new_a)
+        # new_a += [b]
+        new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
+        # new_a = drop_duplicat(new_a)
+        print("Sorted finally : ", new_a, flush=True)
 
 
-            # if new_a[-1].get('y') == price:
-            #     new_a.append({'x': term+2, 'y': price})
-            # print(new_a, flush=True)
-            # new_point = new_a[-1]
-            # print('last item: ', new_point, flush=True)
-            # new_point_x = int(new_point.get('x'))
-            # new_point_y = int(new_point.get('y'))
-            # print("x from last item: ", new_point_x, flush=True)
-            #
-            #
-            # print('new x: ', new_point, flush=True)
-            # new_a.append({"x": new_point_x+2, 'y': new_point_y+new_point_y*0.02})
-            # print("Finally new_a: ", new_a, flush=True)
-            # # Check if enough data for plotting
-            #
-            #
+
+        oops = 1 if len(new_a)<=1 else 0
+        term = 0 if len(new_a)<=1 else term
 
 
-            answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
+
+
+
+        answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
     else:
         answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS":1})
     return answ

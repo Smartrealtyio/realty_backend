@@ -329,6 +329,7 @@ def map():
     # Drop Price and Term Outliers using Z-Score
     df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
     ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 3)]
+    df_for_current_label = df_for_current_label[df_for_current_label.closed == True]
 
     df_for_current_label = pd.merge(df, ds, on=list(ds.columns), how='right')
 
@@ -339,7 +340,6 @@ def map():
     print("???", flush=True)
     if df_for_current_label.shape[0] > 1:
         # ONLY CLOSED OFFERS
-        df_for_current_label = df_for_current_label[df_for_current_label.closed == True]
 
         df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
 

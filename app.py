@@ -299,19 +299,34 @@ def map():
     # PRICE PREDICTION
 
 
-    price_cat_pred = (np.expm1(gbr.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-                                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))+np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-                                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))+np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-                                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))) / 3
+    # price_cat_pred = (np.expm1(gbr.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
+    #                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))+np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
+    #                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))+np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
+    #                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))) / 3
 
+    gbr_predicted_price = np.expm1(gbr.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+                           np.log1p(full_sq),
+                           np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
 
-    print("Stacking_rf_gbr_lgbm: ", price_cat_pred, flush=True)
+    print("Gbr predicted price: ", gbr_predicted_price, flush=True)
+    rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+                          np.log1p(full_sq),
+                          np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
+    print("Rf predicted price: ", rf_predicted_price, flush=True)
+
+    lgbm_pedicted_price = np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
+                                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
+    print("Lgbm predicted price: ", lgbm_pedicted_price, flush=True)
+
+    price_main = (gbr_predicted_price+rf_predicted_price+lgbm_pedicted_price)/ 3
+
+    print("Stacking_rf_gbr_lgbm: ", price_main, flush=True)
 
 
 
     # Count mean of Cat and GBR algorithms prediction
     # price = (price_gbr_pred+price_cat_pred)/2
-    price = price_cat_pred
+    price = price_main
     price = int(price[0])
     print("Predicted Price: ", price, flush=True)
 
@@ -342,8 +357,8 @@ def map():
     # Create subsample according to the same(+-) python3 -m venv tutorial-envpython -m flask runsize of the full_sq
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq - full_sq * 0.018) & (
                 df_for_current_label.full_sq <= full_sq + full_sq * 0.018)&(df_for_current_label.rooms == rooms))]
-    
-    print("???", flush=True)
+
+
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
     if df_for_current_label.shape[0] > 1:
 
@@ -527,6 +542,7 @@ def map():
 
         answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
     else:
+        print("Not enough data to plot", flush=True)
         answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS":1})
     return answ
 

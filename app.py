@@ -318,7 +318,7 @@ def map():
                                        np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
     print("Lgbm predicted price: ", lgbm_pedicted_price, flush=True)
 
-    price_main = (gbr_predicted_price++lgbm_pedicted_price)/ 3
+    price_main = (gbr_predicted_price++lgbm_pedicted_price)/ 2
 
     print("Stacking gbr_lgbm: ", price_main, flush=True)
 

@@ -336,6 +336,7 @@ def map():
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq - full_sq * 0.018) & (
                 df_for_current_label.full_sq <= full_sq + full_sq * 0.018)&(df_for_current_label.rooms == rooms))]
     answ = 0
+    print("???", flush=True)
     if df_for_current_label.shape[0] > 1:
         # ONLY CLOSED OFFERS
         df_for_current_label = df_for_current_label[df_for_current_label.closed == True]

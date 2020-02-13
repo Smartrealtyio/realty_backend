@@ -487,7 +487,7 @@ def map():
                     new_list_of_prices.append(item)
             return new_list_of_prices
 
-        if (price > new_list_of_dicts[0].get('y') and len(new_list_of_dicts) > 1) and (price < new_list_of_dicts[-1].get('y')):
+        if (price > new_list_of_dicts[0].get('y') and len(new_list_of_dicts) > 1):
             for i in enumerate(new_list_of_dicts):
                 print(i[0])
                 if new_list_of_dicts[i[0]].get('y') < b.get('y') < new_list_of_dicts[i[0] + 1].get('y'):
@@ -495,16 +495,9 @@ def map():
                     term = int((new_list_of_dicts[i[0]].get('x')+new_list_of_dicts[i[0] + 1].get('x'))/2)
                     break
             print("New term: ", b, flush=True)
+        elif price < new_list_of_dicts[-1].get('y'):
+            new_list_of_dicts = [b]
 
-
-            # def range_plot(l: list):
-            #     new_a = [l[0]]
-            #     for i in list(range(1, len(l))):
-            #         print(l[i])
-            #         if l[i].get('y') > l[i - 1].get('y'):
-            #             if l[i].get('y') > new_a[-1].get('y'):
-            #                 new_a.append(l[i])
-            #     return new_a
         new_a = drop_duplicates_price(new_list_of_dicts)
         print('Drop price duplicates:', new_a, flush=True)
 

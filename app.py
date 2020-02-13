@@ -329,19 +329,23 @@ def map():
     # Drop Price and Term Outliers using Z-Score
     df = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.price)) < 3)]
     ds = df_for_current_label[(np.abs(stats.zscore(df_for_current_label.term)) < 3)]
-    df_for_current_label = df_for_current_label[df_for_current_label.closed == True]
+
+
 
     df_for_current_label = pd.merge(df, ds, on=list(ds.columns), how='right')
+    # ONLY CLOSED OFFERS
+    df_for_current_label = df_for_current_label[df_for_current_label.closed == True]
+    if df_for_current_label.shape[0] < 2:
+        answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1})
+        return answ
 
     # Create subsample according to the same(+-) python3 -m venv tutorial-envpython -m flask runsize of the full_sq
     df_for_current_label = df_for_current_label[((df_for_current_label.full_sq >= full_sq - full_sq * 0.018) & (
                 df_for_current_label.full_sq <= full_sq + full_sq * 0.018)&(df_for_current_label.rooms == rooms))]
-    answ = 0
+    
     print("???", flush=True)
+    df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
     if df_for_current_label.shape[0] > 1:
-        # ONLY CLOSED OFFERS
-
-        df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
 
 
         term = 0

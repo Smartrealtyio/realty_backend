@@ -17,7 +17,6 @@ PATH_TO_TIME_MODEL = SETTINGS.MODEL_MOSCOW
 
 
 def main_preprocessing():
-
     prices = pd.read_csv(raw_data + "prices.csv", names=[
         'id', 'price', 'changed_date', 'flat_id', 'created_at', 'updated_at'
     ], usecols=["price", "flat_id", 'created_at', 'changed_date', 'updated_at'])
@@ -25,8 +24,14 @@ def main_preprocessing():
 
     # Drop reapeated offers, keep just last
     # print(prices_and_flats[prices_and_flats.duplicated('flat_id', keep=False)].sort_values('flat_id'))
-    prices = prices.drop_duplicates(subset='flat_id', keep="last")
-    print("after drop duplicates: ", prices.shape)
+    # Count num of price changing
+    # prices= prices.iloc[:500]
+    # prices['nums_of_changing'] = prices.groupby(['flat_id'])["flat_id"].transform("count")
+
+    prices['nums_of_changing'] = prices.sort_values(['changed_date'][-9:], ascending=True).groupby(['flat_id'])[
+        "flat_id"].transform("count")
+
+    prices = prices.drop_duplicates(subset='flat_id', keep="first")
     prices = prices[((prices['changed_date'].str.contains('2020')) | (prices['changed_date'].str.contains('2019')) | (
         prices['changed_date'].str.contains('2018')))]
     print("Unique flats Prices 2018/2019/2020 yearS: ", len(prices.flat_id.unique()))

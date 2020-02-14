@@ -378,14 +378,14 @@ def map():
                                    row.clusters]]))))[0] / 2), axis=1)
     df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
         lambda row: ((row.pred_price / row.price)), axis=1)
-
+    print(df_for_current_label[['profit']].head(), flush=True)
 
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
     if df_for_current_label.shape[0] > 1:
 
 
         term = 0
-        df_for_current_label['profit'] = np.log1p(df_for_current_label['profit'])
+        # df_for_current_label['profit'] = np.log1p(df_for_current_label['profit'])
         df_for_current_label['price'] = np.log1p(df_for_current_label['price'])
         X = df_for_current_label[['profit', 'price']]
         y = df_for_current_label[['term']].values.ravel()
@@ -429,7 +429,7 @@ def map():
             list_of_terms = []
             for i in l:
                 profit = i / price
-                term_profit = np.expm1(reg.predict([[np.log1p(profit), np.log1p(price)]]))
+                term_profit = np.expm1(reg.predict([[profit, np.log1p(i)]]))
 
 
                 print("Predicted term: ", term_profit, flush=True)

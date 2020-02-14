@@ -321,7 +321,7 @@ def map():
                                        np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
     print("Lgbm predicted price: ", lgbm_pedicted_price, flush=True)
 
-    price_main = (gbr_predicted_price++lgbm_pedicted_price)/ 2
+    price_main = (gbr_predicted_price+lgbm_pedicted_price)/ 2
 
     print("Stacking gbr_lgbm: ", price_main, flush=True)
 
@@ -388,6 +388,7 @@ def map():
         # df_for_current_label['profit'] = np.log1p(df_for_current_label['profit'])
         df_for_current_label['price'] = np.log1p(df_for_current_label['price'])
         X = df_for_current_label[['profit', 'price']]
+        print(df_for_current_label[['term']].head(), flush=True)
         y = df_for_current_label[['term']].values.ravel()
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
@@ -429,7 +430,7 @@ def map():
             list_of_terms = []
             for i in l:
                 profit = i / price
-                term_profit = np.expm1(reg.predict([[profit, np.log1p(i)]]))
+                term_profit = reg.predict([[profit, np.log1p(i)]])
 
 
                 print("Predicted term: ", term_profit, flush=True)

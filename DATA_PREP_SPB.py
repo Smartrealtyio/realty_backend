@@ -21,12 +21,11 @@ def main_preprocessing():
 
     prices['nums_of_changing'] = prices.sort_values(['changed_date'][-9:], ascending=True).groupby(['flat_id'])[
         "flat_id"].transform("count")
-    # Drop reapeated offers, keep just last
-    # print(prices_and_flats[prices_and_flats.duplicated('flat_id', keep=False)].sort_values('flat_id'))
-    prices = prices.drop_duplicates(subset='flat_id', keep="last")
-    print("after drop duplicates: ", prices.shape)
+
+    prices = prices.drop_duplicates(subset='flat_id', keep="first")
     prices = prices[((prices['changed_date'].str.contains('2020')) | (prices['changed_date'].str.contains('2019')) | (
         prices['changed_date'].str.contains('2018')))]
+
     print("Unique flats Prices 2018/2019/2020 yearS: ", len(prices.flat_id.unique()))
 
     # Calculating selling term. TIME UNIT: DAYS
@@ -131,12 +130,12 @@ def main_preprocessing():
 
     num[num < 0] = 0
 
-    df['X'] = df[['latitude', 'longitude']].apply(
-        lambda row: (m.cos(row['latitude']) *
-                     m.cos(row['longitude'])), axis=1)
-    df['Y'] = df[['latitude', 'longitude']].apply(
-        lambda row: (m.cos(row['latitude']) *
-                     m.sin(row['longitude'])), axis=1)
+    # df['X'] = df[['latitude', 'longitude']].apply(
+    #     lambda row: (m.cos(row['latitude']) *
+    #                  m.cos(row['longitude'])), axis=1)
+    # df['Y'] = df[['latitude', 'longitude']].apply(
+    #     lambda row: (m.cos(row['latitude']) *
+    #                  m.sin(row['longitude'])), axis=1)
     df['price_meter_sq'] = df[['price', 'full_sq']].apply(
         lambda row: (row['price'] /
                      row['full_sq']), axis=1)
@@ -149,19 +148,7 @@ def main_preprocessing():
     print("After removing term_outliers: ", df2.shape)
     print("After removing price_outliers: ", df1.shape)
     clean_data = pd.merge(df1, df2, on=list(df.columns), how='left')
-    '''
-    print("Find optimal number of K means: ")
-    Sum_of_squared_distances = []
-    k_list = []
-    K = range(100, 110)
-    for k in K:
-        km = KMeans(n_clusters=k)
-        km = km.fit(clean_data[['longitude', 'latitude']])
-        Sum_of_squared_distances.append(km.inertia_)
-        print(k)
-        k_list.append(k)
-    print(list(zip(k_list, Sum_of_squared_distances)))
-    '''
+
     clean_data_vtor = clean_data[(clean_data.flat_type == 'SECONDARY')]
     kmeans_vtor = KMeans(n_clusters=80, random_state=42).fit(clean_data_vtor[['longitude', 'latitude']])
 
@@ -172,8 +159,6 @@ def main_preprocessing():
     print("SPB headers finally: ", list(clean_data_vtor.columns), flush=True)
     print('Saving clean_data_vtor to new csv', flush=True)
     clean_data_vtor.to_csv(PREPARED_DATA + '/SPB_VTOR.csv', index=None, header=True)
-
-
 
     clean_data_new_flats = clean_data[((clean_data.flat_type == 'NEW_FLAT') | (clean_data.flat_type == 'NEW_SECONDARY'))]
     kmeans_NEW_FLAT = KMeans(n_clusters=20, random_state=42).fit(clean_data_new_flats[['longitude', 'latitude']])

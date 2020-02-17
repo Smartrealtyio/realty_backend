@@ -19,6 +19,8 @@ def main_preprocessing():
     ], usecols=["price", "flat_id", 'created_at', 'changed_date', 'updated_at'])
     print("Unique flat id in prices: ", len(prices.flat_id.unique()))
 
+    prices['nums_of_changing'] = prices.sort_values(['changed_date'][-9:], ascending=True).groupby(['flat_id'])[
+        "flat_id"].transform("count")
     # Drop reapeated offers, keep just last
     # print(prices_and_flats[prices_and_flats.duplicated('flat_id', keep=False)].sort_values('flat_id'))
     prices = prices.drop_duplicates(subset='flat_id', keep="last")

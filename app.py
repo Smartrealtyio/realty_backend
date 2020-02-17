@@ -14,7 +14,7 @@ from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 #from catboost import Pool, CatBoostRegressor
 from joblib import dump, load
 import math as m
-import math
+from math import sqrt
 from datetime import datetime
 import requests
 import json
@@ -280,90 +280,63 @@ def map():
         rf = load(PATH_PRICE_RF_SPB_VTOR)
         lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
 
-
     print("Initial shape: ", data.shape, flush=True)
 
-
-
     # Predict Cluster for current flat
-    current_claster = kmeans.predict([[longitude, latitude]])
-    print("Current label: ", current_claster, flush=True)
+    current_cluster = kmeans.predict([[longitude, latitude]])
+    print("Current cluster is : ", current_cluster, flush=True)
 
-
-
-    # Reducing skew in data using LogTransformation
-    # longitude = np.log1p(longitude)
-    # latitude = np.log1p(latitude)
-    # full_sq = np.log1p(full_sq)
-    # kitchen_sq = np.log1p(kitchen_sq)
-    # life_sq = np.log1p(life_sq)
-    # rooms = np.log1p(rooms)
-
-    # PRICE PREDICTION
-
-
-    # price_cat_pred = (np.expm1(gbr.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-    #                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))+np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-    #                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))+np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-    #                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))) / 3
-
+    # Predict Price using gbr
     gbr_predicted_price = np.expm1(gbr.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                            np.log1p(full_sq),
-                           np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
+                           np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
 
     print("Gbr predicted price: ", gbr_predicted_price, flush=True)
-    # rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-    #                       np.log1p(full_sq),
-    #                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
-    # print("Rf predicted price: ", rf_predicted_price, flush=True)
 
+    # Predict Price using lgbm
     lgbm_pedicted_price = np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-                                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_claster]]))
+                                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
     print("Lgbm predicted price: ", lgbm_pedicted_price, flush=True)
 
+    # Calculate mean price value based on two algorithms
     price_main = (gbr_predicted_price+lgbm_pedicted_price)/ 2
-
-    print("Stacking gbr_lgbm: ", price_main, flush=True)
-
-
-
-    # Count mean of Cat and GBR algorithms prediction
-    # price = (price_gbr_pred+price_cat_pred)/2
-    price = price_main
-    price = int(price[0])
+    price = int(price_main[0])
     print("Predicted Price: ", price, flush=True)
 
     price_meter_sq = price / full_sq
 
+    ####################
+    #                  #
+    # TERM CALCULATING #
+    #                  #
+    ####################
 
+    # Create subsample of flats from same cluster (from same "geographical" district)
+    df_for_current_label = data[data.clusters == current_cluster[0]]
 
-
-
-    # TERm
-
-    # Create subsample of flats with same cluster label value (from same "geographical" district)
-    df_for_current_label = data[data.clusters == current_claster[0]]
-
-    from math import sqrt
-    n = int(sqrt(df_for_current_label.shape[0]))
-
-    # Create SUB Classes
-    kmeans = KMeans(n_clusters=n, random_state=42).fit(
-        df_for_current_label[['full_sq', 'life_sq', 'kitchen_sq', 'clusters', 'time_to_metro', 'longitude', 'latitude', 'renovation', 'nums_of_changing']])
-
-    labels = kmeans.labels_
-    df_for_current_label['SUB_cluster'] = labels
-    print(df_for_current_label.SUB_cluster.unique(), flush=True)
-    df_for_current_label['num_of_flats_in_SUB_cluster'] = df_for_current_label.groupby(['SUB_cluster'])["SUB_cluster"].transform("count")
-
-    # Drop Price and Term Outliers using Z-Score
-    df_for_current_label = df_for_current_label[df_for_current_label.price.between(df_for_current_label.term.quantile(.1), df_for_current_label.price.quantile(.9))]
-
-
-    if df_for_current_label.shape[0] < 2:
+    # Check if subsample size have more than 3 samples
+    if df_for_current_label.shape[0] < 3:
         answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1})
         return answ
 
+    # Create SUB Classes KMeans clustering based on size of subsample
+    n = int(sqrt(df_for_current_label.shape[0]))
+    kmeans = KMeans(n_clusters=n, random_state=42).fit(
+        df_for_current_label[['full_sq', 'life_sq', 'kitchen_sq', 'clusters', 'time_to_metro', 'longitude', 'latitude', 'renovation', 'nums_of_changing']])
+
+    # Set new column equals to new SUBclusters values
+    labels = kmeans.labels_
+    df_for_current_label['SUB_cluster'] = labels
+
+    print(df_for_current_label.SUB_cluster.unique(), flush=True)
+
+    # Create new feature: number of flats in each SUBcluster
+    df_for_current_label['num_of_flats_in_SUB_cluster'] = df_for_current_label.groupby(['SUB_cluster'])["SUB_cluster"].transform("count")
+
+    # Drop Price and Term Outliers using Z-Score / 25-75 quartiles
+    df_for_current_label = df_for_current_label[df_for_current_label.price.between(df_for_current_label.term.quantile(.1), df_for_current_label.price.quantile(.9))]
+
+    # Calculate price for each flat in SubSample based on price prediction models we have trained
     df_for_current_label['pred_price'] = df_for_current_label[
         ['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
          'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
@@ -376,91 +349,82 @@ def map():
                                    np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
                                    np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
                                    row.clusters]]))))[0] / 2), axis=1)
+
+    # Calculate the profitability for each flat knowing the price for which the flat was sold and the price that our model predicted
     df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
         lambda row: ((row.pred_price / row.price)), axis=1)
-    print(df_for_current_label[['profit']].head(), flush=True)
+    print(df_for_current_label[['profit', 'price', 'pred_price']].head(), flush=True)
 
+    # Drop flats which sold more than 600 days
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
+
+    # Check if still enough samples
     if df_for_current_label.shape[0] > 1:
 
-
         term = 0
+        # Log Transformation
         # df_for_current_label['profit'] = np.log1p(df_for_current_label['profit'])
         df_for_current_label['price'] = np.log1p(df_for_current_label['price'])
+
+        # Create X and y for Linear Model training
         X = df_for_current_label[['profit', 'price']]
-        print(df_for_current_label[['term']].head(), flush=True)
         y = df_for_current_label[['term']].values.ravel()
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
-        reg = LinearRegression().fit(X_train, y_train)
-        # logreg = LogisticRegression()
-        # names = ['renovation', 'has_elevator', 'longitude', 'latitude', 'price', 'full_sq', 'kitchen_sq',
-        #      'is_apartment', 'time_to_metro', 'floor_last', 'floor_first', 'X', 'Y',
-        #      'price_meter_sq', 'profit']
-        # print("Features importances GBR Term: ", sorted(zip(GBR_TERM_NEW.feature_importances_.tolist(), names)), flush=True)
-        # print("Features importances Cat Term: ",sorted(zip(CAT_TERM_NEW.feature_importances_.tolist(), names)), flush=True)
+        # Create LinearModel and fitting
+        reg = LinearRegression().fit(X, y)
 
-        # Create list of N prices: which are larger and smaller than predicted
-        def larger(p=0):
+        def larger(p=0, percent=2):
             larger_prices = []
-            percent = 2
             for _ in range(15):
                 new_p = p + p * percent / 100
                 larger_prices.append(new_p)
                 percent += 2
             return larger_prices
+
+        # Create list of N larger prices than predicted
         list_of_larger_prices = larger(price)
 
-        def smaller(p=0):
+        def smaller(p=0, percent=2):
             smaller_prices = []
-            percent = 2
             for _ in range(15):
                 new_p = p - p * percent / 100
                 smaller_prices.append(new_p)
                 percent += 2
             return smaller_prices[::-1]
+
+        # Create list of N smaller prices than predicted
         list_of_smaller_prices = smaller(price)
 
-
+        # Create list of N prices: which are larger and smaller than predicted
         list_of_prices = list_of_smaller_prices+list_of_larger_prices
 
-
-
-        def fn(l: list):
+        def CalculateProfit(l: list):
             list_of_terms = []
             for i in l:
                 profit = i / price
-                term_profit = reg.predict([[profit, np.log1p(i)]])
-
-
-                print("Predicted term: ", term_profit, flush=True)
-                list_of_terms.append(term_profit)
+                # Calculate term based on profit for each price
+                term_on_profit = reg.predict([[profit, np.log1p(i)]])
+                print("Predicted term is {0} based on {1} profit: ".format(term_on_profit, profit), flush=True)
+                list_of_terms.append(term_on_profit)
             return list_of_terms
-        list_of_terms = fn(list_of_prices)
 
+        # Calculating term for each price from generated list of prices based on associated profit -> returns list of terms
+        list_of_terms = CalculateProfit(list_of_prices)
 
-
-
-
-        # Count profit for different prices
 
         # Add links to flats
         term_links = df_for_current_label.to_dict('record')
 
-
-
         list_of_terms = [i.tolist()[0] for i in list_of_terms]
         print("Terms: ", list_of_terms, flush=True)
-
 
         prices = list_of_prices
         print("Prices: ", prices, flush=True)
 
-
         # Create list of dictionaries
         a = []
         a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
-
 
         # Sort list by term
         a = [i for i in a if 0 < i.get('x') <600]
@@ -476,6 +440,7 @@ def map():
                     new_l.append(item)
             return new_l
 
+        # Drop duplicated terms, because FrontEnd waits only unique values
         new_list_of_dicts = drop_duplicates_term(a)
         print("After drop term duplicates: ", new_list_of_dicts, flush=True)
 
@@ -490,46 +455,39 @@ def map():
                     seen_prices.add(item.get('y'))
                     new_list_of_prices.append(item)
             return new_list_of_prices
+
+        # Set term based on price
         if len(new_list_of_dicts) > 1:
-            if (new_list_of_dicts[-1].get('y')>price > new_list_of_dicts[0].get('y')):
+            # Check that our predicted price lies in the price range for which we calculated the term
+            if new_list_of_dicts[-1].get('y') > price > new_list_of_dicts[0].get('y'):
                 for i in enumerate(new_list_of_dicts):
                     if new_list_of_dicts[i[0]].get('y') < b.get('y') < new_list_of_dicts[i[0] + 1].get('y'):
                         b['x'] = int((new_list_of_dicts[i[0]].get('x')+new_list_of_dicts[i[0] + 1].get('x'))/2)
                         term = int((new_list_of_dicts[i[0]].get('x')+new_list_of_dicts[i[0] + 1].get('x'))/2)
                         break
                 print("New term: ", b, flush=True)
-            elif price > new_list_of_dicts[-1].get('y'):
-                new_list_of_dicts = [b]
+            else:
+                answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1})
+                return answ
 
+        # Drop duplicates from price, because FrontEnd waits only unique values
         new_a = drop_duplicates_price(new_list_of_dicts)
         print('Drop price duplicates:', new_a, flush=True)
 
-
-
-
         new_a.insert(0, b)
 
-        # new_a = drop_duplicates(new_a)
-        # new_a += [b]
         new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
-        # new_a = drop_duplicat(new_a)
         print("Sorted finally : ", new_a, flush=True)
 
-
-
+        # Check if final list have items in it, otherwise set parameter "OOPS" to 1
         oops = 1 if len(new_a)<=1 else 0
         term = 0 if len(new_a)<=1 else term
-
-
-
-
 
         answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
     else:
         print("Not enough data to plot", flush=True)
         answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS":1})
     return answ
-
 
 
 if __name__ == '__main__':

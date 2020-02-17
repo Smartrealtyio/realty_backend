@@ -68,12 +68,11 @@ def mean():
     sort_type = int(request.args.get('sort_type')) if request.args.get('sort_type') is not None else 0
     city_id = int(request.args.get('city_id')) if request.args.get('city_id') is not None else 0
 
-    print(latitude_from, latitude_to, longitude_from, longitude_to, flush=True)
 
     # Initialize DF
     data_offers = pd.DataFrame()
 
-    # 0 = Moscow, 1 = Spb
+    # Set paths to data and price prediction models, depending on city:  0 = Moscow, 1 = Spb
     if city_id == 0:
         data_offers = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW.csv')
         data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
@@ -87,15 +86,16 @@ def mean():
         rf = load(PATH_PRICE_RF_SPB_VTOR)
         lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
 
+    # Apply filtering flats in database on parameters: full_sq range, coordinates scope
     filter = (((data_offers.full_sq >= full_sq_from)&(data_offers.full_sq <= full_sq_to))&(data_offers.rooms == rooms) &
               ((data_offers.latitude >= latitude_from) & (data_offers.latitude <= latitude_to))
               & ((data_offers.longitude >= longitude_from) & (data_offers.longitude <= longitude_to)))
     data_offers = data_offers[filter]
-    print("data offers: ", data_offers.shape, flush=True)
-    # Uses only open offers
+
+    # Use only open offers
     data_offers = data_offers[data_offers['closed'] == False]
 
-    print('ds: ', data_offers.head(), flush=True)
+    print('Actual offers: ', data_offers.head(), flush=True)
 
     if time_to_metro != None:
         data_offers = data_offers[(data_offers.time_to_metro <= time_to_metro)]
@@ -120,10 +120,7 @@ def mean():
     if price_to != None:
         data_offers = data_offers[data_offers.price <= price_to]
 
-
-
-    # PRICE
-
+    # PRICE PREDICTION
     data_offers['pred_price'] = data_offers[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
                                           'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
         lambda row:
@@ -133,15 +130,15 @@ def mean():
                                     np.log1p(row.latitude), np.log1p(row.latitude),
                                        np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last, row.clusters]])))[0]/2), axis=1)
 
-    print('Profitable offers using price prediction model: ', data_offers.shape[0])
-
+    # Calculate the profitability for each flat knowing current and the price that our model predicted
     data_offers['profit'] = data_offers[['pred_price', 'price']].apply(lambda row: ((row.pred_price*100/row.price)-100), axis=1)
+
+    # Set threshold for showing profitable offers
     data_offers = data_offers[(data_offers.profit >= 5)]
     data_offers = data_offers.sort_values(by=['profit'], ascending=False)
-    print(data_offers[['pred_price', "price"]].head())
+    print("Profitable offers: ", data_offers[['pred_price', "price", 'profit']].head(), flush=True)
 
     flats = data_offers.to_dict('record')
-
 
     flats_count = len(flats)
     flats_page_count = 10
@@ -175,14 +172,11 @@ def mean():
                     (flat['building_id'],))
         flat['address'] = cur.fetchone()[0]
 
-        # print(flat['image'], flush=True)
-
         if type(flat['image']) != str:
             flat['image'] = None
         del flat['offer_id']
         del flat['building_id']
         del flat['time_to_metro']
-        # print(flat, flush=True)
 
     conn.close()
 
@@ -270,6 +264,12 @@ def map():
         lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
 
     print("Initial shape: ", data.shape, flush=True)
+
+    ####################
+    #                  #
+    # PRICE PREDICTION #
+    #                  #
+    ####################
 
     # Predict Cluster for current flat
     current_cluster = kmeans.predict([[longitude, latitude]])

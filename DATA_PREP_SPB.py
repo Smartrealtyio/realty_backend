@@ -35,15 +35,17 @@ def main_preprocessing():
 
     flats = pd.read_csv(RAW_DATA + "flats.csv",
                         names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
-                               'building_id', 'created_at',
-                               'updated_at', 'offer_id', 'closed', 'rooms', 'image', 'resource_id', 'flat_type'],
+                                                 'building_id', 'created_at',
+                                                 'updated_at', 'offer_id', 'closed', 'rooms', 'image', 'resource_id',
+                                                        'flat_type', 'is_rented', 'rent_quarter', 'rent_year', 'agency'],
                         usecols=["id", "full_sq",
-                                 "kitchen_sq",
-                                 "life_sq",
-                                 "floor", "is_apartment",
-                                 "building_id",
-                                 "closed", 'rooms', 'resource_id', 'flat_type'
-                                 ],
+                                                   "kitchen_sq",
+                                                   "life_sq",
+                                                   "floor", "is_apartment",
+                                                   "building_id",
+                                                   "closed", 'rooms', 'resource_id', 'flat_type', 'is_rented', 'rent_quarter',
+                                                   'rent_year', 'agency'
+                                                   ],
                         true_values="t", false_values="f", header=0)
 
     flats.closed = flats[['closed']].fillna(True)

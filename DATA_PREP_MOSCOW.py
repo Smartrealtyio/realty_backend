@@ -56,7 +56,7 @@ def main_preprocessing():
                                                    ],
                         true_values="t", false_values="f", header=0)
 
-    flats.closed = flats[['closed']].fillna(True)
+    flats.closed = flats.closed.fillna(False)
 
     # Leave only VTORICHKA
     # flats = flats[flats.flat_type == 'SECONDARY']
@@ -111,7 +111,7 @@ def main_preprocessing():
 
     # Merge main DF and time_to_metro on building_id, fill the zero value with the mean value
     df = pd.merge(df, time_to_metro, on="building_id", how='left')
-    df[['time_to_metro']] = df[['time_to_metro']].apply(lambda x: x.fillna(x.mean()), axis=0)
+    df.time_to_metro = df.time_to_metro.fillna(lambda x: x.mean())
     print('plus metro: ', df.shape)
 
     # Check if main DF constains null values

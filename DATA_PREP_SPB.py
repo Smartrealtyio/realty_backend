@@ -121,6 +121,7 @@ def main_preprocessing():
     df.has_elevator = df.has_elevator.astype(int)
     df.renovation = df.renovation.astype(int)
     df.is_apartment = df.is_apartment.astype(int)
+    df.closed = df.closed.astype(int)
 
     # Set values for floor_last/floor_first column: if floor_last/floor_first set 1, otherwise 0
     max_floor_list = df['max_floor'].tolist()

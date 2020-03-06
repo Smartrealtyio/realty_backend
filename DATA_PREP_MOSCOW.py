@@ -128,6 +128,7 @@ def main_preprocessing():
     df.has_elevator = df.has_elevator.astype(int)
     df.renovation = df.renovation.astype(int)
     df.is_apartment = df.is_apartment.astype(int)
+    df.closed = df.closed.astype(int)
 
     # Set values for floor_last/floor_first column: if floor_last/floor_first set 1, otherwise 0
     max_floor_list = df['max_floor'].tolist()
@@ -140,12 +141,14 @@ def main_preprocessing():
 
     num[num < 0] = 0
 
+    '''
     df['X'] = df[['latitude', 'longitude']].apply(
         lambda row: (m.cos(row['latitude']) *
                      m.cos(row['longitude'])), axis=1)
     df['Y'] = df[['latitude', 'longitude']].apply(
         lambda row: (m.cos(row['latitude']) *
                      m.sin(row['longitude'])), axis=1)
+    '''
     df['price_meter_sq'] = df[['price', 'full_sq']].apply(
         lambda row: (row['price'] /
                      row['full_sq']), axis=1)

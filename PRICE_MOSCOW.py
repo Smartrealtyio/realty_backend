@@ -31,7 +31,7 @@ def Model_Secondary(data: pd.DataFrame):
     data = data[(np.abs(stats.zscore(data.term)) < 3)]
     data["longitude"] = np.log1p(data["longitude"])
     data["latitude"] = np.log1p(data["latitude"])
-    data['rooms'] = np.log1p(data['rooms'])
+    # data['rooms'] = np.log1p(data['rooms'])
     # data['clusters'] = np.log1p(data['clusters'])
     data["full_sq"] = np.log1p(data["full_sq"])
     data["life_sq"] = np.log1p(data["life_sq"])

@@ -302,7 +302,7 @@ def map():
 
     # Predict Price using lgbm
     if secondary == 0:
-        lgbm_pedicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+        lgbm_pedicted_price = np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                                np.log1p(full_sq),
                                np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
     elif secondary == 1:
@@ -350,18 +350,39 @@ def map():
     df_for_current_label = df_for_current_label[df_for_current_label.price.between(df_for_current_label.term.quantile(.1), df_for_current_label.price.quantile(.9))]
 
     # Calculate price for each flat in SubSample based on price prediction models we have trained
-    df_for_current_label['pred_price'] = df_for_current_label[
-        ['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-         'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
-        lambda row:
-        int((np.expm1(gbr.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
-                                 np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
-                                 np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
-                                 row.clusters]])) +
-             (np.expm1(lgbm.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
-                                   np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
-                                   np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
-                                   row.clusters]]))))[0] / 2), axis=1)
+    if secondary == 0:
+        df_for_current_label['pred_price'] = df_for_current_label[
+            ['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+             'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year']].apply(
+            lambda row:
+            int((np.expm1(gbr.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
+                                     np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
+                                     np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
+                                     row.clusters, row.is_rented, row.rent_quarter, row.rent_year]])) + (np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
+                                       np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
+                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
+                                       row.clusters, row.is_rented, row.rent_quarter, row.rent_year]]))) + 
+                 (np.expm1(lgbm.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
+                                       np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
+                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
+                                       row.clusters, row.is_rented, row.rent_quarter, row.rent_year]]))))[0] / 3), axis=1)
+
+    if secondary == 1:
+        df_for_current_label['pred_price'] = df_for_current_label[
+            ['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+             'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
+            lambda row:
+            int((np.expm1(gbr.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
+                                     np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
+                                     np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
+                                     row.clusters]])) + (np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
+                                       np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
+                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
+                                       row.clusters]]))) + 
+                 (np.expm1(lgbm.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
+                                       np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
+                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
+                                       row.clusters]]))))[0] / 3), axis=1)
 
     # Calculate the profitability for each flat knowing the price for which the flat was sold and the price that
     # our model predicted

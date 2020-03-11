@@ -53,10 +53,10 @@ def Price_Secondary(data: pd.DataFrame):
     # print('The R2_score of the Gradient boost is', r2_score(y_test, gbr_preds), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, gbr_preds), flush=True)
 
-    print('Train on full dataset GBR price secondary: ', flush=True)
+    print('Train on full dataset GBR secondary Spb: ', flush=True)
     gbr_model.fit(X, y)
 
-    print('Save model GBR price secondary: ', flush=True)
+    print('Save model GBR secondary Spb: ', flush=True)
     dump(gbr_model, PATH_TO_PRICE_MODEL_GBR_VTOR)
 
     RF = RandomForestRegressor(n_estimators=300, min_samples_leaf=3, verbose=1, n_jobs=-1)
@@ -68,10 +68,10 @@ def Price_Secondary(data: pd.DataFrame):
     # print('The accuracy of the RandomForest is', r2_score(y_test, rf_predicts), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, rf_predicts), flush=True)
 
-    print('Train on full dataset RF price secondary: ', flush=True)
+    print('Train on full dataset RF secondary Spb: ', flush=True)
     RF.fit(X, y)
 
-    print('Save model RF price secondary: ', flush=True)
+    print('Save model RF secondary Spb: ', flush=True)
     dump(RF, PATH_TO_PRICE_MODEL_RF_VTOR)
 
     # LGBM model
@@ -84,10 +84,10 @@ def Price_Secondary(data: pd.DataFrame):
     # print('The accuracy of the lgbm Regressor is', r2_score(y_test, lgbm_preds), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
 
-    print('Train on full dataset LGBM price secondary: ', flush=True)
+    print('Train on full dataset LGBM secondary Spb: ', flush=True)
     lgbm_model.fit(X, y)
 
-    print('Save model LGBM price secondary: ', flush=True)
+    print('Save model LGBM secondary Spb: ', flush=True)
     dump(lgbm_model, PATH_TO_PRICE_MODEL_LGBM_VTOR)
 
 
@@ -116,10 +116,10 @@ def Pirce_NewFlats(data: pd.DataFrame):
     # print('The R2_score of the Gradient boost is', r2_score(y_test, gbr_preds), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, gbr_preds), flush=True)
 
-    print('Train on full dataset GBR price NEW: ', flush=True)
+    print('Train on full dataset GBR new Spb: ', flush=True)
     gbr_model.fit(X, y)
 
-    print('Save model GBR price NEW: ', flush=True)
+    print('Save model GBR new Spb: ', flush=True)
     dump(gbr_model, PATH_TO_PRICE_MODEL_GBR_NEW)
 
     RF = RandomForestRegressor(n_estimators=300, min_samples_leaf=3, verbose=1, n_jobs=-1).fit(X_train, y_train)
@@ -129,10 +129,10 @@ def Pirce_NewFlats(data: pd.DataFrame):
     # print('The accuracy of the RandomForest is', r2_score(y_test, rf_predicts), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, rf_predicts), flush=True)
 
-    print('Train on full dataset RF price NEW: ', flush=True)
+    print('Train on full dataset RF new Spb: ', flush=True)
     RF.fit(X, y)
 
-    print('Save model RF price NEW: ', flush=True)
+    print('Save model RF new Spb: ', flush=True)
     dump(RF, PATH_TO_PRICE_MODEL_RF_NEW)
 
     # LGBM model
@@ -144,10 +144,10 @@ def Pirce_NewFlats(data: pd.DataFrame):
     # print('The accuracy of the lgbm Regressor is', r2_score(y_test, lgbm_preds), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
 
-    print('Train on full dataset LGBM price NEW: ', flush=True)
+    print('Train on full dataset LGBM new Spb: ', flush=True)
     lgbm_model.fit(X, y)
 
-    print('Save model LGBM price NEW: ', flush=True)
+    print('Save model LGBM new Spb: ', flush=True)
     dump(lgbm_model, PATH_TO_PRICE_MODEL_LGBM_NEW)
 
 

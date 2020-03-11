@@ -31,12 +31,11 @@ def Model_Secondary(data: pd.DataFrame):
     data = data[(np.abs(stats.zscore(data.term)) < 3)]
     data["longitude"] = np.log1p(data["longitude"])
     data["latitude"] = np.log1p(data["latitude"])
-    # data['rooms'] = np.log1p(data['rooms'])
-    # data['clusters'] = np.log1p(data['clusters'])
     data["full_sq"] = np.log1p(data["full_sq"])
     data["life_sq"] = np.log1p(data["life_sq"])
     data["kitchen_sq"] = np.log1p(data["kitchen_sq"])
     data["price"] = np.log1p(data["price"])
+
     X = data[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
               'time_to_metro', 'floor_last', 'floor_first', 'clusters']]
 
@@ -51,10 +50,10 @@ def Model_Secondary(data: pd.DataFrame):
     # print('The R2_score of the Gradient boost is', r2_score(y_test, gbr_preds), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, gbr_preds), flush=True)
 
-    print('Train on full dataset: ', flush=True)
+    print('Train on full dataset GBR secondary Moscow: ', flush=True)
     gbr_model.fit(X, y)
 
-    print('Save model: ', flush=True)
+    print('Save model GBR secondary Moscow: ', flush=True)
     dump(gbr_model, PATH_TO_PRICE_MODEL_GBR)
 
     RF = RandomForestRegressor(n_estimators=300, min_samples_leaf=3, verbose=1, n_jobs=-1)
@@ -65,10 +64,10 @@ def Model_Secondary(data: pd.DataFrame):
     # print('The accuracy of the RandomForest is', r2_score(y_test, rf_predicts), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, rf_predicts), flush=True)
 
-    print('Train on full dataset: ', flush=True)
+    print('Train on full dataset RF secondary Moscow: ', flush=True)
     RF.fit(X, y)
 
-    print('Save model: ', flush=True)
+    print('Save model RF secondary Moscow: ', flush=True)
     dump(RF, PATH_TO_PRICE_MODEL_RF)
 
     # LGBM model
@@ -80,10 +79,10 @@ def Model_Secondary(data: pd.DataFrame):
     # print('The accuracy of the lgbm Regressor is', r2_score(y_test, lgbm_preds), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
 
-    print('Train on full dataset: ', flush=True)
+    print('Train on full dataset LGBM secondary Moscow: ', flush=True)
     lgbm_model.fit(X, y)
 
-    print('Save model: ', flush=True)
+    print('Save model LGBM secondary Moscow: ', flush=True)
     dump(lgbm_model, PATH_TO_PRICE_MODEL_LGBM)
 
 def Model_New(data: pd.DataFrame):
@@ -93,8 +92,6 @@ def Model_New(data: pd.DataFrame):
     data = data[(np.abs(stats.zscore(data.term)) < 3)]
     data["longitude"] = np.log1p(data["longitude"])
     data["latitude"] = np.log1p(data["latitude"])
-    data['rooms'] = np.log1p(data['rooms'])
-    # data['clusters'] = np.log1p(data['clusters'])
     data["full_sq"] = np.log1p(data["full_sq"])
     data["life_sq"] = np.log1p(data["life_sq"])
     data["kitchen_sq"] = np.log1p(data["kitchen_sq"])
@@ -113,10 +110,10 @@ def Model_New(data: pd.DataFrame):
     # print('The R2_score of the Gradient boost is', r2_score(y_test, gbr_preds), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, gbr_preds), flush=True)
 
-    print('Train on full dataset: ', flush=True)
+    print('Train on full dataset GBR new Moscow: ', flush=True)
     gbr_model.fit(X, y)
 
-    print('Save model: ', flush=True)
+    print('Save model GBR new Moscow: ', flush=True)
     dump(gbr_model, PATH_TO_PRICE_MODEL_GBR_NEW)
 
     RF = RandomForestRegressor(n_estimators=300, min_samples_leaf=3, verbose=1, n_jobs=-1)
@@ -127,10 +124,10 @@ def Model_New(data: pd.DataFrame):
     # print('The accuracy of the RandomForest is', r2_score(y_test, rf_predicts), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, rf_predicts), flush=True)
 
-    print('Train on full dataset: ', flush=True)
+    print('Train on full dataset RF new Moscow: ', flush=True)
     RF.fit(X, y)
 
-    print('Save model: ', flush=True)
+    print('Save model RF new Moscow: ', flush=True)
     dump(RF, PATH_TO_PRICE_MODEL_RF_NEW)
 
     # LGBM model
@@ -142,10 +139,10 @@ def Model_New(data: pd.DataFrame):
     # print('The accuracy of the lgbm Regressor is', r2_score(y_test, lgbm_preds), flush=True)
     # print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
 
-    print('Train on full dataset: ', flush=True)
+    print('Train on full dataset LGBM new Moscow: ', flush=True)
     lgbm_model.fit(X, y)
 
-    print('Save model: ', flush=True)
+    print('Save model LGBM new Moscow: ', flush=True)
     dump(lgbm_model, PATH_TO_PRICE_MODEL_LGBM_NEW)
 
 

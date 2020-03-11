@@ -114,7 +114,6 @@ def main_preprocessing():
 
     # Drop all offers without important data
     df = df.dropna(subset=['full_sq'])
-
     df = df.fillna(0)
 
     df = df.drop(['built_year', 'flats_count', 'district_id', 'name', 'transport_type'], axis=1)
@@ -130,10 +129,8 @@ def main_preprocessing():
     df['floor_last'] = np.where(df['max_floor'] == df['floor'], 1, 0)
     df['floor_first'] = np.where(df['floor'] == 1, 1, 0)
 
-    print(df.shape)
-
+    # Replace all negative values with zero
     num = df._get_numeric_data()
-
     num[num < 0] = 0
 
     # df['X'] = df[['latitude', 'longitude']].apply(
@@ -142,39 +139,43 @@ def main_preprocessing():
     # df['Y'] = df[['latitude', 'longitude']].apply(
     #     lambda row: (m.cos(row['latitude']) *
     #                  m.sin(row['longitude'])), axis=1)
+
+    # Count price per meter square for each flat
     df['price_meter_sq'] = df[['price', 'full_sq']].apply(
         lambda row: (row['price'] /
                      row['full_sq']), axis=1)
-    print(df.columns)
 
+    # Remove price and term outliers (out of 3 sigmas)
     df1 = df[(np.abs(stats.zscore(df.price)) < 3)]
-
     df2 = df[(np.abs(stats.zscore(df.term)) < 3)]
 
-    print("After removing term_outliers: ", df2.shape)
-    print("After removing price_outliers: ", df1.shape)
     clean_data = pd.merge(df1, df2, on=list(df.columns), how='left')
 
+    # Create df with SECONDARY flats
     clean_data_vtor = clean_data[(clean_data.flat_type == 'SECONDARY')]
-    kmeans_vtor = KMeans(n_clusters=80, random_state=42).fit(clean_data_vtor[['longitude', 'latitude']])
+
+    # fit k-Means clustering on geo for SECONDARY flats
+    kmeans_vtor = KMeans(n_clusters=60, random_state=42).fit(clean_data_vtor[['longitude', 'latitude']])
 
     dump(kmeans_vtor, PATH_TO_MODELS + '/KMEAN_CLUSTERING_SPB_VTOR.joblib')
     labels = kmeans_vtor.labels_
     clean_data_vtor['clusters'] = labels
 
-    print("SPB headers finally: ", list(clean_data_vtor.columns), flush=True)
-    print('Saving clean_data_vtor to new csv', flush=True)
+    # Save .csv with SECONDARY flats
     clean_data_vtor.to_csv(PREPARED_DATA + '/SPB_VTOR.csv', index=None, header=True)
 
+
+    # Create df with NEW flats
     clean_data_new_flats = clean_data[((clean_data.flat_type == 'NEW_FLAT') | (clean_data.flat_type == 'NEW_SECONDARY'))]
+
+    # fit k-Means clustering on geo for NEW flats
     kmeans_NEW_FLAT = KMeans(n_clusters=20, random_state=42).fit(clean_data_new_flats[['longitude', 'latitude']])
 
     dump(kmeans_NEW_FLAT, PATH_TO_MODELS + '/KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
     labels = kmeans_NEW_FLAT.labels_
     clean_data_new_flats['clusters'] = labels
 
-    print("SPB headers finally: ", list(clean_data_new_flats.columns), flush=True)
-    print('Saving clean_data_new_flats to new csv', flush=True)
+    # Save .csv with NEW flats
     clean_data_new_flats.to_csv(PREPARED_DATA + '/SPB_NEW_FLATS.csv', index=None, header=True)
 
 if __name__ == '__main__':

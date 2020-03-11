@@ -122,6 +122,8 @@ def main_preprocessing():
     df.is_rented = df.is_rented.fillna(True)
     df.is_rented = df.is_rented.astype(int)
     print("is rented after", df[['is_rented']].head())
+
+    df = df.fillna(0)
     
     # Replace missed value 'RENT_YEAR' with posted year
     # now = datetime.datetime.now()
@@ -146,6 +148,7 @@ def main_preprocessing():
     df.rent_year = df.rent_year.astype(int)
 
     df = df.drop(['built_year', 'flats_count', 'district_id', 'name', 'transport_type'], axis=1)
+
 
     
 

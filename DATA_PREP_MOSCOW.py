@@ -126,6 +126,9 @@ def main_preprocessing():
     df.is_rented = df.is_rented.astype(int)
     print("is rented after", df[['is_rented']].head())
 
+    df = df.fillna(0)
+    
+
     # Replace missed value 'RENT_YEAR' with posted year
     # now = datetime.datetime.now()
     df.rent_year = df.rent_year.fillna(df.changed_date.apply(lambda x: x[:4]))
@@ -152,6 +155,7 @@ def main_preprocessing():
     max_floor_list = df['max_floor'].tolist()
     df['floor_last'] = np.where(df['max_floor'] == df['floor'], 1, 0)
     df['floor_first'] = np.where(df['floor'] == 1, 1, 0)
+
 
     # Replace all negative values with zero
     num = df._get_numeric_data()

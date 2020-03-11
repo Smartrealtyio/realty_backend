@@ -106,7 +106,8 @@ def main_preprocessing():
     
     df.time_to_metro = df.time_to_metro.fillna(df.time_to_metro.mean())
    
-    print('plus metro: ', df.shape)
+    
+    print('Data types: ', df.dtypes, flush=True)
 
     # Check if main DF constains null values
     # print(df.isnull().sum())
@@ -150,8 +151,8 @@ def main_preprocessing():
     df['floor_last'] = np.where(df['max_floor'] == df['floor'], 1, 0)
     df['floor_first'] = np.where(df['floor'] == 1, 1, 0)
 
-    
-    
+
+
     # Replace all negative values with zero
     num = df._get_numeric_data()
     num[num < 0] = 0

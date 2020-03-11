@@ -110,8 +110,9 @@ def main_preprocessing():
     df = pd.merge(df, time_to_metro, on="building_id", how='left')
     # df[['time_to_metro']] = df[['time_to_metro']].apply(lambda x: x.fillna(x.mean()), axis=0)
     df.time_to_metro = df.time_to_metro.fillna(df.time_to_metro.mean())
-    print('plus metro: ', df.shape)
+    
 
+    print('Data types: ', df.dtypes, flush=True)
     # Check if main DF constains null values
     # print(df.isnull().sum())
 
@@ -133,7 +134,7 @@ def main_preprocessing():
     df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 9, 3, df.rent_quarter)
     df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 6, 2, df.rent_quarter)
     df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 3, 1, df.rent_quarter)
-    
+
     df = df.drop(['built_year', 'flats_count', 'district_id', 'name', 'transport_type'], axis=1)
 
     # Transform bool values to int

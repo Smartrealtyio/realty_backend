@@ -355,10 +355,7 @@ def map():
             ['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
              'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year']].apply(
             lambda row:
-            int((np.expm1(gbr.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
-                                     np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
-                                     np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
-                                     row.clusters, row.is_rented, row.rent_quarter, row.rent_year]])) + (np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
+            int(((np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
                                        np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
                                        np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
                                        row.clusters, row.is_rented, row.rent_quarter, row.rent_year]]))) + 
@@ -372,10 +369,7 @@ def map():
             ['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
              'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
             lambda row:
-            int((np.expm1(gbr.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
-                                     np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
-                                     np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
-                                     row.clusters]])) + (np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
+            int(((np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
                                        np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
                                        np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
                                        row.clusters]]))) + 

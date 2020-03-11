@@ -285,7 +285,7 @@ def map():
     # Predict Price using rf
     rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
                                        np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
-    print("rf predicted price: ", lgbm_pedicted_price, flush=True)
+    print("rf predicted price: ", rf_pedicted_price, flush=True)
 
     # Predict Price using lgbm
     lgbm_pedicted_price = np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),

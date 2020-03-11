@@ -201,7 +201,9 @@ def map():
     floor_first = int(request.args.get('floor_first'))
     floor_last = int(request.args.get('floor_last'))
     time_to_metro = int(request.args.get('time_to_metro'))
-
+    is_rented = int(request.args.get('is_rented')) if request.args.get('is_rented') is not None else 0
+    rent_year = int(request.args.get('rent_year')) if request.args.get('rent_year') is not None else 0
+    rent_quarter = int(request.args.get('rent_quarter')) if request.args.get('rent_quarter') is not None else 0
     city_id = int(request.args.get('city_id')) if request.args.get('city_id') is not None else 0
 
     # initialize dataframe

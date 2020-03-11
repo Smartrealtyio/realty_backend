@@ -44,8 +44,7 @@ def main_preprocessing():
                                                    "floor", "is_apartment",
                                                    "building_id",
                                                    "closed", 'rooms', 'resource_id', 'flat_type', 'is_rented', 'rent_quarter',
-                                                   'rent_year', 'agency'
-                                                   ],
+                                                   'rent_year'],
                         true_values="t", false_values="f", header=0)
 
     flats.closed = flats.closed.fillna(False)

@@ -102,8 +102,7 @@ def Pirce_NewFlats(data: pd.DataFrame):
     data["life_sq"] = np.log1p(data["life_sq"])
     data["kitchen_sq"] = np.log1p(data["kitchen_sq"])
     data["price"] = np.log1p(data["price"])
-    X = data[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq', 'time_to_metro',
-     'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year']]
+    X = data[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq', 'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year']]
 
     y = data[['price']].values.ravel()
     print(X.shape, y.shape, flush=True)

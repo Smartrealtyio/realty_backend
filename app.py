@@ -283,7 +283,7 @@ def map():
     print("Gbr predicted price: ", gbr_predicted_price, flush=True)
 
     # Predict Price using rf
-    lgbm_pedicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
+    rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
                                        np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
     print("rf predicted price: ", lgbm_pedicted_price, flush=True)
 
@@ -292,8 +292,8 @@ def map():
                                        np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
     print("Lgbm predicted price: ", lgbm_pedicted_price, flush=True)
 
-    # Calculate mean price value based on two algorithms
-    price_main = (gbr_predicted_price+lgbm_pedicted_price)/ 2
+    # Calculate mean price value based on three algorithms
+    price_main = (gbr_predicted_price+lgbm_pedicted_price+rf_predicted_price)/ 3
     price = int(price_main[0])
     print("Predicted Price: ", price, flush=True)
 

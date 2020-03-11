@@ -119,9 +119,12 @@ def main_preprocessing():
     # Drop all offers without important data
     df = df.dropna(subset=['full_sq'])
     
+    print("is rented before", df[['is_rented']].head())
+
     # Replace missed "IS_RENTED" with 1 and convert bool -> int
-    df.is_rented = df.is_rented.fillna(1)
+    df.is_rented = df.is_rented.fillna(True)
     df.is_rented = df.is_rented.astype(int)
+    print("is rented after", df[['is_rented']].head())
 
     # Replace missed value 'RENT_YEAR' with posted year
     # now = datetime.datetime.now()

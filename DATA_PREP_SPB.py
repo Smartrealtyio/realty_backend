@@ -113,21 +113,45 @@ def main_preprocessing():
 
     # Drop all offers without important data
     df = df.dropna(subset=['full_sq'])
-    df = df.fillna(0)
+    # df = df.fillna(0)
 
-    df = df.drop(['built_year', 'flats_count', 'district_id', 'name', 'transport_type'], axis=1)
+    # Replace missed "IS_RENTED" with 1 and convert bool -> int
+    df.is_rented = df.is_rented.fillna(1)
+    df.is_rented = df.is_rented.astype(int)
+
+    # Replace missed value 'RENT_YEAR' with posted year
+    # now = datetime.datetime.now()
+    df.rent_year = df.rent_year.fillna(df.changed_date.apply(lambda x: x[:4]))
+
+    # Replace missed value "RENT_QUARTER" with current quarter, when value was posted
+    df.rent_quarter = df.rent_quarter.fillna(df.changed_date.apply(lambda x: x[5:7]))
+    df.rent_quarter = df.rent_quarter.astype(int)
+    df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 12, 4, 4) 
+    df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 9, 3, df.rent_quarter)
+    df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 6, 2, df.rent_quarter)
+    df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 3, 1, df.rent_quarter)
+    
 
     # Transform bool values to int
     df.has_elevator = df.has_elevator.astype(int)
     df.renovation = df.renovation.astype(int)
     df.is_apartment = df.is_apartment.astype(int)
-    df.closed = df.closed.astype(int)
+    df.has_elevator = df.has_elevator.astype(int)
+    df.renovation = df.renovation.astype(int)
+    df.is_apartment = df.is_apartment.astype(int)
+    df.rent_year = df.rent_year.astype(int)
+
+    df = df.drop(['built_year', 'flats_count', 'district_id', 'name', 'transport_type'], axis=1)
+
+    
 
     # Set values for floor_last/floor_first column: if floor_last/floor_first set 1, otherwise 0
     max_floor_list = df['max_floor'].tolist()
     df['floor_last'] = np.where(df['max_floor'] == df['floor'], 1, 0)
     df['floor_first'] = np.where(df['floor'] == 1, 1, 0)
 
+    
+    
     # Replace all negative values with zero
     num = df._get_numeric_data()
     num[num < 0] = 0

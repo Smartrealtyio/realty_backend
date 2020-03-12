@@ -341,7 +341,7 @@ def map():
     SUB_cluster = kmeans_sub.predict([[full_sq, life_sq, kitchen_sq, current_cluster, time_to_metro, longitude, latitude, renovation]])
     # print(df_for_current_label.SUB_cluster.unique(), flush=True)
 
-    df_for_current_label['SUB_cluster'] = SUB_cluster
+    df_for_current_label = df_for_current_label[df_for_current_label.SUB_cluster == SUB_cluster[0]]
     # Create new feature: number of flats in each SUBcluster
     # df_for_current_label['num_of_flats_in_SUB_cluster'] = df_for_current_label.groupby(['SUB_cluster'])["SUB_cluster"].transform("count")
 

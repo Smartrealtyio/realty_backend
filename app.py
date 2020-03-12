@@ -338,7 +338,7 @@ def map():
     labels = kmeans_sub.labels_
     df_for_current_label['SUB_cluster'] = labels
 
-    SUB_cluster = kmeans_sub.predict([[full_sq, life_sq, time_to_metro, longitude, latitude, renovation]])
+    SUB_cluster = kmeans_sub.predict([[full_sq, life_sq, kitchen_sq, current_cluster, time_to_metro, longitude, latitude, renovation]])
     # print(df_for_current_label.SUB_cluster.unique(), flush=True)
 
     df_for_current_label['SUB_cluster'] = SUB_cluster

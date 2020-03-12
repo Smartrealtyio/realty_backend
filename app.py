@@ -333,18 +333,18 @@ def map():
         return answ
 
     # Create SUB Classes KMeans clustering based on size of subsample
-    n = int(sqrt(df_for_current_label.shape[0]))
-    kmeans = KMeans(n_clusters=n, random_state=42).fit(
-        df_for_current_label[['full_sq', 'life_sq', 'kitchen_sq', 'clusters', 'time_to_metro', 'longitude', 'latitude', 'renovation', 'nums_of_changing']])
+    # n = int(sqrt(df_for_current_label.shape[0]))
+    # kmeans = KMeans(n_clusters=n, random_state=42).fit(
+    #     df_for_current_label[['full_sq', 'life_sq', 'kitchen_sq', 'clusters', 'time_to_metro', 'longitude', 'latitude', 'renovation', 'nums_of_changing']])
 
     # Set new column equals to new SUBclusters values
-    labels = kmeans.labels_
-    df_for_current_label['SUB_cluster'] = labels
+    # labels = kmeans.labels_
+    # df_for_current_label['SUB_cluster'] = labels
 
-    print(df_for_current_label.SUB_cluster.unique(), flush=True)
+    # print(df_for_current_label.SUB_cluster.unique(), flush=True)
 
     # Create new feature: number of flats in each SUBcluster
-    df_for_current_label['num_of_flats_in_SUB_cluster'] = df_for_current_label.groupby(['SUB_cluster'])["SUB_cluster"].transform("count")
+    # df_for_current_label['num_of_flats_in_SUB_cluster'] = df_for_current_label.groupby(['SUB_cluster'])["SUB_cluster"].transform("count")
 
     # Drop Price and Term Outliers using Z-Score / 25-75 quartiles
     df_for_current_label = df_for_current_label[df_for_current_label.price.between(df_for_current_label.term.quantile(.1), df_for_current_label.price.quantile(.9))]

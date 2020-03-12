@@ -347,6 +347,8 @@ def map():
     # Drop Price and Term Outliers using Z-Score / 25-75 quartiles
     df_for_current_label = df_for_current_label[df_for_current_label.price.between(df_for_current_label.term.quantile(.1), df_for_current_label.price.quantile(.9))]
 
+
+    print("Shape: ", df_for_current_label.shape)
     # Calculate price for each flat in SubSample based on price prediction models we have trained
     if secondary == 0:
         df_for_current_label['pred_price'] = df_for_current_label[

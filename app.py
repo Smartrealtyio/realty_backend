@@ -331,16 +331,17 @@ def map():
         return answ
 
     # Create SUB Classes KMeans clustering based on size of subsample
-    # n = int(sqrt(df_for_current_label.shape[0]))
-    # kmeans = KMeans(n_clusters=n, random_state=42).fit(
-    #     df_for_current_label[['full_sq', 'life_sq', 'kitchen_sq', 'clusters', 'time_to_metro', 'longitude', 'latitude', 'renovation', 'nums_of_changing']])
+    n = int(sqrt(df_for_current_label.shape[0]))
+    kmeans_sub = KMeans(n_clusters=n, random_state=42).fit(df_for_current_label[['full_sq', 'life_sq', 'kitchen_sq', 'clusters', 'time_to_metro', 'longitude', 'latitude', 'renovation']])#, 'nums_of_changing']])
 
     # Set new column equals to new SUBclusters values
-    # labels = kmeans.labels_
-    # df_for_current_label['SUB_cluster'] = labels
+    labels = kmeans_sub.labels_
+    df_for_current_label['SUB_cluster'] = labels
 
+    SUB_cluster = kmeans_sub.predict([[full_sq, life_sq, time_to_metro, longitude, latitude, renovation]])
     # print(df_for_current_label.SUB_cluster.unique(), flush=True)
 
+    df_for_current_label['SUB_cluster'] = SUB_cluster
     # Create new feature: number of flats in each SUBcluster
     # df_for_current_label['num_of_flats_in_SUB_cluster'] = df_for_current_label.groupby(['SUB_cluster'])["SUB_cluster"].transform("count")
 

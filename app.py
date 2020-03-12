@@ -277,39 +277,37 @@ def map():
     current_cluster = kmeans.predict([[longitude, latitude]])
     print("Current cluster is : ", current_cluster, flush=True)
 
-    # Predict Price using gbr
+    # Predict Price using gbr, rf, lgmb if not secondary 
     if secondary == 0:
         gbr_predicted_price = np.expm1(gbr.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                                np.log1p(full_sq),
                                np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
-    elif secondary == 1:
-        gbr_predicted_price = np.expm1(gbr.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-                               np.log1p(full_sq),
-                               np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
+        print("Gbr predicted price NOT secondary: ", gbr_predicted_price, flush=True)
 
-    print("Gbr predicted price: ", gbr_predicted_price, flush=True)
-
-    # Predict Price using rf
-    if secondary == 0:
         rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                                np.log1p(full_sq),
                                np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
-    elif secondary == 1:
-        rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-                                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
-    
-    print("rf predicted price: ", rf_predicted_price, flush=True)
+        print("rf predicted price NOT secondary: ", rf_predicted_price, flush=True)
 
-    # Predict Price using lgbm
-    if secondary == 0:
         lgbm_pedicted_price = np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                                np.log1p(full_sq),
                                np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
+        print("Lgbm predicted price NOT secondary: ", lgbm_pedicted_price, flush=True)
+
+    # Predict Price using gbr, rf, lgmb if secondary 
     elif secondary == 1:
+        gbr_predicted_price = np.expm1(gbr.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+                               np.log1p(full_sq), np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
+        print("Gbr predicted price secondary: ", gbr_predicted_price, flush=True)
+
+        rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
+                                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
+        print("rf predicted price secondary: ", rf_predicted_price, flush=True)
+
         lgbm_pedicted_price = np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
                                        np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
+        print("Lgbm predicted price secondary: ", lgbm_pedicted_price, flush=True)
 
-    print("Lgbm predicted price: ", lgbm_pedicted_price, flush=True)
 
     # Calculate mean price value based on three algorithms
     price_main = (gbr_predicted_price+lgbm_pedicted_price+rf_predicted_price)/ 3

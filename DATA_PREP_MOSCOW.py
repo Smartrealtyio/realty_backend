@@ -21,9 +21,13 @@ def main_preprocessing():
     ], usecols=["price", "flat_id", 'created_at', 'changed_date', 'updated_at'])
     print("Unique flat id in prices: ", len(prices.flat_id.unique()))
 
+    # Count number of price changing for each unique flat and SORT changed_date for each subgroup (group consist of one flat)
     prices['nums_of_changing'] = prices.sort_values(['changed_date'][-9:], ascending=True).groupby(['flat_id'])[
         "flat_id"].transform("count")
+    # Group by falt_id and sort in ascending order for term counting
+    # prices = prices.sort_values(['changed_date'][-9:],ascending=True).groupby('flat_id')
 
+    # Keep just first date 
     prices = prices.drop_duplicates(subset='flat_id', keep="first")
     prices = prices[((prices['changed_date'].str.contains('2020')) | (prices['changed_date'].str.contains('2019')) | (
         prices['changed_date'].str.contains('2018')))]

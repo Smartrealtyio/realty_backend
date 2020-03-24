@@ -350,11 +350,17 @@ def map():
     # Create new feature: number of flats in each SUBcluster
     # df_for_current_label['num_of_flats_in_SUB_cluster'] = df_for_current_label.groupby(['SUB_cluster'])["SUB_cluster"].transform("count")
 
-    # Drop Price and Term Outliers using Z-Score / 25-75 quartiles
-    df_for_current_label = df_for_current_label[df_for_current_label.price.between(df_for_current_label.term.quantile(.1), df_for_current_label.price.quantile(.9))]
+    # Drop Outliers using Z-Score / 15-85 quartiles
+    # price outliers removing
+    df_for_current_label = df_for_current_label[df_for_current_label.price.between(df_for_current_label.price.quantile(.15), df_for_current_label.price.quantile(.85))]
+    #  term outliers removing
+    df_for_current_label = df_for_current_label[df_for_current_label.term.between(df_for_current_label.term.quantile(.15), df_for_current_label.term.quantile(.85))]
+    # squares outliers removing
+    df_for_current_label = df_for_current_label[df_for_current_label.full_sq.between(df_for_current_label.full_sq.quantile(.15), df_for_current_label.full_sq.quantile(.85))]
+    df_for_current_label = df_for_current_label[df_for_current_label.life_sq.between(df_for_current_label.life_sq.quantile(.15), df_for_current_label.life_sq.quantile(.85))]
+    df_for_current_label = df_for_current_label[df_for_current_label.kitchen_sq.between(df_for_current_label.kitchen_sq.quantile(.15), df_for_current_label.kitchen_sq.quantile(.85))]
+    
 
-
-    print("Shape: ", df_for_current_label.shape, flush=True)
     # Calculate price for each flat in SubSample based on price prediction models we have trained
     if secondary == 0:
         df_for_current_label['pred_price'] = df_for_current_label[

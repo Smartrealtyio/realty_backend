@@ -188,6 +188,9 @@ def main_preprocessing():
 
     clean_data = pd.merge(df1, df2, on=list(df.columns), how='left')
 
+    # Fill NaN if it appears after merging 
+    clean_data[['term']] = clean_data[['term']].fillna(clean_data[['term']].mean())
+
     # Create df with SECONDARY flats
     clean_data_vtor = clean_data[(clean_data.flat_type == 'SECONDARY')]
 

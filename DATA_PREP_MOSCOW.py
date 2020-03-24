@@ -183,6 +183,9 @@ def main_preprocessing():
     df2 = df[(np.abs(stats.zscore(df.term)) < 3)]
 
     clean_data = pd.merge(df1, df2, on=list(df.columns), how='left')
+
+    # Fill NaN if it appears after merging 
+    clean_data[['term']] = clean_data[['term']].fillna(clean_data[['term']].mean())
     '''
     print("Find optimal number of K means: ")
     Sum_of_squared_distances = []

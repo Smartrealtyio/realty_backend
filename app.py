@@ -23,6 +23,7 @@ import statistics
 import numpy as np
 import math
 
+
 PATH_PRICE_GBR_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_GBR.joblib'
 PATH_PRICE_RF_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_RF.joblib'
 PATH_PRICE_LGBM_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_LGBM.joblib'
@@ -212,7 +213,7 @@ def map():
     gbr = 0
     lgbm = 0
     rf = 0
-    print("PArams: ", city_id, secondary, flush=True)
+    print("Params: City id: {0}, is secondary: {1}".format(city_id, secondary), flush=True)
 
     # 0 = Moscow, 1 = Spb
     # Москва новостройки
@@ -321,6 +322,17 @@ def map():
     # TERM CALCULATING #
     #                  #
     ####################
+    
+    # Remove price and term outliers (out of 3 sigmas)
+    data1 = data[(np.abs(stats.zscore(data.price)) < 3)]
+    data2 = data[(np.abs(stats.zscore(data.term)) < 3)]
+
+
+    data = pd.merge(data1, data2, on=list(data.columns), how='left')
+
+    # Fill NaN if it appears after merging 
+    data[['term']] = data[['term']].fillna(data[['term']].mean())
+
 
     # Create subsample of flats from same cluster (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_cluster[0]]

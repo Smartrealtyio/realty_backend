@@ -157,14 +157,6 @@ class MainPreprocessing():
 
         df = df.drop(['built_year', 'flats_count', 'district_id', 'name', 'transport_type'], axis=1)
 
-        # Transform bool values to int
-        df.has_elevator = df.has_elevator.astype(int)
-        df.renovation = df.renovation.astype(int)
-        df.is_apartment = df.is_apartment.astype(int)
-        df.has_elevator = df.has_elevator.astype(int)
-        df.renovation = df.renovation.astype(int)
-        df.is_apartment = df.is_apartment.astype(int)
-        df.rent_year = df.rent_year.astype(int)
         # Set values for floor_last/floor_first column: if floor_last/floor_first set 1, otherwise 0
         max_floor_list = df['max_floor'].tolist()
         df['floor_last'] = np.where(df['max_floor'] == df['floor'], 1, 0)
@@ -250,9 +242,24 @@ class MainPreprocessing():
         for i in range(len(df)+1, len(df)+13):
             df.loc[i, 'mm_announce'] = i%len(df)
 
+
+
         for i in range(len(df), len(df)+130):
             df.loc[i, 'clusters'] = i%len(df)
         df = df[df.rooms < 7]
+
+        # Transform bool values to int
+        df.has_elevator = df.has_elevator.astype(int)
+        df.renovation = df.renovation.astype(int)
+        df.is_apartment = df.is_apartment.astype(int)
+        df.has_elevator = df.has_elevator.astype(int)
+        df.renovation = df.renovation.astype(int)
+        df.is_apartment = df.is_apartment.astype(int)
+        df.rent_year = df.rent_year.astype(int)
+
+        df.rooms = df.rooms.astype(int)
+        df.mm_announce = df.mm_announce.astype(int)
+        df.yyyy_announce = df.yyyy_announce.astype(int)
         return df
         # df.loc[len(df)+8, 'rooms'] = ['inf' + [None] * len(list(df.shape[1])) - 1
 
@@ -266,6 +273,8 @@ class MainPreprocessing():
         dump(kmeans, path_kmeans_models + '/KMEANS_CLUSTERING_MOSCOW_MAIN.joblib')
         labels = kmeans.labels_
         data['clusters'] = labels
+
+        df.clusters = df.clusters.astype(int)
 
         # Create dummies from cluster
         df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])

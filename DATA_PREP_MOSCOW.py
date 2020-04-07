@@ -155,6 +155,15 @@ class MainPreprocessing():
         df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 6, 2, df.rent_quarter)
         df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 3, 1, df.rent_quarter)
 
+        # Transform bool values to int
+        df.has_elevator = df.has_elevator.astype(int)
+        df.renovation = df.renovation.astype(int)
+        df.is_apartment = df.is_apartment.astype(int)
+        df.has_elevator = df.has_elevator.astype(int)
+        df.renovation = df.renovation.astype(int)
+        df.is_apartment = df.is_apartment.astype(int)
+        df.rent_year = df.rent_year.astype(int)
+
         df = df.drop(['built_year', 'flats_count', 'district_id', 'name', 'transport_type'], axis=1)
 
         # Set values for floor_last/floor_first column: if floor_last/floor_first set 1, otherwise 0
@@ -249,14 +258,6 @@ class MainPreprocessing():
         df = df[df.rooms < 7]
 
         # Transform bool values to int
-        df.has_elevator = df.has_elevator.astype(int)
-        df.renovation = df.renovation.astype(int)
-        df.is_apartment = df.is_apartment.astype(int)
-        df.has_elevator = df.has_elevator.astype(int)
-        df.renovation = df.renovation.astype(int)
-        df.is_apartment = df.is_apartment.astype(int)
-        df.rent_year = df.rent_year.astype(int)
-
         df.rooms = df.rooms.astype(int)
         df.mm_announce = df.mm_announce.astype(int)
         df.yyyy_announce = df.yyyy_announce.astype(int)

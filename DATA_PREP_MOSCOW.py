@@ -258,8 +258,11 @@ class MainPreprocessing():
         df = df[df.rooms < 7]
 
         # Transform bool values to int
+        df.rooms.fillna(df.rooms.mode()[0])
         df.rooms = df.rooms.astype(int)
+        df.mm_announce.fillna(df.mm_announce.mode()[0])
         df.mm_announce = df.mm_announce.astype(int)
+        df.yyyy_announce.fillna(df.yyyy_announce.mode()[0])
         df.yyyy_announce = df.yyyy_announce.astype(int)
         return df
         # df.loc[len(df)+8, 'rooms'] = ['inf' + [None] * len(list(df.shape[1])) - 1

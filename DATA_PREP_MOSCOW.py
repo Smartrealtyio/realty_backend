@@ -402,6 +402,7 @@ if __name__ == '__main__':
     # Load data
     print("Load data...", flush=True)
     df = mp.load_and_merge(raw_data=raw_data)
+    df = df.iloc[:4000]
     # Generate new features
     print("Generate new features...", flush=True)
     features_data = mp.new_features(data=df, full_sq_corridor_percent=full_sq_corridor_percent,

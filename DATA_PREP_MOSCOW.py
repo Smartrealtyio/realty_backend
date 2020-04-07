@@ -278,7 +278,7 @@ class MainPreprocessing():
         labels = kmeans.labels_
         data['clusters'] = labels
 
-        df.clusters = df.clusters.astype(int)
+        data.clusters = data.clusters.astype(int)
 
         # Create dummies from cluster
         df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])

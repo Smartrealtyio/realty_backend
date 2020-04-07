@@ -164,6 +164,7 @@ def Model_New(data: pd.DataFrame):
 
 def model():
     data_secondary = pd.read_csv(prepared_data_secondary)
+    print(data_secondary.columns, flush=True)
     Model_Secondary(data_secondary)
     data_new = pd.read_csv(prepared_data_new)
     Model_New(data_new)

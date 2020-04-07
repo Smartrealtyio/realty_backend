@@ -260,8 +260,8 @@ class MainPreprocessing():
     def clustering(self, data: pd.DataFrame(), path_kmeans_models: str):
         # fit k-Means clustering on geo for SECONDARY flats
 
-        data.longitude= data.longitude.fillna(data.longitude.mode())
-        data.latitude= data.latitude.fillna(data.latitude.mode())
+        data.longitude= data.longitude.fillna(data.longitude.mode()[0])
+        data.latitude= data.latitude.fillna(data.latitude.mode()[0])
         kmeans = KMeans(n_clusters=130, random_state=42).fit(data[['longitude', 'latitude']])
         dump(kmeans, path_kmeans_models + '/KMEANS_CLUSTERING_MOSCOW_MAIN.joblib')
         labels = kmeans.labels_

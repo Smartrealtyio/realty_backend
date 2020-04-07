@@ -3,6 +3,7 @@ from scipy import stats
 from lightgbm import LGBMRegressor
 from catboost import CatBoostRegressor, Pool
 from sklearn.linear_model import LogisticRegression
+import time, ciso8601
 import psycopg2
 import settings_local as SETTINGS
 from sklearn.linear_model import LinearRegression
@@ -22,6 +23,8 @@ import pandas as pd
 import statistics
 import numpy as np
 import math
+
+# TODO: ! pip install ciso8601
 
 
 PATH_PRICE_GBR_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_GBR.joblib'
@@ -207,66 +210,67 @@ def map():
     rent_quarter = int(request.args.get('rent_quarter')) if request.args.get('rent_quarter') is not None else 0
     city_id = int(request.args.get('city_id')) if request.args.get('city_id') is not None else 0
 
-    # initialize dataframe
-    data = pd.DataFrame()
-    kmeans = 0
-    gbr = 0
-    lgbm = 0
-    rf = 0
     print("Params: City id: {0}, is secondary: {1}".format(city_id, secondary), flush=True)
 
     # 0 = Moscow, 1 = Spb
     # Москва новостройки
-    if city_id == 0 and secondary ==0:
-        # Load data Moscow New flats
-        data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv')
+    def define_city_and_flat_type(city_id: int, secondary: int):
+        data = pd.DataFrame()
+        kmeans, gbr, rf, lgbm = 0, 0, 0 ,0
+        if city_id == 0 and secondary ==0:
+            # Load data Moscow New flats
+            data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv')
 
-        # Load KMean Clustering model
-        kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_NEW_FLAT.joblib')
+            # Load KMean Clustering model
+            kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_NEW_FLAT.joblib')
 
-        # Load Price Models Moscow Secondary
-        gbr = load(PATH_PRICE_GBR_MOSCOW_NEW)
-        rf = load(PATH_PRICE_RF_MOSCOW_NEW)
-        lgbm = load(PATH_PRICE_LGBM_MOSCOW_NEW)
+            # Load Price Models Moscow Secondary
+            gbr = load(PATH_PRICE_GBR_MOSCOW_NEW)
+            rf = load(PATH_PRICE_RF_MOSCOW_NEW)
+            lgbm = load(PATH_PRICE_LGBM_MOSCOW_NEW)
 
-    # Москва вторичка
-    elif city_id == 0 and secondary == 1:
-        # Load data Moscow secondary
-        data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv')
+        # Москва вторичка
+        elif city_id == 0 and secondary == 1:
+            # Load data Moscow secondary
+            data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv')
 
-        # Load KMean Clustering model
-        kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_VTOR.joblib')
+            # Load KMean Clustering model
+            kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_VTOR.joblib')
 
-        # Load Price Models Moscow Secondary
-        gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
-        rf = load(PATH_PRICE_GBR_MOSCOW_VTOR)
-        lgbm = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+            # Load Price Models Moscow Secondary
+            gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+            rf = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+            lgbm = load(PATH_PRICE_GBR_MOSCOW_VTOR)
 
-    # Санкт-Петербург новостройки
-    elif city_id == 1 and secondary == 0:
-        # Load data SPb New Flats
-        data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB_NEW_FLATS.csv')
+        # Санкт-Петербург новостройки
+        elif city_id == 1 and secondary == 0:
+            # Load data SPb New Flats
+            data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB_NEW_FLATS.csv')
 
-        # Load KMean Clustering model
-        kmeans = load(SETTINGS.MODEL_SPB + 'KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
+            # Load KMean Clustering model
+            kmeans = load(SETTINGS.MODEL_SPB + 'KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
 
-        # Load Price Models Spb Secondary
-        gbr = load(PATH_PRICE_GBR_SPB_NEW)
-        rf = load(PATH_PRICE_RF_SPB_NEW)
-        lgbm = load(PATH_PRICE_LGBM_SPB_NEW)
+            # Load Price Models Spb Secondary
+            gbr = load(PATH_PRICE_GBR_SPB_NEW)
+            rf = load(PATH_PRICE_RF_SPB_NEW)
+            lgbm = load(PATH_PRICE_LGBM_SPB_NEW)
 
-    # Санкт-Петербург вторичка
-    elif city_id == 1 and secondary == 1:
-        data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB_VTOR.csv')
-        # Load KMean Clustering model
-        kmeans = load(SETTINGS.MODEL_SPB + '/KMEAN_CLUSTERING_SPB_VTOR.joblib')
+        # Санкт-Петербург вторичка
+        elif city_id == 1 and secondary == 1:
+            data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB_VTOR.csv')
+            # Load KMean Clustering model
+            kmeans = load(SETTINGS.MODEL_SPB + '/KMEAN_CLUSTERING_SPB_VTOR.joblib')
 
-        # Load Price Models Spb Secondary
-        gbr = load(PATH_PRICE_GBR_SPB_VTOR)
-        rf = load(PATH_PRICE_RF_SPB_VTOR)
-        lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
+            # Load Price Models Spb Secondary
+            gbr = load(PATH_PRICE_GBR_SPB_VTOR)
+            rf = load(PATH_PRICE_RF_SPB_VTOR)
+            lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
 
-    print("Initial shape: ", data.shape, flush=True)
+        print("Initial shape: ", data.shape, flush=True)
+        return data, kmeans, gbr, rf, lgbm
+
+    # Call define function
+    data, kmeans, gbr, rf, lgbm = define_city_and_flat_type(city_id=city_id, secondary=secondary)
 
     ####################
     #                  #
@@ -275,63 +279,135 @@ def map():
     ####################
 
     # Predict Cluster for current flat
-    current_cluster = kmeans.predict([[longitude, latitude]])
+    def define_cluster(km_model: KMeans, lon: float, lat: float):
+        current_cluster = km_model.predict([[lon, lat]])
+        return current_cluster
+
+    current_cluster = define_cluster(km_model=kmeans, lon=longitude, lat=latitude)
+
     print("Current cluster is : ", current_cluster, flush=True)
 
-    # Predict Price using gbr, rf, lgmb if not secondary 
-    if secondary == 0:
-        gbr_predicted_price = np.expm1(gbr.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-                               np.log1p(full_sq),
-                               np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
-        print("Gbr predicted price NOT secondary: ", gbr_predicted_price, flush=True)
+    # Predict Price using gbr, rf, lgmb if not secondary
+    def calculate_price(gbr_model: GradientBoostingRegressor, rf_model: RandomForestRegressor, lgbm_model: LGBMRegressor, secondary: int):
+        gbr_predicted_price, lgbm_pedicted_price, rf_predicted_price = 0, 0, 0
+        if secondary == 0:
+            gbr_predicted_price = np.expm1(gbr_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+                                   np.log1p(full_sq),
+                                   np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
+            print("Gbr predicted price NOT secondary: ", gbr_predicted_price, flush=True)
 
-        rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-                               np.log1p(full_sq),
-                               np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
-        print("rf predicted price NOT secondary: ", rf_predicted_price, flush=True)
+            rf_predicted_price = np.expm1(rf_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+                                   np.log1p(full_sq),
+                                   np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
+            print("rf predicted price NOT secondary: ", rf_predicted_price, flush=True)
 
-        lgbm_pedicted_price = np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-                               np.log1p(full_sq),
-                               np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
-        print("Lgbm predicted price NOT secondary: ", lgbm_pedicted_price, flush=True)
+            lgbm_pedicted_price = np.expm1(lgbm_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+                                   np.log1p(full_sq),
+                                   np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
+            print("Lgbm predicted price NOT secondary: ", lgbm_pedicted_price, flush=True)
 
-    # Predict Price using gbr, rf, lgmb if secondary 
-    elif secondary == 1:
-        gbr_predicted_price = np.expm1(gbr.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-                               np.log1p(full_sq), np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
-        print("Gbr predicted price secondary: ", gbr_predicted_price, flush=True)
+        # Predict Price using gbr, rf, lgmb if secondary
+        elif secondary == 1:
+            gbr_predicted_price = np.expm1(gbr_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+                                   np.log1p(full_sq), np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
+            print("Gbr predicted price secondary: ", gbr_predicted_price, flush=True)
 
-        rf_predicted_price = np.expm1(rf.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-                                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
-        print("rf predicted price secondary: ", rf_predicted_price, flush=True)
+            rf_predicted_price = np.expm1(rf_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
+                                           np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
+            print("rf predicted price secondary: ", rf_predicted_price, flush=True)
 
-        lgbm_pedicted_price = np.expm1(lgbm.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-                                       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
-        print("Lgbm predicted price secondary: ", lgbm_pedicted_price, flush=True)
+            lgbm_pedicted_price = np.expm1(lgbm_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
+                                           np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
+            print("Lgbm predicted price secondary: ", lgbm_pedicted_price, flush=True)
 
 
-    # Calculate mean price value based on three algorithms
-    price_main = (gbr_predicted_price+lgbm_pedicted_price+rf_predicted_price)/ 3
-    price = int(price_main[0])
-    print("Predicted Price: ", price, flush=True)
+        # Calculate mean price value based on three algorithms
+        price_main = (gbr_predicted_price+lgbm_pedicted_price+rf_predicted_price)/ 3
+        price = int(price_main[0])
+        print("Predicted Price: ", price, flush=True)
 
-    price_meter_sq = price / full_sq
+        price_meter_sq = price / full_sq
+        return price, price_meter_sq
+
+    # Calculate price
+    price, price_meter_sq = calculate_price(gbr_model=gbr, rf_model=rf, lgbm_model=lgbm, secondary=secondary)
 
     ####################
     #                  #
     # TERM CALCULATING #
     #                  #
     ####################
-    
-    # Remove price and term outliers (out of 3 sigmas)
-    data1 = data[(np.abs(stats.zscore(data.price)) < 3)]
-    data2 = data[(np.abs(stats.zscore(data.term)) < 3)]
 
+    def prepare_data_for_term_model(data: pd.DataFrame()):
 
-    data = pd.merge(data1, data2, on=list(data.columns), how='left')
+        df = data
 
-    # Fill NaN if it appears after merging 
-    data[['term']] = data[['term']].fillna(data[['term']].mean())
+        # Remove price and term outliers (out of 3 sigmas)
+        data1 = df[(np.abs(stats.zscore(df.full_sq)) < 3)]
+        data2 = df[(np.abs(stats.zscore(df.life_sq)) < 3)]
+        data3 = df[(np.abs(stats.zscore(df.kitchen_sq)) < 3)]
+
+        # Merge data1 and data2
+        df = pd.merge(data1, data2, on=list(df.columns), how='left')
+        # Fill NaN if it appears after merging
+        df[['life_sq']] = df[['life_sq']].fillna(df[['life_sq']].mean())
+
+        # Merge df and data3
+        df = pd.merge(df, data3, on=list(df.columns), how='left')
+
+        # Fill NaN if it appears after merging
+        df[['kitchen_sq']] = df[['kitchen_sq']].fillna(df[['kitchen_sq']].mean())
+
+        # No 1. Distance from city center
+        Moscow_center_lon = 37.619291
+        Moscow_center_lat = 55.751474
+        df['to_center'] = abs(Moscow_center_lon - df['longitude']) + abs(Moscow_center_lat - df['latitude'])
+
+        # No 2. Fictive(for futher offer value calculating): yyyy_announc, mm_announc - year and month when flats were announced on market
+        df['yyyy_announce'] = df['changed_date'].str[:4].astype('int64')
+        df['mm_announce'] = df['changed_date'].str[5:7].astype('int64')
+
+        # No 3. Number of offers were added calculating by months and years
+        df['all_offers_added_in_month'] = df.groupby(['yyyy_announce', 'mm_announce'])["flat_id"].transform("count")
+
+        # No 4. Convert changed_date and updated_at to unix timestamp. Convert only yyyy-mm-dd hh
+        df['open_date_unix'] = df['changed_date'].apply(
+            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple())))
+        df['close_date_unix'] = df['updated_at'].apply(
+            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple())))
+
+        # Take just part of data
+        df = df.iloc[:len(df) // part_data]
+        # Calculate number of "similar" flats which were on market when each closed offer was closed.
+        df['was_opened'] = [np.sum((df['open_date_unix'] < close_time) & (df['close_date_unix'] >= close_time) &
+                                   (df['rooms'] == rooms) &
+                                   ((df['full_sq'] <= full_sq * (1 + full_sq_corridor_percent / 100)) & (
+                                           df['full_sq'] >= full_sq * (1 - full_sq_corridor_percent / 100))) &
+                                   ((df['price'] <= price * (1 + price_corridor_percent / 100)) & (
+                                           df['price'] >= price * (1 - price_corridor_percent / 100)))) for
+                            close_time, rooms, full_sq, price in
+                            zip(df['close_date_unix'], df['rooms'], df['full_sq'], df['price'])]
+
+        # Fill missed valeus for secondary flats
+        df.loc[:, ['rent_quarter', 'rent_year']] = df[['rent_quarter', 'rent_year']].fillna(0)
+        df.loc[:, 'is_rented'] = df[['is_rented']].fillna(1)
+
+        # Checkpoint
+        if checkpoint_save:
+            df.to_csv(checkpoint, index=None, header=True)
+        return df
+
+        # Transform some features (such as mm_announce, rooms, clusters) to dummies
+
+    def cat_to_dummies(self, data: pd.DataFrame):
+        df_mm_announce = pd.get_dummies(data, prefix='mm_announce_', columns=['mm_announce'])
+        df_rooms = pd.get_dummies(data, prefix='rooms_', columns=['rooms'])
+        df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])
+        df = pd.merge(df_mm_announce, df_rooms, how='left')
+        df = pd.merge(df, df_clusters, how='right')
+        print("After transform to dummies features: ", df.shape)
+        return df
+
 
 
     # Create subsample of flats from same cluster (from same "geographical" district)
@@ -362,16 +438,6 @@ def map():
     # Create new feature: number of flats in each SUBcluster
     # df_for_current_label['num_of_flats_in_SUB_cluster'] = df_for_current_label.groupby(['SUB_cluster'])["SUB_cluster"].transform("count")
 
-    # Drop Outliers using Z-Score / 15-85 quartiles
-    # price outliers removing
-    df_for_current_label = df_for_current_label[df_for_current_label.price.between(df_for_current_label.price.quantile(.15), df_for_current_label.price.quantile(.85))]
-    #  term outliers removing
-    df_for_current_label = df_for_current_label[df_for_current_label.term.between(df_for_current_label.term.quantile(.15), df_for_current_label.term.quantile(.85))]
-    # squares outliers removing
-    df_for_current_label = df_for_current_label[df_for_current_label.full_sq.between(df_for_current_label.full_sq.quantile(.15), df_for_current_label.full_sq.quantile(.85))]
-    df_for_current_label = df_for_current_label[df_for_current_label.life_sq.between(df_for_current_label.life_sq.quantile(.15), df_for_current_label.life_sq.quantile(.85))]
-    df_for_current_label = df_for_current_label[df_for_current_label.kitchen_sq.between(df_for_current_label.kitchen_sq.quantile(.15), df_for_current_label.kitchen_sq.quantile(.85))]
-    
 
     # Calculate price for each flat in SubSample based on price prediction models we have trained
     if secondary == 0:
@@ -412,7 +478,10 @@ def map():
     # Drop flats which sold more than 600 days
     df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
 
+
+
     # Check if still enough samples
+
     if df_for_current_label.shape[0] > 1:
 
         term = 0

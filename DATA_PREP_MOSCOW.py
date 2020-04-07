@@ -245,14 +245,15 @@ class MainPreprocessing():
         df.loc[:, 'is_rented'] = df[['is_rented']].fillna(1)
 
         for i in range(len(df), len(df)+8):
-            df.loc[i, 'rooms'] = [i%len(df)]
+            df.loc[i, 'rooms'] = i%len(df)
 
         for i in range(len(df)+1, len(df)+13):
-            df.loc[i, 'mm_announce'] = [i%len(df)]
+            df.loc[i, 'mm_announce'] = i%len(df)
 
         for i in range(len(df), len(df)+130):
-            df.loc[i, 'clusters'] = [i%len(df)]
+            df.loc[i, 'clusters'] = i%len(df)
         df = df[df.rooms < 7]
+        return df
         # df.loc[len(df)+8, 'rooms'] = ['inf' + [None] * len(list(df.shape[1])) - 1
 
 
@@ -271,7 +272,7 @@ class MainPreprocessing():
         df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])
         df = pd.merge(df_mm_announce, df_rooms, how='left')
         df = pd.merge(df, df_clusters, how='right')
-        
+
         df = df.dropna(subset=['full_sq'])
         print("After transform to dummies features: ", df.shape)
         return df
@@ -417,11 +418,12 @@ if __name__ == '__main__':
     # Load data
     print("Load data...", flush=True)
     df = mp.load_and_merge(raw_data=raw_data)
-    df = df.iloc[:4000]
+    df = df.iloc[:1000]
     # Generate new features
     print("Generate new features...", flush=True)
+
     features_data = mp.new_features(data=df, full_sq_corridor_percent=full_sq_corridor_percent,
-                                 price_corridor_percent=price_corridor_percent, part_data=False)
+                                    price_corridor_percent=price_corridor_percent, part_data=False)
 
     # Define clusters
     print("Defining clusters based on lon, lat...")

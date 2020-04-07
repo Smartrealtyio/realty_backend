@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 from joblib import dump
 import settings_local as SETTINGS
+from numpy.random import randint
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from scipy import stats
 import time, ciso8601
@@ -138,6 +139,7 @@ class MainPreprocessing():
         df.is_rented = df.is_rented.fillna(True)
         df.is_rented = df.is_rented.astype(int)
 
+        df.rooms = df.rooms.fillna(0)
         df = df.fillna(0)
 
 
@@ -241,7 +243,18 @@ class MainPreprocessing():
         # Fill missed valeus for secondary flats
         df.loc[:, ['rent_quarter', 'rent_year']] = df[['rent_quarter', 'rent_year']].fillna(0)
         df.loc[:, 'is_rented'] = df[['is_rented']].fillna(1)
-        return df
+
+        for i in range(len(df), len(df)+8):
+            df.loc[i, 'rooms'] = [i%len(df)]
+
+        for i in range(len(df)+1, len(df)+13):
+            df.loc[i, 'mm_announce'] = [i%len(df)]
+
+        for i in range(len(df), len(df)+130):
+            df.loc[i, 'clusters'] = [i%len(df)]
+        df = df[df.rooms < 7]
+        # df.loc[len(df)+8, 'rooms'] = ['inf' + [None] * len(list(df.shape[1])) - 1
+
 
     def clustering(self, data: pd.DataFrame(), path_kmeans_models: str):
         # fit k-Means clustering on geo for SECONDARY flats
@@ -258,6 +271,8 @@ class MainPreprocessing():
         df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])
         df = pd.merge(df_mm_announce, df_rooms, how='left')
         df = pd.merge(df, df_clusters, how='right')
+        
+        df = df.dropna(subset=['full_sq'])
         print("After transform to dummies features: ", df.shape)
         return df
 
@@ -323,7 +338,7 @@ class MainPreprocessing():
                   row.mm_announce__5, row.mm_announce__6, row.mm_announce__7, row.mm_announce__8, row.mm_announce__9,
                   row.mm_announce__10, row.mm_announce__11, row.mm_announce__12, row.mm_announce, row.rooms__0,
                   row.rooms__1, row.rooms__2,
-                  row.rooms__3, row.rooms__4, row.rooms__5, row.rooms__6, row.rooms__7, row.rooms__12, row.rooms__33,
+                  row.rooms__3, row.rooms__4, row.rooms__5, row.rooms__6,
                   row.cluster__0, row.cluster__1,
                   row.cluster__2, row.cluster__3, row.cluster__4, row.cluster__5, row.cluster__6, row.cluster__8,
                   row.cluster__9, row.cluster__10, row.cluster__11,

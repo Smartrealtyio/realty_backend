@@ -212,7 +212,7 @@ def main_preprocessing():
 
 
     # Create df with NEW flats
-    df_new_flats = df[((df.flat_type == 'NEW_FLAT')|(f.flat_type == 'NEW_SECONDARY'))]
+    df_new_flats = df[((df.flat_type == 'NEW_FLAT')|(df.flat_type == 'NEW_SECONDARY'))]
 
     # fit k-Means clustering on geo for NEW flats 
     kmeans_NEW_FLAT = KMeans(n_clusters=30, random_state=42).fit(df_new_flats[['longitude', 'latitude']])

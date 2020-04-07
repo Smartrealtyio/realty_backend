@@ -259,19 +259,23 @@ class MainPreprocessing():
 
     def clustering(self, data: pd.DataFrame(), path_kmeans_models: str):
         # fit k-Means clustering on geo for SECONDARY flats
+
         kmeans = KMeans(n_clusters=130, random_state=42).fit(data[['longitude', 'latitude']])
         dump(kmeans, path_kmeans_models + '/KMEANS_CLUSTERING_MOSCOW_MAIN.joblib')
         labels = kmeans.labels_
         data['clusters'] = labels
+
+        # Create dummies from cluster
+        df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])
+        data = pd.merge(data, df_clusters, how='left')
         return data
 
     # Transform some features (such as mm_announce, rooms, clusters) to dummies
     def cat_to_dummies(self, data: pd.DataFrame):
         df_mm_announce = pd.get_dummies(data, prefix='mm_announce_', columns=['mm_announce'])
         df_rooms = pd.get_dummies(data, prefix='rooms_', columns=['rooms'])
-        df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])
         df = pd.merge(df_mm_announce, df_rooms, how='left')
-        df = pd.merge(df, df_clusters, how='right')
+
 
         df = df.dropna(subset=['full_sq'])
         print("After transform to dummies features: ", df.shape)
@@ -425,27 +429,28 @@ if __name__ == '__main__':
     features_data = mp.new_features(data=df, full_sq_corridor_percent=full_sq_corridor_percent,
                                     price_corridor_percent=price_corridor_percent, part_data=False)
 
-    # Define clusters
-    print("Defining clusters based on lon, lat...")
-    cl_data = mp.clustering(features_data, path_kmeans_models=PATH_TO_CLUSTERING_MODELS)
 
     # Create dummies variables
     print("Transform to dummies...", flush=True)
-    cat_data = mp.cat_to_dummies(cl_data)
+    cat_data = mp.cat_to_dummies(features_data)
+
+    # Define clusters
+    print("Defining clusters based on lon, lat...")
+    cl_data = mp.clustering(cat_data, path_kmeans_models=PATH_TO_CLUSTERING_MODELS)
 
     # Train price model
     print("Train price model...", flush=True)
-    price_model, list_columns = mp.train_price_model(data=cat_data)
+    price_model, list_columns = mp.train_price_model(data=cl_data)
 
     # Calculate profit for each flat
     print("Calculating profit for each offer in dataset...", flush=True)
-    test = mp.calculate_profit(data=cat_data, price_model=price_model, list_of_columns=list_columns)
+    test = mp.calculate_profit(data=cl_data, price_model=price_model, list_of_columns=list_columns)
 
     # Create separate files for secondary flats
     print("Save secondary flats csv.")
-    mp.secondary_flats(data=cat_data, path_to_save_data=PREPARED_DATA)
+    mp.secondary_flats(data=cl_data, path_to_save_data=PREPARED_DATA)
 
     # Create sepatare files for new flats
     print("Save new flats csv.")
-    mp.new_flats(data=cat_data, path_to_save_data=PREPARED_DATA)
+    mp.new_flats(data=cl_data, path_to_save_data=PREPARED_DATA)
 

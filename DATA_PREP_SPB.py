@@ -269,7 +269,7 @@ class MainPreprocessing():
         df.mm_announce = df.mm_announce.astype(int)
         #df.yyyy_announce = df.yyyy_announce.fillna(df.yyyy_announce.mode()[0])
         df.yyyy_announce = df.yyyy_announce.astype(int)
-        print('NEW FEATURES: ', df.mm_announce.value_counts(), flush=True)
+        
         return df
 
     def clustering(self, data: pd.DataFrame(), path_kmeans_models: str):
@@ -287,7 +287,7 @@ class MainPreprocessing():
         # Create dummies from cluster
         df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])
         data = pd.merge(data, df_clusters, how='left')
-        print("AFTER CLUSTERING: ", list(data.columns), flush=True)
+
         return data
 
     # Transform some features (such as mm_announce, rooms, clusters) to dummies
@@ -301,8 +301,8 @@ class MainPreprocessing():
 
         df = df.loc[:-60]
         df = df.dropna(subset=['full_sq'])
-        print("After dummies: ", list(df.columns), flush=True)
-        print("After transform to dummies features: ", df.shape)
+
+        print("After transform to dummies features: ", df.shape, flush=True)
         return df
 
     def train_price_model(self, data: pd.DataFrame):

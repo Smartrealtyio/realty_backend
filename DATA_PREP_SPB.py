@@ -66,7 +66,7 @@ class MainPreprocessing():
 
 
         flats = flats.rename(columns={"id": "flat_id"})
-        print("flats only secondary: ", flats.shape)
+
 
         buildings = pd.read_csv(raw_data + "buildings.csv",
                                 names=["id", "max_floor", 'building_type_str', "built_year", "flats_count",
@@ -104,14 +104,14 @@ class MainPreprocessing():
 
         # Keep just shortest time to metro
         time_to_metro = time_to_metro.drop_duplicates(subset='building_id', keep="first")
-        print('time_to_metro: \n', time_to_metro.iloc[:5])
+
         # Merage prices and flats on flat_id
         prices_and_flats = pd.merge(prices, flats, on='flat_id', how="left")
-        print("Prices + Flats: \n", prices_and_flats.shape)
+
 
         # Merge districts and buildings on district_id
         districts_and_buildings = pd.merge(districts, buildings, on='district_id', how='right')
-        print("districts + buildings: \n", districts_and_buildings.shape)
+
 
         # Merge to one main DF on building_id
         df = pd.merge(prices_and_flats, districts_and_buildings, on='building_id', how='left')
@@ -122,8 +122,6 @@ class MainPreprocessing():
 
         df.time_to_metro = df.time_to_metro.fillna(df.time_to_metro.mean())
 
-
-        print('Data types: ', df.dtypes, flush=True)
 
         # Check if main DF constains null values
         # print(df.isnull().sum())
@@ -179,12 +177,6 @@ class MainPreprocessing():
 
         # Check if data contains only SPB offers
         df = df[((df['latitude'].astype('str').str.contains('59.'))|(df['latitude'].astype('str').str.contains('60.')))]
-        # df['X'] = df[['latitude', 'longitude']].apply(
-        #     lambda row: (m.cos(row['latitude']) *
-        #                  m.cos(row['longitude'])), axis=1)
-        # df['Y'] = df[['latitude', 'longitude']].apply(
-        #     lambda row: (m.cos(row['latitude']) *
-        #                  m.sin(row['longitude'])), axis=1)
 
         # Count price per meter square for each flat
         df['price_meter_sq'] = df[['price', 'full_sq']].apply(
@@ -240,16 +232,16 @@ class MainPreprocessing():
                 data.loc[i, 'rooms'] = i % len_df
 
             updated_len_df = len(data)
-            for i in range(len(data) + 1, len(data) + 13):
+            for i in range(updated_len_df + 1, updated_len_df + 13):
                 data.loc[i, 'mm_announce'] = i % updated_len_df
 
             updated_len_df = len(data)
 
-            for i in range(len(data) + 18, len(data) + now.year - 2000 + 1):
+            for i in range(updated_len_df + 18, updated_len_df + now.year - 2000 + 1):
                 data.loc[i, 'yyyy_announce'] = i % updated_len_df
 
             updated_len_df = len(data)
-            for i in range(len(data), len(data) + 60):
+            for i in range(updated_len_df, updated_len_df + 60):
                 data.loc[i, 'clusters'] = i % updated_len_df
 
             return data
@@ -422,7 +414,7 @@ class MainPreprocessing():
         df_VTOR = data[(data.flat_type == 'SECONDARY')]
 
         # Save .csv with SECONDARY flats
-        print('Saving secondary to csv', df_VTOR.shape[0], flush=True)
+
         df_VTOR.to_csv(path_to_save_data + '/SPB_VTOR.csv', index=None, header=True)
 
     def new_flats(self, data: pd.DataFrame(), path_to_save_data: str):
@@ -437,7 +429,7 @@ class MainPreprocessing():
         # df_new_flats['clusters'] = labels
 
         # Save .csv with NEW flats
-        print('Saving new to csv', df_new_flats.shape[0], flush=True)
+
         df_new_flats.to_csv(path_to_save_data + '/SPB_NEW_FLATS.csv', index=None, header=True)
 
 

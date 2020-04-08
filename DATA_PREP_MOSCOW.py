@@ -234,16 +234,16 @@ class MainPreprocessing():
                 data.loc[i, 'rooms'] = i%len_df
 
             updated_len_df = len(data)
-            for i in range(len(data)+1, len(data)+13):
+            for i in range(updated_len_df+1, updated_len_df+13):
                 data.loc[i, 'mm_announce'] = i%updated_len_df
 
             updated_len_df = len(data)
 
-            for i in range(len(data) + 18, len(data) + now.year - 2000 + 1):
+            for i in range(updated_len_df + 18, updated_len_df + now.year - 2000 + 1):
                 data.loc[i, 'yyyy_announce'] = i % updated_len_df
 
             updated_len_df = len(data)
-            for i in range(len(data), len(data)+130):
+            for i in range(updated_len_df, updated_len_df+130):
                 data.loc[i, 'clusters'] = i%updated_len_df
 
             return data

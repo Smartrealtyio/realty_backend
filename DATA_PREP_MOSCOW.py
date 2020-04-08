@@ -167,23 +167,15 @@ class MainPreprocessing():
         df = df.drop(['built_year', 'flats_count', 'district_id', 'name', 'transport_type'], axis=1)
 
         # Set values for floor_last/floor_first column: if floor_last/floor_first set 1, otherwise 0
-        max_floor_list = df['max_floor'].tolist()
+        # max_floor_list = df['max_floor'].tolist()
         df['floor_last'] = np.where(df['max_floor'] == df['floor'], 1, 0)
         df['floor_first'] = np.where(df['floor'] == 1, 1, 0)
-
 
         # Replace all negative values with zero
         num = df._get_numeric_data()
         num[num < 0] = 0
 
-        '''
-        df['X'] = df[['latitude', 'longitude']].apply(
-            lambda row: (m.cos(row['latitude']) *
-                         m.cos(row['longitude'])), axis=1)
-        df['Y'] = df[['latitude', 'longitude']].apply(
-            lambda row: (m.cos(row['latitude']) *
-                         m.sin(row['longitude'])), axis=1)
-        '''
+
         # Count price per meter square for each flat
         df['price_meter_sq'] = df[['price', 'full_sq']].apply(
             lambda row: (row['price'] /
@@ -196,20 +188,6 @@ class MainPreprocessing():
 
     def new_features(self, data: pd.DataFrame(), full_sq_corridor_percent: float, price_corridor_percent: float, part_data: int):
         df = data
-        data1 = df[(np.abs(stats.zscore(df.full_sq)) < 3)]
-        data2 = df[(np.abs(stats.zscore(df.life_sq)) < 3)]
-        data3 = df[(np.abs(stats.zscore(df.kitchen_sq)) < 3)]
-
-        # Merge data1 and data2
-        df = pd.merge(data1, data2, on=list(df.columns), how='left')
-        # Fill NaN if it appears after merging
-        df[['life_sq']] = df[['life_sq']].fillna(df[['life_sq']].mean())
-
-        # Merge df and data3
-        df = pd.merge(df, data3, on=list(df.columns), how='left')
-        # Fill NaN if it appears after merging
-        df[['kitchen_sq']] = df[['kitchen_sq']].fillna(df[['kitchen_sq']].mean())
-
         # No 1. Distance from city center
         Moscow_center_lon = 37.619291
         Moscow_center_lat = 55.751474
@@ -245,16 +223,26 @@ class MainPreprocessing():
         df.loc[:, ['rent_quarter', 'rent_year']] = df[['rent_quarter', 'rent_year']].fillna(0)
         df.loc[:, 'is_rented'] = df[['is_rented']].fillna(1)
 
-        for i in range(len(df), len(df)+8):
-            df.loc[i, 'rooms'] = i%len(df)
+        # Get lenght of all df
+        len_df = len(df)
 
-        for i in range(len(df)+1, len(df)+13):
-            df.loc[i, 'mm_announce'] = i%len(df)
+        def add_fictive_rows(data: pd.DataFrame(), len_df: int):
 
+            for i in range(len(data), len(data)+8):
+                data.loc[i, 'rooms'] = i%len_df
 
+            updated_len_df = len(data)
+            for i in range(len(data)+1, len(data)+13):
+                data.loc[i, 'mm_announce'] = i%updated_len_df
 
-        for i in range(len(df), len(df)+130):
-            df.loc[i, 'clusters'] = i%len(df)
+            updated_len_df = len(data)
+            for i in range(len(data), len(data)+130):
+                data.loc[i, 'clusters'] = i%updated_len_df
+
+            return data
+
+        df = add_fictive_rows(data=df, len_df=len_df)
+
         df = df[df.rooms < 7]
 
         # Transform bool values to int
@@ -265,7 +253,7 @@ class MainPreprocessing():
         df.yyyy_announce = df.yyyy_announce.fillna(df.yyyy_announce.mode()[0])
         df.yyyy_announce = df.yyyy_announce.astype(int)
         return df
-        # df.loc[len(df)+8, 'rooms'] = ['inf' + [None] * len(list(df.shape[1])) - 1
+
 
 
     def clustering(self, data: pd.DataFrame(), path_kmeans_models: str):
@@ -286,11 +274,10 @@ class MainPreprocessing():
         return data
 
     # Transform some features (such as mm_announce, rooms, clusters) to dummies
-    def cat_to_dummies(self, data: pd.DataFrame):
+    def to_dummies(self, data: pd.DataFrame):
         df_mm_announce = pd.get_dummies(data, prefix='mm_announce_', columns=['mm_announce'])
         df_rooms = pd.get_dummies(data, prefix='rooms_', columns=['rooms'])
         df = pd.merge(df_mm_announce, df_rooms, how='left')
-
 
         df = df.dropna(subset=['full_sq'])
         print(df.columns, flush=True)
@@ -298,6 +285,22 @@ class MainPreprocessing():
         return df
 
     def train_price_model(self, data: pd.DataFrame):
+
+        df = data
+        data1 = df[(np.abs(stats.zscore(df.full_sq)) < 3)]
+        data2 = df[(np.abs(stats.zscore(df.life_sq)) < 3)]
+        data3 = df[(np.abs(stats.zscore(df.kitchen_sq)) < 3)]
+
+        # Merge data1 and data2
+        df = pd.merge(data1, data2, on=list(df.columns), how='left')
+        # Fill NaN if it appears after merging
+        df[['life_sq']] = df[['life_sq']].fillna(df[['life_sq']].mean())
+
+        # Merge df and data3
+        df = pd.merge(df, data3, on=list(df.columns), how='left')
+        # Fill NaN if it appears after merging
+        df[['kitchen_sq']] = df[['kitchen_sq']].fillna(df[['kitchen_sq']].mean())
+
         # Drop unnecessary columns
         df = data.drop(
             ['close_date_unix', 'open_date_unix', 'all_offers_added_in_month', 'clusters', 'price_meter_sq', 'latitude',
@@ -439,32 +442,32 @@ if __name__ == '__main__':
     print("Load data...", flush=True)
     df = mp.load_and_merge(raw_data=raw_data)
     df = df.iloc[:1000]
+
     # Generate new features
     print("Generate new features...", flush=True)
-
     features_data = mp.new_features(data=df, full_sq_corridor_percent=full_sq_corridor_percent,
                                     price_corridor_percent=price_corridor_percent, part_data=False)
 
-    # Create dummies variables
-    print("Transform to dummies...", flush=True)
-    cat_data = mp.cat_to_dummies(features_data)
-
     # Define clusters
     print("Defining clusters based on lon, lat...")
-    cl_data = mp.clustering(cat_data, path_kmeans_models=PATH_TO_CLUSTERING_MODELS)
+    cl_data = mp.clustering(features_data, path_kmeans_models=PATH_TO_CLUSTERING_MODELS)
+
+    # Create dummies variables
+    print("Transform to dummies...", flush=True)
+    cat_data = mp.to_dummies(cl_data)
 
 
     # Train price model
     print("Train price model...", flush=True)
-    price_model, list_columns = mp.train_price_model(data=cl_data)
+    price_model, list_columns = mp.train_price_model(data=cat_data)
 
     # Calculate profit for each flat
     print("Calculating profit for each offer in dataset...", flush=True)
-    test = mp.calculate_profit(data=cl_data, price_model=price_model, list_of_columns=list_columns)
+    test = mp.calculate_profit(data=cat_data, price_model=price_model, list_of_columns=list_columns)
 
     # Create separate files for secondary flats
     print("Save secondary flats csv.")
-    mp.secondary_flats(data=cl_data, path_to_save_data=PREPARED_DATA)
+    mp.secondary_flats(data=cat_data, path_to_save_data=PREPARED_DATA)
 
     # Create sepatare files for new flats
     print("Save new flats csv.")

@@ -223,8 +223,6 @@ class MainPreprocessing():
         df.loc[:, ['rent_quarter', 'rent_year']] = df[['rent_quarter', 'rent_year']].fillna(0)
         df.loc[:, 'is_rented'] = df[['is_rented']].fillna(1)
 
-
-
         def add_fictive_rows(data: pd.DataFrame()):
             # rooms = 1
             # for i in range(len(data), len(data)+6):
@@ -260,20 +258,22 @@ class MainPreprocessing():
         df1 = add_fictive_rows(data=df)
         print('shape fictive df: ', df1.shape, flush=True)
         print('shape MAIN df: ', df.shape, flush=True)
-        df  = pd.concat([df, df1], axis=0, ignore_index=True)
+        df = pd.concat([df, df1], axis=0, ignore_index=True)
         print('After concat: ', df.shape, flush=True)
-        df = df[df.rooms < 7]
+        print('NEW FEATURES #1: ', df.mm_announce.value_counts(), flush=True)
+        df['rooms'] = np.where(df['rooms'] > 6, 0, df['rooms'])
+
+        print('NEW FEATURES #2: ', df.mm_announce.value_counts(), flush=True)
 
         # Transform bool values to int
-        df.rooms = df.rooms.fillna(df.rooms.mode()[0])
+        # df.rooms = df.rooms.fillna(df.rooms.mode()[0])
         df.rooms = df.rooms.astype(int)
-        df.mm_announce = df.mm_announce.fillna(df.mm_announce.mode()[0])
+        # df.mm_announce = df.mm_announce.fillna(df.mm_announce.mode()[0])
         df.mm_announce = df.mm_announce.astype(int)
-        df.yyyy_announce = df.yyyy_announce.fillna(df.yyyy_announce.mode()[0])
+        # df.yyyy_announce = df.yyyy_announce.fillna(df.yyyy_announce.mode()[0])
         df.yyyy_announce = df.yyyy_announce.astype(int)
         print('NEW FEATURES: ', df.mm_announce.value_counts(), flush=True)
         return df
-
 
 
     def clustering(self, data: pd.DataFrame(), path_kmeans_models: str):

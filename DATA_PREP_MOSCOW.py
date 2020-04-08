@@ -223,11 +223,9 @@ class MainPreprocessing():
         df.loc[:, ['rent_quarter', 'rent_year']] = df[['rent_quarter', 'rent_year']].fillna(0)
         df.loc[:, 'is_rented'] = df[['is_rented']].fillna(1)
 
-        # Get lenght of all df
-        len_df = len(df)
 
 
-        def add_fictive_rows(data: pd.DataFrame(), len_df: int):
+        def add_fictive_rows(data: pd.DataFrame()):
             rooms = 1
             for i in range(len(data), len(data)+6):
                 data.loc[i, 'rooms'] = rooms
@@ -255,7 +253,7 @@ class MainPreprocessing():
                 cl += 1
             return data
 
-        df = add_fictive_rows(data=df, len_df=len_df)
+        df = add_fictive_rows(data=df)
 
         df = df[df.rooms < 7]
 

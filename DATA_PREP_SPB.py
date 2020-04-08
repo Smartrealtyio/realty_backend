@@ -223,10 +223,9 @@ class MainPreprocessing():
         df.loc[:, ['rent_quarter', 'rent_year']] = df[['rent_quarter', 'rent_year']].fillna(0)
         df.loc[:, 'is_rented'] = df[['is_rented']].fillna(1)
 
-        # Get lenght of all df
-        len_df = len(df)
 
-        def add_fictive_rows(data: pd.DataFrame(), len_df: int):
+
+        def add_fictive_rows(data: pd.DataFrame()):
 
             rooms = 1
             for i in range(len(data), len(data) + 6):
@@ -256,7 +255,7 @@ class MainPreprocessing():
             return data
 
 
-        df = add_fictive_rows(data=df, len_df=len_df)
+        df = add_fictive_rows(data=df)
 
         df = df[df.rooms < 7]
 
@@ -267,14 +266,15 @@ class MainPreprocessing():
         df.mm_announce = df.mm_announce.astype(int)
         df.yyyy_announce = df.yyyy_announce.fillna(df.yyyy_announce.mode()[0])
         df.yyyy_announce = df.yyyy_announce.astype(int)
+        print('NEW FEATURES: ', df.mm_announce.value_counts(), flush=True)
         return df
 
     def clustering(self, data: pd.DataFrame(), path_kmeans_models: str):
         # fit k-Means clustering on geo for SECONDARY flats
 
-        data.longitude= data.longitude.fillna(data.longitude.mode()[0])
-        data.latitude= data.latitude.fillna(data.latitude.mode()[0])
-        kmeans = KMeans(n_clusters=60, random_state=42).fit(data[['longitude', 'latitude']])
+        data.longitude = data.longitude.fillna(data.longitude.mode()[0])
+        data.latitude = data.latitude.fillna(data.latitude.mode()[0])
+        kmeans = KMeans(n_clusters=130, random_state=42).fit(data[['longitude', 'latitude']])
         dump(kmeans, path_kmeans_models + '/KMEANS_CLUSTERING_SPB_MAIN.joblib')
         labels = kmeans.labels_
         data['clusters'] = labels
@@ -284,6 +284,7 @@ class MainPreprocessing():
         # Create dummies from cluster
         df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])
         data = pd.merge(data, df_clusters, how='left')
+        print("AFTER CLUSTERING: ", list(data.columns), flush=True)
         return data
 
     # Transform some features (such as mm_announce, rooms, clusters) to dummies
@@ -296,7 +297,7 @@ class MainPreprocessing():
         df = pd.merge(df, df_year_announce, how='left')
 
         df = df.dropna(subset=['full_sq'])
-        print(df.columns, flush=True)
+        print("After dummies: ", list(df.columns), flush=True)
         print("After transform to dummies features: ", df.shape)
         return df
 
@@ -324,6 +325,8 @@ class MainPreprocessing():
         #      'building_type_str', 'max_floor', 'flat_type', 'resource_id', 'rooms',
         #      'building_id', 'closed', 'floor', 'term', 'updated_at', 'created_at',
         #      'flat_id', 'changed_date', 'yyyy_announce', 'mm_announce'], axis=1)
+
+        print("TRAIN PRICE: ", list(df.columns), flush=True)
 
         df = df[['price', 'full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
                  'renovation', 'has_elevator',
@@ -464,7 +467,7 @@ if __name__ == '__main__':
                                     price_corridor_percent=price_corridor_percent, part_data=False)
 
     # Define clusters
-    print("Defining clusters based on lon, lat...", flush=True)
+    print("Defining clusters based on lon, lat...")
     cl_data = mp.clustering(features_data, path_kmeans_models=PATH_TO_MODELS)
 
     # Create dummies variables
@@ -480,9 +483,9 @@ if __name__ == '__main__':
     test = mp.calculate_profit(data=cat_data, price_model=price_model, list_of_columns=list_columns)
 
     # Create separate files for secondary flats
-    print("Save secondary flats csv.", flush=True)
-    mp.secondary_flats(data=test, path_to_save_data=PREPARED_DATA)
+    print("Save secondary flats csv.")
+    mp.secondary_flats(data=cat_data, path_to_save_data=PREPARED_DATA)
 
     # Create sepatare files for new flats
-    print("Save new flats csv.", flush=True)
-    mp.new_flats(data=test, path_to_save_data=PREPARED_DATA)
+    print("Save new flats csv.")
+    mp.new_flats(data=cl_data, path_to_save_data=PREPARED_DATA)

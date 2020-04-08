@@ -35,8 +35,8 @@ class MainPreprocessing():
 
 
         # Count number of price changing for each unique flat and SORT changed_date for each subgroup (group consist of one flat)
-        prices['nums_of_changing'] = prices.sort_values(['changed_date'][-9:], ascending=True).groupby(['flat_id'])[
-            "flat_id"].transform("count")
+        # prices['nums_of_changing'] = prices.sort_values(['changed_date'][-9:], ascending=True).groupby(['flat_id'])[
+        #     "flat_id"].transform("count")
         # Group by falt_id and sort in ascending order for term counting
         # prices = prices.sort_values(['changed_date'][-9:],ascending=True).groupby('flat_id')
 
@@ -316,7 +316,7 @@ class MainPreprocessing():
             ['close_date_unix', 'open_date_unix', 'all_offers_added_in_month', 'clusters', 'price_meter_sq', 'latitude',
              'longitude',
              'building_type_str', 'max_floor', 'flat_type', 'resource_id', 'rooms',
-             'building_id', 'closed', 'floor', 'term', 'nums_of_changing', 'updated_at', 'created_at',
+             'building_id', 'closed', 'floor', 'term', 'updated_at', 'created_at',
              'flat_id', 'changed_date', 'yyyy_announce', 'mm_announce'], axis=1)
 
         # Save leaved columns to variable

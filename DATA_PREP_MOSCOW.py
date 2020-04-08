@@ -416,6 +416,15 @@ class MainPreprocessing():
 
         data = data[data.closed == True]
         print(list(data.dtypes), flush=True)
+        print(data[['full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
+                 'renovation', 'has_elevator',
+                 'time_to_metro', 'floor_first', 'floor_last',
+                 'is_rented', 'rent_quarter',
+                 'rent_year', 'to_center', 'was_opened', 'mm_announce__1']].head(2), flush=True)
+        print(data[['rooms__6', 'yyyy_announce__18',
+                 'yyyy_announce__19', 'yyyy_announce__20',
+                 'cluster__0']].head(2), flush=True)
+
         # data = data[list_of_columns]
         data['pred_price'] = data[['full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
                  'renovation', 'has_elevator',

@@ -269,7 +269,7 @@ class MainPreprocessing():
         df.mm_announce = df.mm_announce.astype(int)
         #df.yyyy_announce = df.yyyy_announce.fillna(df.yyyy_announce.mode()[0])
         df.yyyy_announce = df.yyyy_announce.astype(int)
-        
+
         return df
 
     def clustering(self, data: pd.DataFrame(), path_kmeans_models: str):
@@ -299,7 +299,7 @@ class MainPreprocessing():
         df_year_announce = pd.get_dummies(data=data, prefix='yyyy_announce_', columns=['yyyy_announce'])
         df = pd.merge(df, df_year_announce, how='left')
 
-        df = df.loc[:-60]
+        df.drop(df.tail(60).index,inplace=True)
         df = df.dropna(subset=['full_sq'])
 
         print("After transform to dummies features: ", df.shape, flush=True)

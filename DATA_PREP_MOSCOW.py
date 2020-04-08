@@ -303,7 +303,7 @@ class MainPreprocessing():
         df_year_announce = pd.get_dummies(data=data, prefix='yyyy_announce_', columns=['yyyy_announce'])
         df = pd.merge(df, df_year_announce, how='left')
 
-        df = df.loc[:-130]
+        df.drop(df.tail(130).index,inplace=True)
 
         df = df.dropna(subset=['full_sq'])
         print("After dummies: ", list(df.columns), flush=True)
@@ -417,7 +417,7 @@ class MainPreprocessing():
         data = data[data.closed == True]
         print(list(data.dtypes), flush=True)
         # data = data[list_of_columns]
-        data.loc[:, 'pred_price'] = data.apply(lambda row: int(np.expm1(price_model.predict(
+        data['pred_price'] = data.apply(lambda row: int(np.expm1(price_model.predict(
                 [[np.log1p(row.full_sq), np.log1p(row.kitchen_sq), np.log1p(row.life_sq), row.is_apartment,
                   row.renovation, row.has_elevator, row.time_to_metro, row.floor_first, row.floor_last,
                   row.is_rented, row.rent_quarter, row.rent_year, row.to_center, row.was_opened, row.mm_announce__1,

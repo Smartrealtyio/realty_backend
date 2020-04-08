@@ -394,7 +394,7 @@ class MainPreprocessing():
 
         data = data[data.closed == True]
         print(list(data.dtypes), flush=True)
-        data.loc[:, 'pred_price'] = data[list_of_columns].apply(
+        data['pred_price'] = data[list_of_columns].apply(
             lambda row:
             int(np.expm1(price_model.predict(
                 [[np.log1p(row.full_sq), np.log1p(row.kitchen_sq), np.log1p(row.life_sq), row.is_apartment,
@@ -420,11 +420,11 @@ class MainPreprocessing():
                   row.cluster__53, row.cluster__54, row.cluster__55,
                   row.cluster__56, row.cluster__57, row.cluster__58, row.cluster__59]]))), axis=1)
 
-        data.loc[:, 'profit'] = data[['pred_price', 'price']].apply(
+        data['profit'] = data[['pred_price', 'price']].apply(
             lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)
 
         # Handle negative profit values
-        data.loc[:, 'profit'] = data['profit'] + 1 - data['profit'].min()
+        data['profit'] = data['profit'] + 1 - data['profit'].min()
         print(data[['pred_price', 'price', 'profit', 'term', 'changed_date', 'updated_at']].head(2))
         return data
 

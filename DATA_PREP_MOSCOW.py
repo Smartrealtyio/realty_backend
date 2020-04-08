@@ -417,7 +417,47 @@ class MainPreprocessing():
         data = data[data.closed == True]
         print(list(data.dtypes), flush=True)
         # data = data[list_of_columns]
-        data['pred_price'] = data.apply(lambda row: int(np.expm1(price_model.predict(
+        data['pred_price'] = data[['full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
+                 'renovation', 'has_elevator',
+                 'time_to_metro', 'floor_first', 'floor_last',
+                 'is_rented', 'rent_quarter',
+                 'rent_year', 'to_center', 'was_opened', 'mm_announce__1',
+                 'mm_announce__2', 'mm_announce__3', 'mm_announce__4',
+                 'mm_announce__5', 'mm_announce__6', 'mm_announce__7', 'mm_announce__8', 'mm_announce__9',
+                 'mm_announce__10', 'mm_announce__11', 'mm_announce__12', 'rooms__0',
+                 'rooms__1', 'rooms__2', 'rooms__3', 'rooms__4', 'rooms__5', 'rooms__6', 'yyyy_announce__18',
+                 'yyyy_announce__19', 'yyyy_announce__20',
+                 'cluster__0', 'cluster__1',
+                 'cluster__2', 'cluster__3', 'cluster__4', 'cluster__5', 'cluster__6', 'cluster__7', 'cluster__8',
+                 'cluster__9', 'cluster__10', 'cluster__11',
+                 'cluster__11', 'cluster__12', 'cluster__13', 'cluster__14', 'cluster__15', 'cluster__16',
+                 'cluster__17', 'cluster__18', 'cluster__19',
+                 'cluster__20', 'cluster__21', 'cluster__22', 'cluster__23', 'cluster__24',
+                 'cluster__25', 'cluster__26', 'cluster__27', 'cluster__28', 'cluster__29', 'cluster__30',
+                 'cluster__31', 'cluster__32',
+                 'cluster__33', 'cluster__34', 'cluster__35', 'cluster__36', 'cluster__37', 'cluster__38',
+                 'cluster__39', 'cluster__40',
+                 'cluster__41', 'cluster__42', 'cluster__43', 'cluster__44', 'cluster__45', 'cluster__46',
+                 'cluster__47', 'cluster__48', 'cluster__49', 'cluster__50', 'cluster__51', 'cluster__52',
+                 'cluster__53', 'cluster__54', 'cluster__55',
+                 'cluster__56', 'cluster__57', 'cluster__58', 'cluster__59', 'cluster__60', 'cluster__61',
+                 'cluster__62', 'cluster__63', 'cluster__64', 'cluster__65', 'cluster__66', 'cluster__67',
+                 'cluster__68', 'cluster__69',
+                 'cluster__70', 'cluster__71', 'cluster__72', 'cluster__73', 'cluster__74', 'cluster__75',
+                 'cluster__76', 'cluster__77',
+                 'cluster__78', 'cluster__79', 'cluster__80', 'cluster__81', 'cluster__82', 'cluster__83',
+                 'cluster__84',
+                 'cluster__85', 'cluster__86', 'cluster__87', 'cluster__88', 'cluster__89', 'cluster__90',
+                 'cluster__91', 'cluster__92',
+                 'cluster__93', 'cluster__94', 'cluster__95', 'cluster__96', 'cluster__97', 'cluster__98',
+                 'cluster__99', 'cluster__100', 'cluster__101', 'cluster__102', 'cluster__103',
+                 'cluster__104', 'cluster__105', 'cluster__106',
+                 'cluster__107', 'cluster__108', 'cluster__109', 'cluster__110', 'cluster__111',
+                 'cluster__112', 'cluster__113', 'cluster__114',
+                 'cluster__115', 'cluster__116', 'cluster__117', 'cluster__119', 'cluster__120',
+                 'cluster__121', 'cluster__122',
+                 'cluster__123', 'cluster__124', 'cluster__125', 'cluster__126', 'cluster__127',
+                 'cluster__128', 'cluster__129']].apply(lambda row: int(np.expm1(price_model.predict(
                 [[np.log1p(row.full_sq), np.log1p(row.kitchen_sq), np.log1p(row.life_sq), row.is_apartment,
                   row.renovation, row.has_elevator, row.time_to_metro, row.floor_first, row.floor_last,
                   row.is_rented, row.rent_quarter, row.rent_year, row.to_center, row.was_opened, row.mm_announce__1,
@@ -458,11 +498,11 @@ class MainPreprocessing():
                   row.cluster__123, row.cluster__124, row.cluster__125, row.cluster__126, row.cluster__127,
                   row.cluster__128, row.cluster__129]]))[0]), axis=1)
 
-        data.loc[:, 'profit'] = data[['pred_price', 'price']].apply(
+        data['profit'] = data[['pred_price', 'price']].apply(
             lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)
 
         # Handle negative profit values
-        data.loc[:, 'profit'] = data['profit'] + 1 - data['profit'].min()
+        data['profit'] = data['profit'] + 1 - data['profit'].min()
         print(data[['pred_price', 'price', 'profit', 'term', 'changed_date', 'updated_at']].head(2))
         return data
 

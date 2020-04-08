@@ -401,25 +401,18 @@ class MainPreprocessing():
         # price_model = load('/content/drive/My Drive/DDG/developers/models/MOSCOW_VTOR_PRICE_GBR.joblib')
 
         data = data[data.closed == True]
-        # print(list(data.columns), flush=True)
-        matching = [s for s in list(data.columns) if any(xs in s for xs in 'mm_announce__')]
-        print(matching, flush=True)
-        data.loc[:, 'pred_price'] = data[list_of_columns].apply(
-            lambda row:
-            int(np.expm1(price_model.predict(
+        data.loc[:, 'pred_price'] = data[list_of_columns].apply(lambda row: int(np.expm1(price_model.predict(
                 [[np.log1p(row.full_sq), np.log1p(row.kitchen_sq), np.log1p(row.life_sq), row.is_apartment,
-                  row.renovation, row.has_elevator,
-                  row.time_to_metro, row.floor_first, row.floor_last,
-                  row.is_rented, row.rent_quarter,
-                  row.rent_year, row.to_center, row.was_opened, row.mm_announce__1,
-                  row.mm_announce__2, row.mm_announce__3, row.mm_announce__4,
-                  row.mm_announce__5, row.mm_announce__6, row.mm_announce__7, row.mm_announce__8, row.mm_announce__9,
+                  row.renovation, row.has_elevator, row.time_to_metro, row.floor_first, row.floor_last,
+                  row.is_rented, row.rent_quarter, row.rent_year, row.to_center, row.was_opened, row.mm_announce__1,
+                  row.mm_announce__2, row.mm_announce__3, row.mm_announce__4, row.mm_announce__5, row.mm_announce__6,
+                  row.mm_announce__7, row.mm_announce__8, row.mm_announce__9,
                   row.mm_announce__10, row.mm_announce__11, row.mm_announce__12, row.rooms__0,
-                  row.rooms__1, row.rooms__2,
-                  row.rooms__3, row.rooms__4, row.rooms__5, row.rooms__6, row.yyyy_announce__18, row.yyyy_announce__19, row.yyyy_announce__20,
-                  row.cluster__0, row.cluster__1,
-                  row.cluster__2, row.cluster__3, row.cluster__4, row.cluster__5, row.cluster__6, row.cluster__7, row.cluster__8,
-                  row.cluster__9, row.cluster__10, row.cluster__11,
+                  row.rooms__1, row.rooms__2, row.rooms__3, row.rooms__4, row.rooms__5, row.rooms__6,
+                  row.yyyy_announce__18, row.yyyy_announce__19, row.yyyy_announce__20,
+                  row.cluster__0, row.cluster__1, row.cluster__2, row.cluster__3, row.cluster__4, row.cluster__5,
+                  row.cluster__6, row.cluster__7,
+                  row.cluster__8, row.cluster__9, row.cluster__10, row.cluster__11,
                   row.cluster__11, row.cluster__12, row.cluster__13, row.cluster__14, row.cluster__15, row.cluster__16,
                   row.cluster__17, row.cluster__18, row.cluster__19,
                   row.cluster__20, row.cluster__21, row.cluster__22, row.cluster__23, row.cluster__24,
@@ -428,9 +421,8 @@ class MainPreprocessing():
                   row.cluster__33, row.cluster__34, row.cluster__35, row.cluster__36, row.cluster__37, row.cluster__38,
                   row.cluster__39, row.cluster__40,
                   row.cluster__41, row.cluster__42, row.cluster__43, row.cluster__44, row.cluster__45, row.cluster__46,
-                  row.cluster__47,
-                  row.cluster__48, row.cluster__49, row.cluster__50, row.cluster__51, row.cluster__52, row.cluster__53,
-                  row.cluster__54, row.cluster__55,
+                  row.cluster__47, row.cluster__48, row.cluster__49, row.cluster__50, row.cluster__51, row.cluster__52,
+                  row.cluster__53, row.cluster__54, row.cluster__55,
                   row.cluster__56, row.cluster__57, row.cluster__58, row.cluster__59, row.cluster__60, row.cluster__61,
                   row.cluster__62, row.cluster__63, row.cluster__64, row.cluster__65, row.cluster__66, row.cluster__67,
                   row.cluster__68, row.cluster__69,

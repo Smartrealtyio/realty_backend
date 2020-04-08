@@ -478,8 +478,8 @@ if __name__ == '__main__':
 
     # Create separate files for secondary flats
     print("Save secondary flats csv.", flush=True)
-    mp.secondary_flats(data=cat_data, path_to_save_data=PREPARED_DATA)
+    mp.secondary_flats(data=test, path_to_save_data=PREPARED_DATA)
 
     # Create sepatare files for new flats
     print("Save new flats csv.", flush=True)
-    mp.new_flats(data=cl_data, path_to_save_data=PREPARED_DATA)
+    mp.new_flats(data=test, path_to_save_data=PREPARED_DATA)

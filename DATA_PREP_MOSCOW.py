@@ -266,8 +266,8 @@ class MainPreprocessing():
     def clustering(self, data: pd.DataFrame(), path_kmeans_models: str):
         # fit k-Means clustering on geo for SECONDARY flats
 
-        data.longitude= data.longitude.fillna(data.longitude.mode()[0])
-        data.latitude= data.latitude.fillna(data.latitude.mode()[0])
+        data.longitude = data.longitude.fillna(data.longitude.mode()[0])
+        data.latitude = data.latitude.fillna(data.latitude.mode()[0])
         kmeans = KMeans(n_clusters=130, random_state=42).fit(data[['longitude', 'latitude']])
         dump(kmeans, path_kmeans_models + '/KMEANS_CLUSTERING_MOSCOW_MAIN.joblib')
         labels = kmeans.labels_
@@ -290,7 +290,7 @@ class MainPreprocessing():
         df = pd.merge(df, df_year_announce, how='left')
 
         df = df.dropna(subset=['full_sq'])
-        print(df.columns, flush=True)
+        print("After dummies: ", list(df.columns), flush=True)
         print("After transform to dummies features: ", df.shape)
         return df
 
@@ -319,8 +319,9 @@ class MainPreprocessing():
         #      'building_id', 'closed', 'floor', 'term', 'updated_at', 'created_at',
         #      'flat_id', 'changed_date', 'yyyy_announce', 'mm_announce'], axis=1)
 
-        matching = [s for s in list(df.columns) if any(xs in s for xs in 'mm_announce__')]
-        print(matching, flush=True)
+        print("TRAIN PRICE: ", list(df.columns), flush=True)
+        # matching = [s for s in list(df.columns) if any(xs in s for xs in 'mm_announce__')]
+        # print(matching, flush=True)
         df = df[['price', 'full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
                  'renovation', 'has_elevator',
                  'time_to_metro', 'floor_first', 'floor_last',

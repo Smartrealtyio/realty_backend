@@ -317,7 +317,7 @@ class MainPreprocessing():
              'longitude',
              'building_type_str', 'max_floor', 'flat_type', 'resource_id', 'rooms',
              'building_id', 'closed', 'floor', 'term', 'nums_of_changing', 'updated_at', 'created_at',
-             'flat_id', 'changed_date', 'yyyy_announce'], axis=1)
+             'flat_id', 'changed_date', 'yyyy_announce', 'mm_announce'], axis=1)
 
         # Save leaved columns to variable
         columns = list(df.columns)
@@ -368,7 +368,7 @@ class MainPreprocessing():
                   row.rent_year, row.to_center, row.yyyy_announce__18, row.yyyy_announce__19, row.yyyy_announce__20, row.was_opened, row.mm_announce__1,
                   row.mm_announce__2, row.mm_announce__3, row.mm_announce__4,
                   row.mm_announce__5, row.mm_announce__6, row.mm_announce__7, row.mm_announce__8, row.mm_announce__9,
-                  row.mm_announce__10, row.mm_announce__11, row.mm_announce__12, row.mm_announce, row.rooms__0,
+                  row.mm_announce__10, row.mm_announce__11, row.mm_announce__12, row.rooms__0,
                   row.rooms__1, row.rooms__2,
                   row.rooms__3, row.rooms__4, row.rooms__5, row.rooms__6,
                   row.cluster__0, row.cluster__1,

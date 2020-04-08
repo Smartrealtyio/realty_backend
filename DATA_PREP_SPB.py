@@ -393,6 +393,7 @@ class MainPreprocessing():
     def calculate_profit(self, data: pd.DataFrame, price_model: GradientBoostingRegressor, list_of_columns: list):
 
         data = data[data.closed == True]
+        print(list(data.dtypes), flush=True)
         data.loc[:, 'pred_price'] = data[list_of_columns].apply(
             lambda row:
             int(np.expm1(price_model.predict(
@@ -417,7 +418,7 @@ class MainPreprocessing():
                   row.cluster__41, row.cluster__42, row.cluster__43, row.cluster__44, row.cluster__45, row.cluster__46,
                   row.cluster__47, row.cluster__48, row.cluster__49, row.cluster__50, row.cluster__51, row.cluster__52,
                   row.cluster__53, row.cluster__54, row.cluster__55,
-                  row.cluster__56, row.cluster__57, row.cluster__58, row.cluster__59]]))[0]), axis=1)
+                  row.cluster__56, row.cluster__57, row.cluster__58, row.cluster__59]]))), axis=1)
 
         data.loc[:, 'profit'] = data[['pred_price', 'price']].apply(
             lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)

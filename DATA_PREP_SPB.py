@@ -263,13 +263,14 @@ class MainPreprocessing():
         print('NEW FEATURES #1: ', df.mm_announce.value_counts(), flush=True)
         df = df[df.rooms < 7]
 
+        print('NEW FEATURES #2: ', df.mm_announce.value_counts(), flush=True)
 
         # Transform bool values to int
-        df.rooms = df.rooms.fillna(df.rooms.mode()[0])
+        #df.rooms = df.rooms.fillna(df.rooms.mode()[0])
         df.rooms = df.rooms.astype(int)
-        df.mm_announce = df.mm_announce.fillna(df.mm_announce.mode()[0])
+        #df.mm_announce = df.mm_announce.fillna(df.mm_announce.mode()[0])
         df.mm_announce = df.mm_announce.astype(int)
-        df.yyyy_announce = df.yyyy_announce.fillna(df.yyyy_announce.mode()[0])
+        #df.yyyy_announce = df.yyyy_announce.fillna(df.yyyy_announce.mode()[0])
         df.yyyy_announce = df.yyyy_announce.astype(int)
         print('NEW FEATURES: ', df.mm_announce.value_counts(), flush=True)
         return df

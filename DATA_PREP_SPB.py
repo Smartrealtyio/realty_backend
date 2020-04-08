@@ -223,41 +223,44 @@ class MainPreprocessing():
         df.loc[:, ['rent_quarter', 'rent_year']] = df[['rent_quarter', 'rent_year']].fillna(0)
         df.loc[:, 'is_rented'] = df[['is_rented']].fillna(1)
 
+        def add_fictive_rows(data: pd.DataFrame()):
+            # rooms = 1
+            # for i in range(len(data), len(data)+6):
+            #     data.loc[i, 'rooms'] = rooms
+            #     rooms += 1
+            #
+            # updated_len_df = len(data)
+            #
+            # mm = 1
+            # for i in range(updated_len_df, updated_len_df+12):
+            #     data.loc[i, 'mm_announce'] = mm
+            #     mm+=1
+            #
+            # updated_len_df = len(data)
+            #
+            # yy = 18
+            # for i in range(updated_len_df, updated_len_df + 3):
+            #     data.loc[i, 'yyyy_announce'] = yy
+            #     yy += 1
+            #
+            # updated_len_df = len(data)
+            #
+            # cl = 0
+            # for i in range(updated_len_df, updated_len_df+129):
+            #     data.loc[i, 'clusters'] = cl
+            #     cl += 1
+            data_cols = list(data.columns)
+            fict_data = {}
+            for i in data_cols:
+                fict_data[i] = [j for j in range(130)]
+            return pd.DataFrame(fict_data)
 
-
-        def add_fictive_rows(df: pd.DataFrame()):
-
-            data = df
-
-            rooms = 1
-            for i in range(len(data), len(data) + 6):
-                data.loc[i, 'rooms'] = rooms
-                rooms += 1
-
-            updated_len_df = len(data)
-
-            mm = 1
-            for i in range(updated_len_df, updated_len_df + 12):
-                data.loc[i, 'mm_announce'] = mm
-                mm += 1
-
-            updated_len_df = len(data)
-
-            yy = 18
-            for i in range(updated_len_df, updated_len_df + 3):
-                data.loc[i, 'yyyy_announce'] = yy
-                yy += 1
-
-            updated_len_df = len(data)
-
-            cl = 0
-            for i in range(updated_len_df, updated_len_df + 59):
-                data.loc[i, 'clusters'] = cl
-                cl += 1
-            return data
-
-
-        df = add_fictive_rows(df = df)
+        df1 = add_fictive_rows(data=df)
+        print('shape fictive df: ', df1.shape, flush=True)
+        print('shape MAIN df: ', df.shape, flush=True)
+        df = pd.concat([df, df1], axis=0, ignore_index=True)
+        print('After concat: ', df.shape, flush=True)
+        df = df[df.rooms < 7]
 
         df = df[df.rooms < 7]
 

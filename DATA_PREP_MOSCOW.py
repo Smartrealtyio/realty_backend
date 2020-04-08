@@ -316,8 +316,6 @@ class MainPreprocessing():
         # 			 'rent_year']]
 
         # Log transformation
-        # df["longitude"] = np.log1p(df["longitude"])
-        # df["latitude"] = np.log1p(df["latitude"])
         df["full_sq"] = np.log1p(df["full_sq"])
         df["life_sq"] = np.log1p(df["life_sq"])
         df["kitchen_sq"] = np.log1p(df["kitchen_sq"])
@@ -364,7 +362,7 @@ class MainPreprocessing():
                   row.rooms__1, row.rooms__2,
                   row.rooms__3, row.rooms__4, row.rooms__5, row.rooms__6,
                   row.cluster__0, row.cluster__1,
-                  row.cluster__2, row.cluster__3, row.cluster__4, row.cluster__5, row.cluster__6, row.cluster__8,
+                  row.cluster__2, row.cluster__3, row.cluster__4, row.cluster__5, row.cluster__6, row.cluster__7, row.cluster__8,
                   row.cluster__9, row.cluster__10, row.cluster__11,
                   row.cluster__11, row.cluster__12, row.cluster__13, row.cluster__14, row.cluster__15, row.cluster__16,
                   row.cluster__17, row.cluster__18, row.cluster__19,

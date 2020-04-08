@@ -327,10 +327,10 @@ class MainPreprocessing():
                   'mm_announce__2', 'mm_announce__3', 'mm_announce__4',
                   'mm_announce__5', 'mm_announce__6', 'mm_announce__7', 'mm_announce__8', 'mm_announce__9',
                   'mm_announce__10', 'mm_announce__11', 'mm_announce__12', 'rooms__0',
-                  'rooms__1', 'rooms__2', 'rooms__3', 'rooms__4'', rooms__5', 'rooms__6', 'yyyy_announce__18',
+                  'rooms__1', 'rooms__2', 'rooms__3', 'rooms__4', 'rooms__5', 'rooms__6', 'yyyy_announce__18',
                   'yyyy_announce__19', 'yyyy_announce__20',
                   'cluster__0', 'cluster__1',
-                  'cluster__2,' 'cluster__3,' 'cluster__4', 'cluster__5', 'cluster__6', 'cluster__7', 'cluster__8',
+                  'cluster__2', 'cluster__3', 'cluster__4', 'cluster__5', 'cluster__6', 'cluster__7', 'cluster__8',
                   'cluster__9', 'cluster__10', 'cluster__11',
                   'cluster__11', 'cluster__12', 'cluster__13', 'cluster__14', 'cluster__15', 'cluster__16',
                   'cluster__17', 'cluster__18', 'cluster__19',
@@ -506,7 +506,6 @@ if __name__ == '__main__':
     # Create dummies variables
     print("Transform to dummies...", flush=True)
     cat_data = mp.to_dummies(cl_data)
-
 
     # Train price model
     print("Train price model...", flush=True)

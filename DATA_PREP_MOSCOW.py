@@ -319,6 +319,8 @@ class MainPreprocessing():
         #      'building_id', 'closed', 'floor', 'term', 'updated_at', 'created_at',
         #      'flat_id', 'changed_date', 'yyyy_announce', 'mm_announce'], axis=1)
 
+        matching = [s for s in list(df.columns) if any(xs in s for xs in 'mm_announce__')]
+        print(matching, flush=True)
         df = df[['full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
                   'renovation', 'has_elevator',
                   'time_to_metro', 'floor_first', 'floor_last',

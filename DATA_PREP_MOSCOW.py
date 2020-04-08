@@ -303,6 +303,8 @@ class MainPreprocessing():
         df_year_announce = pd.get_dummies(data=data, prefix='yyyy_announce_', columns=['yyyy_announce'])
         df = pd.merge(df, df_year_announce, how='left')
 
+        df = df.loc[:-130]
+
         df = df.dropna(subset=['full_sq'])
         print("After dummies: ", list(df.columns), flush=True)
         print("After transform to dummies features: ", df.shape)

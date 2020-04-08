@@ -256,14 +256,11 @@ class MainPreprocessing():
             return pd.DataFrame(fict_data)
 
         df1 = add_fictive_rows(data=df)
-        print('shape fictive df: ', df1.shape, flush=True)
-        print('shape MAIN df: ', df.shape, flush=True)
+
         df = pd.concat([df, df1], axis=0, ignore_index=True)
-        print('After concat: ', df.shape, flush=True)
-        print('NEW FEATURES #1: ', df.mm_announce.value_counts(), flush=True)
+
         df['rooms'] = np.where(df['rooms'] >6, 0, df['rooms'])
 
-        print('NEW FEATURES #2: ', df.mm_announce.value_counts(), flush=True)
 
         # Transform bool values to int
         #df.rooms = df.rooms.fillna(df.rooms.mode()[0])
@@ -302,6 +299,7 @@ class MainPreprocessing():
         df_year_announce = pd.get_dummies(data=data, prefix='yyyy_announce_', columns=['yyyy_announce'])
         df = pd.merge(df, df_year_announce, how='left')
 
+        df = df.loc[:-60]
         df = df.dropna(subset=['full_sq'])
         print("After dummies: ", list(df.columns), flush=True)
         print("After transform to dummies features: ", df.shape)

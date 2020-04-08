@@ -302,7 +302,6 @@ class MainPreprocessing():
         df.drop(df.tail(60).index,inplace=True)
         df = df.dropna(subset=['full_sq'])
 
-        print("After transform to dummies features: ", df.shape, flush=True)
         return df
 
     def train_price_model(self, data: pd.DataFrame):
@@ -393,7 +392,7 @@ class MainPreprocessing():
     def calculate_profit(self, data: pd.DataFrame, price_model: GradientBoostingRegressor, list_of_columns: list):
 
         data = data[data.closed == True]
-        print(list(data.dtypes), flush=True)
+
 
 
         data['pred_price'] = data[['full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
@@ -449,7 +448,6 @@ class MainPreprocessing():
 
         # Handle negative profit values
         data['profit'] = data['profit'] + 1 - data['profit'].min()
-        print(data[['pred_price', 'price', 'profit', 'term', 'changed_date', 'updated_at']].head(2))
         return data
 
     def secondary_flats(self, data: pd.DataFrame(), path_to_save_data: str):
@@ -488,7 +486,7 @@ if __name__ == '__main__':
     print('_'*10, "SPB", "_"*10)
     print("Load data...", flush=True)
     df = mp.load_and_merge(raw_data=RAW_DATA)
-    df = df.iloc[:1000]
+    # df = df.iloc[:1000]
 
     # Generate new features
     print("Generate new features...", flush=True)

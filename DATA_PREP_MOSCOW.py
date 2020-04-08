@@ -256,14 +256,12 @@ class MainPreprocessing():
             return pd.DataFrame(fict_data)
 
         df1 = add_fictive_rows(data=df)
-        print('shape fictive df: ', df1.shape, flush=True)
-        print('shape MAIN df: ', df.shape, flush=True)
+
         df = pd.concat([df, df1], axis=0, ignore_index=True)
-        print('After concat: ', df.shape, flush=True)
-        print('NEW FEATURES #1: ', df.mm_announce.value_counts(), flush=True)
+
         df['rooms'] = np.where(df['rooms'] > 6, 0, df['rooms'])
 
-        print('NEW FEATURES #2: ', df.mm_announce.value_counts(), flush=True)
+
 
         # Transform bool values to int
         # df.rooms = df.rooms.fillna(df.rooms.mode()[0])
@@ -272,7 +270,7 @@ class MainPreprocessing():
         df.mm_announce = df.mm_announce.astype(int)
         # df.yyyy_announce = df.yyyy_announce.fillna(df.yyyy_announce.mode()[0])
         df.yyyy_announce = df.yyyy_announce.astype(int)
-        print('NEW FEATURES: ', df.mm_announce.value_counts(), flush=True)
+
         return df
 
 
@@ -291,7 +289,7 @@ class MainPreprocessing():
         # Create dummies from cluster
         df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])
         data = pd.merge(data, df_clusters, how='left')
-        print("AFTER CLUSTERING: ", list(data.columns), flush=True)
+
         return data
 
     # Transform some features (such as mm_announce, rooms, clusters) to dummies
@@ -306,8 +304,7 @@ class MainPreprocessing():
         df.drop(df.tail(130).index,inplace=True)
 
         df = df.dropna(subset=['full_sq'])
-        print("After dummies: ", list(df.columns), flush=True)
-        print("After transform to dummies features: ", df.shape)
+
         return df
 
     def train_price_model(self, data: pd.DataFrame):
@@ -335,7 +332,7 @@ class MainPreprocessing():
         #      'building_id', 'closed', 'floor', 'term', 'updated_at', 'created_at',
         #      'flat_id', 'changed_date', 'yyyy_announce', 'mm_announce'], axis=1)
 
-        print("TRAIN PRICE: ", list(df.columns), flush=True)
+
         # matching = [s for s in list(df.columns) if any(xs in s for xs in 'mm_announce__')]
         # print(matching, flush=True)
         df = df[['price', 'full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
@@ -414,15 +411,7 @@ class MainPreprocessing():
         # price_model = load('/content/drive/My Drive/DDG/developers/models/MOSCOW_VTOR_PRICE_GBR.joblib')
 
         data = data[data.closed == True]
-        print(list(data.dtypes), flush=True)
-        print(data[['full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
-                 'renovation', 'has_elevator',
-                 'time_to_metro', 'floor_first', 'floor_last',
-                 'is_rented', 'rent_quarter',
-                 'rent_year', 'to_center', 'was_opened', 'mm_announce__1']].head(2), flush=True)
-        print(data[['rooms__6', 'yyyy_announce__18',
-                 'yyyy_announce__19', 'yyyy_announce__20',
-                 'cluster__0']].head(2), flush=True)
+
 
         # data = data[list_of_columns]
         data['pred_price'] = data[['full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
@@ -510,7 +499,7 @@ class MainPreprocessing():
 
         # Handle negative profit values
         data['profit'] = data['profit'] + 1 - data['profit'].min()
-        print(data[['pred_price', 'price', 'profit', 'term', 'changed_date', 'updated_at']].head(2))
+
         return data
 
 
@@ -552,7 +541,7 @@ if __name__ == '__main__':
     print('_' * 10, "MOSCOW", "_" * 10)
     print("Load data...", flush=True)
     df = mp.load_and_merge(raw_data=RAW_DATA)
-    df = df.iloc[:1000]
+    # df = df.iloc[:1000]
 
     # Generate new features
     print("Generate new features...", flush=True)

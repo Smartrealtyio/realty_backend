@@ -12,10 +12,11 @@ from scipy import stats
 import time, ciso8601
 from sklearn.cluster import KMeans
 import math as m
+import datetime
 np.random.seed(42)
 
 # Define paths
-raw_data = SETTINGS.PATH_TO_SINGLE_CSV_FILES_MOSCOW
+RAW_DATA = SETTINGS.PATH_TO_SINGLE_CSV_FILES_MOSCOW
 PREPARED_DATA = SETTINGS.DATA_MOSCOW
 PATH_TO_CLUSTERING_MODELS = SETTINGS.MODEL_MOSCOW
 
@@ -139,7 +140,7 @@ class MainPreprocessing():
         df.is_rented = df.is_rented.fillna(True)
         df.is_rented = df.is_rented.astype(int)
 
-        df.rooms = df.rooms.fillna(0)
+        # df.rooms = df.rooms.fillna(0)
         df = df.fillna(0)
 
 
@@ -187,6 +188,7 @@ class MainPreprocessing():
 
 
     def new_features(self, data: pd.DataFrame(), full_sq_corridor_percent: float, price_corridor_percent: float, part_data: int):
+        now = datetime.datetime.now()
         df = data
         # No 1. Distance from city center
         Moscow_center_lon = 37.619291
@@ -194,7 +196,7 @@ class MainPreprocessing():
         df['to_center'] = abs(Moscow_center_lon - df['longitude']) + abs(Moscow_center_lat - df['latitude'])
 
         # No 2. Fictive(for futher offer value calculating): yyyy_announc, mm_announc - year and month when flats were announced on market
-        df['yyyy_announce'] = df['changed_date'].str[:4].astype('int64')
+        df['yyyy_announce'] = df['changed_date'].str[2:4].astype('int64')
         df['mm_announce'] = df['changed_date'].str[5:7].astype('int64')
 
         # No 3. Number of offers were added calculating by months and years
@@ -236,8 +238,13 @@ class MainPreprocessing():
                 data.loc[i, 'mm_announce'] = i%updated_len_df
 
             updated_len_df = len(data)
-            for i in range(len(data), len(data)+130):
-                data.loc[i, 'clusters'] = i%updated_len_df
+
+            for i in range(len(data) + 18, len(data) + now.year-2000):
+                data.loc[i, 'yyyy_announce'] = i % updated_len_df
+
+            # updated_len_df = len(data)
+            # for i in range(len(data), len(data)+130):
+            #     data.loc[i, 'clusters'] = i%updated_len_df
 
             return data
 
@@ -279,6 +286,9 @@ class MainPreprocessing():
         df_rooms = pd.get_dummies(data, prefix='rooms_', columns=['rooms'])
         df = pd.merge(df_mm_announce, df_rooms, how='left')
 
+        df_year_announce = pd.get_dummies(data=data, prefix='yyyy_announce_', columns=['yyyy_announce'])
+        df = pd.merge(df, df_year_announce, how='left')
+
         df = df.dropna(subset=['full_sq'])
         print(df.columns, flush=True)
         print("After transform to dummies features: ", df.shape)
@@ -307,7 +317,7 @@ class MainPreprocessing():
              'longitude',
              'building_type_str', 'max_floor', 'flat_type', 'resource_id', 'rooms',
              'building_id', 'closed', 'floor', 'term', 'nums_of_changing', 'updated_at', 'created_at',
-             'flat_id', 'changed_date'], axis=1)
+             'flat_id', 'changed_date', 'yyyy_announce'], axis=1)
 
         # Save leaved columns to variable
         columns = list(df.columns)
@@ -355,7 +365,7 @@ class MainPreprocessing():
                   row.renovation, row.has_elevator,
                   row.time_to_metro, row.floor_first, row.floor_last,
                   row.is_rented, row.rent_quarter,
-                  row.rent_year, row.to_center, row.yyyy_announce, row.was_opened, row.mm_announce__1,
+                  row.rent_year, row.to_center, row.yyyy_announce__18, row.yyyy_announce__19, row.yyyy_announce__20, row.was_opened, row.mm_announce__1,
                   row.mm_announce__2, row.mm_announce__3, row.mm_announce__4,
                   row.mm_announce__5, row.mm_announce__6, row.mm_announce__7, row.mm_announce__8, row.mm_announce__9,
                   row.mm_announce__10, row.mm_announce__11, row.mm_announce__12, row.mm_announce, row.rooms__0,
@@ -396,6 +406,7 @@ class MainPreprocessing():
 
         data.loc[:, 'profit'] = data[['pred_price', 'price']].apply(
             lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)
+
         # Handle negative profit values
         data.loc[:, 'profit'] = data['profit'] + 1 - data['profit'].min()
         print(data[['pred_price', 'price', 'profit', 'term', 'changed_date', 'updated_at']].head(2))
@@ -437,8 +448,9 @@ if __name__ == '__main__':
     mp = MainPreprocessing()
 
     # Load data
+    print('_' * 10, "MOSCOW", "_" * 10)
     print("Load data...", flush=True)
-    df = mp.load_and_merge(raw_data=raw_data)
+    df = mp.load_and_merge(raw_data=RAW_DATA)
     df = df.iloc[:1000]
 
     # Generate new features

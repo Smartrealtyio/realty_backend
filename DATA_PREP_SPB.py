@@ -228,23 +228,33 @@ class MainPreprocessing():
 
         def add_fictive_rows(data: pd.DataFrame(), len_df: int):
 
-            for i in range(len(data), len(data) + 8):
-                data.loc[i, 'rooms'] = i % len_df
+            rooms = 1
+            for i in range(len(data), len(data) + 6):
+                data.loc[i, 'rooms'] = rooms
+                rooms += 1
 
             updated_len_df = len(data)
-            for i in range(updated_len_df + 1, updated_len_df + 13):
-                data.loc[i, 'mm_announce'] = i % updated_len_df
+
+            mm = 1
+            for i in range(updated_len_df, updated_len_df + 12):
+                data.loc[i, 'mm_announce'] = mm
+                mm += 1
 
             updated_len_df = len(data)
 
-            for i in range(updated_len_df + 18, updated_len_df + now.year - 2000 + 1):
-                data.loc[i, 'yyyy_announce'] = i % updated_len_df
+            yy = 18
+            for i in range(updated_len_df, updated_len_df + 3):
+                data.loc[i, 'yyyy_announce'] = yy
+                yy += 1
 
             updated_len_df = len(data)
-            for i in range(updated_len_df, updated_len_df + 60):
-                data.loc[i, 'clusters'] = i % updated_len_df
 
+            cl = 0
+            for i in range(updated_len_df, updated_len_df + 59):
+                data.loc[i, 'clusters'] = cl
+                cl += 1
             return data
+
 
         df = add_fictive_rows(data=df, len_df=len_df)
 

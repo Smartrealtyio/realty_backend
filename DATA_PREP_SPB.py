@@ -252,7 +252,7 @@ class MainPreprocessing():
             data_cols = list(data.columns)
             fict_data = {}
             for i in data_cols:
-                fict_data[i] = [j for j in range(130)]
+                fict_data[i] = [j for j in range(60)]
             return pd.DataFrame(fict_data)
 
         df1 = add_fictive_rows(data=df)
@@ -260,9 +260,9 @@ class MainPreprocessing():
         print('shape MAIN df: ', df.shape, flush=True)
         df = pd.concat([df, df1], axis=0, ignore_index=True)
         print('After concat: ', df.shape, flush=True)
+        print('NEW FEATURES #1: ', df.mm_announce.value_counts(), flush=True)
         df = df[df.rooms < 7]
 
-        df = df[df.rooms < 7]
 
         # Transform bool values to int
         df.rooms = df.rooms.fillna(df.rooms.mode()[0])

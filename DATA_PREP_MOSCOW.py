@@ -401,6 +401,7 @@ class MainPreprocessing():
         # price_model = load('/content/drive/My Drive/DDG/developers/models/MOSCOW_VTOR_PRICE_GBR.joblib')
 
         data = data[data.closed == True]
+        print(data.dtypes, flush=True)
         data.loc[:, 'pred_price'] = data[list_of_columns].apply(lambda row: int(np.expm1(price_model.predict(
                 [[np.log1p(row.full_sq), np.log1p(row.kitchen_sq), np.log1p(row.life_sq), row.is_apartment,
                   row.renovation, row.has_elevator, row.time_to_metro, row.floor_first, row.floor_last,

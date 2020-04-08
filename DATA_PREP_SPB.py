@@ -344,7 +344,7 @@ class MainPreprocessing():
                  'yyyy_announce__19', 'yyyy_announce__20',
                  'cluster__0', 'cluster__1',
                  'cluster__2', 'cluster__3', 'cluster__4', 'cluster__5', 'cluster__6', 'cluster__7', 'cluster__8',
-                 'cluster__9', 'cluster__10', 'cluster__11',
+                 'cluster__9', 'cluster__10',
                  'cluster__11', 'cluster__12', 'cluster__13', 'cluster__14', 'cluster__15', 'cluster__16',
                  'cluster__17', 'cluster__18', 'cluster__19',
                  'cluster__20', 'cluster__21', 'cluster__22', 'cluster__23', 'cluster__24',

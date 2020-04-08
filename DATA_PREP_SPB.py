@@ -320,7 +320,7 @@ class MainPreprocessing():
             ['close_date_unix', 'open_date_unix', 'all_offers_added_in_month', 'clusters', 'price_meter_sq', 'latitude',
              'longitude',
              'building_type_str', 'max_floor', 'flat_type', 'resource_id', 'rooms',
-             'building_id', 'closed', 'floor', 'term', 'nums_of_changing', 'updated_at', 'created_at',
+             'building_id', 'closed', 'floor', 'term', 'updated_at', 'created_at',
              'flat_id', 'changed_date', 'yyyy_announce'], axis=1)
 
         # Save leaved columns to variable

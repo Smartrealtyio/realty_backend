@@ -261,7 +261,7 @@ class MainPreprocessing():
         df = pd.concat([df, df1], axis=0, ignore_index=True)
         print('After concat: ', df.shape, flush=True)
         print('NEW FEATURES #1: ', df.mm_announce.value_counts(), flush=True)
-        df = df[df.rooms < 7]
+        # df = df[df.rooms < 7]
 
         print('NEW FEATURES #2: ', df.mm_announce.value_counts(), flush=True)
 

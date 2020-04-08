@@ -225,7 +225,9 @@ class MainPreprocessing():
 
 
 
-        def add_fictive_rows(data: pd.DataFrame()):
+        def add_fictive_rows(df: pd.DataFrame()):
+
+            data = df
 
             rooms = 1
             for i in range(len(data), len(data) + 6):
@@ -255,7 +257,7 @@ class MainPreprocessing():
             return data
 
 
-        df = add_fictive_rows(data=df)
+        df = add_fictive_rows(df = df)
 
         df = df[df.rooms < 7]
 
@@ -484,8 +486,8 @@ if __name__ == '__main__':
 
     # Create separate files for secondary flats
     print("Save secondary flats csv.")
-    mp.secondary_flats(data=cat_data, path_to_save_data=PREPARED_DATA)
+    mp.secondary_flats(data=test, path_to_save_data=PREPARED_DATA)
 
     # Create sepatare files for new flats
     print("Save new flats csv.")
-    mp.new_flats(data=cl_data, path_to_save_data=PREPARED_DATA)
+    mp.new_flats(data=test, path_to_save_data=PREPARED_DATA)

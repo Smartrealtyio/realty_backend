@@ -316,18 +316,41 @@ class MainPreprocessing():
         df[['kitchen_sq']] = df[['kitchen_sq']].fillna(df[['kitchen_sq']].mean())
 
         # Drop unnecessary columns
-        df = data.drop(
-            ['close_date_unix', 'open_date_unix', 'all_offers_added_in_month', 'clusters', 'price_meter_sq', 'latitude',
-             'longitude',
-             'building_type_str', 'max_floor', 'flat_type', 'resource_id', 'rooms',
-             'building_id', 'closed', 'floor', 'term', 'updated_at', 'created_at',
-             'flat_id', 'changed_date', 'yyyy_announce', 'mm_announce'], axis=1)
+        # df = data.drop(
+        #     ['close_date_unix', 'open_date_unix', 'all_offers_added_in_month', 'clusters', 'price_meter_sq', 'latitude',
+        #      'longitude',
+        #      'building_type_str', 'max_floor', 'flat_type', 'resource_id', 'rooms',
+        #      'building_id', 'closed', 'floor', 'term', 'updated_at', 'created_at',
+        #      'flat_id', 'changed_date', 'yyyy_announce', 'mm_announce'], axis=1)
+
+        df = df[['full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
+                 'renovation', 'has_elevator',
+                 'time_to_metro', 'floor_first', 'floor_last',
+                 'is_rented', 'rent_quarter',
+                 'rent_year', 'to_center', 'was_opened', 'mm_announce__1',
+                 'mm_announce__2', 'mm_announce__3', 'mm_announce__4',
+                 'mm_announce__5', 'mm_announce__6', 'mm_announce__7', 'mm_announce__8', 'mm_announce__9',
+                 'mm_announce__10', 'mm_announce__11', 'mm_announce__12', 'rooms__0',
+                 'rooms__1', 'rooms__2', 'rooms__3', 'rooms__4'', rooms__5', 'rooms__6', 'yyyy_announce__18',
+                 'yyyy_announce__19', 'yyyy_announce__20',
+                 'cluster__0', 'cluster__1',
+                 'cluster__2,' 'cluster__3,' 'cluster__4', 'cluster__5', 'cluster__6', 'cluster__7', 'cluster__8',
+                 'cluster__9', 'cluster__10', 'cluster__11',
+                 'cluster__11', 'cluster__12', 'cluster__13', 'cluster__14', 'cluster__15', 'cluster__16',
+                 'cluster__17', 'cluster__18', 'cluster__19',
+                 'cluster__20', 'cluster__21', 'cluster__22', 'cluster__23', 'cluster__24',
+                 'cluster__25', 'cluster__26', 'cluster__27', 'cluster__28', 'cluster__29', 'cluster__30',
+                 'cluster__31', 'cluster__32',
+                 'cluster__33', 'cluster__34', 'cluster__35', 'cluster__36', 'cluster__37', 'cluster__38',
+                 'cluster__39', 'cluster__40',
+                 'cluster__41', 'cluster__42', 'cluster__43', 'cluster__44', 'cluster__45', 'cluster__46',
+                 'cluster__47', 'cluster__48', 'cluster__49', 'cluster__50', 'cluster__51', 'cluster__52',
+                 'cluster__53', 'cluster__54', 'cluster__55',
+                 'cluster__56', 'cluster__57', 'cluster__58', 'cluster__59']]
 
         # Save leaved columns to variable
         columns = list(df.columns)
-        # df = df[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-        # 			 'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'price', 'is_rented', 'rent_quarter',
-        # 			 'rent_year']]
+
 
         # Log transformation
         df["full_sq"] = np.log1p(df["full_sq"])

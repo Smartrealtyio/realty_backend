@@ -263,8 +263,8 @@ class MainPreprocessing():
         df['rooms'] = np.where(df['rooms'] > 6, 0, df['rooms'])
         df['mm_announce'] = np.where(((0 >= df['mm_announce']) & (df['mm_announce'] > 12)), 0,
                                      df['mm_announce'])
-        df['yyy_announce'] = np.where(((17 >= df['yyy_announce']) & (df['yyy_announce'] > 20)), 0,
-                                      df['yyy_announce'])
+        df['yyy_announce'] = np.where(((17 >= df['yyyy_announce']) & (df['yyyy_announce'] > 20)), 0,
+                                      df['yyyy_announce'])
 
 
         # Transform bool values to int

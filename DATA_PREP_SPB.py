@@ -261,9 +261,9 @@ class MainPreprocessing():
         df = pd.concat([df, df1], axis=0, ignore_index=True)
 
         df['rooms'] = np.where(df['rooms'] > 6, 0, df['rooms'])
-        df['mm_announce'] = np.where(((0 >= df['mm_announce']) & (df['mm_announce'] > 12)).all(axis=1), 0,
+        df['mm_announce'] = np.where(((0 >= df['mm_announce']) & (df['mm_announce'] > 12)), 0,
                                      df['mm_announce'])
-        df['yyy_announce'] = np.where(((17 >= df['yyy_announce']) & (df['yyy_announce'] > 20)).all(axis=1), 0,
+        df['yyy_announce'] = np.where(((17 >= df['yyy_announce']) & (df['yyy_announce'] > 20)), 0,
                                       df['yyy_announce'])
 
 

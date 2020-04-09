@@ -543,7 +543,7 @@ if __name__ == '__main__':
     print('_' * 10, "MOSCOW", "_" * 10)
     print("Load data...", flush=True)
     df = mp.load_and_merge(raw_data=RAW_DATA)
-    # df = df.iloc[:1000]
+    df = df.iloc[:1000]
 
     # Generate new features
     print("Generate new features...", flush=True)

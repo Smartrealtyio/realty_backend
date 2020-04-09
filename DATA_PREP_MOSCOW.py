@@ -20,7 +20,7 @@ RAW_DATA = SETTINGS.PATH_TO_SINGLE_CSV_FILES_MOSCOW
 PREPARED_DATA = SETTINGS.DATA_MOSCOW
 PATH_TO_CLUSTERING_MODELS = SETTINGS.MODEL_MOSCOW
 
-
+# TODO: calculate profit absolutely for all offers
 
 class MainPreprocessing():
     """Create class for data preprocessing"""
@@ -260,6 +260,8 @@ class MainPreprocessing():
         df = pd.concat([df, df1], axis=0, ignore_index=True)
 
         df['rooms'] = np.where(df['rooms'] > 6, 0, df['rooms'])
+        df['mm_announce'] = np.where(0 >= df['mm_announce'] > 12, 0, df['mm_announce'])
+        df['yyyy_announce'] = np.where(17 >= df['yyyy_announce'] > 20, 0, df['yyyy_announce'])
 
 
 

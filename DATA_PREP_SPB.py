@@ -17,6 +17,7 @@ RAW_DATA = SETTINGS.PATH_TO_SINGLE_CSV_FILES_SPB
 PREPARED_DATA = SETTINGS.DATA_SPB
 PATH_TO_MODELS = SETTINGS.MODEL_SPB
 
+# TODO: calculate profit absolutely for all offers
 class MainPreprocessing():
     """Create class for data preprocessing"""
     def __init__(self):
@@ -259,7 +260,9 @@ class MainPreprocessing():
 
         df = pd.concat([df, df1], axis=0, ignore_index=True)
 
-        df['rooms'] = np.where(df['rooms'] >6, 0, df['rooms'])
+        df['rooms'] = np.where(df['rooms'] > 6, 0, df['rooms'])
+        df['mm_announce'] = np.where(0 >= df['mm_announce'] > 12, 0, df['mm_announce'])
+        df['yyyy_announce'] = np.where(17 >= df['yyyy_announce'] > 20, 0, df['yyyy_announce'])
 
 
         # Transform bool values to int

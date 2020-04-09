@@ -82,7 +82,7 @@ def Model_Secondary(data: pd.DataFrame):
     # LGBM model
     lgbm_model = LGBMRegressor(objective='regression',
                                learning_rate=0.1,
-                               n_estimators=1250, max_depth=6, min_child_samples=1, verbose=1)
+                               n_estimators=1250, max_depth=6, min_child_samples=1, verbose=0)
     # lgbm_model.fit(X_train, y_train)
     # lgbm_preds = lgbm_model.predict(X_test)
     # print('The accuracy of the lgbm Regressor is', r2_score(y_test, lgbm_preds), flush=True)

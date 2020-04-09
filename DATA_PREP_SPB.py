@@ -261,9 +261,9 @@ class MainPreprocessing():
         df = pd.concat([df, df1], axis=0, ignore_index=True)
 
         df['rooms'] = np.where(df['rooms'] > 6, 0, df['rooms'])
-        df['mm_announce'] = np.where(((0 >= df['mm_announce']) & (df['mm_announce'] > 12)), 0,
+        df['mm_announce'] = np.where(((0 >= df['mm_announce']) | (df['mm_announce'] > 12)), 1,
                                      df['mm_announce'])
-        df['yyy_announce'] = np.where(((17 >= df['yyyy_announce']) & (df['yyyy_announce'] > 20)), 0,
+        df['yyyy_announce'] = np.where(((17 >= df['yyyy_announce']) | (df['yyyy_announce'] > 20)), 19,
                                       df['yyyy_announce'])
 
 
@@ -282,7 +282,7 @@ class MainPreprocessing():
 
         data.longitude = data.longitude.fillna(data.longitude.mode()[0])
         data.latitude = data.latitude.fillna(data.latitude.mode()[0])
-        kmeans = KMeans(n_clusters=130, random_state=42).fit(data[['longitude', 'latitude']])
+        kmeans = KMeans(n_clusters=60, random_state=42).fit(data[['longitude', 'latitude']])
         dump(kmeans, path_kmeans_models + '/KMEANS_CLUSTERING_SPB_MAIN.joblib')
         labels = kmeans.labels_
         data['clusters'] = labels
@@ -334,7 +334,6 @@ class MainPreprocessing():
         #      'building_id', 'closed', 'floor', 'term', 'updated_at', 'created_at',
         #      'flat_id', 'changed_date', 'yyyy_announce', 'mm_announce'], axis=1)
 
-        print("TRAIN PRICE: ", list(df.columns), flush=True)
 
         df = df[['price', 'full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
                  'renovation', 'has_elevator',
@@ -460,7 +459,7 @@ class MainPreprocessing():
         df_VTOR = data[(data.flat_type == 'SECONDARY')]
 
         # Save .csv with SECONDARY flats
-
+        print('Saving SECONDARY flats to csv', df_VTOR.shape[0], flush=True)
         df_VTOR.to_csv(path_to_save_data + '/SPB_VTOR.csv', index=None, header=True)
 
     def new_flats(self, data: pd.DataFrame(), path_to_save_data: str):
@@ -475,7 +474,7 @@ class MainPreprocessing():
         # df_new_flats['clusters'] = labels
 
         # Save .csv with NEW flats
-
+        print('Saving NEW flats to csv', df_new_flats.shape[0], flush=True)
         df_new_flats.to_csv(path_to_save_data + '/SPB_NEW_FLATS.csv', index=None, header=True)
 
 
@@ -515,9 +514,7 @@ if __name__ == '__main__':
     test = mp.calculate_profit(data=cat_data, price_model=price_model, list_of_columns=list_columns)
 
     # Create separate files for secondary flats
-    print("Save secondary flats csv.")
     mp.secondary_flats(data=test, path_to_save_data=PREPARED_DATA)
 
     # Create sepatare files for new flats
-    print("Save new flats csv.")
     mp.new_flats(data=test, path_to_save_data=PREPARED_DATA)

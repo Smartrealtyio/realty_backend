@@ -261,10 +261,10 @@ class MainPreprocessing():
 
         df['rooms'] = np.where(df['rooms'] > 6, 0, df['rooms'])
 
-
-        df['mm_announce'] = np.where(((0 >= df['mm_announce']) & (df['mm_announce'] > 12)), 0, df['mm_announce'])
-        df['yyy_announce'] = np.where(((17 >= df['yyyy_announce']) & (df['yyyy_announce'] > 20)), 0,
-                                     df['yyyy_announce'])
+        df['mm_announce'] = np.where(((0 >= df['mm_announce']) | (df['mm_announce'] > 12)), 1,
+                                     df['mm_announce'])
+        df['yyyy_announce'] = np.where(((17 >= df['yyyy_announce']) | (df['yyyy_announce'] > 20)), 19,
+                                       df['yyyy_announce'])
 
         # Transform bool values to int
         # df.rooms = df.rooms.fillna(df.rooms.mode()[0])
@@ -512,7 +512,7 @@ class MainPreprocessing():
 
 
         # Save .csv with SECONDARY flats
-        print('Saving secondary to csv', df_VTOR.shape[0], flush=True)
+        print('Saving SECONDARY flats to csv', df_VTOR.shape[0], flush=True)
         df_VTOR.to_csv(path_to_save_data + '/MOSCOW_VTOR.csv', index=None, header=True)
 
 
@@ -528,7 +528,7 @@ class MainPreprocessing():
         # df_new_flats['clusters'] = labels
 
         # Save .csv with NEW flats
-        print('Saving new to csv', df_new_flats.shape[0], flush=True)
+        print('Saving NEW flats to csv', df_new_flats.shape[0], flush=True)
         df_new_flats.to_csv(path_to_save_data + '/MOSCOW_NEW_FLATS.csv', index=None, header=True)
 
 
@@ -545,19 +545,23 @@ if __name__ == '__main__':
     print("Load data...", flush=True)
     df = mp.load_and_merge(raw_data=RAW_DATA)
     df = df.iloc[:1000]
+    print('Data shape after loading and slicing: {0}'.format(df.shape))
 
     # Generate new features
     print("Generate new features...", flush=True)
     features_data = mp.new_features(data=df, full_sq_corridor_percent=full_sq_corridor_percent,
                                     price_corridor_percent=price_corridor_percent, part_data=False)
+    print('Data shape after new features: {0}'.format(features_data.shape))
 
     # Define clusters
     print("Defining clusters based on lon, lat...")
     cl_data = mp.clustering(features_data, path_kmeans_models=PATH_TO_CLUSTERING_MODELS)
+    print('Data shape after clustering: {0}'.format(cl_data.shape))
 
     # Create dummies variables
     print("Transform to dummies...", flush=True)
     cat_data = mp.to_dummies(cl_data)
+    print('Data shape after dummies: {0}'.format(cat_data.shape))
 
     # Train price model
     print("Train price model...", flush=True)
@@ -568,10 +572,8 @@ if __name__ == '__main__':
     test = mp.calculate_profit(data=cat_data, price_model=price_model, list_of_columns=list_columns)
 
     # Create separate files for secondary flats
-    print("Save secondary flats csv.")
     mp.secondary_flats(data=test, path_to_save_data=PREPARED_DATA)
 
     # Create sepatare files for new flats
-    print("Save new flats csv.")
     mp.new_flats(data=test, path_to_save_data=PREPARED_DATA)
 

@@ -445,7 +445,7 @@ def map():
         list_of_parameters[14+month] = 1
         list_of_parameters[27 + rooms] = 1
         list_of_parameters[36] = 1
-        list_of_parameters[37 + current_cluster] = 1
+        list_of_parameters[37 + int(current_cluster)] = 1
 
         term_model = 0
 
@@ -679,7 +679,7 @@ def map():
         list_of_parameters[14+month] = 1
         list_of_parameters[27 + rooms] = 1
         list_of_parameters[36] = 1
-        list_of_parameters[37 + current_cluster] = 1
+        list_of_parameters[37 + int(current_cluster)] = 1
 
         term_model = 0
 

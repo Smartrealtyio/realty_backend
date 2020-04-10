@@ -329,7 +329,7 @@ def map():
     def calculate_price(gbr_model: GradientBoostingRegressor, rf_model: RandomForestRegressor, lgbm_model: LGBMRegressor, secondary: int):
         gbr_predicted_price, lgbm_pedicted_price, rf_predicted_price = 0, 0, 0
         # New
-        if secondary == secondary:
+        if secondary == 0:
             gbr_predicted_price = np.expm1(gbr_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                                    np.log1p(full_sq),
                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
@@ -346,7 +346,7 @@ def map():
             print("Lgbm predicted price NOT secondary: ", lgbm_pedicted_price, flush=True)
 
         # Predict Price using gbr, rf, lgmb if secondary
-        elif secondary == secondary:
+        elif secondary == 1:
             gbr_predicted_price = np.expm1(gbr_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                                    np.log1p(full_sq), np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
             print("Gbr predicted price secondary: ", gbr_predicted_price, flush=True)

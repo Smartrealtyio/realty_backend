@@ -8,6 +8,7 @@ import psycopg2
 import settings_local as SETTINGS
 from sklearn.linear_model import LinearRegression
 from sklearn.cluster import KMeans
+import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import IsolationForest
@@ -24,9 +25,8 @@ import statistics
 import numpy as np
 import math
 
-# TODO: ! pip install ciso8601
 
-
+# Define paths to Moscow and Spb Secondary flats models OLD
 PATH_PRICE_GBR_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_GBR.joblib'
 PATH_PRICE_RF_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_RF.joblib'
 PATH_PRICE_LGBM_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_LGBM.joblib'
@@ -34,12 +34,47 @@ PATH_PRICE_GBR_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
 PATH_PRICE_RF_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF.joblib'
 PATH_PRICE_LGBM_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM.joblib'
 
+# Define paths to Moscow and Spb New flats models OLD
 PATH_PRICE_GBR_MOSCOW_NEW = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_GBR.joblib'
 PATH_PRICE_RF_MOSCOW_NEW = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_RF.joblib'
 PATH_PRICE_LGBM_MOSCOW_NEW = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_LGBM.joblib'
 PATH_PRICE_GBR_SPB_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_GBR.joblib'
 PATH_PRICE_RF_SPB_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_RF.joblib'
 PATH_PRICE_LGBM_SPB_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_LGBM.joblib'
+
+# Define paths to Moscow and Spb Secondary flats models DUMMIES
+PATH_PRICE_GBR_MOSCOW_VTOR_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_GBR_D.joblib'
+PATH_PRICE_RF_MOSCOW_VTOR_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_RF_D.joblib'
+PATH_PRICE_LGBM_MOSCOW_VTOR_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_LGBM_D.joblib'
+PATH_PRICE_GBR_SPB_VTOR_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR_D.joblib'
+PATH_PRICE_RF_SPB_VTOR_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF_D.joblib'
+PATH_PRICE_LGBM_SPB_VTOR_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM_D.joblib'
+
+# Define paths to Moscow and Spb New flats models DUMMIES
+PATH_PRICE_GBR_MOSCOW_NEW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_GBR_D.joblib'
+PATH_PRICE_RF_MOSCOW_NEW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_RF_D.joblib'
+PATH_PRICE_LGBM_MOSCOW_NEW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_LGBM_D.joblib'
+PATH_PRICE_GBR_SPB_NEW_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_GBR_D.joblib'
+PATH_PRICE_RF_SPB_NEW_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_RF_D.joblib'
+PATH_PRICE_LGBM_SPB_NEW_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_LGBM_D.joblib'
+
+# Define paths to Moscow and Spb term models DUMMIES
+PATH_TO_TERM_MODEL_GBR_msc_NEW_D = SETTINGS.MODEL_MOSCOW+ '/TermModel_Moscow_NEW_GBR_D.joblib'
+PATH_TO_TERM_MODEL_GBR_msc_Secondary_D = SETTINGS.MODEL_MOSCOW+ '/TermModel_Moscow_Secondary_GBR_D.joblib'
+PATH_TO_TERM_MODEL_GBR_spb_NEW_D = SETTINGS.MODEL_SPB + '/TermModel_SPB_NEW_GBR_D.joblib'
+PATH_TO_TERM_MODEL_GBR_spb_Secondary_D = SETTINGS.MODEL_SPB + '/TermModel_SPB_Secondary_GBR_D.joblib'
+
+# Define paths to Moscow and Spb clustering models
+KMEANS_CLUSTERING_MOSCOW_MAIN = SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_MAIN.joblib'
+KMEANS_CLUSTERING_SPB_MAIN = SETTINGS.MODEL_SPB + 'KMEAN_CLUSTERING_SPB_MAIN.joblib'
+
+# Define paths to Moscow and Spb data
+MOSCOW_DATA_NEW = SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv'
+MOSCOW_DATA_SECONDARY = SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv'
+SPB_DATA_NEW = SETTINGS.DATA_SPB + '/SPB_NEW_FLATS.csv'
+SPB_DATA_SECONDARY = SETTINGS.DATA_SPB + '/SPB_VTOR.csv'
+
+
 app = Flask(__name__)
 
 
@@ -78,7 +113,7 @@ def mean():
 
     # Set paths to data and price prediction models, depending on city:  0 = Moscow, 1 = Spb
     if city_id == 0:
-        data_offers = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW.csv')
+        data_offers = pd.read_csv(MOSCOW_DATA_SECONDARY)
         data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
         gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
         rf = load(PATH_PRICE_RF_MOSCOW_VTOR)
@@ -212,17 +247,20 @@ def map():
 
     print("Params: City id: {0}, is secondary: {1}".format(city_id, secondary), flush=True)
 
-    # 0 = Moscow, 1 = Spb
-    # Москва новостройки
+    # Get current time
+    now = datetime.datetime.now()
+
+    # City_id: 0 = Moscow, 1 = Spb
+
     def define_city_and_flat_type(city_id: int, secondary: int):
         data = pd.DataFrame()
         kmeans, gbr, rf, lgbm = 0, 0, 0 ,0
         if city_id == 0 and secondary ==0:
             # Load data Moscow New flats
-            data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv')
+            data = pd.read_csv(MOSCOW_DATA_NEW)
 
             # Load KMean Clustering model
-            kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_NEW_FLAT.joblib')
+            kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
 
             # Load Price Models Moscow Secondary
             gbr = load(PATH_PRICE_GBR_MOSCOW_NEW)
@@ -232,10 +270,10 @@ def map():
         # Москва вторичка
         elif city_id == 0 and secondary == 1:
             # Load data Moscow secondary
-            data = pd.read_csv(SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv')
+            data = pd.read_csv(MOSCOW_DATA_SECONDARY)
 
             # Load KMean Clustering model
-            kmeans = load(SETTINGS.MODEL_MOSCOW + '/KMEAN_CLUSTERING_MOSCOW_VTOR.joblib')
+            kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
 
             # Load Price Models Moscow Secondary
             gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
@@ -245,10 +283,10 @@ def map():
         # Санкт-Петербург новостройки
         elif city_id == 1 and secondary == 0:
             # Load data SPb New Flats
-            data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB_NEW_FLATS.csv')
+            data = pd.read_csv(SPB_DATA_NEW)
 
             # Load KMean Clustering model
-            kmeans = load(SETTINGS.MODEL_SPB + 'KMEAN_CLUSTERING_NEW_FLAT_SPB.joblib')
+            kmeans = load(KMEANS_CLUSTERING_SPB_MAIN)
 
             # Load Price Models Spb Secondary
             gbr = load(PATH_PRICE_GBR_SPB_NEW)
@@ -257,9 +295,9 @@ def map():
 
         # Санкт-Петербург вторичка
         elif city_id == 1 and secondary == 1:
-            data = pd.read_csv(SETTINGS.DATA_SPB + '/SPB_VTOR.csv')
+            data = pd.read_csv(SPB_DATA_SECONDARY)
             # Load KMean Clustering model
-            kmeans = load(SETTINGS.MODEL_SPB + '/KMEAN_CLUSTERING_SPB_VTOR.joblib')
+            kmeans = load(KMEANS_CLUSTERING_SPB_MAIN)
 
             # Load Price Models Spb Secondary
             gbr = load(PATH_PRICE_GBR_SPB_VTOR)
@@ -290,6 +328,7 @@ def map():
     # Predict Price using gbr, rf, lgmb if not secondary
     def calculate_price(gbr_model: GradientBoostingRegressor, rf_model: RandomForestRegressor, lgbm_model: LGBMRegressor, secondary: int):
         gbr_predicted_price, lgbm_pedicted_price, rf_predicted_price = 0, 0, 0
+        # New
         if secondary == 0:
             gbr_predicted_price = np.expm1(gbr_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                                    np.log1p(full_sq),
@@ -338,164 +377,90 @@ def map():
     #                  #
     ####################
 
-    def prepare_data_for_term_model(data: pd.DataFrame()):
+    # Term SPB
+    def calculate_term_spb(type: int):
 
-        df = data
+        # Calculate necessary parameters
+        # 1. Distance to_center
+        SPB_center_lon = 30.315768
+        SPB_center_lat = 59.938976
+        to_center = abs(SPB_center_lon - longitude) + abs(SPB_center_lat - latitude)
 
-        # Remove price and term outliers (out of 3 sigmas)
-        data1 = df[(np.abs(stats.zscore(df.full_sq)) < 3)]
-        data2 = df[(np.abs(stats.zscore(df.life_sq)) < 3)]
-        data3 = df[(np.abs(stats.zscore(df.kitchen_sq)) < 3)]
+        #2
+        is_apartment = 1
 
-        # Merge data1 and data2
-        df = pd.merge(data1, data2, on=list(df.columns), how='left')
-        # Fill NaN if it appears after merging
-        df[['life_sq']] = df[['life_sq']].fillna(df[['life_sq']].mean())
+        #3
+        month = now.month
 
-        # Merge df and data3
-        df = pd.merge(df, data3, on=list(df.columns), how='left')
-
-        # Fill NaN if it appears after merging
-        df[['kitchen_sq']] = df[['kitchen_sq']].fillna(df[['kitchen_sq']].mean())
-
-        # No 1. Distance from city center
-        Moscow_center_lon = 37.619291
-        Moscow_center_lat = 55.751474
-        df['to_center'] = abs(Moscow_center_lon - df['longitude']) + abs(Moscow_center_lat - df['latitude'])
-
-        # No 2. Fictive(for futher offer value calculating): yyyy_announc, mm_announc - year and month when flats were announced on market
-        df['yyyy_announce'] = df['changed_date'].str[:4].astype('int64')
-        df['mm_announce'] = df['changed_date'].str[5:7].astype('int64')
-
-        # No 3. Number of offers were added calculating by months and years
-        df['all_offers_added_in_month'] = df.groupby(['yyyy_announce', 'mm_announce'])["flat_id"].transform("count")
-
-        # No 4. Convert changed_date and updated_at to unix timestamp. Convert only yyyy-mm-dd hh
-        df['open_date_unix'] = df['changed_date'].apply(
-            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple())))
-        df['close_date_unix'] = df['updated_at'].apply(
-            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple())))
-
-        # Take just part of data
-        df = df.iloc[:len(df) // part_data]
-        # Calculate number of "similar" flats which were on market when each closed offer was closed.
-        df['was_opened'] = [np.sum((df['open_date_unix'] < close_time) & (df['close_date_unix'] >= close_time) &
-                                   (df['rooms'] == rooms) &
-                                   ((df['full_sq'] <= full_sq * (1 + full_sq_corridor_percent / 100)) & (
-                                           df['full_sq'] >= full_sq * (1 - full_sq_corridor_percent / 100))) &
-                                   ((df['price'] <= price * (1 + price_corridor_percent / 100)) & (
-                                           df['price'] >= price * (1 - price_corridor_percent / 100)))) for
-                            close_time, rooms, full_sq, price in
-                            zip(df['close_date_unix'], df['rooms'], df['full_sq'], df['price'])]
-
-        # Fill missed valeus for secondary flats
-        df.loc[:, ['rent_quarter', 'rent_year']] = df[['rent_quarter', 'rent_year']].fillna(0)
-        df.loc[:, 'is_rented'] = df[['is_rented']].fillna(1)
-
-        # Checkpoint
-        if checkpoint_save:
-            df.to_csv(checkpoint, index=None, header=True)
-        return df
-
-        # Transform some features (such as mm_announce, rooms, clusters) to dummies
-
-    def cat_to_dummies(self, data: pd.DataFrame):
-        df_mm_announce = pd.get_dummies(data, prefix='mm_announce_', columns=['mm_announce'])
-        df_rooms = pd.get_dummies(data, prefix='rooms_', columns=['rooms'])
-        df_clusters = pd.get_dummies(data, prefix='cluster_', columns=['clusters'])
-        df = pd.merge(df_mm_announce, df_rooms, how='left')
-        df = pd.merge(df, df_clusters, how='right')
-        print("After transform to dummies features: ", df.shape)
-        return df
+        #4
+        profit = 100
 
 
-
-    # Create subsample of flats from same cluster (from same "geographical" district)
-    df_for_current_label = data[data.clusters == current_cluster[0]]
-
-    # Check if subsample size have more than 3 samples
-    if df_for_current_label.shape[0] < 3:
-        answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1})
-        return answ
-
-    # Create SUB Classes KMeans clustering based on size of subsample
-    n = int(sqrt(df_for_current_label.shape[0]))
-    kmeans_sub = KMeans(n_clusters=n, random_state=42).fit(df_for_current_label[['full_sq', 'life_sq', 'kitchen_sq', 'time_to_metro', 'longitude', 'latitude', 'renovation']])#, 'nums_of_changing']])
-
-    # Set new column equals to new SUBclusters values
-    labels = kmeans_sub.labels_
-    df_for_current_label['SUB_cluster'] = labels
-
-    SUB_cluster = kmeans_sub.predict([[full_sq, life_sq, kitchen_sq, time_to_metro, longitude, latitude, renovation]])
-    # print(df_for_current_label.SUB_cluster.unique(), flush=True)
-
-
-    df_for_current_label = df_for_current_label[df_for_current_label.SUB_cluster == SUB_cluster[0]]
-
-    if len(df_for_current_label) < 2: 
-        df_for_current_label = data[data.clusters == current_cluster[0]]
-
-    # Create new feature: number of flats in each SUBcluster
-    # df_for_current_label['num_of_flats_in_SUB_cluster'] = df_for_current_label.groupby(['SUB_cluster'])["SUB_cluster"].transform("count")
+        [mm_announce__1,
+                  mm_announce__2, mm_announce__3, mm_announce__4, mm_announce__5, mm_announce__6,
+                  mm_announce__7, mm_announce__8, mm_announce__9,
+                  mm_announce__10, mm_announce__11, mm_announce__12, rooms__0,
+                  rooms__1, rooms__2, rooms__3, rooms__4, rooms__5, rooms__6,
+                  yyyy_announce__18, yyyy_announce__19, yyyy_announce__20,
+                  cluster__0, cluster__1, cluster__2, cluster__3, cluster__4, cluster__5,
+                  cluster__6, cluster__7,
+                  cluster__8, cluster__9, cluster__10,
+                  cluster__11, cluster__12, cluster__13, cluster__14, cluster__15, cluster__16,
+                  cluster__17, cluster__18, cluster__19,
+                  cluster__20, cluster__21, cluster__22, cluster__23, cluster__24,
+                  cluster__25, cluster__26, cluster__27, cluster__28, cluster__29, cluster__30,
+                  cluster__31, cluster__32,
+                  cluster__33, cluster__34, cluster__35, cluster__36, cluster__37, cluster__38,
+                  cluster__39, cluster__40,
+                  cluster__41, cluster__42, cluster__43, cluster__44, cluster__45, cluster__46,
+                  cluster__47, cluster__48, cluster__49, cluster__50, cluster__51, cluster__52,
+                  cluster__53, cluster__54, cluster__55,
+                  cluster__56, cluster__57, cluster__58, cluster__59] = [0 for _ in range(82)]
 
 
-    # Calculate price for each flat in SubSample based on price prediction models we have trained
-    if secondary == 0:
-        df_for_current_label['pred_price'] = df_for_current_label[
-            ['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-             'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year']].apply(
-            lambda row:
-            int(((np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
-                                       np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
-                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
-                                       row.clusters, row.is_rented, row.rent_quarter, row.rent_year]]))) + 
-                 (np.expm1(lgbm.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
-                                       np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
-                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
-                                       row.clusters, row.is_rented, row.rent_quarter, row.rent_year]]))))[0] / 2), axis=1)
-        pass
+        list_of_parameters = [np.log1p(price_meter_sq), np.log1p(profit), np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
+                              np.log1p(life_sq), is_apartment, renovation,
+                  has_elevator,  time_to_metro, floor_first, floor_last,
+                  is_rented, rent_quarter, rent_year, to_center, mm_announce__1,
+                  mm_announce__2, mm_announce__3, mm_announce__4, mm_announce__5, mm_announce__6,
+                  mm_announce__7, mm_announce__8, mm_announce__9,
+                  mm_announce__10, mm_announce__11, mm_announce__12, rooms__0,
+                  rooms__1, rooms__2, rooms__3, rooms__4, rooms__5, rooms__6,
+                  yyyy_announce__18, yyyy_announce__19, yyyy_announce__20,
+                  cluster__0, cluster__1, cluster__2, cluster__3, cluster__4, cluster__5,
+                  cluster__6, cluster__7,
+                  cluster__8, cluster__9, cluster__10,
+                  cluster__11, cluster__12, cluster__13, cluster__14, cluster__15, cluster__16,
+                  cluster__17, cluster__18, cluster__19,
+                  cluster__20, cluster__21, cluster__22, cluster__23, cluster__24,
+                  cluster__25, cluster__26, cluster__27, cluster__28, cluster__29, cluster__30,
+                  cluster__31, cluster__32,
+                  cluster__33, cluster__34, cluster__35, cluster__36, cluster__37, cluster__38,
+                  cluster__39, cluster__40,
+                  cluster__41, cluster__42, cluster__43, cluster__44, cluster__45, cluster__46,
+                  cluster__47, cluster__48, cluster__49, cluster__50, cluster__51, cluster__52,
+                  cluster__53, cluster__54, cluster__55,
+                  cluster__56, cluster__57, cluster__58, cluster__59]
 
-    if secondary == 1:
-        df_for_current_label['pred_price'] = df_for_current_label[
-            ['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-             'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
-            lambda row:
-            int(((np.expm1(rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
-                                       np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
-                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
-                                       row.clusters]]))) + 
-                 (np.expm1(lgbm.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator,
-                                       np.log1p(row.longitude), np.log1p(row.latitude), np.log1p(row.full_sq),
-                                       np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_last, row.floor_first,
-                                       row.clusters]]))))[0] / 2), axis=1)
-        pass
-    # Calculate the profitability for each flat knowing the price for which the flat was sold and the price that
-    # our model predicted
-    df_for_current_label['profit'] = df_for_current_label[['pred_price', 'price']].apply(
-        lambda row: ((row.pred_price / row.price)), axis=1)
-    print(df_for_current_label[['profit', 'price', 'pred_price']].head(), flush=True)
+        list_of_parameters[14+month] = 1
+        list_of_parameters[27 + rooms] = 1
+        list_of_parameters[36] = 1
+        list_of_parameters[37 + current_cluster] = 1
 
-    # Drop flats which sold more than 600 days
-    df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
+        term_model = 0
 
+        # if new
+        if type == 0:
+            term_model = load(PATH_TO_TERM_MODEL_GBR_spb_NEW_D)
+        # If secondary
+        elif type == 1:
+            term_model = load(PATH_TO_TERM_MODEL_GBR_spb_Secondary_D)
 
+        term = int(np.expm1(term_model.predict(
+                [list_of_parameters]))[0])
 
-    # Check if still enough samples
+        print("Base term: ", term)
 
-    if df_for_current_label.shape[0] > 1:
-
-        term = 0
-        # Log Transformation
-        # df_for_current_label['profit'] = np.log1p(df_for_current_label['profit'])
-        df_for_current_label['price'] = np.log1p(df_for_current_label['price'])
-
-        # Create X and y for Linear Model training
-        X = df_for_current_label[['profit', 'price']]
-        y = df_for_current_label[['term']].values.ravel()
-        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
-
-        # Create LinearModel and fitting
-        reg = LinearRegression().fit(X, y)
 
         def larger(p=0, percent=2):
             larger_prices = []
@@ -526,8 +491,13 @@ def map():
             list_of_terms = []
             for i in l:
                 profit = i / price
+
                 # Calculate term based on profit for each price
-                term_on_profit = reg.predict([[profit, np.log1p(i)]])
+                list_of_parameters[1] = np.log1p(profit)
+                # reset price_meter_sq, price
+                list_of_parameters[0], list_of_parameters[2] = np.log1p(price/full_sq), np.log1p(price)
+                term_on_profit = int(np.expm1(term_model.predict(
+                [list_of_parameters]))[0])
                 print("Predicted term is {0} based on {1} profit: ".format(term_on_profit, profit), flush=True)
                 list_of_terms.append(term_on_profit)
             return list_of_terms
@@ -536,10 +506,7 @@ def map():
         list_of_terms = CalculateProfit(list_of_prices)
 
 
-        # Add links to flats
-        term_links = df_for_current_label.to_dict('record')
-
-        list_of_terms = [i.tolist()[0] for i in list_of_terms]
+        # list_of_terms = [i.tolist()[0] for i in list_of_terms]
         print("Terms: ", list_of_terms, flush=True)
 
         prices = list_of_prices
@@ -606,10 +573,256 @@ def map():
         oops = 1 if len(new_a)<=1 else 0
         term = 0 if len(new_a)<=1 else term
 
+        term_links = []
         answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
-    else:
-        print("Not enough data to plot", flush=True)
-        answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS":1})
+        return answ
+
+    # Term Moscow
+    def calculate_term_moscow(type: int):
+
+        # Calculate necessary parameters
+        # 1. Distance to_center
+        Moscow_center_lon = 37.619291
+        Moscow_center_lat = 55.751474
+        to_center = abs(Moscow_center_lon - longitude) + abs(Moscow_center_lat - latitude)
+
+        #2
+        is_apartment = 1
+
+        #3
+        month = now.month
+
+        #4
+        profit = 100
+
+
+        [mm_announce__1,
+                  mm_announce__2, mm_announce__3, mm_announce__4, mm_announce__5, mm_announce__6,
+                  mm_announce__7, mm_announce__8, mm_announce__9,
+                  mm_announce__10, mm_announce__11, mm_announce__12, rooms__0,
+                  rooms__1, rooms__2, rooms__3, rooms__4, rooms__5, rooms__6,
+                  yyyy_announce__18, yyyy_announce__19, yyyy_announce__20,
+                  cluster__0, cluster__1, cluster__2, cluster__3, cluster__4, cluster__5,
+                  cluster__6, cluster__7,
+                  cluster__8, cluster__9, cluster__10,
+                  cluster__11, cluster__12, cluster__13, cluster__14, cluster__15, cluster__16,
+                  cluster__17, cluster__18, cluster__19,
+                  cluster__20, cluster__21, cluster__22, cluster__23, cluster__24,
+                  cluster__25, cluster__26, cluster__27, cluster__28, cluster__29, cluster__30,
+                  cluster__31, cluster__32,
+                  cluster__33, cluster__34, cluster__35, cluster__36, cluster__37, cluster__38,
+                  cluster__39, cluster__40,
+                  cluster__41, cluster__42, cluster__43, cluster__44, cluster__45, cluster__46,
+                  cluster__47, cluster__48, cluster__49, cluster__50, cluster__51, cluster__52,
+                  cluster__53, cluster__54, cluster__55,
+                  cluster__56, cluster__57, cluster__58, cluster__59, cluster__60, cluster__61,
+                  cluster__62, cluster__63, cluster__64, cluster__65, cluster__66, cluster__67,
+                  cluster__68, cluster__69,
+                  cluster__70, cluster__71, cluster__72, cluster__73, cluster__74, cluster__75,
+                  cluster__76, cluster__77,
+                  cluster__78, cluster__79, cluster__80, cluster__81, cluster__82, cluster__83,
+                  cluster__84,
+                  cluster__85, cluster__86, cluster__87, cluster__88, cluster__89, cluster__90,
+                  cluster__91, cluster__92,
+                  cluster__93, cluster__94, cluster__95, cluster__96, cluster__97, cluster__98,
+                  cluster__99, cluster__100, cluster__101, cluster__102, cluster__103,
+                  cluster__104, cluster__105, cluster__106,
+                  cluster__107, cluster__108, cluster__109, cluster__110, cluster__111,
+                  cluster__112, cluster__113, cluster__114,
+                  cluster__115, cluster__116, cluster__117, cluster__119, cluster__120,
+                  cluster__121, cluster__122,
+                  cluster__123, cluster__124, cluster__125, cluster__126, cluster__127,
+                  cluster__128, cluster__129] = [0 for _ in range(151)]
+
+
+        list_of_parameters = [np.log1p(price_meter_sq), np.log1p(profit), np.log1p(price), np.log1p(full_sq), np.log1p(kitchen_sq),
+                              np.log1p(life_sq), is_apartment, renovation,
+                  has_elevator,  time_to_metro, floor_first, floor_last,
+                  is_rented, rent_quarter, rent_year, to_center, mm_announce__1,
+                  mm_announce__2, mm_announce__3, mm_announce__4, mm_announce__5, mm_announce__6,
+                  mm_announce__7, mm_announce__8, mm_announce__9,
+                  mm_announce__10, mm_announce__11, mm_announce__12, rooms__0,
+                  rooms__1, rooms__2, rooms__3, rooms__4, rooms__5, rooms__6,
+                  yyyy_announce__18, yyyy_announce__19, yyyy_announce__20,
+                  cluster__0, cluster__1, cluster__2, cluster__3, cluster__4, cluster__5,
+                  cluster__6, cluster__7,
+                  cluster__8, cluster__9, cluster__10,
+                  cluster__11, cluster__12, cluster__13, cluster__14, cluster__15, cluster__16,
+                  cluster__17, cluster__18, cluster__19,
+                  cluster__20, cluster__21, cluster__22, cluster__23, cluster__24,
+                  cluster__25, cluster__26, cluster__27, cluster__28, cluster__29, cluster__30,
+                  cluster__31, cluster__32,
+                  cluster__33, cluster__34, cluster__35, cluster__36, cluster__37, cluster__38,
+                  cluster__39, cluster__40,
+                  cluster__41, cluster__42, cluster__43, cluster__44, cluster__45, cluster__46,
+                  cluster__47, cluster__48, cluster__49, cluster__50, cluster__51, cluster__52,
+                  cluster__53, cluster__54, cluster__55,
+                  cluster__56, cluster__57, cluster__58, cluster__59, cluster__60, cluster__61,
+                  cluster__62, cluster__63, cluster__64, cluster__65, cluster__66, cluster__67,
+                  cluster__68, cluster__69,
+                  cluster__70, cluster__71, cluster__72, cluster__73, cluster__74, cluster__75,
+                  cluster__76, cluster__77,
+                  cluster__78, cluster__79, cluster__80, cluster__81, cluster__82, cluster__83,
+                  cluster__84,
+                  cluster__85, cluster__86, cluster__87, cluster__88, cluster__89, cluster__90,
+                  cluster__91, cluster__92,
+                  cluster__93, cluster__94, cluster__95, cluster__96, cluster__97, cluster__98,
+                  cluster__99, cluster__100, cluster__101, cluster__102, cluster__103,
+                  cluster__104, cluster__105, cluster__106,
+                  cluster__107, cluster__108, cluster__109, cluster__110, cluster__111,
+                  cluster__112, cluster__113, cluster__114,
+                  cluster__115, cluster__116, cluster__117, cluster__119, cluster__120,
+                  cluster__121, cluster__122,
+                  cluster__123, cluster__124, cluster__125, cluster__126, cluster__127,
+                  cluster__128, cluster__129]
+
+        list_of_parameters[14+month] = 1
+        list_of_parameters[27 + rooms] = 1
+        list_of_parameters[36] = 1
+        list_of_parameters[37 + current_cluster] = 1
+
+        term_model = 0
+
+        # If new
+        if type==0:
+            term_model = load(PATH_TO_TERM_MODEL_GBR_msc_NEW_D)
+
+        # If secondary
+        elif type==1:
+            term_model = load(PATH_TO_TERM_MODEL_GBR_msc_Secondary_D)
+
+        term = int(np.expm1(term_model.predict(
+                [list_of_parameters]))[0])
+
+        print("Base term: ", term)
+
+
+        def larger(p=0, percent=2):
+            larger_prices = []
+            for _ in range(15):
+                new_p = p + p * percent / 100
+                larger_prices.append(new_p)
+                percent += 2
+            return larger_prices
+
+        # Create list of N larger prices than predicted
+        list_of_larger_prices = larger(price)
+
+        def smaller(p=0, percent=2):
+            smaller_prices = []
+            for _ in range(15):
+                new_p = p - p * percent / 100
+                smaller_prices.append(new_p)
+                percent += 2
+            return smaller_prices[::-1]
+
+        # Create list of N smaller prices than predicted
+        list_of_smaller_prices = smaller(price)
+
+        # Create list of N prices: which are larger and smaller than predicted
+        list_of_prices = list_of_smaller_prices+list_of_larger_prices
+
+        def CalculateProfit(l: list):
+            list_of_terms = []
+            for i in l:
+                profit = i / price
+
+                # Calculate term based on profit for each price
+                list_of_parameters[1] = np.log1p(profit)
+                # reset price_meter_sq, price
+                list_of_parameters[0], list_of_parameters[2] = np.log1p(price/full_sq), np.log1p(price)
+                term_on_profit = int(np.expm1(term_model.predict(
+                [list_of_parameters]))[0])
+                print("Predicted term is {0} based on {1} profit: ".format(term_on_profit, profit), flush=True)
+                list_of_terms.append(term_on_profit)
+            return list_of_terms
+
+        # Calculating term for each price from generated list of prices based on associated profit -> returns list of terms
+        list_of_terms = CalculateProfit(list_of_prices)
+
+
+        # list_of_terms = [i.tolist()[0] for i in list_of_terms]
+        print("Terms: ", list_of_terms, flush=True)
+
+        prices = list_of_prices
+        print("Prices: ", prices, flush=True)
+
+        # Create list of dictionaries
+        a = []
+        a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
+
+        # Sort list by term
+        a = [i for i in a if 0 < i.get('x') <600]
+        a = sorted(a, key=lambda z: z['x'], reverse=False)
+        print("First sort by term: ", a, flush=True)
+
+        def drop_duplicates_term(l: list):
+            seen = set()
+            new_l = []
+            for item in l:
+                if item.get('x') not in seen:
+                    seen.add(item.get('x'))
+                    new_l.append(item)
+            return new_l
+
+        # Drop duplicated terms, because FrontEnd waits only unique values
+        new_list_of_dicts = drop_duplicates_term(a)
+        print("After drop term duplicates: ", new_list_of_dicts, flush=True)
+
+        b = {'x': int(term), 'y': int(price)}
+        print("Predicted raw term, and exact price: ", b, flush=True)
+
+        def drop_duplicates_price(l: list):
+            seen_prices = set()
+            new_list_of_prices = []
+            for item in l:
+                if item.get('y') not in seen_prices:
+                    seen_prices.add(item.get('y'))
+                    new_list_of_prices.append(item)
+            return new_list_of_prices
+
+        # Set term based on price
+        if len(new_list_of_dicts) > 1:
+            # Check that our predicted price lies in the price range for which we calculated the term
+            if new_list_of_dicts[-1].get('y') > price > new_list_of_dicts[0].get('y'):
+                for i in enumerate(new_list_of_dicts):
+                    if new_list_of_dicts[i[0]].get('y') < b.get('y') < new_list_of_dicts[i[0] + 1].get('y'):
+                        b['x'] = int((new_list_of_dicts[i[0]].get('x')+new_list_of_dicts[i[0] + 1].get('x'))/2)
+                        term = int((new_list_of_dicts[i[0]].get('x')+new_list_of_dicts[i[0] + 1].get('x'))/2)
+                        break
+                print("New term: ", b, flush=True)
+            else:
+                answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1})
+                return answ
+
+        # Drop duplicates from price, because FrontEnd waits only unique values
+        new_a = drop_duplicates_price(new_list_of_dicts)
+        print('Drop price duplicates:', new_a, flush=True)
+
+        new_a.insert(0, b)
+
+        new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
+        print("Sorted finally : ", new_a, flush=True)
+
+        # Check if final list have items in it, otherwise set parameter "OOPS" to 1
+        oops = 1 if len(new_a)<=1 else 0
+        term = 0 if len(new_a)<=1 else term
+
+        term_links = []
+        answ = jsonify({'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops})
+        return answ
+
+    answ = 0
+
+    if city_id == 1:
+        answ = calculate_term_spb(type=secondary)
+
+    if city_id == 0:
+        answ = calculate_term_moscow(type=secondary)
+
+    # else:
+    #     print("Not enough data to plot", flush=True)
+    #     answ = jsonify({'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS":1})
     return answ
 
 

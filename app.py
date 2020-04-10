@@ -248,7 +248,7 @@ def map():
     print("Params: City id: {0}, is secondary: {1}".format(city_id, secondary), flush=True)
 
     # Get current time
-    now = datetime.datetime.now()
+    now = datetime.now()
 
     # City_id: 0 = Moscow, 1 = Spb
 

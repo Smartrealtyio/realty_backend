@@ -106,7 +106,7 @@ def term_gbr(data: pd.DataFrame, type: str):
 
     cdf = pd.DataFrame(np.transpose(reg.feature_importances_), X.columns, columns=['Coefficients']).sort_values(
         by=['Coefficients'], ascending=False)
-    print(cdf)
+    # print(cdf)
 
     return reg
 

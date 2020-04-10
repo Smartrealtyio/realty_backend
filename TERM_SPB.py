@@ -74,14 +74,13 @@ def term_gbr(data: pd.DataFrame, type: str):
                                     learning_rate=0.07)
     reg.fit(X_train, y_train)
     gbr_preds = reg.predict(X_test)
-    print('The R2_score of the Gradient boost is', r2_score(y_test, gbr_preds), flush=True)
-    print('RMSE is: \n', mean_squared_error(y_test, gbr_preds), flush=True)
+    print('The R2_score GBR Spb term ', r2_score(y_test, gbr_preds), flush=True)
+    print('RMSE GBR Spb term ', mean_squared_error(y_test, gbr_preds), flush=True)
 
 
-    print('Train on full dataset GBR', flush=True)
+    print('Train on full dataset GBR Spb term ', flush=True)
     reg.fit(X, y)
 
-    print('Save model GBR ', flush=True)
     if type == "New_flats":
         dump(reg, PATH_TO_TERM_MODEL_GBR_NEW_D)
     elif type == "Secondary":
@@ -89,7 +88,7 @@ def term_gbr(data: pd.DataFrame, type: str):
 
     cdf = pd.DataFrame(np.transpose(reg.feature_importances_), X.columns, columns=['Coefficients']).sort_values(
         by=['Coefficients'], ascending=False)
-    print(cdf)
+    # print(cdf)
 
     return reg
 

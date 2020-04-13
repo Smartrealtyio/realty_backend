@@ -534,6 +534,7 @@ def map():
                 term_on_profit = np.expm1(reg.predict([[np.log1p(profit), np.log1p(i)]]))
                 print("Predicted term is {0} based on {1} profit: ".format(term_on_profit, profit), flush=True)
                 list_of_terms.append(term_on_profit)
+
             return list_of_terms
 
         # Calculating term for each price from generated list of prices based on associated profit -> returns list of terms
@@ -542,11 +543,11 @@ def map():
         # Add links to flats
         term_links = df_for_current_label.to_dict('record')
 
-        list_of_terms = [i.tolist()[0] for i in list_of_terms]
+        list_of_terms = [int(i.tolist()[0] )for i in list_of_terms]
         print("Terms: ", list_of_terms, flush=True)
 
         prices = list_of_prices
-        prices = [i*full_sq for i in prices]
+        prices = [int(i*full_sq) for i in prices]
         print("Prices: ", prices, flush=True)
 
         # Create list of dictionaries

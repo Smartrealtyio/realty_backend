@@ -483,13 +483,13 @@ def map():
         def LinearReg_Term(data: pd.DataFrame):
 
             # Log Transformation
-            data['price'] = np.log1p(data['price'])
+            data['price'] = np.log1p(data['price_meter_sq'])
             data['profit'] = np.log1p(data['profit'])
             data['term'] = np.log1p(data['term'])
 
 
             # Create X and y for Linear Model training
-            X = data[['profit', 'price']]
+            X = data[['profit', 'price_meter_sq']]
             y = data[['term']].values.ravel()
 
             # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
@@ -507,7 +507,7 @@ def map():
             return larger_prices
 
         # Create list of N larger prices than predicted
-        list_of_larger_prices = larger(price)
+        list_of_larger_prices = larger(price_meter_sq)
 
         def smaller(p=0, percent=2):
             smaller_prices = []
@@ -518,7 +518,7 @@ def map():
             return smaller_prices[::-1]
 
         # Create list of N smaller prices than predicted
-        list_of_smaller_prices = smaller(price)
+        list_of_smaller_prices = smaller(price_meter_sq)
 
         # Create list of N prices: which are larger and smaller than predicted
         list_of_prices = list_of_smaller_prices + list_of_larger_prices
@@ -529,7 +529,7 @@ def map():
         def CalculateProfit(l: list):
             list_of_terms = []
             for i in l:
-                profit = i / price
+                profit = i / price_meter_sq
                 # Calculate term based on profit for each price
                 term_on_profit = np.expm1(reg.predict([[np.log1p(profit), np.log1p(i)]]))
                 print("Predicted term is {0} based on {1} profit: ".format(term_on_profit, profit), flush=True)
@@ -546,6 +546,7 @@ def map():
         print("Terms: ", list_of_terms, flush=True)
 
         prices = list_of_prices
+        prices = [i*full_sq for i in prices]
         print("Prices: ", prices, flush=True)
 
         # Create list of dictionaries

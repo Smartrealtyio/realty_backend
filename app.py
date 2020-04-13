@@ -495,7 +495,7 @@ def map():
             # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
             # Create LinearModel and fitting
-            reg = GradientBoostingRegressor().fit(X, y)
+            reg = LinearRegression().fit(X, y)
             return reg
 
         def larger(p=0, percent=2):

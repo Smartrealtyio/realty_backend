@@ -4,6 +4,7 @@ from sklearn import preprocessing
 import backports.datetime_fromisoformat as bck
 from joblib import dump
 import datetime
+from lightgbm import LGBMRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
@@ -11,7 +12,7 @@ import time, ciso8601
 from sklearn.cluster import KMeans
 import math as m
 from scipy import stats
-import settings_local as SETTINGS
+import settings_local_MY as SETTINGS
 
 RAW_DATA = SETTINGS.PATH_TO_SINGLE_CSV_FILES_SPB
 PREPARED_DATA = SETTINGS.DATA_SPB
@@ -60,7 +61,7 @@ class MainPreprocessing():
                                                        "floor", "is_apartment",
                                                        "building_id",
                                                        "closed", 'rooms', 'resource_id', 'flat_type', 'is_rented', 'rent_quarter',
-                                                       'rent_year'],
+                                                       'rent_year', 'windows_view', 'renovation_type'],
                             true_values="t", false_values="f", header=0)
 
         flats.closed = flats.closed.fillna(False)
@@ -351,18 +352,19 @@ class MainPreprocessing():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
         # Define Gradient Boosting Machine model
-        gbr_model = GradientBoostingRegressor(n_estimators=450, max_depth=8, verbose=1,
-                                              random_state=42,
-                                              learning_rate=0.07)
+        lgbm_model = LGBMRegressor(objective='regression',
+                                  learning_rate=0.07,
+                                  n_estimators=1250, max_depth=10, min_child_samples=1, verbose=0)
+
         # Train GBR on train dataset
-        gbr_model.fit(X_train, y_train)
-        gbr_preds = gbr_model.predict(X_test)
-        print('The R2_score of the Gradient boost is', r2_score(y_test, gbr_preds), flush=True)
-        print('RMSE is: \n', mean_squared_error(y_test, gbr_preds), flush=True)
+        lgbm_model.fit(X_train, y_train)
+        lgbm_preds = lgbm_model.predict(X_test)
+        print('The R2_score of the Gradient boost is', r2_score(y_test, lgbm_preds), flush=True)
+        print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
 
         # Train GBR on full dataset
-        gbr_model.fit(X, y)
-        return gbr_model, columns
+        lgbm_model.fit(X, y)
+        return lgbm_model, columns
 
     def calculate_profit(self, data: pd.DataFrame, price_model: GradientBoostingRegressor, list_of_columns: list):
 
@@ -451,7 +453,7 @@ if __name__ == '__main__':
     print('_'*10, "SPB", "_"*10)
     print("Load data...", flush=True)
     df = mp.load_and_merge(raw_data=RAW_DATA)
-    df = df.iloc[:1000]
+    # df = df.iloc[:1000]
 
     # Generate new features
     print("Generate new features...", flush=True)

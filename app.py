@@ -26,37 +26,14 @@ import numpy as np
 import math
 
 
-# Define paths to Moscow and Spb Secondary flats models OLD
-PATH_PRICE_GBR_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_GBR.joblib'
-PATH_PRICE_RF_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_RF.joblib'
-PATH_PRICE_LGBM_MOSCOW_VTOR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_LGBM.joblib'
-PATH_PRICE_GBR_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
-PATH_PRICE_RF_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF.joblib'
-PATH_PRICE_LGBM_SPB_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM.joblib'
-
-# Define paths to Moscow and Spb New flats models OLD
-PATH_PRICE_GBR_MOSCOW_NEW = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_GBR.joblib'
-PATH_PRICE_RF_MOSCOW_NEW = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_RF.joblib'
-PATH_PRICE_LGBM_MOSCOW_NEW = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_LGBM.joblib'
-PATH_PRICE_GBR_SPB_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_GBR.joblib'
-PATH_PRICE_RF_SPB_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_RF.joblib'
-PATH_PRICE_LGBM_SPB_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_LGBM.joblib'
-
 # Define paths to Moscow and Spb Secondary flats models DUMMIES
-PATH_PRICE_GBR_MOSCOW_VTOR_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_GBR_D.joblib'
-PATH_PRICE_RF_MOSCOW_VTOR_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_RF_D.joblib'
-PATH_PRICE_LGBM_MOSCOW_VTOR_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_LGBM_D.joblib'
-PATH_PRICE_GBR_SPB_VTOR_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR_D.joblib'
-PATH_PRICE_RF_SPB_VTOR_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF_D.joblib'
-PATH_PRICE_LGBM_SPB_VTOR_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM_D.joblib'
+PATH_PRICE_GBR_MOSCOW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_GBR_D.joblib'
+PATH_PRICE_RF_MOSCOW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_RF_D.joblib'
+PATH_PRICE_LGBM_MOSCOW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_LGBM_D.joblib'
+PATH_PRICE_GBR_SPB_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_GBR_D.joblib'
+PATH_PRICE_RF_SPB_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_RF_D.joblib'
+PATH_PRICE_LGBM_SPB_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_LGBM_D.joblib'
 
-# Define paths to Moscow and Spb New flats models DUMMIES
-PATH_PRICE_GBR_MOSCOW_NEW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_GBR_D.joblib'
-PATH_PRICE_RF_MOSCOW_NEW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_RF_D.joblib'
-PATH_PRICE_LGBM_MOSCOW_NEW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_LGBM_D.joblib'
-PATH_PRICE_GBR_SPB_NEW_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_GBR_D.joblib'
-PATH_PRICE_RF_SPB_NEW_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_RF_D.joblib'
-PATH_PRICE_LGBM_SPB_NEW_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_LGBM_D.joblib'
 
 # Define paths to Moscow and Spb term models DUMMIES
 PATH_TO_TERM_MODEL_GBR_msc_NEW_D = SETTINGS.MODEL_MOSCOW+ '/TermModel_Moscow_NEW_GBR_D.joblib'
@@ -115,15 +92,15 @@ def mean():
     if city_id == 0:
         data_offers = pd.read_csv(MOSCOW_DATA_SECONDARY)
         data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
-        gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
-        rf = load(PATH_PRICE_RF_MOSCOW_VTOR)
-        lgbm = load(PATH_PRICE_LGBM_MOSCOW_VTOR)
+        gbr = load(PATH_PRICE_GBR_MOSCOW_D)
+        rf = load(PATH_PRICE_RF_MOSCOW_D)
+        lgbm = load(PATH_PRICE_LGBM_MOSCOW_D)
     elif city_id == 1:
         data_offers = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
         data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
-        gbr = load(PATH_PRICE_GBR_SPB_VTOR)
-        rf = load(PATH_PRICE_RF_SPB_VTOR)
-        lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
+        gbr = load(PATH_PRICE_GBR_SPB_D)
+        rf = load(PATH_PRICE_RF_SPB_D)
+        lgbm = load(PATH_PRICE_LGBM_SPB_D)
 
     # Apply filtering flats in database on parameters: full_sq range, coordinates scope
     filter = (((data_offers.full_sq >= full_sq_from)&(data_offers.full_sq <= full_sq_to))&(data_offers.rooms == rooms) &
@@ -229,7 +206,7 @@ def mean():
 @app.route('/map')
 def map():
     longitude = float(request.args.get('lng'))
-    rooms = int(request.args.get('rooms'))
+    rooms = int(request.args.get('rooms')) if request.args.get('rooms') is not None else 0
     latitude = float(request.args.get('lat'))
     full_sq = float(request.args.get('full_sq'))
     kitchen_sq = float(request.args.get('kitchen_sq'))
@@ -252,63 +229,67 @@ def map():
 
     # City_id: 0 = Moscow, 1 = Spb
 
-    def define_city_and_flat_type(city_id: int, secondary: int):
+    def define_city(city_id: int, secondary: int):
         data = pd.DataFrame()
         kmeans, gbr, rf, lgbm = 0, 0, 0 ,0
-        if city_id == 0 and secondary ==0:
-            # Load data Moscow New flats
-            data = pd.read_csv(MOSCOW_DATA_NEW)
+        if city_id == 0:
+            # Load data Moscow flats
+            data1 = pd.read_csv(MOSCOW_DATA_NEW)
+            data2 = pd.read_csv(MOSCOW_DATA_SECONDARY)
+            data = pd.concat([data1, data2], ignore_index=True)
 
             # Load KMean Clustering model
             kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
 
             # Load Price Models Moscow Secondary
-            gbr = load(PATH_PRICE_GBR_MOSCOW_NEW)
-            rf = load(PATH_PRICE_RF_MOSCOW_NEW)
-            lgbm = load(PATH_PRICE_LGBM_MOSCOW_NEW)
+            gbr = load(PATH_PRICE_GBR_MOSCOW_D)
+            rf = load(PATH_PRICE_RF_MOSCOW_D)
+            lgbm = load(PATH_PRICE_GBR_MOSCOW_D)
 
-        # Москва вторичка
-        elif city_id == 0 and secondary == 1:
-            # Load data Moscow secondary
-            data = pd.read_csv(MOSCOW_DATA_SECONDARY)
-
-            # Load KMean Clustering model
-            kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
-
-            # Load Price Models Moscow Secondary
-            gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
-            rf = load(PATH_PRICE_RF_MOSCOW_VTOR)
-            lgbm = load(PATH_PRICE_LGBM_MOSCOW_VTOR)
+        # # Москва вторичка
+        # elif city_id == 0 and secondary == 1:
+        #     # Load data Moscow secondary
+        #     data = pd.read_csv(MOSCOW_DATA_SECONDARY)
+        #
+        #     # Load KMean Clustering model
+        #     kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
+        #
+        #     # Load Price Models Moscow Secondary
+        #     gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+        #     rf = load(PATH_PRICE_GBR_MOSCOW_VTOR)
+        #     lgbm = load(PATH_PRICE_GBR_MOSCOW_VTOR)
 
         # Санкт-Петербург новостройки
-        elif city_id == 1 and secondary == 0:
-            # Load data SPb New Flats
-            data = pd.read_csv(SPB_DATA_NEW)
+        elif city_id == 1:
+            # Load data SPb
+            data1 = pd.read_csv(SPB_DATA_NEW)
+            data2 = pd.read_csv(SPB_DATA_SECONDARY)
+            data = pd.concat([data1, data2], ignore_index=True)
 
             # Load KMean Clustering model
             kmeans = load(KMEANS_CLUSTERING_SPB_MAIN)
 
             # Load Price Models Spb Secondary
-            gbr = load(PATH_PRICE_GBR_SPB_NEW)
-            rf = load(PATH_PRICE_RF_SPB_NEW)
-            lgbm = load(PATH_PRICE_LGBM_SPB_NEW)
+            gbr = load(PATH_PRICE_GBR_SPB_D)
+            rf = load(PATH_PRICE_RF_SPB_D)
+            lgbm = load(PATH_PRICE_LGBM_SPB_D)
 
-        # Санкт-Петербург вторичка
-        elif city_id == 1 and secondary == 1:
-            data = pd.read_csv(SPB_DATA_SECONDARY)
-            # Load KMean Clustering model
-            kmeans = load(KMEANS_CLUSTERING_SPB_MAIN)
-
-            # Load Price Models Spb Secondary
-            gbr = load(PATH_PRICE_GBR_SPB_VTOR)
-            rf = load(PATH_PRICE_RF_SPB_VTOR)
-            lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
+        # # Санкт-Петербург вторичка
+        # elif city_id == 1 and secondary == 1:
+        #     data = pd.read_csv(SPB_DATA_SECONDARY)
+        #     # Load KMean Clustering model
+        #     kmeans = load(KMEANS_CLUSTERING_SPB_MAIN)
+        #
+        #     # Load Price Models Spb Secondary
+        #     gbr = load(PATH_PRICE_GBR_SPB_VTOR)
+        #     rf = load(PATH_PRICE_RF_SPB_VTOR)
+        #     lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
 
         print("Initial shape: ", data.shape, flush=True)
         return data, kmeans, gbr, rf, lgbm
 
     # Call define function
-    data, kmeans, gbr, rf, lgbm = define_city_and_flat_type(city_id=city_id, secondary=secondary)
+    data, kmeans, gbr, rf, lgbm = define_city(city_id=city_id, secondary=secondary)
 
     ####################
     #                  #
@@ -329,35 +310,34 @@ def map():
     def calculate_price(gbr_model: GradientBoostingRegressor, rf_model: RandomForestRegressor, lgbm_model: LGBMRegressor, secondary: int):
         gbr_predicted_price, lgbm_pedicted_price, rf_predicted_price = 0, 0, 0
         # New
-        if secondary == 0:
-            gbr_predicted_price = np.expm1(gbr_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+        gbr_predicted_price = np.expm1(gbr_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                                    np.log1p(full_sq),
                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
-            print("Gbr predicted price NOT secondary: ", gbr_predicted_price, flush=True)
+        print("Gbr predicted price ", gbr_predicted_price, flush=True)
 
-            rf_predicted_price = np.expm1(rf_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+        rf_predicted_price = np.expm1(rf_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                                    np.log1p(full_sq),
                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
-            print("rf predicted price NOT secondary: ", rf_predicted_price, flush=True)
+        print("rf predicted price ", rf_predicted_price, flush=True)
 
-            lgbm_pedicted_price = np.expm1(lgbm_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+        lgbm_pedicted_price = np.expm1(lgbm_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
                                    np.log1p(full_sq),
                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter, rent_year]]))
-            print("Lgbm predicted price NOT secondary: ", lgbm_pedicted_price, flush=True)
+        print("Lgbm predicted price ", lgbm_pedicted_price, flush=True)
 
-        # Predict Price using gbr, rf, lgmb if secondary
-        elif secondary == 1:
-            gbr_predicted_price = np.expm1(gbr_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
-                                   np.log1p(full_sq), np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
-            print("Gbr predicted price secondary: ", gbr_predicted_price, flush=True)
-
-            rf_predicted_price = np.expm1(rf_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-                                           np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
-            print("rf predicted price secondary: ", rf_predicted_price, flush=True)
-
-            lgbm_pedicted_price = np.expm1(lgbm_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
-                                           np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
-            print("Lgbm predicted price secondary: ", lgbm_pedicted_price, flush=True)
+        # # Predict Price using gbr, rf, lgmb if secondary
+        # elif secondary == 1:
+        #     gbr_predicted_price = np.expm1(gbr_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude),
+        #                            np.log1p(full_sq), np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
+        #     print("Gbr predicted price secondary: ", gbr_predicted_price, flush=True)
+        #
+        #     rf_predicted_price = np.expm1(rf_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
+        #                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
+        #     print("rf predicted price secondary: ", rf_predicted_price, flush=True)
+        #
+        #     lgbm_pedicted_price = np.expm1(lgbm_model.predict([[np.log1p(life_sq), rooms, renovation, has_elevator, np.log1p(longitude), np.log1p(latitude), np.log1p(full_sq),
+        #                                    np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster]]))
+        #     print("Lgbm predicted price secondary: ", lgbm_pedicted_price, flush=True)
 
 
         # Calculate mean price value based on three algorithms

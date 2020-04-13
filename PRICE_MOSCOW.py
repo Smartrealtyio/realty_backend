@@ -12,7 +12,7 @@ from sklearn.metrics import r2_score, scorer, mean_squared_error
 from joblib import dump, load
 import xgboost
 import os
-import settings_local as SETTINGS
+import settings_local_MY as SETTINGS
 
 prepared_data_secondary = SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv'
 prepared_data_new = SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv'
@@ -93,7 +93,7 @@ def Price_Main(data: pd.DataFrame):
     # LGBM model
     lgbm_model = LGBMRegressor(objective='regression',
                                learning_rate=0.1,
-                               n_estimators=1250, max_depth=5, min_child_samples=1, verbose=False)
+                               n_estimators=1250, max_depth=5, min_child_samples=1, verbose=0)
 
     lgbm_model.fit(X_train, y_train)
     lgbm_preds = lgbm_model.predict(X_test)

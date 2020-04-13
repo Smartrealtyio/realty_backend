@@ -5,6 +5,7 @@ import backports.datetime_fromisoformat as bck
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 from joblib import dump
+from lightgbm import LGBMRegressor
 import settings_local_MY as SETTINGS
 from numpy.random import randint
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
@@ -15,8 +16,7 @@ import math as m
 import datetime
 np.random.seed(42)
 
-# TODO: 'renovation_type',
-#                                    'windows_view'
+# TODO:
 
 # Define paths
 RAW_DATA = SETTINGS.PATH_TO_SINGLE_CSV_FILES_MOSCOW
@@ -64,7 +64,8 @@ class MainPreprocessing():
                             names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
                                    'building_id', 'created_at',
                                    'updated_at', 'offer_id', 'closed', 'rooms', 'image', 'resource_id',
-                                   'flat_type', 'is_rented', 'rent_quarter', 'rent_year', 'agency', 'renovation_type', 'windows_view'],
+                                   'flat_type', 'is_rented', 'rent_quarter', 'rent_year', 'agency', 'renovation_type',
+                                   'windows_view'],
                             usecols=["id", "full_sq",
                                                        "kitchen_sq",
                                                        "life_sq",
@@ -343,18 +344,18 @@ class MainPreprocessing():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
         # Define Gradient Boosting Machine model
-        gbr_model = GradientBoostingRegressor(n_estimators=450, max_depth=8, verbose=1,
-                                              random_state=42,
-                                              learning_rate=0.07)
+        lgbm_model = LGBMRegressor(objective='regression',
+                                   learning_rate=0.07,
+                                   n_estimators=1250, max_depth=10, min_child_samples=1, verbose=0)
         # Train GBR on train dataset
-        gbr_model.fit(X_train, y_train)
-        gbr_preds = gbr_model.predict(X_test)
-        print('The R2_score of the Gradient boost is', r2_score(y_test, gbr_preds), flush=True)
-        print('RMSE is: \n', mean_squared_error(y_test, gbr_preds), flush=True)
+        lgbm_model.fit(X_train, y_train)
+        lgbm_preds = lgbm_model.predict(X_test)
+        print('The R2_score of the Gradient boost is', r2_score(y_test, lgbm_preds), flush=True)
+        print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
 
         # Train GBR on full dataset
-        gbr_model.fit(X, y)
-        return gbr_model, columns
+        lgbm_model.fit(X, y)
+        return lgbm_model, columns
 
     def calculate_profit(self, data: pd.DataFrame, price_model: GradientBoostingRegressor, list_of_columns: list):
 

@@ -82,6 +82,17 @@ class MainPreprocessing():
         # Replace all missed values in CLOSED with 'False'
         flats.closed = flats.closed.fillna(False)
 
+        # Encoding categorical parameters:
+        # renovation type
+        flats.renovation_type = flats.renovation_type.fillna(0)
+        flats.renovation_type = flats.renovation_type.map(
+            {'Без ремонта': 0, 0: 1, 'Косметический': 1, 'Евроремонт': 2, 'Дизайнерский': 3}).astype(int)
+
+        # windows view
+        flats.windows_view = flats.windows_view.fillna(0)
+        flats.windows_view = flats.windows_view.map(
+            {'Во двор': 0, 0: 1, 'На улицу и двор': 1, 'На улицу': 2}).astype(int)
+
         flats = flats.rename(columns={"id": "flat_id"})
 
         buildings = pd.read_csv(raw_data + "buildings.csv",
@@ -176,6 +187,8 @@ class MainPreprocessing():
         df.has_elevator = df.has_elevator.astype(int)
         df.renovation = df.renovation.astype(int)
         df.is_apartment = df.is_apartment.astype(int)
+        df.renovation_type = df.renovation_type.astype(int)
+        df.windows_view = df.windows_view.astype(int)
 
 
         df = df.drop(['built_year', 'flats_count', 'district_id', 'name', 'transport_type'], axis=1)

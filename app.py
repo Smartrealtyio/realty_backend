@@ -495,7 +495,7 @@ def map():
             # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
             # Create LinearModel and fitting
-            reg = LinearRegression().fit(X, y)
+            reg = GradientBoostingRegressor().fit(X, y)
             return reg
 
         def larger(p=0, percent=2):
@@ -507,7 +507,7 @@ def map():
             return larger_prices
 
         # Create list of N larger prices than predicted
-        list_of_larger_prices = larger(price_meter_sq)
+        list_of_larger_prices = larger(int(price_meter_sq))
 
         def smaller(p=0, percent=2):
             smaller_prices = []
@@ -518,11 +518,11 @@ def map():
             return smaller_prices[::-1]
 
         # Create list of N smaller prices than predicted
-        list_of_smaller_prices = smaller(price_meter_sq)
+        list_of_smaller_prices = smaller(int(price_meter_sq))
 
         # Create list of N prices: which are larger and smaller than predicted
         list_of_prices = list_of_smaller_prices + list_of_larger_prices
-        list_of_prices = [int(i/full_sq) for i in list_of_prices]
+        list_of_prices = [int(i) for i in list_of_prices]
 
         # Call LinearReg on term
         reg = LinearReg_Term(df_for_current_label)
@@ -530,10 +530,10 @@ def map():
         def CalculateProfit(l: list):
             list_of_terms = []
             for i in l:
-                profit = price_meter_sq / i 
+                profit = price_meter_sq / i
                 # Calculate term based on profit for each price
                 term_on_profit = np.expm1(reg.predict([[np.log1p(profit), np.log1p(i)]]))
-                print("Predicted term is {0} based on {1} profit: ".format(term_on_profit, profit), flush=True)
+                print("Predicted term is {0} based on {1} profit and price_meter_sq {2}: ".format(term_on_profit, profit, i), flush=True)
                 list_of_terms.append(term_on_profit)
 
             return list_of_terms
@@ -544,7 +544,7 @@ def map():
         # Add links to flats
         term_links = df_for_current_label.to_dict('record')
 
-        list_of_terms = [int(i.tolist()[0] )for i in list_of_terms]
+        list_of_terms = [int(i.tolist()[0]) for i in list_of_terms]
         print("Terms: ", list_of_terms, flush=True)
 
         prices = list_of_prices

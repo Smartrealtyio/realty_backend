@@ -522,6 +522,7 @@ def map():
 
         # Create list of N prices: which are larger and smaller than predicted
         list_of_prices = list_of_smaller_prices + list_of_larger_prices
+        list_of_prices = [int(i/full_sq) for i in list_of_prices]
 
         # Call LinearReg on term
         reg = LinearReg_Term(df_for_current_label)
@@ -529,7 +530,7 @@ def map():
         def CalculateProfit(l: list):
             list_of_terms = []
             for i in l:
-                profit = i / price_meter_sq
+                profit = price_meter_sq / i 
                 # Calculate term based on profit for each price
                 term_on_profit = np.expm1(reg.predict([[np.log1p(profit), np.log1p(i)]]))
                 print("Predicted term is {0} based on {1} profit: ".format(term_on_profit, profit), flush=True)

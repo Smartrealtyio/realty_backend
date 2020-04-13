@@ -388,6 +388,7 @@ def map():
 
     # Create subsample of flats from same cluster (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_cluster[0]]
+    print('Shape of current cluster: {0}'.format(df_for_current_label.shape))
 
     # Check if subsample size have more than 3 samples
     if df_for_current_label.shape[0] < 3:
@@ -395,23 +396,23 @@ def map():
         return answ
 
     # Create SUB Classes KMeans clustering based on size of subsample
-    n = int(sqrt(df_for_current_label.shape[0]))
-    kmeans_sub = KMeans(n_clusters=n, random_state=42).fit(df_for_current_label[
-                                                               ['full_sq', 'life_sq', 'kitchen_sq', 'time_to_metro',
-                                                                'longitude', 'latitude',
-                                                                'renovation']])  # , 'nums_of_changing']])
+    # n = int(sqrt(df_for_current_label.shape[0]))
+    # kmeans_sub = KMeans(n_clusters=n, random_state=42).fit(df_for_current_label[
+    #                                                            ['full_sq', 'life_sq', 'kitchen_sq', 'time_to_metro',
+    #                                                             'longitude', 'latitude',
+    #                                                             'renovation']])  # , 'nums_of_changing']])
 
-    # Set new column equals to new SUBclusters values
-    labels = kmeans_sub.labels_
-    df_for_current_label['SUB_cluster'] = labels
-
-    SUB_cluster = kmeans_sub.predict([[full_sq, life_sq, kitchen_sq, time_to_metro, longitude, latitude, renovation]])
-    # print(df_for_current_label.SUB_cluster.unique(), flush=True)
-
-    df_for_current_label = df_for_current_label[df_for_current_label.SUB_cluster == SUB_cluster[0]]
-
-    if len(df_for_current_label) < 2:
-        df_for_current_label = data[data.clusters == current_cluster[0]]
+    # # Set new column equals to new SUBclusters values
+    # labels = kmeans_sub.labels_
+    # df_for_current_label['SUB_cluster'] = labels
+    #
+    # SUB_cluster = kmeans_sub.predict([[full_sq, life_sq, kitchen_sq, time_to_metro, longitude, latitude, renovation]])
+    # # print(df_for_current_label.SUB_cluster.unique(), flush=True)
+    #
+    # df_for_current_label = df_for_current_label[df_for_current_label.SUB_cluster == SUB_cluster[0]]
+    #
+    # if len(df_for_current_label) < 2:
+    #     df_for_current_label = data[data.clusters == current_cluster[0]]
 
     # Create new feature: number of flats in each SUBcluster
     # df_for_current_label['num_of_flats_in_SUB_cluster'] = df_for_current_label.groupby(['SUB_cluster'])["SUB_cluster"].transform("count")
@@ -479,18 +480,23 @@ def map():
     # Check if still enough samples
     if df_for_current_label.shape[0] > 1:
 
-        term = 0
-        # Log Transformation
-        # df_for_current_label['profit'] = np.log1p(df_for_current_label['profit'])
-        df_for_current_label['price'] = np.log1p(df_for_current_label['price'])
+        def LinearReg_Term(data: pd.DataFrame):
 
-        # Create X and y for Linear Model training
-        X = df_for_current_label[['profit', 'price']]
-        y = df_for_current_label[['term']].values.ravel()
-        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+            # Log Transformation
+            data['price'] = np.log1p(data['price'])
+            data['profit'] = np.log1p(data['profit'])
+            data['term'] = np.log1p(data['term'])
 
-        # Create LinearModel and fitting
-        reg = LinearRegression().fit(X, y)
+
+            # Create X and y for Linear Model training
+            X = data[['profit', 'price']]
+            y = data[['term']].values.ravel()
+
+            # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+            # Create LinearModel and fitting
+            reg = LinearRegression().fit(X, y)
+            return reg
 
         def larger(p=0, percent=2):
             larger_prices = []
@@ -517,12 +523,15 @@ def map():
         # Create list of N prices: which are larger and smaller than predicted
         list_of_prices = list_of_smaller_prices + list_of_larger_prices
 
+        # Call LinearReg on term
+        reg = LinearReg_Term(df_for_current_label)
+
         def CalculateProfit(l: list):
             list_of_terms = []
             for i in l:
                 profit = i / price
                 # Calculate term based on profit for each price
-                term_on_profit = reg.predict([[profit, np.log1p(i)]])
+                term_on_profit = np.expm1(reg.predict([[np.log1p(profit), np.log1p(i)]]))
                 print("Predicted term is {0} based on {1} profit: ".format(term_on_profit, profit), flush=True)
                 list_of_terms.append(term_on_profit)
             return list_of_terms
@@ -560,6 +569,9 @@ def map():
         # Drop duplicated terms, because FrontEnd waits only unique values
         new_list_of_dicts = drop_duplicates_term(a)
         print("After drop term duplicates: ", new_list_of_dicts, flush=True)
+
+        # Initialize term
+        term = 0
 
         b = {'x': int(term), 'y': int(price)}
         print("Predicted raw term, and exact price: ", b, flush=True)

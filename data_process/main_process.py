@@ -508,7 +508,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         # Update list of dicts with current flat
         list_of_dicts.insert(0, current_flat)
 
-        # Finally sort 
+        # Finally sort
         list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
 
         # Check if final list have items in it, otherwise set parameter "OOPS" to 1

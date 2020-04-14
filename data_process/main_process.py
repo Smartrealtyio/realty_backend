@@ -362,6 +362,14 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
         def LinearReg_Term(data: pd.DataFrame):
 
+            # Handle with negative term values
+            # way no1
+            data = data._get_numeric_data()  # <- this increase accuracy
+            data[data < 0] = 0
+
+            # way no2
+            # data['profit'] = data['profit'] + 1 - data['profit'].min()
+
             # Log Transformation
             data['price'] = np.log1p(data['price_meter_sq'])
             data['profit'] = np.log1p(data['profit'])

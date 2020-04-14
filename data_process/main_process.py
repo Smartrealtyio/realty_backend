@@ -504,7 +504,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                 if ((i['x'] != current_flat['x']) & (i['y'] != current_flat['y'])):
                     unique.append(i)
             return unique
-        if oops:
+        if not oops:
             # Check if all dict's keys and values in list are unique
             list_of_dicts = check(list_of_dicts, current_flat)
 

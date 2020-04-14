@@ -12,11 +12,18 @@ import time, ciso8601
 from sklearn.cluster import KMeans
 import math as m
 from scipy import stats
+import sys
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+
 import settings_local as SETTINGS
 
 RAW_DATA = SETTINGS.PATH_TO_SINGLE_CSV_FILES_SPB
 PREPARED_DATA = SETTINGS.DATA_SPB
 PATH_TO_MODELS = SETTINGS.MODEL_SPB
+
 
 # TODO:
 class MainPreprocessing():

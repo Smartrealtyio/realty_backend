@@ -6,7 +6,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 from joblib import dump
 from lightgbm import LGBMRegressor
-import settings_local as SETTINGS
 from numpy.random import randint
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from scipy import stats
@@ -14,7 +13,22 @@ import time, ciso8601
 from sklearn.cluster import KMeans
 import math as m
 import datetime
+import sys
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+
+import settings_local as SETTINGS
+
 np.random.seed(42)
+
+
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+
 
 # TODO:
 

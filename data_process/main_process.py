@@ -7,9 +7,14 @@ from joblib import dump, load
 from datetime import datetime
 import pandas as pd
 import numpy as np
+import sys
+import os
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
 
 import settings_local as SETTINGS
+
 
 # Define paths to Moscow and Spb Secondary flats models DUMMIES
 PATH_PRICE_GBR_MOSCOW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_GBR_D.joblib'

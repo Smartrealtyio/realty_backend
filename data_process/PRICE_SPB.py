@@ -13,6 +13,11 @@ from joblib import dump, load
 
 from scipy import stats
 import os
+import sys
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+
 import settings_local as SETTINGS
 
 prepared_data_VTOR = SETTINGS.DATA_SPB + '/SPB_VTOR.csv'

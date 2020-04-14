@@ -475,8 +475,11 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         # drop term duplicates
         list_of_dicts = drop_duplicates_term(list_of_dicts)
 
+
         # drop price duplicates
         list_of_dicts = drop_duplicates_price(list_of_dicts)
+
+        oops = 1 if len(list_of_dicts) <= 2 else 0
 
         # Define current flat with predicted price and initial term = 0
         current_flat = {'x': 0, 'y': price}
@@ -501,20 +504,20 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                 if ((i['x'] != current_flat['x']) & (i['y'] != current_flat['y'])):
                     unique.append(i)
             return unique
+        if oops:
+            # Check if all dict's keys and values in list are unique
+            list_of_dicts = check(list_of_dicts, current_flat)
 
-        # Check if all dict's keys and values in list are unique
-        list_of_dicts = check(list_of_dicts, current_flat)
+            # Update list of dicts with current flat
+            list_of_dicts.insert(0, current_flat)
 
-        # Update list of dicts with current flat
-        list_of_dicts.insert(0, current_flat)
+            # Finally sort
+            list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
+            print('Answer: ', list_of_dicts, flush=True)
 
-        # Finally sort
-        list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
-        print('Answer: ', list_of_dicts, flush=True)
-
-        # Check if final list have items in it, otherwise set parameter "OOPS" to 1
-        oops = 1 if len(list_of_dicts) <= 2 else 0
-        term = 0 if len(list_of_dicts) <= 2 else term
+            # Check if final list have items in it, otherwise set parameter "OOPS" to 1
+            oops = 1 if len(list_of_dicts) <= 3 else 0
+            term = 0 if len(list_of_dicts) <= 3 else term
 
         answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': term_links, "OOPS": oops}
     else:

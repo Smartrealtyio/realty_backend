@@ -12,23 +12,16 @@ from sklearn.metrics import r2_score, scorer, mean_squared_error
 from joblib import dump, load
 import xgboost
 import os
-import settings_local_MY as SETTINGS
+import settings_local as SETTINGS
 
 prepared_data_secondary = SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv'
 prepared_data_new = SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv'
 
 
-PATH_TO_PRICE_MODEL_GBR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_GBR.joblib'
-PATH_TO_PRICE_MODEL_RF = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_RF.joblib'
-PATH_TO_PRICE_MODEL_LGBM = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_LGBM.joblib'
+PATH_TO_PRICE_MODEL_GBR = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_GBR_D.joblib'
+PATH_TO_PRICE_MODEL_RF = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_RF_D.joblib'
+PATH_TO_PRICE_MODEL_LGBM = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_LGBM_D.joblib'
 
-
-# PATH_TO_PRICE_MODEL_GBR_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_GBR_D.joblib'
-# PATH_TO_PRICE_MODEL_RF_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_RF_D.joblib'
-# PATH_TO_PRICE_MODEL_LGBM_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_Vtor_LGBM_D.joblib'
-# PATH_TO_PRICE_MODEL_GBR_NEW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_GBR_D.joblib'
-# PATH_TO_PRICE_MODEL_RF_NEW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_RF_D.joblib'
-# PATH_TO_PRICE_MODEL_LGBM_NEW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_NEW_LGBM_D.joblib'
 
 
 def Price_Main(data: pd.DataFrame):

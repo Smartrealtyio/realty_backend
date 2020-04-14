@@ -12,7 +12,7 @@ import time, ciso8601
 from sklearn.cluster import KMeans
 import math as m
 from scipy import stats
-import settings_local_MY as SETTINGS
+import settings_local as SETTINGS
 
 RAW_DATA = SETTINGS.PATH_TO_SINGLE_CSV_FILES_SPB
 PREPARED_DATA = SETTINGS.DATA_SPB

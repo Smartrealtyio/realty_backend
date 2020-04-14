@@ -32,11 +32,7 @@ PATH_TO_PRICE_MODEL_LGBM = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_LGBM_D.jo
 def Price_Main(data: pd.DataFrame):
 
     # Remove price and term outliers (out of 3 sigmas)
-    data1 = data[(np.abs(stats.zscore(data.price)) < 3)]
-    data2 = data[(np.abs(stats.zscore(data.term)) < 3)]
-
-
-    data = pd.merge(data1, data2, on=list(data.columns), how='left')
+    data = data[((np.abs(stats.zscore(data.price)) < 3)&(np.abs(stats.zscore(data.term)) < 3))]
 
     # Fill NaN if it appears after merging
     data[['term']] = data[['term']].fillna(data[['term']].mean())
@@ -106,9 +102,6 @@ def Price_Main(data: pd.DataFrame):
 
 # def Model_Secondary_D(data: pd.DataFrame):
 #
-#     # Remove price and term outliers (out of 3 sigmas)
-#     data1 = data[(np.abs(stats.zscore(data.price)) < 3)]
-#     data2 = data[(np.abs(stats.zscore(data.term)) < 3)]
 #
 #
 #     data = pd.merge(data1, data2, on=list(data.columns), how='left')

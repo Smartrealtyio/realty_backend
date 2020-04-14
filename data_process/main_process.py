@@ -422,7 +422,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         def CalculateProfit(l: list):
             list_of_terms = []
             for i in l:
-                profit = price_meter_sq / i
+                profit = i / price_meter_sq
                 # Calculate term based on profit for each price
                 term_on_profit = np.expm1(reg.predict([[np.log1p(profit), np.log1p(i)]]))
                 print(

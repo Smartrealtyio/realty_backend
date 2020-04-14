@@ -512,8 +512,8 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
 
         # Check if final list have items in it, otherwise set parameter "OOPS" to 1
-        oops = 1 if len(list_of_dicts) <= 1 else 0
-        term = 0 if len(list_of_dicts) <= 1 else term
+        oops = 1 if len(list_of_dicts) <= 2 else 0
+        term = 0 if len(list_of_dicts) <= 2 else term
 
         answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': term_links, "OOPS": oops}
     else:

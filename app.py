@@ -1,16 +1,9 @@
 from flask import Flask, request, jsonify, render_template
 
-
 from main_process import mean_estimation, map_estimation
 from db_queries import get_other_params
 
-
 app = Flask(__name__)
-
-
-@app.route('/')
-def hello_world():
-    return render_template('index.html')
 
 
 @app.route('/api/mean/', methods=['GET'])
@@ -91,4 +84,3 @@ def map():
                             city_id)
 
     return jsonify(result)
-

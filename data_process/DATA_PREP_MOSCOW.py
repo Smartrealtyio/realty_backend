@@ -328,20 +328,8 @@ class MainPreprocessing():
     def train_price_model(self, data: pd.DataFrame):
 
         df = data
-        data1 = df[(np.abs(stats.zscore(df.full_sq)) < 3)]
-        data2 = df[(np.abs(stats.zscore(df.life_sq)) < 3)]
-        data3 = df[(np.abs(stats.zscore(df.kitchen_sq)) < 3)]
+        df = df[((np.abs(stats.zscore(df.price)) < 3)&(np.abs(stats.zscore(df.term)) < 3)&(np.abs(stats.zscore(df.full_sq)) < 3))]
 
-        # Merge data1 and data2
-        df = pd.merge(data1, data2, on=list(df.columns), how='left')
-        # Fill NaN if it appears after merging
-        df[['life_sq']] = df[['life_sq']].fillna(df[['life_sq']].mean())
-
-        # Merge df and data3
-        df = pd.merge(df, data3, on=list(df.columns), how='left')
-
-        # Fill NaN if it appears after merging
-        df[['kitchen_sq']] = df[['kitchen_sq']].fillna(df[['kitchen_sq']].mean())
 
 
         df = df[['price', 'full_sq', 'kitchen_sq', 'life_sq', 'rooms', 'is_apartment',

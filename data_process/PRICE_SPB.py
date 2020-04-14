@@ -33,11 +33,8 @@ PATH_TO_PRICE_MODEL_LGBM_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_LGBM_D.joblib
 def Price_Main(data: pd.DataFrame):
 
     # Remove price and term outliers (out of 3 sigmas)
-    data1 = data[(np.abs(stats.zscore(data.price)) < 3)]
-    data2 = data[(np.abs(stats.zscore(data.term)) < 3)]
+    data = data[((np.abs(stats.zscore(data.price)) < 3)&(np.abs(stats.zscore(data.term)) < 3))]
 
-
-    data = pd.merge(data1, data2, on=list(data.columns), how='left')
 
     # Fill NaN if it appears after merging
     data[['term']] = data[['term']].fillna(data[['term']].mean())

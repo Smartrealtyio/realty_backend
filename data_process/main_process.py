@@ -445,14 +445,11 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         prices = [int(i * full_sq) for i in prices]
         print("Prices: ", prices, flush=True)
 
-        # Create list of dictionaries
-        a = []
-        a += ({'x': int(trm), 'y': prc} for trm, prc in zip(list_of_terms, prices))
-
-        # Sort list by term
-        a = [i for i in a if 0 < i.get('x') < 600]
-        a = sorted(a, key=lambda z: z['x'], reverse=False)
-        print("First sort by term: ", a, flush=True)
+        # define function for creating list of dicts
+        def X(terms: list, prices: list):
+            list_of_dicts = []
+            list_of_dicts += ({'x': int(trm), 'y': prc} for trm, prc in zip(terms, prices))
+            return list_of_dicts
 
         def drop_duplicates_term(l: list):
             seen = set()
@@ -463,16 +460,6 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                     new_l.append(item)
             return new_l
 
-        # Drop duplicated terms, because FrontEnd waits only unique values
-        new_list_of_dicts = drop_duplicates_term(a)
-        print("After drop term duplicates: ", new_list_of_dicts, flush=True)
-
-        # Initialize term
-        term = 0
-
-        b = {'x': int(term), 'y': int(price)}
-        print("Predicted raw term, and exact price: ", b, flush=True)
-
         def drop_duplicates_price(l: list):
             seen_prices = set()
             new_list_of_prices = []
@@ -482,34 +469,53 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                     new_list_of_prices.append(item)
             return new_list_of_prices
 
-        # Set term based on price
-        if len(new_list_of_dicts) > 1:
-            # Check that our predicted price lies in the price range for which we calculated the term
-            if new_list_of_dicts[-1].get('y') > price > new_list_of_dicts[0].get('y'):
-                for i in enumerate(new_list_of_dicts):
-                    if new_list_of_dicts[i[0]].get('y') < b.get('y') < new_list_of_dicts[i[0] + 1].get('y'):
-                        b['x'] = int((new_list_of_dicts[i[0]].get('x') + new_list_of_dicts[i[0] + 1].get('x')) / 2)
-                        term = int((new_list_of_dicts[i[0]].get('x') + new_list_of_dicts[i[0] + 1].get('x')) / 2)
+        # Create list of dicts
+        list_of_dicts = X(list_of_terms, prices)
+
+        # drop term duplicates
+        list_of_dicts = drop_duplicates_term(list_of_dicts)
+
+        # drop price duplicates
+        list_of_dicts = drop_duplicates_price(list_of_dicts)
+
+        # Define current flat with predicted price and initial term = 0
+        current_flat = {'x': 0, 'y': price}
+
+        def find_term(l: list, current_flat: dict):
+            term = 0
+            if l[-1].get('y') > 1400 > l[0].get('y'):
+                for i in enumerate(l):
+                    if l[i[0]].get('y') <= current_flat.get('y') < l[i[0] + 1].get('y'):
+                        current_flat['x'] = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
+                        term = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
                         break
-                print("New term: ", b, flush=True)
-            else:
-                answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
-                return answ
+                print("New term: ", current_flat, flush=True)
+            return current_flat, term
 
-        # Drop duplicates from price, because FrontEnd waits only unique values
-        new_a = drop_duplicates_price(new_list_of_dicts)
-        print('Drop price duplicates:', new_a, flush=True)
+        # Find real term for current flat
+        current_flat, term = find_term(l=list_of_dicts, current_flat=current_flat)
 
-        new_a.insert(0, b)
+        def check(l: list, current_flat):
+            unique = []
+            for i in l:
+                if ((i['x'] != current_flat['x']) & (i['y'] != current_flat['y'])):
+                    unique.append(i)
+            return unique
 
-        new_a = sorted(new_a, key=lambda z: z['x'], reverse=False)
-        print("Sorted finally : ", new_a, flush=True)
+        # Check if all dict's keys and values in list are unique
+        list_of_dicts = check(list_of_dicts, current_flat)
+
+        # Update list of dicts with current flat
+        list_of_dicts.insert(0, current_flat)
+
+        # Finally sort 
+        list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
 
         # Check if final list have items in it, otherwise set parameter "OOPS" to 1
-        oops = 1 if len(new_a) <= 1 else 0
-        term = 0 if len(new_a) <= 1 else term
+        oops = 1 if len(list_of_dicts) <= 1 else 0
+        term = 0 if len(list_of_dicts) <= 1 else term
 
-        answ = {'Price': price, 'Duration': term, 'PLot': new_a, 'FlatsTerm': term_links, "OOPS": oops}
+        answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': term_links, "OOPS": oops}
     else:
         print("Not enough data to plot", flush=True)
         answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}

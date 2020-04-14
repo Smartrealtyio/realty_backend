@@ -1,7 +1,7 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 
-from main_process import mean_estimation, map_estimation
-from db_queries import get_other_params
+from data_process.main_process import mean_estimation, map_estimation
+from app.db_queries import get_other_params
 
 app = Flask(__name__)
 

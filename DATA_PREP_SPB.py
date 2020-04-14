@@ -93,7 +93,9 @@ class MainPreprocessing():
                                 usecols=["id", "max_floor", 'building_type_str', "built_year", "flats_count",
                                          "renovation",
                                          "has_elevator",
-                                         "district_id", 'longitude', 'latitude',  # nominative scale
+                                         "district_id", 'longitude', 'latitude', 'schools_500m', 'schools_1000m', 'kindergartens_500m',
+                                       'kindergartens_1000m', 'clinics_500m', 'clinics_1000m', 'shops_500m',
+                                       'shops_1000m'  # nominative scale
                                          ],
                                 true_values="t", false_values="f", header=0)
 

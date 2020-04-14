@@ -19,11 +19,6 @@ PATH_PRICE_GBR_SPB_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_GBR_D.joblib'
 PATH_PRICE_RF_SPB_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_RF_D.joblib'
 PATH_PRICE_LGBM_SPB_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_LGBM_D.joblib'
 
-# Define paths to Moscow and Spb term models DUMMIES
-PATH_TO_TERM_MODEL_GBR_msc_NEW_D = SETTINGS.MODEL_MOSCOW + '/TermModel_Moscow_NEW_GBR_D.joblib'
-PATH_TO_TERM_MODEL_GBR_msc_Secondary_D = SETTINGS.MODEL_MOSCOW + '/TermModel_Moscow_Secondary_GBR_D.joblib'
-PATH_TO_TERM_MODEL_GBR_spb_NEW_D = SETTINGS.MODEL_SPB + '/TermModel_SPB_NEW_GBR_D.joblib'
-PATH_TO_TERM_MODEL_GBR_spb_Secondary_D = SETTINGS.MODEL_SPB + '/TermModel_SPB_Secondary_GBR_D.joblib'
 
 # Define paths to Moscow and Spb clustering models
 KMEANS_CLUSTERING_MOSCOW_MAIN = SETTINGS.MODEL_MOSCOW + '/KMEANS_CLUSTERING_MOSCOW_MAIN.joblib'

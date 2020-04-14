@@ -112,3 +112,5 @@ __pycache__/
 *.iml
 gunicorn.conf.py
 settings_local.py
+catboost_info
+out.txt

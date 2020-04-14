@@ -510,6 +510,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
         # Finally sort
         list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
+        print('Answer: ', list_of_dicts, flush=True)
 
         # Check if final list have items in it, otherwise set parameter "OOPS" to 1
         oops = 1 if len(list_of_dicts) <= 2 else 0

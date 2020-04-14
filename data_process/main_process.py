@@ -522,7 +522,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             oops = 1 if len(list_of_dicts) <= 3 else 0
             term = 0 if len(list_of_dicts) <= 3 else term
         answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': term_links, "OOPS": oops}
-        print('answ: ', answ)
+        print('answ: ', price, term, list_of_dicts, sep='\n', flush=True)
     else:
         print("Not enough data to plot", flush=True)
         answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}

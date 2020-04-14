@@ -481,6 +481,8 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
         oops = 1 if len(list_of_dicts) <= 2 else 0
 
+        print('list_of_dicts: ', list_of_dicts, flush=True)
+
         # Define current flat with predicted price and initial term = 0
         current_flat = {'x': 0, 'y': price}
 
@@ -505,6 +507,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                     unique.append(i)
             return unique
         if not oops:
+            print('not oops', flush=True)
             # Check if all dict's keys and values in list are unique
             list_of_dicts = check(list_of_dicts, current_flat)
 
@@ -518,8 +521,8 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             # Check if final list have items in it, otherwise set parameter "OOPS" to 1
             oops = 1 if len(list_of_dicts) <= 3 else 0
             term = 0 if len(list_of_dicts) <= 3 else term
-
         answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': term_links, "OOPS": oops}
+        print('answ: ', answ)
     else:
         print("Not enough data to plot", flush=True)
         answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}

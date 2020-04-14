@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 from joblib import dump
 from lightgbm import LGBMRegressor
-import settings_local_MY as SETTINGS
+import settings_local as SETTINGS
 from numpy.random import randint
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from scipy import stats

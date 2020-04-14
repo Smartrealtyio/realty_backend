@@ -13,30 +13,16 @@ from joblib import dump, load
 
 from scipy import stats
 import os
-import settings_local_MY as SETTINGS
+import settings_local as SETTINGS
 
 prepared_data_VTOR = SETTINGS.DATA_SPB + '/SPB_VTOR.csv'
 prepared_data_NEW = SETTINGS.DATA_SPB + '/SPB_NEW_FLATS.csv'
 
-# Path to prices models
-PATH_TO_PRICE_MODEL_GBR_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR.joblib'
-PATH_TO_PRICE_MODEL_RF_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF.joblib'
-PATH_TO_PRICE_MODEL_LGBM_VTOR = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM.joblib'
-PATH_TO_PRICE_MODEL_GBR_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_GBR.joblib'
-PATH_TO_PRICE_MODEL_RF_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_RF.joblib'
-PATH_TO_PRICE_MODEL_LGBM_NEW = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_LGBM.joblib'
 
 # Path to prices models with dummies features
 PATH_TO_PRICE_MODEL_GBR_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_GBR_D.joblib'
 PATH_TO_PRICE_MODEL_RF_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_RF_D.joblib'
 PATH_TO_PRICE_MODEL_LGBM_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_LGBM_D.joblib'
-# PATH_TO_PRICE_MODEL_GBR_VTOR_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_GBR_D.joblib'
-# PATH_TO_PRICE_MODEL_RF_VTOR_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_RF_D.joblib'
-# PATH_TO_PRICE_MODEL_LGBM_VTOR_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_Vtor_LGBM_D.joblib'
-# PATH_TO_PRICE_MODEL_GBR_NEW_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_GBR_D.joblib'
-# PATH_TO_PRICE_MODEL_RF_NEW_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_RF_D.joblib'
-# PATH_TO_PRICE_MODEL_LGBM_NEW_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_NEW_LGBM_D.joblib'
-
 
 
 def Price_Main(data: pd.DataFrame):

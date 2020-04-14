@@ -480,7 +480,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         list_of_dicts = drop_duplicates_price(list_of_dicts)
 
         oops = 1 if len(list_of_dicts) <= 2 else 0
-        list_of_dicts = [{"x": 0, 'y': 0}] if oops else list_of_dicts= list_of_dicts
+        list_of_dicts = [{"x": 0, 'y': 0}] if oops else list_of_dicts
 
         print('list_of_dicts: ', list_of_dicts, flush=True)
 

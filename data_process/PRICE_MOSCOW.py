@@ -11,7 +11,12 @@ from sklearn.metrics import r2_score, scorer, mean_squared_error
 # import Realty.config as cf
 from joblib import dump, load
 import xgboost
+import sys
 import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+
 import settings_local as SETTINGS
 
 prepared_data_secondary = SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv'

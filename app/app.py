@@ -55,6 +55,8 @@ def mean():
 
     # if math.isnan(mean_price):
     #     mean_price = None
+
+    print('COUNTED, returning answer', flush=True)
     return jsonify({'flats': flats, 'page': page, 'max_page': max_page, 'count': flats_count})
 
 
@@ -82,5 +84,7 @@ def map():
     result = map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, renovation, secondary,
                             has_elevator, floor_first, floor_last, time_to_metro, is_rented, rent_year, rent_quarter,
                             city_id)
+
+    print('COUNTED, returning answer', flush=True)
 
     return jsonify(result)

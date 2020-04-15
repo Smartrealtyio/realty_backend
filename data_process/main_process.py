@@ -436,7 +436,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         list_of_terms = CalculateProfit(list_of_prices)
 
         # Add links to flats
-        term_links = df_for_current_label.to_dict('record')
+        # term_links = df_for_current_label.to_dict('record')
 
         list_of_terms = [int(i.tolist()[0]) for i in list_of_terms]
         print("Terms: ", list_of_terms, flush=True)
@@ -522,7 +522,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             # Check if final list have items in it, otherwise set parameter "OOPS" to 1
             oops = 1 if len(list_of_dicts) <= 3 else 0
             term = 0 if len(list_of_dicts) <= 3 else term
-        answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': term_links, "OOPS": oops}
+        answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': 0, "OOPS": oops}
         print('answ: ', price, term, list_of_dicts, oops, sep='\n', flush=True)
     else:
         print("Not enough data to plot", flush=True)

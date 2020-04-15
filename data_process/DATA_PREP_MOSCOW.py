@@ -258,11 +258,9 @@ class MainPreprocessing():
         df['was_opened'] = [np.sum((df['open_date_unix'] < close_time) & (df['close_date_unix'] >= close_time) &
                                    (df['rooms'] == rooms) &
                                    ((df['full_sq'] <= full_sq * (1 + full_sq_corridor_percent / 100)) & (
-                                           df['full_sq'] >= full_sq * (1 - full_sq_corridor_percent / 100))) &
-                                   ((df['price'] <= price * (1 + price_corridor_percent / 100)) & (
-                                           df['price'] >= price * (1 - price_corridor_percent / 100)))) for
-                            close_time, rooms, full_sq, price in
-                            zip(df['close_date_unix'], df['rooms'], df['full_sq'], df['price'])]
+                                           df['full_sq'] >= full_sq * (1 - full_sq_corridor_percent / 100)))) for
+                            close_time, rooms, full_sq in
+                            zip(df['close_date_unix'], df['rooms'], df['full_sq'])]
 
         # Fill missed valeus for secondary flats
         df.loc[:, ['rent_quarter', 'rent_year']] = df[['rent_quarter', 'rent_year']].fillna(0)

@@ -84,7 +84,7 @@ class MainPreprocessing():
                                                        "kitchen_sq",
                                                        "life_sq",
                                                        "floor", "is_apartment",
-                                                       "building_id",
+                                                       "building_id", 'offer_id'
                                                        "closed", 'rooms', 'resource_id', 'flat_type', 'is_rented', 'rent_quarter',
                                                        'rent_year', 'renovation_type', 'windows_view'
                                                        ],

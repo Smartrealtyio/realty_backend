@@ -45,13 +45,13 @@ def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longit
     # Set paths to data and price prediction models, depending on city:  0 = Moscow, 1 = Spb
     if city_id == 0:
         data_offers = pd.read_csv(MOSCOW_DATA_SECONDARY)
-        data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
+        # data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
         gbr = load(PATH_PRICE_GBR_MOSCOW_D)
         rf = load(PATH_PRICE_RF_MOSCOW_D)
         lgbm = load(PATH_PRICE_LGBM_MOSCOW_D)
     elif city_id == 1:
-        data_offers = pd.read_csv(SETTINGS.DATA_SPB + '/SPB.csv')
-        data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
+        data_offers = pd.read_csv(SPB_DATA_SECONDARY)
+        # data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
         gbr = load(PATH_PRICE_GBR_SPB_D)
         rf = load(PATH_PRICE_RF_SPB_D)
         lgbm = load(PATH_PRICE_LGBM_SPB_D)

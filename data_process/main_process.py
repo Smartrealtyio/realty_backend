@@ -95,7 +95,7 @@ def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longit
     # PRICE PREDICTION
     data_offers['pred_price'] = data_offers[
         ['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-         'time_to_metro', 'floor_last', 'floor_first', 'clusters']].apply(
+         'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year']].apply(
         lambda row:
         int((np.expm1(
             rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),

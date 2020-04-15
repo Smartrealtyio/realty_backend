@@ -101,11 +101,11 @@ def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longit
             rf.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
                          np.log1p(row.latitude), np.log1p(row.latitude),
                          np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last,
-                         row.clusters]])) + np.expm1(
+                         row.clusters, row.is_rented, row.rent_quarter, row.rent_year]])) + np.expm1(
             lgbm.predict([[np.log1p(row.life_sq), row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
                            np.log1p(row.latitude), np.log1p(row.latitude),
                            np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last,
-                           row.clusters]])))[0] / 2), axis=1)
+                           row.clusters, row.is_rented, row.rent_quarter, row.rent_year]])))[0] / 2), axis=1)
 
     # Calculate the profitability for each flat knowing current and the price that our model predicted
     data_offers['profit'] = data_offers[['pred_price', 'price']].apply(

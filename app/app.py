@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import json
 
 from data_process.main_process import mean_estimation, map_estimation
 from app.db_queries import get_other_params
@@ -91,7 +92,7 @@ def map():
 
 @app.route('/api/builder/', methods=['POST'])
 def builder():
-    result = request.data
+    result = json.loads(request.data.decode())
     print(result, flush=True)
     print(type(result), flush=True)
 

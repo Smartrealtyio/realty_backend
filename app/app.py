@@ -88,3 +88,11 @@ def map():
     print('COUNTED, returning answer', flush=True)
 
     return jsonify(result)
+
+@app.route('/api/developer/', methods=['POST'])
+def developer():
+    result = request.data
+    print(result, flush=True)
+    print(type(result), flush=True)
+
+    return jsonify(result)

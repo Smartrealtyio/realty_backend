@@ -89,8 +89,8 @@ def map():
 
     return jsonify(result)
 
-@app.route('/api/developer/', methods=['POST'])
-def developer():
+@app.route('/api/builder/', methods=['POST'])
+def builder():
     result = request.data
     print(result, flush=True)
     print(type(result), flush=True)

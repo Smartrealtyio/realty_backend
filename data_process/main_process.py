@@ -2,6 +2,8 @@ from scipy import stats
 from lightgbm import LGBMRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.cluster import KMeans
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from joblib import dump, load
 from datetime import datetime

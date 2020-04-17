@@ -679,7 +679,7 @@ class Developers_API():
         self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)
         self.all_msc = pd.concat([msc_new, msc_vtor], ignore_index=True, axis=0)
 
-    def parse_json(self, file: str):
+    def parse_json(self, file=0):
         with open(file, encoding='utf-8') as read_file:
             data = json.load(read_file)
             city_id = data['city_id']
@@ -809,7 +809,7 @@ def predict_developers_term(json_file=0):
 
     # Parse json
     city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro, \
-    flats = devAPI.parse_json('builder.json')
+    flats = devAPI.parse_json(json_file)
 
     # Train reg
     reg = devAPI.train_reg(city_id=city_id)

@@ -625,8 +625,8 @@ class Developers_API():
             profit = (pred_price * 100 / (price_meter_sq*full_sq)) - 100
 
 
-            term = np.expm1(term_model.predict([[np.log1p(price_meter_sq), np.log1p(profit), mm_announce, yyyy_announce, rent_year,
-                                             windows_view, renovation_type, np.log1p(full_sq), is_rented]]))
+            term = int(np.expm1(term_model.predict([[np.log1p(price_meter_sq), np.log1p(profit), mm_announce, yyyy_announce, rent_year,
+                                             windows_view, renovation_type, np.log1p(full_sq), is_rented]]))[0])
             list_of_terms.append({'type': type, 'term': term})
         print("List of terms: ", list_of_terms, flush=True)
         return list_of_terms

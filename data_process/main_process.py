@@ -535,14 +535,18 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
 
 
-
-
 class Developers_API():
 
     def __init__(self):
         pass
 
-    def load_data(self, spb_new: pd.DataFrame, spb_vtor: pd.DataFrame, msc_new: pd.DataFrame, msc_vtor: pd.DataFrame):
+    def load_data(self, spb_new: str, spb_vtor: str, msc_new: str, msc_vtor: str):
+
+        spb_new = pd.read_csv(spb_new)
+        spb_vtor = pd.read_csv(spb_vtor)
+        msc_new = pd.read_csv(msc_new)
+        msc_vtor = pd.read_csv(msc_vtor)
+
         self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)
         self.all_msc = pd.concat([msc_new, msc_vtor], ignore_index=True, axis=0)
 
@@ -665,7 +669,7 @@ class Developers_API():
         acc = r2_score(y_test, preds)
         print(" Term R2 acc: {0}".format(acc))
         return reg
-    
+
 def predict_developers_term(json_file=0):
     # Create Class
     devAPI = Developers_API()

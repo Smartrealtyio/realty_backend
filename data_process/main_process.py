@@ -669,7 +669,13 @@ class Developers_API():
     def __init__(self):
         pass
 
-    def load_data(self, spb_new, spb_vtor, msc_new, msc_vtor):
+    def load_data(self, spb_new: str, spb_vtor: str, msc_new: str, msc_vtor: str):
+
+        spb_new = pd.read_csv(spb_new)
+        spb_vtor = pd.read_csv(spb_vtor)
+        msc_new = pd.read_csv(msc_new)
+        msc_vtor = pd.read_csv(msc_vtor)
+
         self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)
         self.all_msc = pd.concat([msc_new, msc_vtor], ignore_index=True, axis=0)
 

@@ -610,7 +610,7 @@ class Developers_API():
             has_elevator = has_elevator
             # 'life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
             # 'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year'
-            has_elevator = i['elevator']
+
 
             # calculate profit
 

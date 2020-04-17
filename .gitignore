@@ -114,3 +114,4 @@ gunicorn.conf.py
 settings_local.py
 catboost_info
 out.txt
+media/

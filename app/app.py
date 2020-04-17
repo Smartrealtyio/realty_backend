@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import json
 
-from data_process.main_process import mean_estimation, map_estimation
+from data_process.main_process import mean_estimation, map_estimation, predict_developers_term
 from app.db_queries import get_other_params
 
 app = Flask(__name__)
@@ -93,6 +93,9 @@ def map():
 @app.route('/api/builder/', methods=['POST'])
 def builder():
     result = json.loads(request.data.decode())
+
+    result = predict_developers_term(result)
+
     print(result, flush=True)
     print(type(result), flush=True)
 

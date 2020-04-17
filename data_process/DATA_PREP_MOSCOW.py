@@ -244,7 +244,7 @@ class MainPreprocessing():
         # No 3. Number of offers were added calculating by months and years
         df['all_offers_added_in_month'] = df.groupby(['yyyy_announce', 'mm_announce'])["flat_id"].transform("count")
 
-        # No 4. Convert changed_date and updated_at to unix timestamp. Convert only yyyy-mm-dd hh
+            # No 4. Convert changed_date and updated_at to unix timestamp. Convert only yyyy-mm-dd hh
         df['open_date_unix'] = df['changed_date'].apply(
             lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple())))
         df['close_date_unix'] = df['updated_at'].apply(

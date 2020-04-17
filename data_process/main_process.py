@@ -532,6 +532,11 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
     return answ
 
 
+
+
+
+
+
 class Developers_API():
 
     def __init__(self):
@@ -541,21 +546,21 @@ class Developers_API():
         self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)
         self.all_msc = pd.concat([msc_new, msc_vtor], ignore_index=True, axis=0)
 
-    def parse_json(self, file: str):
-        with open(file, encoding='utf-8') as read_file:
-            data = json.load(read_file)
-            city_id = data['city_id']
-            longitude = data['longitude']
-            latitude = data['latitude']
-            is_rented = data['is_rented']
-            rent_year = data['end_timestamp']
-            rent_quarter = data['rent_quarter']
-            start_timestamp = data['start_timestamp']
-            floors_count = data['floors_count']
-            has_elevator = data['elevator']
-            parking = data['parking']
-            time_to_metro = data['time_to_metro']
-            flats = [i for i in data['flats_types']]
+    def parse_json(self, data: dict):
+        # with open(file, encoding='utf-8') as read_file:
+        # data = json.load(read_file)
+        city_id = data['city_id']
+        longitude = data['longitude']
+        latitude = data['latitude']
+        is_rented = data['is_rented']
+        rent_year = data['end_timestamp']
+        rent_quarter = data['rent_quarter']
+        start_timestamp = data['start_timestamp']
+        floors_count = data['floors_count']
+        has_elevator = data['elevator']
+        parking = data['parking']
+        time_to_metro = data['time_to_metro']
+        flats = [i for i in data['flats_types']]
         return city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro,\
                flats
 
@@ -660,145 +665,7 @@ class Developers_API():
         acc = r2_score(y_test, preds)
         print(" Term R2 acc: {0}".format(acc))
         return reg
-
-
-
-
-class Developers_API():
-
-    def __init__(self):
-        pass
-
-    def load_data(self, spb_new: str, spb_vtor: str, msc_new: str, msc_vtor: str):
-
-        spb_new = pd.read_csv(spb_new)
-        spb_vtor = pd.read_csv(spb_vtor)
-        msc_new = pd.read_csv(msc_new)
-        msc_vtor = pd.read_csv(msc_vtor)
-
-        self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)
-        self.all_msc = pd.concat([msc_new, msc_vtor], ignore_index=True, axis=0)
-
-    def parse_json(self, file=0):
-        with open(file, encoding='utf-8') as read_file:
-            data = json.load(read_file)
-            city_id = data['city_id']
-            longitude = data['longitude']
-            latitude = data['latitude']
-            is_rented = data['is_rented']
-            rent_year = data['end_timestamp']
-            rent_quarter = data['rent_quarter']
-            start_timestamp = data['start_timestamp']
-            floors_count = data['floors_count']
-            has_elevator = data['elevator']
-            parking = data['parking']
-            time_to_metro = data['time_to_metro']
-            flats = [i for i in data['flats_types']]
-        return city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro,\
-               flats
-
-
-    def predict(self, term_model: object, city_id: int, flats: list, rent_year: int, longitude: float, latitude: float,
-                time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int):
-
-        price_model = 0
-        kmeans = 0
-
-        if city_id == 0:
-            price_model = load(PATH_PRICE_RF_MOSCOW_D)
-            kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
-        elif city_id == 1:
-            price_model = load(PATH_PRICE_RF_SPB_D)
-            kmeans = load(KMEANS_CLUSTERING_SPB_MAIN)
-        # list for dicts of term-type
-        list_of_terms = []
-
-        # get flats parameters for each flat
-        for i in flats:
-            price_meter_sq = i['price_meter_sq']
-            mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m')) # Get month from unix
-            yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y')) # Get year from unix
-            life_sq = i['life_sq']
-            rooms = i['rooms']
-            renovation = i['renovation']
-            renovation_type = i['renovation_type']
-            longitude = longitude
-            latitude = latitude
-            full_sq = i['full_sq']
-            kitchen_sq = i['kitchen_sq']
-            time_to_metro = time_to_metro
-            floor_last = i['floor_last']
-            floor_first = i['floor_first']
-            windows_view = i['windows_view']
-            type = i['type']
-            is_rented = is_rented
-            rent_year = rent_year
-            rent_quarter = rent_quarter
-            has_elevator = has_elevator
-            # 'life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-            # 'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year'
-            has_elevator = i['elevator']
-
-            # calculate profit
-
-            current_cluster = kmeans.predict([[longitude, latitude]])
-
-            pred_price = int(np.expm1(price_model.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude,
-                                                           full_sq, kitchen_sq,
-              time_to_metro, floor_last, floor_first, current_cluster, is_rented, rent_quarter, rent_year]])))
-
-
-
-            profit = (pred_price * 100 / (price_meter_sq*full_sq)) - 100
-
-
-            term = np.expm1(term_model.predict([[np.log1p(price_meter_sq), np.log1p(profit), mm_announce, yyyy_announce, rent_year,
-                                             windows_view, renovation_type, np.log1p(full_sq), is_rented]]))
-            list_of_terms.append({'type': type, 'term': term})
-        print("List of terms: ", list_of_terms, flush=True)
-        return list_of_terms
-
-
-    def train_reg(self, city_id: int):
-
-        # Define city
-        data = pd.DataFrame()
-
-        if city_id == 1:
-            data = self.all_spb
-        elif city_id == 0:
-            data = self.all_msc
-
-        # Log Transformation
-        # data['profit'] = data['profit'] + 1 - data['profit'].min()
-        data = data._get_numeric_data()
-        data[data < 0] = 0
-
-        # Remove price and term outliers (out of 3 sigmas)
-        data = data[((np.abs(stats.zscore(data.price)) < 2.5) & (np.abs(stats.zscore(data.term)) < 2.5))]
-
-        data['price_meter_sq'] = np.log1p(data['price_meter_sq'])
-        data['profit'] = np.log1p(data['profit'])
-        # data['term'] = np.log1p(data['term'])
-        # data['mode_price_meter_sq'] = np.log1p(data['mode_price_meter_sq'])
-        # data['mean_term'] = np.log1p(data['mean_term'])
-
-        # Create X and y for Linear Model training
-        X = data[['price_meter_sq', 'profit', 'mm_announce', 'rent_year', 'windows_view', 'renovation_type', 'full_sq',
-                  'is_rented']]
-        y = data[['term']].values.ravel()
-
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
-
-        # Create LinearModel and fitting
-        # reg = LinearRegression().fit(X_train, y_train)
-        reg = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=1, random_state=42,
-                                        learning_rate=0.07).fit(X_train, y_train)
-        preds = reg.predict(X_test)
-        acc = r2_score(y_test, preds)
-        print(" Term R2 acc: {0}".format(acc))
-        return reg
-
+    
 def predict_developers_term(json_file=0):
     # Create Class
     devAPI = Developers_API()

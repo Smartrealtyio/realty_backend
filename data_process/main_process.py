@@ -657,7 +657,7 @@ class Developers_API():
         # data['mean_term'] = np.log1p(data['mean_term'])
 
         # Create X and y for Linear Model training
-        X = data[['price_meter_sq', 'profit', 'mm_announce', 'rent_year', 'windows_view', 'renovation_type', 'full_sq',
+        X = data[['price_meter_sq', 'profit', 'mm_announce', 'yyyy_announce', 'rent_year', 'windows_view', 'renovation_type', 'full_sq',
                   'is_rented']]
         y = data[['term']].values.ravel()
 

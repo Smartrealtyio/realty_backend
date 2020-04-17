@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import sys
 import os
+import json
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -536,7 +537,7 @@ class Developers_API():
     def __init__(self):
         pass
 
-    def load_data(self, spb_new, spb_vtor, msc_new, msc_vtor):
+    def load_data(self, spb_new: pd.DataFrame, spb_vtor: pd.DataFrame, msc_new: pd.DataFrame, msc_vtor: pd.DataFrame):
         self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)
         self.all_msc = pd.concat([msc_new, msc_vtor], ignore_index=True, axis=0)
 

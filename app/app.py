@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, url_for
 import json
 
 from data_process.main_process import mean_estimation, map_estimation, predict_developers_term
@@ -90,9 +90,13 @@ def map():
 
     return jsonify(result)
 
+
 @app.route('/api/builder/', methods=['POST'])
 def builder():
     result = json.loads(request.data.decode())
+
+    image_link = url_for('media', filename='test.jpg')
+    print(image_link, flush=True)
 
     result = predict_developers_term(result)
 

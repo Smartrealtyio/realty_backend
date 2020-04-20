@@ -3,6 +3,7 @@ import json
 
 from data_process.main_process import mean_estimation, map_estimation, predict_developers_term
 from app.db_queries import get_other_params
+import settings_local as SETTINGS
 
 app = Flask(__name__)
 
@@ -95,7 +96,7 @@ def map():
 def builder():
     result = json.loads(request.data.decode())
 
-    image_link = url_for('media', filename='test.jpg')
+    image_link = SETTINGS.HOST + SETTINGS.MEDIA_ROOT + 'test.jpg'
     print(image_link, flush=True)
 
     result = predict_developers_term(result)

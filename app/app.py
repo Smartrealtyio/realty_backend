@@ -97,6 +97,6 @@ def builder():
     result = predict_developers_term(result)
 
     print(result, flush=True)
-    print(type(result), flush=True)
+    # print(type(result), flush=True)
 
     return jsonify(result)

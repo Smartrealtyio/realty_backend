@@ -567,8 +567,14 @@ class Developers_API():
         parking = data['parking']
         time_to_metro = data['time_to_metro']
         flats = [i for i in data['flats_types']]
+        sale_start_month = int(
+            datetime.utcfromtimestamp(data['start_timestamp']).strftime('%m'))  # Get month from unix timestamp
+        sale_end_month = int(
+            datetime.utcfromtimestamp(data['end_timestamp']).strftime('%m'))  # Get year from unix timestamp
+        sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
+        sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
         return city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro,\
-               flats
+               flats,  sale_start_month, sale_end_month, sale_start_year, sale_end_year
 
 
     def predict(self, term_model: object, city_id: int, flats: list, rent_year: int, longitude: float, latitude: float,
@@ -665,12 +671,71 @@ class Developers_API():
 
         # Create LinearModel and fitting
         # reg = LinearRegression().fit(X_train, y_train)
-        reg = GradientBoostingRegressor(n_estimators=350, max_depth=3, verbose=1, random_state=42,
-                                        learning_rate=0.07).fit(X_train, y_train)
+        reg = GradientBoostingRegressor(n_estimators=450, max_depth=5, verbose=1, random_state=42,
+                                    learning_rate=0.07, max_features='sqrt', min_samples_split=5).fit(X_train, y_train)
         preds = reg.predict(X_test)
         acc = r2_score(y_test, preds)
         print(" Term R2 acc: {0}".format(acc))
         return reg
+
+        # Расчёт месяца и года продажи при известном сроке(в днях). Предполгается, что квартиры вымещаются на продажу только в начале месяца.
+    def calculate_sale_month_and_year(self, type: int, term: int, yyyy_announce: int, mm_announce: int):
+        from math import ceil
+        # Sale time in months
+        n_months = ceil(term / 30)
+
+        sale_year = yyyy_announce
+        # Define sale months
+        sale_month = mm_announce + n_months - 1
+        if sale_month % 12 != 0:
+            if sale_month > 12 and (sale_month % 12) > 0:
+                sale_month = sale_month % 12
+                sale_year += 1
+            else:
+                sale_month = sale_month % 12
+        # print(' mm_announce: {2},\n Sale_year: {1}, \n sale_month: {0}'.format(sale_month, sale_year, mm_announce))
+        return type, sale_year, sale_month
+
+    def apply_calculate_sale_month_and_year(self, example: list):
+        list_calculated_months = []
+        for i in example:
+            type, sale_year, sale_month = self.calculate_sale_month_and_year(type=i['type'], term=i['term'],
+                                                                             yyyy_announce=i['yyyy_announce'],
+                                                                             mm_announce=i['mm_announce'])
+            list_calculated_months.append({'type': type, 'sale_year': sale_year, 'sale_month': sale_month})
+        print(list_calculated_months)
+        return list_calculated_months
+
+    def create_dataframe(self, list_to_df: list, sale_start_yyyy: int, sale_end_yyyy: int,
+                         sale_start_m: int, sale_end_m: int):
+
+        #  Convert list of dicts to dataframe
+        df = pd.DataFrame(list_to_df)
+
+        # Calculate each group volume
+        df = df.groupby(['type', 'sale_year', "sale_month"]).size().reset_index(name='volume')
+
+        # Add fictive data
+        for year in range(sale_start_yyyy, sale_end_yyyy + 1):
+            for month in range(sale_start_m, sale_end_m + 1):
+                df.loc[len(df), 'sale_year':'sale_month'] = (year, month)
+
+        # Create new column based on sale_month and sale_year : mm.yy
+        df.sale_month = df.sale_month.astype('int')
+        df.sale_year = df.sale_year.astype('int')
+        df.volume = df.volume.fillna(0)
+        df.volume = df.volume.astype('int')
+        df.type = df.type.fillna(0)
+        df.type = df.type.astype('int')
+        df['months'] = df[['sale_month', 'sale_year']].apply(
+            lambda row: "{0}.{1}".format(str(row.sale_month).zfill(2), str(row.sale_year)[-2:]), axis=1)
+
+        # Plotting
+        img = df.pivot_table(index='months', columns='volume', aggfunc='size').plot.bar(stacked=True)
+        img.legend(list(df.type.unique()))
+        # save img
+
+        img.figure.savefig('/home/realtyai/smartrealty/realty/media/test.png')
 
 def predict_developers_term(json_file=0):
     # Create Class
@@ -682,7 +747,7 @@ def predict_developers_term(json_file=0):
 
     # Parse json
     city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro, \
-    flats = devAPI.parse_json(json_file)
+    flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year  = devAPI.parse_json(json_file)
 
     # Train reg
     reg = devAPI.train_reg(city_id=city_id)
@@ -692,5 +757,11 @@ def predict_developers_term(json_file=0):
                             is_rented=is_rented,
                             latitude=latitude, longitude=longitude, rent_quarter=rent_quarter, rent_year=rent_year,
                             time_to_metro=time_to_metro)
+
+    list_calculated_months = devAPI.apply_calculate_sale_month_and_year(answer)
+
+
+    devAPI.create_dataframe(list_to_df=list_calculated_months, sale_start_m=sale_start_month, sale_end_m=sale_end_month,
+                           sale_start_yyyy=sale_start_year, sale_end_yyyy=sale_end_year)
 
     return answer

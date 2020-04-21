@@ -633,7 +633,7 @@ class Developers_API():
 
             term = int(term_model.predict([[np.log1p(price_meter_sq), np.log1p(profit), mm_announce, yyyy_announce, rent_year,
                                              windows_view, renovation_type, np.log1p(full_sq), is_rented]])[0])
-            list_of_terms.append({'type': type, 'term': term})
+            list_of_terms.append({'type': type, 'term': term, 'yyyy_announce': yyyy_announce, 'mm_announce': mm_announce})
         print("List of terms: ", list_of_terms, flush=True)
         return list_of_terms
 

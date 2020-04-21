@@ -24,7 +24,7 @@ sudo -u postgres psql yand -c "copy (select time_metro_buildings.id, time_metro_
 
 sudo -u postgres psql yand -c "copy (select * from metros where city_id = 2) to STDOUT With CSV DELIMITER ',';" > /home/realtyai/smartrealty/data_spb/metro.csv
 
-source /home/realtyai/smartrealty/realty/env/bin/activate
+source /home/realtyai/smartrealty/realty/venv/bin/activate
 python3 /home/realtyai/smartrealty/realty/data_process/DATA_PREP_SPB.py
 python3 /home/realtyai/smartrealty/realty/data_process/DATA_PREP_MOSCOW.py
 

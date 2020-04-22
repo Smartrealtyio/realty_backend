@@ -58,11 +58,12 @@ def train_reg(path_data_new: str, path_data_secondary: str):
 
     # Create LinearModel and fitting
     # reg = LinearRegression().fit(X_train, y_train)
+    print("Start training Spb term model", flush=True)
     reg = GradientBoostingRegressor(n_estimators=450, max_depth=4, verbose=1, random_state=42,
                                     learning_rate=0.07, max_features='sqrt', min_samples_split=2).fit(X_train, y_train)
     preds = reg.predict(X_test)
     acc = r2_score(y_test, preds)
-    print(" Term R2 acc: {0}".format(acc))
+    print("SPB Term R2 acc: {0}".format(acc))
 
     # Train model using full datset
     reg.fit(X, y)

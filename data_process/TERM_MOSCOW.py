@@ -58,7 +58,7 @@ def train_reg(path_data_new: str, path_data_secondary: str):
 
     # Create LinearModel and fitting
     # reg = LinearRegression().fit(X_train, y_train)
-    print("Start training Msc term model", flush=True)
+    print("Msc term model training", flush=True)
     reg = GradientBoostingRegressor(n_estimators=450, max_depth=5, verbose=1, random_state=42,
                                     learning_rate=0.07, max_features='sqrt', min_samples_split=5).fit(X_train, y_train)
     preds = reg.predict(X_test)

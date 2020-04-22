@@ -756,6 +756,10 @@ class Developers_API():
 
         # Create dummies
         dummies = pd.get_dummies(df['type'], prefix='flat_type')
+
+        # Get dummies names
+        dummies_columns = list(dummies.columns)
+
         dummies.values[dummies != 0] = df['volume']
         df = pd.concat([df, dummies], axis=1)
 
@@ -778,17 +782,21 @@ class Developers_API():
 
         # Create new column based on sale_month and sale_year : mm.yy
         df = df.fillna(0)
+
+        df[dummies_columns] = df.groupby(['x_axis_labels'])[dummies_columns].transform('sum')
+
         df = df.sort_values(['sale_year', 'sale_month'], ascending=True)
+
+        df = df.drop_duplicates('x_axis_labels', keep='first')
 
         new_index = df.x_axis_labels.tolist()
         df.index = list(new_index)
 
         df = df.drop(['sale_year', 'sale_month', 'volume', 'type', 'x_axis_labels'], axis=1)
-        
 
-        print(df)
+
         # Plotting
-        img = df.plot.bar(stacked=True, rot=90, title="Sales forecast", figsize=(15,5), x='Месяца', y='Объём продаж')
+        img = df.plot.bar(stacked=True, rot=90, title="Sales forecast", figsize=(15, 5))
         img.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
         # plt.xlabel('months')
         # plt.ylabel('volume')

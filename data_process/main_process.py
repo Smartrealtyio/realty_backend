@@ -9,6 +9,7 @@ from joblib import dump, load
 from datetime import datetime
 import pandas as pd
 import numpy as np
+from matplotlib import pyplot as plt
 from math import ceil
 import sys
 import os
@@ -792,7 +793,7 @@ class Developers_API():
         plt.ylabel('volume')
         # img.savefig('test.png')
 
-        plt.show(block=True)
+        # plt.show(block=True)
 
         # print(df.pivot_table(index='months', columns='volume', aggfunc='size'))
         # df = df.pivot_table(index='months', columns='volume', aggfunc='size')

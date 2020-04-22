@@ -35,6 +35,10 @@ PATH_PRICE_LGBM_SPB_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_LGBM_D.joblib'
 KMEANS_CLUSTERING_MOSCOW_MAIN = SETTINGS.MODEL_MOSCOW + '/KMEANS_CLUSTERING_MOSCOW_MAIN.joblib'
 KMEANS_CLUSTERING_SPB_MAIN = SETTINGS.MODEL_SPB + '/KMEANS_CLUSTERING_SPB_MAIN.joblib'
 
+# Define paths to Moscow and Spb term models
+TERM_SPB = SETTINGS.MODEL_SPB = '/TermModel_Spb_GBR.joblib'
+TERM_MOSCOW = SETTINGS.MODEL_MOSCOW = '/TermModel_Moscow_GBR.joblib'
+
 # Define paths to Moscow and Spb data
 MOSCOW_DATA_NEW = SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv'
 MOSCOW_DATA_SECONDARY = SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv'
@@ -641,44 +645,52 @@ class Developers_API():
         return list_of_terms
 
 
-    def train_reg(self, city_id: int):
+    def train_reg(self, city_id: int, use_trained_models=True):
 
-        # Define city
-        data = pd.DataFrame()
+        reg = 0
+        # CHECK
+        if use_trained_models:
+            if city_id == 0:
+                reg = load(TERM_MOSCOW)
+            elif city_id == 1:
+                reg = load(TERM_SPB)
+        else:
+            # Define city
+            data = pd.DataFrame()
 
-        if city_id == 1:
-            data = self.all_spb
-        elif city_id == 0:
-            data = self.all_msc
+            if city_id == 1:
+                data = self.all_spb
+            elif city_id == 0:
+                data = self.all_msc
 
-        # Log Transformation
-        # data['profit'] = data['profit'] + 1 - data['profit'].min()
-        data = data._get_numeric_data()
-        data[data < 0] = 0
+            # Log Transformation
+            # data['profit'] = data['profit'] + 1 - data['profit'].min()
+            data = data._get_numeric_data()
+            data[data < 0] = 0
 
-        # Remove price and term outliers (out of 3 sigmas)
-        data = data[((np.abs(stats.zscore(data.price)) < 2.5) & (np.abs(stats.zscore(data.term)) < 2.5))]
+            # Remove price and term outliers (out of 3 sigmas)
+            data = data[((np.abs(stats.zscore(data.price)) < 2.5) & (np.abs(stats.zscore(data.term)) < 2.5))]
 
-        data['price_meter_sq'] = np.log1p(data['price_meter_sq'])
-        data['profit'] = np.log1p(data['profit'])
-        # data['term'] = np.log1p(data['term'])
-        # data['mode_price_meter_sq'] = np.log1p(data['mode_price_meter_sq'])
-        # data['mean_term'] = np.log1p(data['mean_term'])
+            data['price_meter_sq'] = np.log1p(data['price_meter_sq'])
+            data['profit'] = np.log1p(data['profit'])
+            # data['term'] = np.log1p(data['term'])
+            # data['mode_price_meter_sq'] = np.log1p(data['mode_price_meter_sq'])
+            # data['mean_term'] = np.log1p(data['mean_term'])
 
-        # Create X and y for Linear Model training
-        X = data[['price_meter_sq', 'profit', 'mm_announce', 'yyyy_announce', 'rent_year', 'windows_view', 'renovation_type', 'full_sq',
-                  'is_rented']]
-        y = data[['term']].values.ravel()
+            # Create X and y for Linear Model training
+            X = data[['price_meter_sq', 'profit', 'mm_announce', 'yyyy_announce', 'rent_year', 'windows_view', 'renovation_type', 'full_sq',
+                      'is_rented']]
+            y = data[['term']].values.ravel()
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
-        # Create LinearModel and fitting
-        # reg = LinearRegression().fit(X_train, y_train)
-        reg = GradientBoostingRegressor(n_estimators=450, max_depth=5, verbose=1, random_state=42,
-                                    learning_rate=0.07, max_features='sqrt', min_samples_split=5).fit(X_train, y_train)
-        preds = reg.predict(X_test)
-        acc = r2_score(y_test, preds)
-        print(" Term R2 acc: {0}".format(acc))
+            # Create LinearModel and fitting
+            # reg = LinearRegression().fit(X_train, y_train)
+            reg = GradientBoostingRegressor(n_estimators=450, max_depth=5, verbose=1, random_state=42,
+                                        learning_rate=0.07, max_features='sqrt', min_samples_split=5).fit(X_train, y_train)
+            preds = reg.predict(X_test)
+            acc = r2_score(y_test, preds)
+            print(" Term R2 acc: {0}".format(acc))
         return reg
 
         # Расчёт месяца и года продажи при известном сроке(в днях). Предполгается, что квартиры вымещаются на продажу только в начале месяца.
@@ -753,7 +765,7 @@ def predict_developers_term(json_file=0):
     flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year  = devAPI.parse_json(json_file)
 
     # Train reg
-    reg = devAPI.train_reg(city_id=city_id)
+    reg = devAPI.train_reg(city_id=city_id, use_trained_models=True)
 
     # Predict
     answer = devAPI.predict(term_model=reg, city_id=city_id, flats=flats, has_elevator=has_elevator,

@@ -788,7 +788,7 @@ class Developers_API():
         print(df)
         # Plotting
         img = df.plot.bar(stacked=True, rot=90, title="Sales forecast")
-
+        img.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
         # plt.xlabel('months')
         # plt.ylabel('volume')
         # img.savefig('test.png')

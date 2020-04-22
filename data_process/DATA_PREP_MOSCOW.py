@@ -437,7 +437,7 @@ if __name__ == '__main__':
     df = mp.load_and_merge(raw_data=RAW_DATA)
 
     # Generate new features
-    print("Generate new features...", flush=True)
+    print("New features generating...", flush=True)
     features_data = mp.new_features(data=df, full_sq_corridor_percent=full_sq_corridor_percent,
                                     price_corridor_percent=price_corridor_percent, part_data=False, K_clusters=K_CLUSTERS)
 
@@ -446,15 +446,15 @@ if __name__ == '__main__':
     cl_data = mp.clustering(features_data, path_kmeans_models=PATH_TO_CLUSTERING_MODELS, K_clusters=K_CLUSTERS)
 
     # Create dummies variables
-    print("Transform to dummies...", flush=True)
+    print("Categorical features transforming to dummies...", flush=True)
     cat_data = mp.to_dummies(cl_data)
 
     # Train price model
-    print("Train price model...", flush=True)
+    print("Price model training...", flush=True)
     price_model, list_columns = mp.train_price_model(data=cat_data)
 
     # Calculate profit for each flat
-    print("Calculating profit for each offer in dataset...", flush=True)
+    print("Profit calculating for each closed offer in dataset...", flush=True)
     test = mp.calculate_profit(data=cat_data, price_model=price_model, list_of_columns=list_columns)
 
     # Create separate files for secondary flats

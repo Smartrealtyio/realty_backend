@@ -13,6 +13,8 @@ import sys
 import os
 import json
 
+machine = os.path.abspath(os.getcwd())
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
@@ -559,30 +561,49 @@ class Developers_API():
         self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)
         self.all_msc = pd.concat([msc_new, msc_vtor], ignore_index=True, axis=0)
 
-    def parse_json(self, data: dict):
-        # with open(file, encoding='utf-8') as read_file:
-        # data = json.load(read_file)
-        city_id = data['city_id']
-        longitude = data['longitude']
-        latitude = data['latitude']
-        is_rented = data['is_rented']
-        rent_year = data['end_timestamp']
-        rent_quarter = data['rent_quarter']
-        start_timestamp = data['start_timestamp']
-        floors_count = data['floors_count']
-        has_elevator = data['elevator']
-        parking = data['parking']
-        time_to_metro = data['time_to_metro']
-        flats = [i for i in data['flats_types']]
-        sale_start_month = int(
-            datetime.utcfromtimestamp(data['start_timestamp']).strftime('%m'))  # Get month from unix timestamp
-        sale_end_month = int(
-            datetime.utcfromtimestamp(data['end_timestamp']).strftime('%m'))  # Get year from unix timestamp
-        sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
-        sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
-        return city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro,\
-               flats,  sale_start_month, sale_end_month, sale_start_year, sale_end_year
+    def parse_json(self, data=0):
+        if "Storage" in machine:
+            with open(data, encoding='utf-8') as read_file:
+                data = json.load(read_file)
+                city_id = data["city_id"]
+                longitude = data['longitude']
+                latitude = data['latitude']
+                is_rented = data['is_rented']
+                rent_year = data['end_timestamp']
+                rent_quarter = data['rent_quarter']
+                start_timestamp = data['start_timestamp']
+                floors_count = data['floors_count']
+                has_elevator = data['elevator']
+                parking = data['parking']
+                time_to_metro = data['time_to_metro']
+                flats = [i for i in data['flats_types']]
+                sale_start_month = int(
+                    datetime.utcfromtimestamp(data['start_timestamp']).strftime('%m'))  # Get month from unix timestamp
+                sale_end_month = int(
+                    datetime.utcfromtimestamp(data['end_timestamp']).strftime('%m'))  # Get year from unix timestamp
+                sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
+                sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
 
+        else:
+            city_id = data["city_id"]
+            longitude = data['longitude']
+            latitude = data['latitude']
+            is_rented = data['is_rented']
+            rent_year = data['end_timestamp']
+            rent_quarter = data['rent_quarter']
+            start_timestamp = data['start_timestamp']
+            floors_count = data['floors_count']
+            has_elevator = data['elevator']
+            parking = data['parking']
+            time_to_metro = data['time_to_metro']
+            flats = [i for i in data['flats_types']]
+            sale_start_month = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%m'))  # Get month from unix timestamp
+            sale_end_month = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%m')) # Get year from unix timestamp
+            sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
+            sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
+
+        return city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro,\
+               flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year
 
     def predict(self, term_model: object, city_id: int, flats: list, rent_year: int, longitude: float, latitude: float,
                 time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int):
@@ -602,8 +623,8 @@ class Developers_API():
         # get flats parameters for each flat
         for i in flats:
             price_meter_sq = i['price_meter_sq']
-            mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m')) # Get month from unix
-            yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y')) # Get year from unix
+            mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m'))  # Get month from unix
+            yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y'))  # Get year from unix
             life_sq = i['life_sq']
             rooms = i['rooms']
             renovation = i['renovation']
@@ -624,23 +645,23 @@ class Developers_API():
             # 'life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
             # 'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year'
 
-
             # calculate profit
 
             current_cluster = kmeans.predict([[longitude, latitude]])
 
-            pred_price = int(np.expm1(price_model.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude,
-                                                           full_sq, kitchen_sq,
-              time_to_metro, floor_last, floor_first, current_cluster, is_rented, rent_quarter, rent_year]])))
+            pred_price = int(
+                np.expm1(price_model.predict([[life_sq, rooms, renovation, has_elevator, longitude, latitude,
+                                               full_sq, kitchen_sq,
+                                               time_to_metro, floor_last, floor_first, current_cluster, is_rented,
+                                               rent_quarter, rent_year]])))
 
+            profit = (pred_price * 100 / (price_meter_sq * full_sq)) - 100
 
-
-            profit = (pred_price * 100 / (price_meter_sq*full_sq)) - 100
-
-
-            term = int(term_model.predict([[np.log1p(price_meter_sq), np.log1p(profit), mm_announce, yyyy_announce, rent_year,
-                                             windows_view, renovation_type, np.log1p(full_sq), is_rented]])[0])
-            list_of_terms.append({'type': type, 'term': term, 'yyyy_announce': yyyy_announce, 'mm_announce': mm_announce})
+            term = int(
+                term_model.predict([[np.log1p(price_meter_sq), np.log1p(profit), mm_announce, yyyy_announce, rent_year,
+                                     windows_view, renovation_type, np.log1p(full_sq), is_rented]])[0])
+            list_of_terms.append(
+                {'type': type, 'term': term, 'mm_announce': mm_announce, 'yyyy_announce': yyyy_announce})
         print("List of terms: ", list_of_terms, flush=True)
         return list_of_terms
 
@@ -693,9 +714,9 @@ class Developers_API():
             print(" Term R2 acc: {0}".format(acc))
         return reg
 
-        # Расчёт месяца и года продажи при известном сроке(в днях). Предполгается, что квартиры вымещаются на продажу только в начале месяца.
+    # Расчёт месяца и года продажи при известном сроке(в днях). Предполгается, что квартиры вымещаются на продажу только в начале месяца.
     def calculate_sale_month_and_year(self, type: int, term: int, yyyy_announce: int, mm_announce: int):
-        from math import ceil
+
         # Sale time in months
         n_months = ceil(term / 30)
 
@@ -708,6 +729,7 @@ class Developers_API():
                 sale_year += 1
             else:
                 sale_month = sale_month % 12
+
         # print(' mm_announce: {2},\n Sale_year: {1}, \n sale_month: {0}'.format(sale_month, sale_year, mm_announce))
         return type, sale_year, sale_month
 
@@ -715,8 +737,8 @@ class Developers_API():
         list_calculated_months = []
         for i in example:
             type, sale_year, sale_month = self.calculate_sale_month_and_year(type=i['type'], term=i['term'],
-                                                                             yyyy_announce=i['yyyy_announce'],
-                                                                             mm_announce=i['mm_announce'])
+                                                                        yyyy_announce=i['yyyy_announce'],
+                                                                        mm_announce=i['mm_announce'])
             list_calculated_months.append({'type': type, 'sale_year': sale_year, 'sale_month': sale_month})
         print(list_calculated_months)
         return list_calculated_months
@@ -748,8 +770,8 @@ class Developers_API():
         # Plotting
         img = df.pivot_table(index='months', columns='volume', aggfunc='size').plot.bar(stacked=True)
         img.legend(list(df.type.unique()))
-        # save img
 
+        # save img
         img.figure.savefig('/home/realtyai/smartrealty/realty/media/test.png')
 
 def predict_developers_term(json_file=0):
@@ -757,15 +779,24 @@ def predict_developers_term(json_file=0):
     devAPI = Developers_API()
 
     # Load CSV data
-    devAPI.load_data(spb_new=SPB_DATA_NEW, spb_vtor=SPB_DATA_SECONDARY, msc_new=MOSCOW_DATA_NEW,
-                     msc_vtor=MOSCOW_DATA_SECONDARY)
+    if "Storage" in machine:
+        devAPI.load_data(spb_new=SPB_DATA_NEW, spb_vtor=SPB_DATA_SECONDARY, msc_new='None',
+                         msc_vtor='None')
+
+    else:
+        devAPI.load_data(spb_new=SPB_DATA_NEW, spb_vtor=SPB_DATA_SECONDARY, msc_new=MOSCOW_DATA_NEW,
+                         msc_vtor=MOSCOW_DATA_SECONDARY)
 
     # Parse json
     city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro, \
-    flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year  = devAPI.parse_json(json_file)
+    flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year = devAPI.parse_json(json_file)
 
-    # Train reg
-    reg = devAPI.train_reg(city_id=city_id, use_trained_models=True)
+    # Train term reg
+    reg = 0
+    if "Storage" in machine:
+        reg = load('C:/Storage/DDG/DEVELOPERS/models/dev_term_gbr_spb.joblib')
+    else:
+        reg = devAPI.train_reg(city_id=city_id)
 
     # Predict
     answer = devAPI.predict(term_model=reg, city_id=city_id, flats=flats, has_elevator=has_elevator,
@@ -775,8 +806,8 @@ def predict_developers_term(json_file=0):
 
     list_calculated_months = devAPI.apply_calculate_sale_month_and_year(answer)
 
-
     devAPI.create_dataframe(list_to_df=list_calculated_months, sale_start_m=sale_start_month, sale_end_m=sale_end_month,
-                           sale_start_yyyy=sale_start_year, sale_end_yyyy=sale_end_year)
+                            sale_start_yyyy=sale_start_year, sale_end_yyyy=sale_end_year)
 
     return answer
+

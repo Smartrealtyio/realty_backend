@@ -18,6 +18,9 @@ sys.path.append(BASE_DIR)
 
 import settings_local as SETTINGS
 
+import matplotlib
+matplotlib.use('agg')
+
 
 # Define paths to Moscow and Spb Secondary flats models DUMMIES
 PATH_PRICE_GBR_MOSCOW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_GBR_D.joblib'

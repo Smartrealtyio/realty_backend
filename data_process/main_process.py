@@ -753,27 +753,58 @@ class Developers_API():
         # Calculate each group volume
         df = df.groupby(['type', 'sale_year', "sale_month"]).size().reset_index(name='volume')
 
-        # Add fictive data
-        for year in range(sale_start_yyyy, sale_end_yyyy + 1):
-            for month in range(sale_start_m, sale_end_m + 1):
-                df.loc[len(df), 'sale_year':'sale_month'] = (year, month)
+        # Create dummies
+        dummies = pd.get_dummies(df['type'], prefix='flat_type')
+        dummies.values[dummies != 0] = df['volume']
+        df = pd.concat([df, dummies], axis=1)
 
         # Create new column based on sale_month and sale_year : mm.yy
         df.sale_month = df.sale_month.astype('int')
         df.sale_year = df.sale_year.astype('int')
-        df.volume = df.volume.fillna(0)
-        df.volume = df.volume.astype('int')
-        df.type = df.type.fillna(0)
-        df.type = df.type.astype('int')
-        df['months'] = df[['sale_month', 'sale_year']].apply(
+        df['x_axis_labels'] = df[['sale_month', 'sale_year']].apply(
             lambda row: "{0}.{1}".format(str(row.sale_month).zfill(2), str(row.sale_year)[-2:]), axis=1)
 
-        # Plotting
-        img = df.pivot_table(index='months', columns='volume', aggfunc='size').plot.bar(stacked=True)
-        img.legend(list(df.type.unique()))
+        # Add fictive data
+        for year in range(sale_start_yyyy, sale_end_yyyy + 1):
+            for month in range(1, 13):
+                if '{0}.{1}'.format(str(month).zfill(2), str(year)[-2:]) not in df.x_axis_labels.tolist():
+                    df.loc[len(df), 'sale_year':'sale_month'] = (year, month)
 
+        df.sale_month = df.sale_month.astype('int')
+        df.sale_year = df.sale_year.astype('int')
+        df['x_axis_labels'] = df[['sale_month', 'sale_year']].apply(
+            lambda row: "{0}.{1}".format(str(row.sale_month).zfill(2), str(row.sale_year)[-2:]), axis=1)
+
+        # Create new column based on sale_month and sale_year : mm.yy
+        df = df.fillna(0)
+        df = df.sort_values(['sale_year', 'sale_month'], ascending=True)
+
+        new_index = df.x_axis_labels.tolist()
+        df.index = list(new_index)
+
+        df = df.drop(['sale_year', 'sale_month', 'volume', 'type', 'x_axis_labels'], axis=1)
+
+        print(df)
+        # Plotting
+        img = df.plot.bar(stacked=True, rot=90, title="Sales forecast")
+
+        plt.xlabel('months')
+        plt.ylabel('volume')
+        # img.savefig('test.png')
+
+        plt.show(block=True)
+
+        # print(df.pivot_table(index='months', columns='volume', aggfunc='size'))
+        # df = df.pivot_table(index='months', columns='volume', aggfunc='size')
+        # df = df.sort_values(by='month', ascending=True)
+        # img = df.pivot_table(index='months', columns='volume', aggfunc='size').plot.bar(stacked=True)
+        # print(list(df.type.unique()))
+        # img.legend(list(df.type.unique()))
         # save img
-        img.figure.savefig('/home/realtyai/smartrealty/realty/media/test.png')
+        if "Storage" in machine:
+            img.figure.savefig('test.png')
+        else:
+            img.figure.savefig('/home/realtyai/smartrealty/realty/media/test.png')
 
 def predict_developers_term(json_file=0):
     # Create Class

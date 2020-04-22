@@ -9,7 +9,7 @@ from joblib import dump, load
 from datetime import datetime
 import pandas as pd
 import numpy as np
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 from math import ceil
 import sys
 import os
@@ -789,8 +789,8 @@ class Developers_API():
         # Plotting
         img = df.plot.bar(stacked=True, rot=90, title="Sales forecast")
 
-        plt.xlabel('months')
-        plt.ylabel('volume')
+        # plt.xlabel('months')
+        # plt.ylabel('volume')
         # img.savefig('test.png')
 
         # plt.show(block=True)

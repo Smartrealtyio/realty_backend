@@ -784,10 +784,11 @@ class Developers_API():
         df.index = list(new_index)
 
         df = df.drop(['sale_year', 'sale_month', 'volume', 'type', 'x_axis_labels'], axis=1)
+        
 
         print(df)
         # Plotting
-        img = df.plot.bar(stacked=True, rot=90, title="Sales forecast", figsize=(15,5))
+        img = df.plot.bar(stacked=True, rot=90, title="Sales forecast", figsize=(15,5), x='Месяца', y='Объём продаж')
         img.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
         # plt.xlabel('months')
         # plt.ylabel('volume')

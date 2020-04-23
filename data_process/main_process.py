@@ -585,9 +585,7 @@ class Developers_API():
                     datetime.utcfromtimestamp(data['end_timestamp']).strftime('%m'))  # Get year from unix timestamp
                 sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
                 sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
-                schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m = \
-                data['schools_500m'], data['schools_1000m'],
-                data['kindergartens_500m'], data['kindergartens_1000m'], data['clinics_500m'], data['clinics_1000m'], \
+                schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m =  data['schools_500m'], data['schools_1000m'], data['kindergartens_500m'], data['kindergartens_1000m'], data['clinics_500m'], data['clinics_1000m'], \
                 data['shops_500m'], data['shops_1000m']
 
         else:
@@ -607,12 +605,11 @@ class Developers_API():
             sale_end_month = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%m')) # Get year from unix timestamp
             sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
             sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
-            schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m = data['schools_500m'], data['schools_1000m'],
-            data['kindergartens_500m'], data['kindergartens_1000m'], data['clinics_500m'], data['clinics_1000m'], data['shops_500m'], data['shops_1000m']
+            schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m = data['schools_500m'], data['schools_1000m'], data['kindergartens_500m'], data['kindergartens_1000m'], data['clinics_500m'], data['clinics_1000m'], data['shops_500m'], data['shops_1000m']
 
 
         return city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro,\
-               flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year
+               flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year, schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m
 
     def predict(self, term_model: object, city_id: int, flats: list, rent_year: int, longitude: float, latitude: float,
                 time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int, schools_500m: int, schools_1000m: int,
@@ -841,10 +838,7 @@ def predict_developers_term(json_file=0):
                          msc_vtor=MOSCOW_DATA_SECONDARY)
 
     # Parse json
-    city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro, \
-    flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year, schools_500m, schools_1000m, kindergartens_500m,
-                                       kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m,
-                                       shops_1000m = devAPI.parse_json(json_file)
+    city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro, flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year, schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m,shops_1000m = devAPI.parse_json(json_file)
 
     # Train term reg
     reg = 0

@@ -47,7 +47,7 @@ def train_reg(path_data_new: str, path_data_secondary: str):
     # Remove price and term outliers (out of 3 sigmas)
     data = data[((np.abs(stats.zscore(data.price)) < 2.5) & (np.abs(stats.zscore(data.term)) < 2.5))]
 
-    data[['']]
+
     data['price_meter_sq'] = np.log1p(data['price_meter_sq'])
     data['profit'] = np.log1p(data['profit'])
     # data['term'] = np.log1p(data['term'])

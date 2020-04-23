@@ -851,7 +851,9 @@ def predict_developers_term(json_file=0):
     answer = devAPI.predict(term_model=reg, city_id=city_id, flats=flats, has_elevator=has_elevator,
                             is_rented=is_rented,
                             latitude=latitude, longitude=longitude, rent_quarter=rent_quarter, rent_year=rent_year,
-                            time_to_metro=time_to_metro)
+                            time_to_metro=time_to_metro, schools_500m=schools_500m, schools_1000m=schools_1000m,
+                            kindergartens_500m=kindergartens_500m, kindergartens_1000m=kindergartens_1000m, clinics_500m=clinics_500m,
+                            clinics_1000m=clinics_1000m, shops_500m=shops_500m,shops_1000m=shops_1000m)
 
     list_calculated_months = devAPI.apply_calculate_sale_month_and_year(answer)
 

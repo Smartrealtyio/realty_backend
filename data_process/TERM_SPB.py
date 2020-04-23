@@ -40,7 +40,11 @@ def train_reg(path_data_new: str, path_data_secondary: str):
 
     # Remove price and term outliers (out of 3 sigmas)
     data = data[((np.abs(stats.zscore(data.price)) < 2.5) & (np.abs(stats.zscore(data.term)) < 2.5))]
-
+    data[['schools_500m', 'schools_1000m', 'kindergartens_500m',
+                                       'kindergartens_1000m', 'clinics_500m', 'clinics_1000m', 'shops_500m',
+                                       'shops_1000m']] = data[['schools_500m', 'schools_1000m', 'kindergartens_500m',
+                                       'kindergartens_1000m', 'clinics_500m', 'clinics_1000m', 'shops_500m',
+                                       'shops_1000m']].fillna(0)
     data['price_meter_sq'] = np.log1p(data['price_meter_sq'])
     data['profit'] = np.log1p(data['profit'])
     # data['term'] = np.log1p(data['term'])
@@ -51,7 +55,9 @@ def train_reg(path_data_new: str, path_data_secondary: str):
     X = data[
         ['price_meter_sq', 'profit', 'mm_announce', 'yyyy_announce', 'rent_year', 'windows_view', 'renovation_type',
          'full_sq',
-         'is_rented']]
+         'is_rented', 'schools_500m', 'schools_1000m', 'kindergartens_500m',
+                                       'kindergartens_1000m', 'clinics_500m', 'clinics_1000m', 'shops_500m',
+                                       'shops_1000m']]
     y = data[['term']].values.ravel()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)

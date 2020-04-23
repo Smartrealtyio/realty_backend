@@ -313,7 +313,9 @@ class MainPreprocessing():
                  'mm_announce__5', 'mm_announce__6', 'mm_announce__7', 'mm_announce__8', 'mm_announce__9',
                  'mm_announce__10', 'mm_announce__11', 'mm_announce__12', 'yyyy_announce__18',
                  'yyyy_announce__19', 'yyyy_announce__20',
-                 'clusters']]
+                 'clusters', 'schools_500m', 'schools_1000m', 'kindergartens_500m',
+                                       'kindergartens_1000m', 'clinics_500m', 'clinics_1000m', 'shops_500m',
+                                       'shops_1000m']]
 
 
         # df = df[['price', 'full_sq', 'kitchen_sq', 'life_sq', 'is_apartment',
@@ -390,7 +392,9 @@ class MainPreprocessing():
                   row.mm_announce__7, row.mm_announce__8, row.mm_announce__9,
                   row.mm_announce__10, row.mm_announce__11, row.mm_announce__12,
                   row.yyyy_announce__18, row.yyyy_announce__19, row.yyyy_announce__20,
-                  row.clusters]]))[0]), axis=1)
+                  row.clusters, row.schools_500m, row.schools_1000m, row.kindergartens_500m,
+                                       row.kindergartens_1000m, row.clinics_500m, row.clinics_1000m, row.shops_500m,
+                                       row.shops_1000m]]))[0]), axis=1)
 
         # data_closed['pred_price'] = data_closed[list_of_columns].apply(
         #     lambda row:

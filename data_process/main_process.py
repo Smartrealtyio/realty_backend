@@ -585,6 +585,10 @@ class Developers_API():
                     datetime.utcfromtimestamp(data['end_timestamp']).strftime('%m'))  # Get year from unix timestamp
                 sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
                 sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
+                schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m = \
+                data['schools_500m'], data['schools_1000m'],
+                data['kindergartens_500m'], data['kindergartens_1000m'], data['clinics_500m'], data['clinics_1000m'], \
+                data['shops_500m'], data['shops_1000m']
 
         else:
             city_id = data["city_id"]
@@ -603,12 +607,17 @@ class Developers_API():
             sale_end_month = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%m')) # Get year from unix timestamp
             sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
             sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
+            schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m = data['schools_500m'], data['schools_1000m'],
+            data['kindergartens_500m'], data['kindergartens_1000m'], data['clinics_500m'], data['clinics_1000m'], data['shops_500m'], data['shops_1000m']
+
 
         return city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro,\
                flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year
 
     def predict(self, term_model: object, city_id: int, flats: list, rent_year: int, longitude: float, latitude: float,
-                time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int):
+                time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int, schools_500m: int, schools_1000m: int,
+                kindergartens_500m: int, kindergartens_1000m: int, clinics_500m: int, clinics_1000m: int, shops_500m: int,
+                shops_1000m:int):
 
         price_model = 0
         kmeans = 0
@@ -661,7 +670,9 @@ class Developers_API():
 
             term = int(
                 term_model.predict([[np.log1p(price_meter_sq), np.log1p(profit), mm_announce, yyyy_announce, rent_year,
-                                     windows_view, renovation_type, np.log1p(full_sq), is_rented]])[0])
+                                     windows_view, renovation_type, np.log1p(full_sq), is_rented, schools_500m,
+                                     schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m,
+                                     shops_500m, shops_1000m]])[0])
             list_of_terms.append(
                 {'type': type, 'term': term, 'mm_announce': mm_announce, 'yyyy_announce': yyyy_announce})
         print("List of terms: ", list_of_terms, flush=True)
@@ -831,7 +842,9 @@ def predict_developers_term(json_file=0):
 
     # Parse json
     city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking, time_to_metro, \
-    flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year = devAPI.parse_json(json_file)
+    flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year, schools_500m, schools_1000m, kindergartens_500m,
+                                       kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m,
+                                       shops_1000m = devAPI.parse_json(json_file)
 
     # Train term reg
     reg = 0

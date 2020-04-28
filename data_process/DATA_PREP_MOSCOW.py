@@ -70,7 +70,10 @@ class MainPreprocessing():
 
 
         # Calculating selling term. TIME UNIT: DAYS
-        prices['term'] = prices[['updated_at', 'changed_date']].apply(
+        # udpated_at - date, when offer was closed
+        # changed_at - date, when offer was opened 
+        # Calculating selling term. TIME UNIT: DAYS
+        prices['term_yand'] = prices[['updated_at', 'changed_date']].apply(
             lambda row: (bck.date_fromisoformat(row['updated_at'][:-9])
                          - bck.date_fromisoformat(row['changed_date'][:-9])).days, axis=1)
 
@@ -84,11 +87,17 @@ class MainPreprocessing():
                                                        "kitchen_sq",
                                                        "life_sq",
                                                        "floor", "is_apartment",
-                                                       "building_id", 'offer_id',
+                                                       "building_id", 'created_at','updated_at', 'offer_id',
                                                        "closed", 'rooms', 'resource_id', 'flat_type', 'is_rented', 'rent_quarter',
                                                        'rent_year', 'renovation_type', 'windows_view'
                                                        ],
                             true_values="t", false_values="f", header=0)
+        # Calculating selling term. TIME UNIT: DAYS
+        flats['term_cian'] = flats[['updated_at', 'created_at']].apply(
+            lambda row: (bck.date_fromisoformat(row['updated_at'][:-9])
+                         - bck.date_fromisoformat(row['created_at'][:-9])).days, axis=1)
+        flats = flats[((flats['created_at'].str.contains('2020')) | (flats['created_at'].str.contains('2019')) | (
+            flats['created_at'].str.contains('2018')))]
 
         # Replace all missed values in FLAT_TYPE with 'SECONDARY'
         flats.flat_type = flats['flat_type'].fillna('SECONDARY')
@@ -151,6 +160,10 @@ class MainPreprocessing():
         # Merage prices and flats on flat_id
         prices_and_flats = pd.merge(prices, flats, on='flat_id', how="left")
 
+        # Select term
+        prices_and_flats['term'] = np.where(prices_and_flats['resource_id'] == 0, prices_and_flats['term_yand'],
+                                            prices_and_flats[
+                                                'term_cian'])  # yandex resource_id = 0, cian resource_id =1
 
         # Merge districts and buildings on district_id
         districts_and_buildings = pd.merge(districts, buildings, on='district_id', how='right')

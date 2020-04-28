@@ -158,7 +158,7 @@ class MainPreprocessing():
         time_to_metro = time_to_metro.drop_duplicates(subset='building_id', keep="first")
 
         # Merage prices and flats on flat_id
-        prices_and_flats = pd.merge(prices, flats, on='flat_id', how="left")
+        prices_and_flats = pd.merge(prices, flats, on='flat_id', how="left", suffixes=('_yand', '_cian'))
 
         # Select term
         prices_and_flats['term'] = np.where(prices_and_flats['resource_id'] == 0, prices_and_flats['term_yand'],
@@ -251,17 +251,26 @@ class MainPreprocessing():
         df['to_center'] = abs(Moscow_center_lon - df['longitude']) + abs(Moscow_center_lat - df['latitude'])
 
         # No 2. Fictive(for futher offer value calculating): yyyy_announc, mm_announc - year and month when flats were announced on market
-        df['yyyy_announce'] = df['changed_date'].str[2:4].astype('int64')
-        df['mm_announce'] = df['changed_date'].str[5:7].astype('int64')
+        df['yyyy_announce'] = np.where(df.resource_id == 0, df['changed_date_yand'].str[2:4].astype('int64'),
+                                       df['changed_date_cian'].str[2:4].astype('int64'))
+        df['mm_announce'] = np.where(df.resource_id == 0, df['changed_date_yand'].str[5:7].astype('int64'),
+                                     df['changed_date_cian'].str[5:7].astype('int64'))
+
+        df['yyyy_sold'] = np.where(df.resource_id == 0, df['udpated_at_yand'].str[2:4].astype('int64'),
+                                   df['updated_at_cian'].str[2:4].astype('int64'))
+        df['mm_sold'] = np.where(df.resource_id == 0, df['updated_at_yand'].str[5:7].astype('int64'),
+                                 df['updated_at_cian'].str[5:7].astype('int64'))
 
         # No 3. Number of offers were added calculating by months and years
         df['all_offers_added_in_month'] = df.groupby(['yyyy_announce', 'mm_announce'])["flat_id"].transform("count")
 
-            # No 4. Convert changed_date and updated_at to unix timestamp. Convert only yyyy-mm-dd hh
-        df['open_date_unix'] = df['changed_date'].apply(
-            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple())))
-        df['close_date_unix'] = df['updated_at'].apply(
-            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple())))
+        # No 4. Convert changed_date and updated_at to unix timestamp. Convert only yyyy-mm-dd hh
+        df['open_date_unix'] = np.where(df.resource_id == 0, df['changed_date_yand'].apply(
+            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))), df['changed_date_cian'].apply(
+            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))))
+        df['close_date_unix'] = np.where(df.resource_id == 0, df['updated_at_yand'].apply(
+            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))), df['updated_at_cian'].apply(
+            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))))
 
         # Take just part of data
         if part_data:

@@ -37,27 +37,27 @@ class MainPreprocessing():
             'id', 'price', 'changed_date', 'flat_id', 'created_at', 'updated_at'
         ], usecols=["price", "flat_id", 'created_at', 'changed_date', 'updated_at'])
 
-        # Count number of price changing for each unique flat and SORT changed_date for each subgroup (group consist of one flat)
-        # prices['nums_of_changing'] = prices.sort_values(['changed_date'][-9:], ascending=True).groupby(['flat_id'])[
+        # Count number of price changing for each unique flat and SORT created_at for each subgroup (group consist of one flat)
+        # prices['nums_of_changing'] = prices.sort_values(['created_at'][-9:], ascending=True).groupby(['flat_id'])[
         #     "flat_id"].transform("count")
         # Group by falt_id and sort in ascending order for term counting
-        # prices = prices.sort_values(['changed_date'][-9:],ascending=True).groupby('flat_id')
+        # prices = prices.sort_values(['created_at'][-9:],ascending=True).groupby('flat_id')
 
         # Rewrite UPDATED_AT column with last date
         prices['updated_at'] = prices.groupby('flat_id')['updated_at'].transform('last')
 
         # Keep just first date
         prices = prices.drop_duplicates(subset='flat_id', keep="first")
-        prices = prices[((prices['changed_date'].str.contains('2020')) | (prices['changed_date'].str.contains('2019')) | (
-            prices['changed_date'].str.contains('2018')))]
+        prices = prices[((prices['created_at'].str.contains('2020')) | (prices['created_at'].str.contains('2019')) | (
+            prices['created_at'].str.contains('2018')))]
 
         # Calculating selling term. TIME UNIT: DAYS
-        # udpated_at - date, when offer was closed
+        # updated_at - date, when offer was closed
         # changed_at - date, when offer was opened
         # Calculating selling term. TIME UNIT: DAYS
-        prices['term_yand'] = prices[['updated_at', 'changed_date']].apply(
+        prices['term_yand'] = prices[['updated_at', 'created_at']].apply(
             lambda row: (bck.date_fromisoformat(row['updated_at'][:-9])
-                         - bck.date_fromisoformat(row['changed_date'][:-9])).days, axis=1)
+                         - bck.date_fromisoformat(row['created_at'][:-9])).days, axis=1)
 
         flats = pd.read_csv(raw_data + "flats.csv",
                             names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
@@ -170,19 +170,19 @@ class MainPreprocessing():
 
         # Replace missed value 'RENT_YEAR' with posted year
         # now = datetime.datetime.now()
-        # df.rent_year = df.rent_year.fillna(df.changed_date.apply(lambda x: x[:4]))
+        # df.rent_year = df.rent_year.fillna(df.created_at.apply(lambda x: x[:4]))
         df.rent_year = df.rent_year.fillna(0)
         df.is_rented = df.is_rented.astype(int)
 
         # Replace missed value "RENT_QUARTER" with current quarter, when value was posted
         df.rent_quarter = df.rent_quarter.fillna(0)
         df.is_rented = df.is_rented.astype(int)
-        # df.rent_quarter = df.rent_quarter.fillna(df.changed_date.apply(lambda x: x[5:7]))
+        # df.rent_quarter = df.rent_quarter.fillna(df.created_at.apply(lambda x: x[5:7]))
         # df.rent_quarter = df.rent_quarter.astype(int)
-        # df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 12, 4, 4)
-        # df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 9, 3, df.rent_quarter)
-        # df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 6, 2, df.rent_quarter)
-        # df.rent_quarter = np.where(df.changed_date.apply(lambda x: int(x[5:7])) <= 3, 1, df.rent_quarter)
+        # df.rent_quarter = np.where(df.created_at.apply(lambda x: int(x[5:7])) <= 12, 4, 4)
+        # df.rent_quarter = np.where(df.created_at.apply(lambda x: int(x[5:7])) <= 9, 3, df.rent_quarter)
+        # df.rent_quarter = np.where(df.created_at.apply(lambda x: int(x[5:7])) <= 6, 2, df.rent_quarter)
+        # df.rent_quarter = np.where(df.created_at.apply(lambda x: int(x[5:7])) <= 3, 1, df.rent_quarter)
 
         df = df.fillna(0)
 
@@ -230,10 +230,10 @@ class MainPreprocessing():
         df['to_center'] = abs(SPB_center_lon - df['longitude']) + abs(SPB_center_lat - df['latitude'])
 
         # No 2. Fictive(for futher offer value calculating): yyyy_announc, mm_announc - year and month when flats were announced on market
-        df['yyyy_announce'] = np.where(df.resource_id == 0, df['changed_date_yand'].str[2:4].astype('int64'), df['changed_date_cian'].str[2:4].astype('int64'))
-        df['mm_announce'] = np.where(df.resource_id == 0, df['changed_date_yand'].str[5:7].astype('int64'), df['changed_date_cian'].str[5:7].astype('int64'))
+        df['yyyy_announce'] = np.where(df.resource_id == 0, df['created_at_yand'].str[2:4].astype('int64'), df['created_at_cian'].str[2:4].astype('int64'))
+        df['mm_announce'] = np.where(df.resource_id == 0, df['created_at_yand'].str[5:7].astype('int64'), df['created_at_cian'].str[5:7].astype('int64'))
 
-        df['yyyy_sold'] = np.where(df.resource_id == 0, df['udpated_at_yand'].str[2:4].astype('int64'),
+        df['yyyy_sold'] = np.where(df.resource_id == 0, df['updated_at_yand'].str[2:4].astype('int64'),
                                        df['updated_at_cian'].str[2:4].astype('int64'))
         df['mm_sold'] = np.where(df.resource_id == 0, df['updated_at_yand'].str[5:7].astype('int64'),
                                      df['updated_at_cian'].str[5:7].astype('int64'))
@@ -241,9 +241,9 @@ class MainPreprocessing():
         # No 3. Number of offers were added calculating by months and years
         df['all_offers_added_in_month'] = df.groupby(['yyyy_announce', 'mm_announce'])["flat_id"].transform("count")
 
-        # No 4. Convert changed_date and updated_at to unix timestamp. Convert only yyyy-mm-dd hh
-        df['open_date_unix'] = np.where(df.resource_id == 0, df['changed_date_yand'].apply(
-            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))), df['changed_date_cian'].apply(
+        # No 4. Convert created_at and updated_at to unix timestamp. Convert only yyyy-mm-dd hh
+        df['open_date_unix'] = np.where(df.resource_id == 0, df['created_at_yand'].apply(
+            lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))), df['created_at_cian'].apply(
             lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))))
         df['close_date_unix'] = np.where(df.resource_id == 0, df['updated_at_yand'].apply(
             lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))), df['updated_at_cian'].apply(

@@ -43,21 +43,26 @@ class MainPreprocessing():
         # Group by falt_id and sort in ascending order for term counting
         # prices = prices.sort_values(['created_at'][-9:],ascending=True).groupby('flat_id')
 
-        # Rewrite UPDATED_AT column with last date
-        prices['updated_at'] = prices.groupby('flat_id')['updated_at'].transform('last')
+        # Create column - date of last change. Will assume, that this is closing date
+        prices['last_change_at'] = prices.sort_values(['changed_date'], ascending=True).groupby('flat_id')['changed_date']\
+            .transform('last')
 
-        # Keep just first date
+        # Sort prices by changed date
+        prices = prices.sort_values(by=['changed_date'])
+
+        # # Keep just first date
         prices = prices.drop_duplicates(subset='flat_id', keep="first")
-        prices = prices[((prices['created_at'].str.contains('2020')) | (prices['created_at'].str.contains('2019')) | (
-            prices['created_at'].str.contains('2018')))]
+        prices = prices[((prices['changed_date'].str.contains('2020')) | (prices['changed_date'].str.contains('2019')) |
+                         (prices['changed_date'].str.contains('2018')))]
+
 
         # Calculating selling term. TIME UNIT: DAYS
-        # updated_at - date, when offer was closed
-        # changed_at - date, when offer was opened
+        # last_change_at - date, when offer was closed
+        # changed_date - date, when offer was opened
         # Calculating selling term. TIME UNIT: DAYS
-        prices['term_yand'] = prices[['updated_at', 'created_at']].apply(
-            lambda row: (bck.date_fromisoformat(row['updated_at'][:-9])
-                         - bck.date_fromisoformat(row['created_at'][:-9])).days, axis=1)
+        prices['term_yand'] = prices[['last_change_at', 'changed_date']].apply(
+            lambda row: (bck.date_fromisoformat(row['last_change_at'][:-9])
+                         - bck.date_fromisoformat(row['changed_date'][:-9])).days, axis=1)
 
         flats = pd.read_csv(raw_data + "flats.csv",
                             names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',

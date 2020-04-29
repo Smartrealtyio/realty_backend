@@ -64,18 +64,27 @@ class MainPreprocessing():
         # prices = prices.sort_values(['created_at'][-9:],ascending=True).groupby('flat_id')
 
         # Keep just first date
+        # Create column - date of last change. Will assume, that this is closing date
+        prices['last_change_at'] = prices.sort_values(['changed_date'], ascending=True).groupby('flat_id')[
+            'changed_date'] \
+            .transform('last')
+
+        # Sort prices by changed date
+        prices = prices.sort_values(by=['changed_date'])
+
+        # # Keep just first date
         prices = prices.drop_duplicates(subset='flat_id', keep="first")
-        prices = prices[((prices['created_at'].str.contains('2020')) | (prices['created_at'].str.contains('2019')) | (
-            prices['created_at'].str.contains('2018')))]
+        prices = prices[((prices['changed_date'].str.contains('2020')) | (prices['changed_date'].str.contains('2019')) |
+                         (prices['changed_date'].str.contains('2018')))]
 
 
         # Calculating selling term. TIME UNIT: DAYS
         # udpated_at - date, when offer was closed
         # created_at - date, when offer was opened
         # Calculating selling term. TIME UNIT: DAYS
-        prices['term_yand'] = prices[['updated_at', 'created_at']].apply(
-            lambda row: (bck.date_fromisoformat(row['updated_at'][:-9])
-                         - bck.date_fromisoformat(row['created_at'][:-9])).days, axis=1)
+        prices['term_yand'] = prices[['last_change_at', 'changed_date']].apply(
+            lambda row: (bck.date_fromisoformat(row['last_change_at'][:-9])
+                         - bck.date_fromisoformat(row['changed_date'][:-9])).days, axis=1)
 
         flats = pd.read_csv(raw_data + "flats.csv",
                             names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
@@ -461,6 +470,7 @@ if __name__ == '__main__':
     print('_' * 10, "MOSCOW", "_" * 10)
     print("Load data...", flush=True)
     df = mp.load_and_merge(raw_data=RAW_DATA)
+    # df = df.loc[:1000]
 
     # Generate new features
     print("New features generating...", flush=True)

@@ -30,7 +30,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
 
-# TODO:
+# TODO: Turn 'was_opened' calculating on
 
 # Define paths
 RAW_DATA = SETTINGS.PATH_TO_SINGLE_CSV_FILES_MOSCOW
@@ -260,24 +260,24 @@ class MainPreprocessing():
         df['to_center'] = abs(Moscow_center_lon - df['longitude']) + abs(Moscow_center_lat - df['latitude'])
 
         # No 2. Fictive(for futher offer value calculating): yyyy_announc, mm_announc - year and month when flats were announced on market
-        df['yyyy_announce'] = np.where(df.resource_id == 0, df['created_at_yand'].str[2:4].astype('int64'),
+        df['yyyy_announce'] = np.where(df.resource_id == 0, df['changed_date'].str[2:4].astype('int64'),
                                        df['created_at_cian'].str[2:4].astype('int64'))
-        df['mm_announce'] = np.where(df.resource_id == 0, df['created_at_yand'].str[5:7].astype('int64'),
+        df['mm_announce'] = np.where(df.resource_id == 0, df['changed_date'].str[5:7].astype('int64'),
                                      df['created_at_cian'].str[5:7].astype('int64'))
 
-        df['yyyy_sold'] = np.where(df.resource_id == 0, df['updated_at_yand'].str[2:4].astype('int64'),
+        df['yyyy_sold'] = np.where(df.resource_id == 0, df['last_change_at'].str[2:4].astype('int64'),
                                    df['updated_at_cian'].str[2:4].astype('int64'))
-        df['mm_sold'] = np.where(df.resource_id == 0, df['updated_at_yand'].str[5:7].astype('int64'),
+        df['mm_sold'] = np.where(df.resource_id == 0, df['last_change_at'].str[5:7].astype('int64'),
                                  df['updated_at_cian'].str[5:7].astype('int64'))
 
         # No 3. Number of offers were added calculating by months and years
         df['all_offers_added_in_month'] = df.groupby(['yyyy_announce', 'mm_announce'])["flat_id"].transform("count")
 
         # No 4. Convert created_at and updated_at to unix timestamp. Convert only yyyy-mm-dd hh
-        df['open_date_unix'] = np.where(df.resource_id == 0, df['created_at_yand'].apply(
+        df['open_date_unix'] = np.where(df.resource_id == 0, df['changed_date'].apply(
             lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))), df['created_at_cian'].apply(
             lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))))
-        df['close_date_unix'] = np.where(df.resource_id == 0, df['updated_at_yand'].apply(
+        df['close_date_unix'] = np.where(df.resource_id == 0, df['last_change_at'].apply(
             lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))), df['updated_at_cian'].apply(
             lambda row: int(time.mktime(ciso8601.parse_datetime(row[:-3]).timetuple()))))
 
@@ -286,12 +286,12 @@ class MainPreprocessing():
             df = df.iloc[:len(df) // part_data]
 
         # Calculate number of "similar" flats which were on market when each closed offer was closed.
-        df['was_opened'] = [np.sum((df['open_date_unix'] < close_time) & (df['close_date_unix'] >= close_time) &
-                                   (df['rooms'] == rooms) &
-                                   ((df['full_sq'] <= full_sq * (1 + full_sq_corridor_percent / 100)) & (
-                                           df['full_sq'] >= full_sq * (1 - full_sq_corridor_percent / 100)))) for
-                            close_time, rooms, full_sq in
-                            zip(df['close_date_unix'], df['rooms'], df['full_sq'])]
+        # df['was_opened'] = [np.sum((df['open_date_unix'] < close_time) & (df['close_date_unix'] >= close_time) &
+        #                            (df['rooms'] == rooms) &
+        #                            ((df['full_sq'] <= full_sq * (1 + full_sq_corridor_percent / 100)) & (
+        #                                    df['full_sq'] >= full_sq * (1 - full_sq_corridor_percent / 100)))) for
+        #                     close_time, rooms, full_sq in
+        #                     zip(df['close_date_unix'], df['rooms'], df['full_sq'])]
 
         # Fill missed valeus for secondary flats
         df.loc[:, ['rent_quarter', 'rent_year']] = df[['rent_quarter', 'rent_year']].fillna(0)

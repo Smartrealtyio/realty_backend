@@ -331,11 +331,12 @@ class MainPreprocessing():
         df = df[((np.abs(stats.zscore(df.price)) < 3) & (np.abs(stats.zscore(df.term)) < 3) & (
                     np.abs(stats.zscore(df.full_sq)) < 3))]
 
+        # !!!! ADD 'was_opened'
         df = df[['price', 'full_sq', 'kitchen_sq', 'life_sq', 'rooms', 'is_apartment',
                  'renovation', 'has_elevator',
                  'time_to_metro', 'floor_first', 'floor_last',
                  'is_rented', 'rent_quarter',
-                 'rent_year', 'to_center', 'was_opened', 'mm_announce__1',
+                 'rent_year', 'to_center', 'mm_announce__1',
                  'mm_announce__2', 'mm_announce__3', 'mm_announce__4',
                  'mm_announce__5', 'mm_announce__6', 'mm_announce__7', 'mm_announce__8', 'mm_announce__9',
                  'mm_announce__10', 'mm_announce__11', 'mm_announce__12', 'yyyy_announce__18',
@@ -409,12 +410,13 @@ class MainPreprocessing():
         data_closed = data[data.closed == True]
         opened_data = data[data.closed==False]
 
+        # !!!! ADD row.was_opened
         data_closed['pred_price'] = data_closed[list_of_columns].apply(
             lambda row:
             int(np.expm1(price_model.predict(
                 [[np.log1p(row.full_sq), np.log1p(row.kitchen_sq), np.log1p(row.life_sq), row.rooms, row.is_apartment,
                   row.renovation, row.has_elevator, row.time_to_metro, row.floor_first, row.floor_last,
-                  row.is_rented, row.rent_quarter, row.rent_year, row.to_center, row.was_opened, row.mm_announce__1,
+                  row.is_rented, row.rent_quarter, row.rent_year, row.to_center, row.mm_announce__1,
                   row.mm_announce__2, row.mm_announce__3, row.mm_announce__4, row.mm_announce__5, row.mm_announce__6,
                   row.mm_announce__7, row.mm_announce__8, row.mm_announce__9,
                   row.mm_announce__10, row.mm_announce__11, row.mm_announce__12,

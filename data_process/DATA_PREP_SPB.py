@@ -68,14 +68,14 @@ class MainPreprocessing():
                             names=['id', 'full_sq', 'kitchen_sq', 'life_sq', 'floor', 'is_apartment',
                                    'building_id', 'created_at',
                                    'updated_at', 'offer_id', 'closed', 'rooms', 'image', 'resource_id',
-                                   'flat_type', 'is_rented', 'rent_quarter', 'rent_year', 'agency', 'renovation_type', 'windows_view'],
+                                   'flat_type', 'is_rented', 'rent_quarter', 'rent_year', 'agency', 'renovation_type', 'windows_view', 'close_date'],
                             usecols=["id", "full_sq",
                                                        "kitchen_sq",
                                                        "life_sq",
                                                        "floor", "is_apartment",
                                                        "building_id", 'created_at','updated_at', 'offer_id',
                                                        "closed", 'rooms', 'resource_id', 'flat_type', 'is_rented', 'rent_quarter',
-                                                       'rent_year', 'renovation_type', 'windows_view'],
+                                                       'rent_year', 'renovation_type', 'windows_view', 'close_date'],
                             true_values="t", false_values="f", header=0)
 
         # Calculating selling term. TIME UNIT: DAYS

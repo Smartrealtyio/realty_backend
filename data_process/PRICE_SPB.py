@@ -39,14 +39,18 @@ def Price_Main(data: pd.DataFrame):
     # Fill NaN if it appears after merging
     data[['term']] = data[['term']].fillna(data[['term']].mean())
 
+    # Fix year
+    data = data[((data.yyyy_announce == 2019)&(data.yyyy_announce == 2020))]
+
     # Log Transformation
     data["longitude"] = np.log1p(data["longitude"])
     data["latitude"] = np.log1p(data["latitude"])
     data["full_sq"] = np.log1p(data["full_sq"])
     data["life_sq"] = np.log1p(data["life_sq"])
     data["kitchen_sq"] = np.log1p(data["kitchen_sq"])
+    data["to_center"] = np.log1p(data["to_center"])
     data["price"] = np.log1p(data["price"])
-    X = data[['life_sq', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
+    X = data[['life_sq', 'to_center', 'mm_announce', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
               'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year']]
 
     y = data[['price']].values.ravel()

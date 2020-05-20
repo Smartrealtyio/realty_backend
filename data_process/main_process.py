@@ -113,7 +113,9 @@ def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longit
     #     lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)
 
     # Set threshold for showing profitable offers
+    print(data_offers.shape, flush=True)
     data_offers = data_offers[(data_offers.profit >= 5)]
+    print(data_offers.shape, flush=True)
     data_offers = data_offers.sort_values(by=['profit'], ascending=False)
     print("Profitable offers: ", data_offers[['pred_price', "price", 'profit']].head(3), flush=True)
 

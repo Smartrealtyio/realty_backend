@@ -67,7 +67,7 @@ def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longit
     # Use only open offers
     data_offers = data_offers[data_offers['closed'] == False]
 
-    print('Actual offers: ', data_offers.head(), flush=True)
+    print('Actual offers: ', data_offers.head(3), flush=True)
 
     if time_to_metro != None:
         data_offers = data_offers[(data_offers.time_to_metro <= time_to_metro)]
@@ -115,7 +115,7 @@ def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longit
     # Set threshold for showing profitable offers
     data_offers = data_offers[(data_offers.profit >= 5)]
     data_offers = data_offers.sort_values(by=['profit'], ascending=False)
-    print("Profitable offers: ", data_offers[['pred_price', "price", 'profit']].head(), flush=True)
+    print("Profitable offers: ", data_offers[['pred_price', "price", 'profit']].head(3), flush=True)
 
     flats = data_offers.to_dict('record')
 

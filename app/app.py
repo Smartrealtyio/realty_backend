@@ -39,7 +39,7 @@ def mean():
                             floor_first,
                             floor_last, time_to_metro, city_id)
 
-    print('flats info', flats, flush=True)
+    # print('flats info', flats, flush=True)
 
     flats_count = len(flats)
     flats_page_count = 10

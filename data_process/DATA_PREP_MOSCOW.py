@@ -77,7 +77,7 @@ class MainPreprocessing():
                                      "life_sq",
                                      "floor", "is_apartment",
                                      "building_id", 'created_at', 'offer_id',
-                                     "closed", 'rooms', 'resource_id', 'flat_type', 'is_rented', 'rent_quarter',
+                                     "closed", 'rooms', 'image', 'resource_id', 'flat_type', 'is_rented', 'rent_quarter',
                                      'rent_year', 'renovation_type', 'windows_view', 'close_date'
                                      ],
                             true_values="t", false_values="f", header=0)

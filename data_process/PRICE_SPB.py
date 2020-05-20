@@ -40,7 +40,7 @@ def Price_Main(data: pd.DataFrame):
     data[['term']] = data[['term']].fillna(data[['term']].mean())
 
     # Fix year
-    data = data[((data.yyyy_announce == 2019)&(data.yyyy_announce == 2020))]
+    data = data[((data.yyyy_announce == 19) | (data.yyyy_announce == 20))]
 
     # Log Transformation
     data["longitude"] = np.log1p(data["longitude"])

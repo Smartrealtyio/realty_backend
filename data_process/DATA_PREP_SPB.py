@@ -217,7 +217,7 @@ class MainPreprocessing():
         now = datetime.datetime.now()
         df = data
 
-        print("New features data: {0}".format(data.columns))
+
         # No 1. Distance from city center
         SPB_center_lon = 30.315768
         SPB_center_lat = 59.938976

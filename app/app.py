@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, url_for
 import json
+import time
 
 from data_process.main_process import mean_estimation, map_estimation
 # from data_process.main_process import predict_developers_term
@@ -107,3 +108,9 @@ def builder():
     # print(type(result), flush=True)
 
     return jsonify({'result': result, 'image_link': image_link})
+
+
+@app.route('/test-route/')
+def test():
+    time.sleep(80)
+    return jsonify({'status': 'ok'})

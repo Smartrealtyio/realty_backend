@@ -152,7 +152,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             # Load Price Models Moscow Secondary
             gbr = load(PATH_PRICE_GBR_MOSCOW_D)
             rf = load(PATH_PRICE_RF_MOSCOW_D)
-            lgbm = load(PATH_PRICE_GBR_MOSCOW_D)
+            lgbm = load(PATH_PRICE_LGBM_MOSCOW_D)
 
             city_center_lon = 37.619291
             city_center_lat = 55.751474

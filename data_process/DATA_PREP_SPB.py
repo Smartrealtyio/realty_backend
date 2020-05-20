@@ -36,34 +36,19 @@ class MainPreprocessing():
     def load_and_merge(self, raw_data: str):
         prices = pd.read_csv(raw_data + "prices.csv", names=[
             'id', 'price', 'changed_date', 'flat_id', 'created_at', 'updated_at'
-        ], usecols=["price", "flat_id", 'created_at', 'changed_date', 'updated_at'])
+        ], usecols=["price", "flat_id"])
 
-        # Count number of price changing for each unique flat and SORT created_at for each subgroup (group consist of one flat)
-        # prices['nums_of_changing'] = prices.sort_values(['created_at'][-9:], ascending=True).groupby(['flat_id'])[
-        #     "flat_id"].transform("count")
-        # Group by falt_id and sort in ascending order for term counting
-        # prices = prices.sort_values(['created_at'][-9:],ascending=True).groupby('flat_id')
 
         # Create column - date of last change. Will assume, that this is closing date
-        prices['last_change_at'] = prices.sort_values(['changed_date'], ascending=True).groupby('flat_id')['changed_date']\
-            .transform('last')
+        # prices['last_change_at'] = prices.sort_values(['changed_date'], ascending=True).groupby('flat_id')['changed_date']\
+        #     .transform('last')
 
         # Sort prices by changed date
-        prices = prices.sort_values(by=['changed_date'])
+        # prices = prices.sort_values(by=['changed_date'])
 
         # # Keep just first date
         prices = prices.drop_duplicates(subset='flat_id', keep="first")
-        prices = prices[((prices['changed_date'].str.contains('2020')) | (prices['changed_date'].str.contains('2019')) |
-                         (prices['changed_date'].str.contains('2018')))]
 
-
-        # Calculating selling term. TIME UNIT: DAYS
-        # last_change_at - date, when offer was closed
-        # changed_date - date, when offer was opened
-        # Calculating selling term. TIME UNIT: DAYS
-        # prices['term_yand'] = prices[['last_change_at', 'changed_date']].apply(
-        #     lambda row: (bck.date_fromisoformat(row['last_change_at'][:-9])
-        #                  - bck.date_fromisoformat(row['changed_date'][:-9])).days, axis=1)
 
         # Load flats
         flats = pd.read_csv(raw_data + "flats.csv",
@@ -150,12 +135,7 @@ class MainPreprocessing():
         time_to_metro = time_to_metro.drop_duplicates(subset='building_id', keep="first")
 
         # Merage prices and flats on flat_id
-        prices_and_flats = pd.merge(prices, flats, on='flat_id', how="left",suffixes=('_yand', '_cian'))
-
-        # Select term
-        # prices_and_flats['term'] = np.where(prices_and_flats['resource_id'] == 0, prices_and_flats['term_yand'],
-        #                                     prices_and_flats[
-        #                                         'term_cian'])  # yandex resource_id = 0, cian resource_id =1
+        prices_and_flats = pd.merge(prices, flats, on='flat_id', how="left")
 
         # Merge districts and buildings on district_id
         districts_and_buildings = pd.merge(districts, buildings, on='district_id', how='right')
@@ -236,6 +216,8 @@ class MainPreprocessing():
     def new_features(self, data: pd.DataFrame(), full_sq_corridor_percent: float, price_corridor_percent: float, part_data: int, K_clusters: int):
         now = datetime.datetime.now()
         df = data
+
+        print("New features data: {0}".format(data.columns))
         # No 1. Distance from city center
         SPB_center_lon = 30.315768
         SPB_center_lat = 59.938976

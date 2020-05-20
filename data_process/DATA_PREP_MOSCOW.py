@@ -231,7 +231,7 @@ class MainPreprocessing():
                          row['full_sq']), axis=1)
 
         # Check if data contains only Moscow offers
-        df = df[~(df['latitude'].astype('str').str.contains('59.'))]
+        df = df[((df['latitude'].astype('str').str.contains('55.')))]
         return df
 
     def new_features(self, data: pd.DataFrame(), full_sq_corridor_percent: float, price_corridor_percent: float,

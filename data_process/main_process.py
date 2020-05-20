@@ -67,7 +67,7 @@ def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longit
     # Use only open offers
     data_offers = data_offers[data_offers['closed'] == False]
 
-    print('Actual offers: ', data_offers.head(3), flush=True)
+    print('columns ', data_offers.columns, flush=True)
 
     if time_to_metro != None:
         data_offers = data_offers[(data_offers.time_to_metro <= time_to_metro)]

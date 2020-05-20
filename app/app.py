@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify, url_for
 import json
 
-from data_process.main_process import mean_estimation, map_estimation, predict_developers_term
+from data_process.main_process import mean_estimation, map_estimation
+# from data_process.main_process import predict_developers_term
+
 from app.db_queries import get_other_params
 import settings_local as SETTINGS
 

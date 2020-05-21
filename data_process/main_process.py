@@ -468,43 +468,22 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         # Define function for creating list of dicts
         # x=term, y=price
         # Example: [{'x': int, 'y': int}, {'x': int, 'y': int}]
-
         def createListOfDicts(terms: list, prices: list):
             list_of_dicts = []
             list_of_dicts += ({'y': int(prc), 'x': int(trm)} for prc, trm in zip(prices, terms))
             return list_of_dicts
 
-        # def drop_duplicates_term(l: list):
-        #     seen = set()
-        #     new_l = []
-        #     for item in l:
-        #         if item.get('x') not in seen:
-        #             seen.add(item.get('x'))
-        #             new_l.append(item)
-        #     return new_l
-        #
-        # def drop_duplicates_price(l: list):
-        #     seen_prices = set()
-        #     new_list_of_prices = []
-        #     for item in l:
-        #         if item.get('y') not in seen_prices:
-        #             seen_prices.add(item.get('y'))
-        #             new_list_of_prices.append(item)
-        #     return new_list_of_prices
-
         # Create list of dicts
         list_of_dicts = createListOfDicts(list_of_terms, prices)
 
-        # # drop term duplicates
-        # list_of_dicts = drop_duplicates_term(list_of_dicts)
-        #
-        #
-        # # drop price duplicates
-        # list_of_dicts = drop_duplicates_price(list_of_dicts)
 
         # Check if enough data for plotting
-        oops = 1 if len(list_of_dicts) <= 2 else 0
-        list_of_dicts = [{"x": 0, 'y': 0}] if oops else list_of_dicts
+        # oops = 1 if len(list_of_dicts) <= 2 else 0
+        # list_of_dicts = [{"x": 0, 'y': 0}] if oops else list_of_dicts
+
+        if len(list_of_dicts) <= 2:
+            answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
+            return answ
 
         print('list_of_dicts: ', list_of_dicts, flush=True)
 
@@ -526,7 +505,11 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             return current_flat, term
 
         # Find actual term for current flat price
-        current_flat, term = find_term(l=list_of_dicts, current_flat=current_flat)
+        if (list_of_dicts[-1].get('y') > current_flat.get('y') > list_of_dicts[0].get('y')) and len(current_flat) > 2:
+            current_flat, term = find_term(l=list_of_dicts, current_flat=current_flat)
+        else:
+            answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
+            return answ
 
 
         def select_unique_term_price_pairs(list_of_dicts: list):
@@ -542,12 +525,18 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                     result.append(list_of_dicts[i])
                     terms.append(list_of_dicts[i].get('term'))
             return result
+
+
         if len(list_of_dicts) > 2:
             list_of_dicts = select_unique_term_price_pairs(list_of_dicts)
+        else:
+            answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
+            return answ
+
 
         # Check if list not empty
-        oops = 1 if len(list_of_dicts) <= 2 else 0
-        list_of_dicts = [{"x": 0, 'y': 0}] if oops else list_of_dicts
+        # oops = 1 if len(list_of_dicts) <= 2 else 0
+        # list_of_dicts = [{"x": 0, 'y': 0}] if oops else list_of_dicts
 
         def check(l: list, current_flat):
             for i in l:
@@ -556,21 +545,21 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             l.append(current_flat)
             return sorted(l, key=lambda k: k['term'])
 
-        if not oops:
-            print('not oops', flush=True)
-            # Check if all dict's keys and values in list are unique
-            list_of_dicts = check(list_of_dicts, current_flat)
+        # if not oops:
+        print('not oops', flush=True)
+        # Check if all dict's keys and values in list are unique
+        list_of_dicts = check(list_of_dicts, current_flat)
 
-            # # Update list of dicts with current flat
-            # list_of_dicts.insert(0, current_flat)
-            #
-            # # Finally sort
-            # list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
-            print('Answer: ', list_of_dicts, flush=True)
+        # # Update list of dicts with current flat
+        # list_of_dicts.insert(0, current_flat)
+        #
+        # # Finally sort
+        # list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
+        print('Answer: ', list_of_dicts, flush=True)
 
-            # Check if final list have items in it, otherwise set parameter "OOPS" to 1
-            oops = 1 if len(list_of_dicts) <= 2 else 0
-            term = 0 if len(list_of_dicts) <= 2 else term
+        # Check if final list have items in it, otherwise set parameter "OOPS" to 1
+        oops = 1 if len(list_of_dicts) <= 2 else 0
+        term = 0 if len(list_of_dicts) <= 2 else term
         answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': 0, "OOPS": oops}
         print('answ: ', price, term, list_of_dicts, oops, sep='\n', flush=True)
     else:

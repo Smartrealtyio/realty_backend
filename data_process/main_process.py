@@ -464,83 +464,113 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         prices = [int(i * full_sq) for i in prices]
         print("Prices: ", prices, flush=True)
 
-        # define function for creating list of dicts
-        def X(terms: list, prices: list):
+
+        # Define function for creating list of dicts
+        # x=term, y=price
+        # Example: [{'x': int, 'y': int}, {'x': int, 'y': int}]
+
+        def createListOfDicts(terms: list, prices: list):
             list_of_dicts = []
-            list_of_dicts += ({'x': int(trm), 'y': prc} for trm, prc in zip(terms, prices))
+            list_of_dicts += ({'y': int(prc), 'x': int(trm)} for prc, trm in zip(prices, terms))
             return list_of_dicts
 
-        def drop_duplicates_term(l: list):
-            seen = set()
-            new_l = []
-            for item in l:
-                if item.get('x') not in seen:
-                    seen.add(item.get('x'))
-                    new_l.append(item)
-            return new_l
-
-        def drop_duplicates_price(l: list):
-            seen_prices = set()
-            new_list_of_prices = []
-            for item in l:
-                if item.get('y') not in seen_prices:
-                    seen_prices.add(item.get('y'))
-                    new_list_of_prices.append(item)
-            return new_list_of_prices
+        # def drop_duplicates_term(l: list):
+        #     seen = set()
+        #     new_l = []
+        #     for item in l:
+        #         if item.get('x') not in seen:
+        #             seen.add(item.get('x'))
+        #             new_l.append(item)
+        #     return new_l
+        #
+        # def drop_duplicates_price(l: list):
+        #     seen_prices = set()
+        #     new_list_of_prices = []
+        #     for item in l:
+        #         if item.get('y') not in seen_prices:
+        #             seen_prices.add(item.get('y'))
+        #             new_list_of_prices.append(item)
+        #     return new_list_of_prices
 
         # Create list of dicts
-        list_of_dicts = X(list_of_terms, prices)
+        list_of_dicts = createListOfDicts(list_of_terms, prices)
 
-        # drop term duplicates
-        list_of_dicts = drop_duplicates_term(list_of_dicts)
+        # # drop term duplicates
+        # list_of_dicts = drop_duplicates_term(list_of_dicts)
+        #
+        #
+        # # drop price duplicates
+        # list_of_dicts = drop_duplicates_price(list_of_dicts)
 
-
-        # drop price duplicates
-        list_of_dicts = drop_duplicates_price(list_of_dicts)
-
+        # Check if enough data for plotting
         oops = 1 if len(list_of_dicts) <= 2 else 0
         list_of_dicts = [{"x": 0, 'y': 0}] if oops else list_of_dicts
 
         print('list_of_dicts: ', list_of_dicts, flush=True)
 
-        # Define current flat with predicted price and initial term = 0
-        current_flat = {'x': 0, 'y': price}
+        # Define current flat with predicted price and initial term = minimal value from list of term
+        current_flat = {'x': min(list_of_terms), 'y': price}
 
+        # Iterate over the list of dicts and try to find suitable term based on prices values
         def find_term(l: list, current_flat: dict):
             term = 0
-            if l[-1].get('y') > 1400 > l[0].get('y'):
+            if l[-1].get('y') > current_flat.get('y') > l[0].get('y'):
                 for i in enumerate(l):
-                    if l[i[0]].get('y') <= current_flat.get('y') < l[i[0] + 1].get('y'):
+                    print(i)
+                    if l[i[0]].get('x') <= current_flat.get('x') < l[i[0] + 1].get('x'):
+                        print('!')
                         current_flat['x'] = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
                         term = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
                         break
                 print("New term: ", current_flat, flush=True)
             return current_flat, term
 
-        # Find real term for current flat
+        # Find actual term for current flat price
         current_flat, term = find_term(l=list_of_dicts, current_flat=current_flat)
 
+
+        def select_unique_term_price_pairs(list_of_dicts: list):
+            terms = []
+            result = []
+
+            for i in range(1, len(list_of_dicts)):
+                if (list_of_dicts[i].get('term') != list_of_dicts[i - 1].get('term')) and list_of_dicts[i].get(
+                        'term') not in terms:
+                    if list_of_dicts[i - 1].get('term') not in terms:
+                        result.append(list_of_dicts[i - 1])
+                        terms.append(list_of_dicts[i - 1].get('term'))
+                    result.append(list_of_dicts[i])
+                    terms.append(list_of_dicts[i].get('term'))
+            return result
+
+        list_of_dicts = select_unique_term_price_pairs(list_of_dicts)
+
+        # Check if list not empty
+        oops = 1 if len(list_of_dicts) <= 2 else 0
+        list_of_dicts = [{"x": 0, 'y': 0}] if oops else list_of_dicts
+
         def check(l: list, current_flat):
-            unique = []
             for i in l:
-                if ((i['x'] != current_flat['x']) & (i['y'] != current_flat['y'])):
-                    unique.append(i)
-            return unique
+                if ((i['x'] == current_flat['x']) | (i['y'] == current_flat['y'])):
+                    l.remove(i)
+            l.append(current_flat)
+            return sorted(l, key=lambda k: k['term'])
+
         if not oops:
             print('not oops', flush=True)
             # Check if all dict's keys and values in list are unique
             list_of_dicts = check(list_of_dicts, current_flat)
 
-            # Update list of dicts with current flat
-            list_of_dicts.insert(0, current_flat)
-
-            # Finally sort
-            list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
+            # # Update list of dicts with current flat
+            # list_of_dicts.insert(0, current_flat)
+            #
+            # # Finally sort
+            # list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
             print('Answer: ', list_of_dicts, flush=True)
 
             # Check if final list have items in it, otherwise set parameter "OOPS" to 1
-            oops = 1 if len(list_of_dicts) <= 3 else 0
-            term = 0 if len(list_of_dicts) <= 3 else term
+            oops = 1 if len(list_of_dicts) <= 2 else 0
+            term = 0 if len(list_of_dicts) <= 2 else term
         answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': 0, "OOPS": oops}
         print('answ: ', price, term, list_of_dicts, oops, sep='\n', flush=True)
     else:

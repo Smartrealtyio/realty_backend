@@ -159,11 +159,6 @@ class MainPreprocessing():
         # Merage prices and flats on flat_id
         prices_and_flats = pd.merge(prices, flats, on='flat_id', how="left")
 
-        # Select term
-        # prices_and_flats['term'] = np.where(prices_and_flats['resource_id'] == 0, prices_and_flats['term_yand'],
-        #                                     prices_and_flats[
-        #                                         'term_cian'])  # yandex resource_id = 0, cian resource_id =1
-
         # Merge districts and buildings on district_id
         districts_and_buildings = pd.merge(districts, buildings, on='district_id', how='right')
 

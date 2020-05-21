@@ -542,8 +542,8 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                     result.append(list_of_dicts[i])
                     terms.append(list_of_dicts[i].get('term'))
             return result
-
-        list_of_dicts = select_unique_term_price_pairs(list_of_dicts)
+        if len(list_of_dicts) > 2:
+            list_of_dicts = select_unique_term_price_pairs(list_of_dicts)
 
         # Check if list not empty
         oops = 1 if len(list_of_dicts) <= 2 else 0

@@ -3,11 +3,11 @@ import json
 import time
 
 from data_process.main_process import mean_estimation, map_estimation
-# from data_process.main_process import predict_developers_term
+from data_process.main_process import predict_developers_term
 
 from app.db_queries import get_other_params
 import settings_local as SETTINGS
-    
+
 app = Flask(__name__)
 
 

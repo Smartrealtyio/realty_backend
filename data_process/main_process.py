@@ -10,6 +10,9 @@ import numpy as np
 import sys
 import os
 from math import sin, cos, sqrt, atan2, radians
+import json
+
+machine = os.path.abspath(os.getcwd())
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -36,7 +39,7 @@ MOSCOW_DATA_SECONDARY = SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv'
 SPB_DATA_NEW = SETTINGS.DATA_SPB + '/SPB_NEW_FLATS.csv'
 SPB_DATA_SECONDARY = SETTINGS.DATA_SPB + '/SPB_VTOR.csv'
 
-
+# Find profitable offers
 def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longitude_from, longitude_to, rooms,
                     price_from, price_to, building_type_str, kitchen_sq, life_sq, renovation, has_elevator, floor_first,
                     floor_last, time_to_metro, city_id):
@@ -123,7 +126,7 @@ def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longit
 
     return flats
 
-
+# Predict price and term
 def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, renovation, secondary, has_elevator,
                    floor_first, floor_last, time_to_metro, is_rented, rent_year, rent_quarter, city_id):
 
@@ -489,3 +492,429 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
 
     return answ
+
+
+# Class for developers page
+class Developers_API():
+
+    def __init__(self):
+        pass
+
+    # Load data from csv
+    def load_data(self, spb_new: str, spb_vtor: str, msc_new: str, msc_vtor: str):
+
+        spb_new = pd.read_csv(spb_new)
+        spb_vtor = pd.read_csv(spb_vtor)
+        msc_new = pd.read_csv(msc_new)
+        msc_vtor = pd.read_csv(msc_vtor)
+
+        # Concatenate new flats + secondary flats
+        self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)
+        self.all_msc = pd.concat([msc_new, msc_vtor], ignore_index=True, axis=0)
+
+        # Just new flats
+        # self.msc_new_flats = msc_new
+
+        # Group dataset by full_sq
+        self.list_of_squares = [38.0, 42.5, 47.0, 51.5, 56.0, 60.5, 65.0, 69.5, 74.0, 78.5, 83.0, 87.5]
+
+        # Initialize full_sq_group values with zero
+        msc_new.loc[:, 'full_sq_group'] = 0
+
+        # Create dictionary: key = group number, value = lower threshold value of full_sq
+        # Example: {1: 38.0, 2: 42.5}
+        full_sq_grouping_dict = {}
+
+        # Update "full_sq_group" column value according to "full_sq" column value
+        for i in range(len(self.list_of_squares)):
+            # print(i + 1, self.list_of_squares[i])
+            full_sq_grouping_dict[i + 1] = self.list_of_squares[i]
+            msc_new.loc[:, 'full_sq_group'] = np.where(msc_new['full_sq'] >= self.list_of_squares[i], i + 1,
+                                                            msc_new['full_sq_group'])
+
+        # Auxiliary columns to calculate flat_class: econom, comfort, business, elite
+        # 0(econom) if price_meter_sq < 0.6 price_meter_sq's quantile within group
+        # 1(comfort) if 0.6 price_meter_sq's quantile within group <= price_meter_sq < 0.9 price_meter_sq's quantile within group
+        # 1(business) if 0.9 price_meter_sq's quantile within group <= price_meter_sq < 0.95 price_meter_sq's quantile within group
+        # 1(elite) if 0.95 price_meter_sq's quantile within group <= price_meter_sq
+
+        msc_new['price_meter_sq_06q'] = \
+        msc_new.groupby(['full_sq_group', 'rooms', 'yyyy_sold', 'mm_sold'])[
+            'price_meter_sq'].transform(lambda x: x.quantile(.6))
+        msc_new['price_meter_sq_09q'] = \
+        msc_new.groupby(['full_sq_group', 'rooms', 'yyyy_sold', 'mm_sold'])[
+            'price_meter_sq'].transform(lambda x: x.quantile(.9))
+        msc_new['price_meter_sq_095q'] = \
+        msc_new.groupby(['full_sq_group', 'rooms', 'yyyy_sold', 'mm_sold'])[
+            'price_meter_sq'].transform(lambda x: x.quantile(.95))
+
+        # Set new column value: flat_class. 0 = econom, 1 = comfort, 2 = business, 3 = elite
+        msc_new.loc[:, 'flat_class'] = 0  # Set to econom by default
+        msc_new.loc[:, 'flat_class'] = np.where(
+            msc_new['price_meter_sq'] >= msc_new['price_meter_sq_06q'], 1,
+            msc_new['flat_class'])  # Set to comfort
+        msc_new.loc[:, 'flat_class'] = np.where(
+            msc_new['price_meter_sq'] >= msc_new['price_meter_sq_09q'], 2,
+            msc_new['flat_class'])  # Set to business
+        msc_new.loc[:, 'flat_class'] = np.where(
+            msc_new['price_meter_sq'] >= msc_new['price_meter_sq_095q'], 3,
+            msc_new['flat_class'])  # Set to elite
+
+        # Remove price outliers within the groups
+        std_data_new_msc = msc_new.groupby(['full_sq_group', 'rooms', 'flat_class', 'yyyy_sold', 'mm_sold'])[
+            'price'].transform(
+            stats.zscore)
+
+        # Construct a Boolean Series to identify outliers: outliers
+        outliers = (std_data_new_msc < -3) | (std_data_new_msc > 3)
+
+        # Filter
+        msc_new = msc_new[~outliers]
+        print('without outliers: ', msc_new.shape, flush=True)
+
+        msc_new['mean_price_group_count'] = \
+        msc_new.groupby(['full_sq_group', 'rooms', 'flat_class', 'yyyy_sold', 'mm_sold'])[
+            'price'].transform('count')
+
+        msc_new.price = msc_new.price.round()
+
+        print("Loaded data shape: {0}".format(msc_new.shape))
+
+        # Transform dtype
+        msc_new['mm_sold'] = msc_new['mm_sold'].astype('int')
+        msc_new['mm_announce'] = msc_new['mm_announce'].astype('int')
+        msc_new['yyyy_sold'] = msc_new['yyyy_sold'].astype('int')
+        msc_new['yyyy_announce'] = msc_new['yyyy_announce'].astype('int')
+
+        self.msc_new = msc_new
+
+        self.full_sq_grouping_dict = full_sq_grouping_dict
+
+
+
+
+    def parse_json(self, data=0):
+        if "Storage" in machine:
+            with open(data, encoding='utf-8') as read_file:
+                data = json.load(read_file)
+                # city_id = data["city_id"]
+                city_id = 0
+                longitude = data['longitude']
+                latitude = data['latitude']
+                is_rented = data['is_rented']
+                rent_year = data['rent_year']
+                rent_quarter = data['rent_quarter']
+                start_timestamp = data['start_timestamp']
+                floors_count = data['floors_count']
+                has_elevator = data['elevator']
+                parking = data['parking']
+                time_to_metro = data['time_to_metro']
+                flats = [i for i in data['flats_types']]
+                sale_start_month = int(
+                    datetime.utcfromtimestamp(data['start_timestamp']).strftime('%m'))  # Get month from unix timestamp
+                sale_end_month = int(
+                    datetime.utcfromtimestamp(data['end_timestamp']).strftime('%m'))  # Get year from unix timestamp
+                sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
+                sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
+                schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m =  data['schools_500m'], data['schools_1000m'], data['kindergartens_500m'], data['kindergartens_1000m'], data['clinics_500m'], data['clinics_1000m'], \
+                data['shops_500m'], data['shops_1000m']
+
+        else:
+            # city_id = data["city_id"]
+            city_id = 0
+            longitude = data['longitude']
+            latitude = data['latitude']
+            is_rented = data['is_rented']
+            rent_year = data['rent_year']
+            rent_quarter = data['rent_quarter']
+            start_timestamp = data['start_timestamp']
+            end_timestamp = data['end_timestamp']
+            floors_count = data['floors_count']
+            has_elevator = data['elevator']
+            parking = data['parking']
+            time_to_metro = data['time_to_metro']
+            flats = [i for i in data['flats_types']]
+            sale_start_month = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%m'))  # Get month from unix timestamp
+            sale_end_month = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%m')) # Get year from unix timestamp
+            sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
+            sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
+            schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, \
+            shops_500m, shops_1000m = data['schools_500m'], data['schools_1000m'], data['kindergartens_500m'],\
+                                      data['kindergartens_1000m'], data['clinics_500m'], data['clinics_1000m'],\
+                                      data['shops_500m'], data['shops_1000m']
+
+
+        return city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking,\
+               time_to_metro, flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year, schools_500m,\
+               schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, \
+               shops_1000m
+
+    def predict(self, city_id: int, flats: list, rent_year: int, longitude: float, latitude: float,
+                time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int, schools_500m: int, schools_1000m: int,
+                kindergartens_500m: int, kindergartens_1000m: int, clinics_500m: int, clinics_1000m: int, shops_500m: int,
+                shops_1000m:int):
+
+        price_model = 0
+        kmeans = 0
+
+        # list for dicts of term-type
+        list_of_terms = []
+
+        # get flats parameters for each flat
+        for i in flats:
+            price_meter_sq = i['price_meter_sq']
+            mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m'))  # Get month from unix
+            yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y'))  # Get year from unix
+            life_sq = i['life_sq']
+            rooms = i['rooms']
+            renovation = i['renovation']
+            renovation_type = i['renovation_type']
+            longitude = longitude
+            latitude = latitude
+            full_sq = i['full_sq']
+            kitchen_sq = i['kitchen_sq']
+            time_to_metro = time_to_metro
+            floor_last = i['floor_last']
+            floor_first = i['floor_first']
+            windows_view = i['windows_view']
+            type = i['type']
+            is_rented = is_rented
+            rent_year = rent_year
+            rent_quarter = rent_quarter
+            has_elevator = has_elevator
+
+
+            # calculate sales values based on prev year
+            # current_cluster = kmeans.predict([[longitude, latitude]])
+
+
+            # Determine appropriate full_sq_group based on
+            full_sq_group = 0
+
+            for idx, item in enumerate(self.list_of_squares):
+                if full_sq >= item:
+                    full_sq_group = idx+1
+                else:
+                    full_sq_group = 0
+
+
+            # Sales value for current sub-group
+            sales_value = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group, mm_sold=mm_announce,
+                                                                   rooms=rooms)
+
+            list_of_terms.append(
+                {'type': type, 'mm_announce': mm_announce, 'yyyy_announce': yyyy_announce, 'sales_value': sales_value,
+                 'full_sq_group': full_sq_group})
+        print("List of terms: ", list_of_terms, flush=True)
+        return list_of_terms
+
+
+    # def train_reg(self, city_id: int, use_trained_models=True):
+    #
+    #     # define regression model variable
+    #     reg = 0
+    #
+    #     # either use pretrained models
+    #     if use_trained_models:
+    #         if city_id == 0:
+    #             reg = load(TERM_MOSCOW)
+    #         elif city_id == 1:
+    #             reg = load(TERM_SPB)
+    #
+    #     # or train regression now
+    #     else:
+    #         # Define city
+    #         data = pd.DataFrame()
+    #
+    #         if city_id == 1:
+    #             data = self.all_spb
+    #         elif city_id == 0:
+    #             data = self.all_msc
+    #
+    #         # Log Transformation
+    #         # data['profit'] = data['profit'] + 1 - data['profit'].min()
+    #         data = data._get_numeric_data()
+    #         data[data < 0] = 0
+    #
+    #         # Remove price and term outliers (out of 3 sigmas)
+    #         data = data[((np.abs(stats.zscore(data.price)) < 2.5) & (np.abs(stats.zscore(data.term)) < 2.5))]
+    #
+    #         data['price_meter_sq'] = np.log1p(data['price_meter_sq'])
+    #         data['profit'] = np.log1p(data['profit'])
+    #         # data['term'] = np.log1p(data['term'])
+    #         # data['mode_price_meter_sq'] = np.log1p(data['mode_price_meter_sq'])
+    #         # data['mean_term'] = np.log1p(data['mean_term'])
+    #
+    #         # Create X and y for Linear Model training
+    #         X = data[['price_meter_sq', 'profit', 'mm_announce', 'yyyy_announce', 'rent_year', 'windows_view', 'renovation_type', 'full_sq',
+    #                   'is_rented']]
+    #         y = data[['term']].values.ravel()
+    #
+    #         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+    #
+    #         # Create LinearModel and fitting
+    #         # reg = LinearRegression().fit(X_train, y_train)
+    #         reg = GradientBoostingRegressor(n_estimators=450, max_depth=5, verbose=1, random_state=42,
+    #                                     learning_rate=0.07, max_features='sqrt', min_samples_split=5).fit(X_train, y_train)
+    #         preds = reg.predict(X_test)
+    #         acc = r2_score(y_test, preds)
+    #         print(" Term R2 acc: {0}".format(acc))
+    #     return reg
+
+
+    # Расчёт месяца и года продажи при известном сроке(в днях). Предполгается, что квартиры вымещаются на продажу только в начале месяца.
+
+    # Calculate sales volume for each flat sub-group based on its group, number of rooms, sale month
+    def calculate_sales_volume_previos_year(self, rooms: int, full_sq_group: int, mm_sold: int):
+
+        # Only closed offers
+        sale_volume_data = self.msc_new[(
+            (self.msc_new['closed'] == True))]
+
+        # Get sales volume
+        volume_19 = sale_volume_data[
+            ((sale_volume_data.rooms == rooms) & (sale_volume_data.yyyy_sold == 19) & (
+                        sale_volume_data.full_sq_group == full_sq_group) & (
+                     sale_volume_data.mm_sold == mm_sold))].shape[0]
+
+        return volume_19
+
+
+    # def calculate_sale_month_and_year(self, type: int, term: int, yyyy_announce: int, mm_announce: int):
+    #
+    #     # Sale time in months
+    #     n_months = ceil(term / 30)
+    #
+    #     sale_year = yyyy_announce
+    #     # Define sale months
+    #     sale_month = mm_announce + n_months - 1
+    #     if sale_month % 12 != 0:
+    #         if sale_month > 12 and (sale_month % 12) > 0:
+    #             sale_month = sale_month % 12
+    #             sale_year += 1
+    #         else:
+    #             sale_month = sale_month % 12
+    #
+    #     # print(' mm_announce: {2},\n Sale_year: {1}, \n sale_month: {0}'.format(sale_month, sale_year, mm_announce))
+    #     return type, sale_year, sale_month
+    #
+    # def apply_calculate_sale_month_and_year(self, example: list):
+    #     list_calculated_months = []
+    #     for i in example:
+    #         type, sale_year, sale_month = self.calculate_sale_month_and_year(type=i['type'], term=i['term'],
+    #                                                                     yyyy_announce=i['yyyy_announce'],
+    #                                                                     mm_announce=i['mm_announce'])
+    #         list_calculated_months.append({'type': type, 'sale_year': sale_year, 'sale_month': sale_month})
+    #     print(list_calculated_months)
+    #     return list_calculated_months
+    #
+    # def create_dataframe(self, list_to_df: list, sale_start_yyyy: int, sale_end_yyyy: int,
+    #                      sale_start_m: int, sale_end_m: int):
+    #
+    #     #  Convert list of dicts to dataframe
+    #     df = pd.DataFrame(list_to_df)
+    #
+    #     # Calculate each group volume
+    #     df = df.groupby(['type', 'sale_year', "sale_month"]).size().reset_index(name='volume')
+    #
+    #     # Create dummies
+    #     dummies = pd.get_dummies(df['type'], prefix='flat_type')
+    #
+    #     # Get dummies names
+    #     dummies_columns = list(dummies.columns)
+    #
+    #     dummies.values[dummies != 0] = df['volume']
+    #     df = pd.concat([df, dummies], axis=1)
+    #
+    #     # Create new column based on sale_month and sale_year : mm.yy
+    #     df.sale_month = df.sale_month.astype('int')
+    #     df.sale_year = df.sale_year.astype('int')
+    #     df['x_axis_labels'] = df[['sale_month', 'sale_year']].apply(
+    #         lambda row: "{0}.{1}".format(str(row.sale_month).zfill(2), str(row.sale_year)[-2:]), axis=1)
+    #
+    #     # Add fictive data
+    #     for year in range(sale_start_yyyy, sale_end_yyyy + 1):
+    #         for month in range(1, 13):
+    #             if '{0}.{1}'.format(str(month).zfill(2), str(year)[-2:]) not in df.x_axis_labels.tolist():
+    #                 df.loc[len(df), 'sale_year':'sale_month'] = (year, month)
+    #
+    #     df.sale_month = df.sale_month.astype('int')
+    #     df.sale_year = df.sale_year.astype('int')
+    #     df['x_axis_labels'] = df[['sale_month', 'sale_year']].apply(
+    #         lambda row: "{0}.{1}".format(str(row.sale_month).zfill(2), str(row.sale_year)[-2:]), axis=1)
+    #
+    #     # Create new column based on sale_month and sale_year : mm.yy
+    #     df = df.fillna(0)
+    #
+    #     df[dummies_columns] = df.groupby(['x_axis_labels'])[dummies_columns].transform('sum')
+    #
+    #     df = df.sort_values(['sale_year', 'sale_month'], ascending=True)
+    #
+    #     df = df.drop_duplicates('x_axis_labels', keep='first')
+    #
+    #     new_index = df.x_axis_labels.tolist()
+    #     df.index = list(new_index)
+    #
+    #     df = df.drop(['sale_year', 'sale_month', 'volume', 'type', 'x_axis_labels'], axis=1)
+    #
+    #
+    #     # Plotting
+    #     img = df.plot.bar(stacked=True, rot=90, title="Sales forecast", figsize=(15, 8))
+    #     img.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+    #     # plt.xlabel('months')
+    #     # plt.ylabel('volume')
+    #     # img.savefig('test.png')
+    #
+    #     # plt.show(block=True)
+    #
+    #     # print(df.pivot_table(index='months', columns='volume', aggfunc='size'))
+    #     # df = df.pivot_table(index='months', columns='volume', aggfunc='size')
+    #     # df = df.sort_values(by='month', ascending=True)
+    #     # img = df.pivot_table(index='months', columns='volume', aggfunc='size').plot.bar(stacked=True)
+    #     # print(list(df.type.unique()))
+    #     # img.legend(list(df.type.unique()))
+    #     # save img
+    #     if "Storage" in machine:
+    #         img.figure.savefig('test.png')
+    #     else:
+    #         img.figure.savefig('/home/realtyai/smartrealty/realty/media/test.png')
+
+def predict_developers_term(json_file=0):
+    # Create Class
+    devAPI = Developers_API()
+
+    # Load CSV data
+    if "Storage" in machine:
+        devAPI.load_data(spb_new=SPB_DATA_NEW, spb_vtor=SPB_DATA_SECONDARY, msc_new='None',
+                         msc_vtor='None')
+
+    else:
+        devAPI.load_data(spb_new=SPB_DATA_NEW, spb_vtor=SPB_DATA_SECONDARY, msc_new=MOSCOW_DATA_NEW,
+                         msc_vtor=MOSCOW_DATA_SECONDARY)
+
+    # Parse json
+    city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count, has_elevator, parking,\
+    time_to_metro, flats, sale_start_month, sale_end_month, sale_start_year, sale_end_year, schools_500m, \
+    schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m,\
+    shops_1000m = devAPI.parse_json(json_file)
+
+    # Train term reg
+    # reg = 0
+    # if "Storage" in machine:
+    #     reg = load('C:/Storage/DDG/DEVELOPERS/models/dev_term_gbr_spb.joblib')
+    # else:
+    #     reg = devAPI.train_reg(city_id=city_id)
+
+    # Predict
+
+
+
+    answer = devAPI.predict(city_id=city_id, flats=flats, has_elevator=has_elevator,
+                            is_rented=is_rented,
+                            latitude=latitude, longitude=longitude, rent_quarter=rent_quarter, rent_year=rent_year,
+                            time_to_metro=time_to_metro, schools_500m=schools_500m, schools_1000m=schools_1000m,
+                            kindergartens_500m=kindergartens_500m, kindergartens_1000m=kindergartens_1000m, clinics_500m=clinics_500m,
+                            clinics_1000m=clinics_1000m, shops_500m=shops_500m,shops_1000m=shops_1000m)
+
+
+    return answer

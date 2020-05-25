@@ -717,8 +717,8 @@ class Developers_API():
                                                                           mm_sold=mm_announce,
                                                                           rooms=4)
 
-            first_graphic.append({'month_announce': mm_announce, 'year_announce': yyyy_announce, -1: sales_value_studio,
-                                  1: sales_value_1, 2: sales_value_2, 3: sales_value_3, 4: sales_value_4})
+            first_graphic.append({'month_announce': mm_announce, 'year_announce': yyyy_announce, '-1': sales_value_studio,
+                                  '1': sales_value_1, '2': sales_value_2, '3': sales_value_3, '4': sales_value_4})
             # list_of_terms.append(
             #     {'type': type, 'mm_announce': mm_announce, 'yyyy_announce': yyyy_announce,
             #      'full_sq_group': full_sq_group})

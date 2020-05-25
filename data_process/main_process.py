@@ -659,6 +659,7 @@ class Developers_API():
 
         # list for dicts of term-type
         list_of_terms = []
+        first_graphic = []
 
         # get flats parameters for each flat
         for i in flats:
@@ -699,14 +700,30 @@ class Developers_API():
 
 
             # Sales value for current sub-group
-            sales_value = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group, mm_sold=mm_announce,
-                                                                   rooms=rooms)
+            sales_value_studio = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group, mm_sold=mm_announce,
+                                                                   rooms=0)
 
-            list_of_terms.append(
-                {'type': type, 'mm_announce': mm_announce, 'yyyy_announce': yyyy_announce, 'sales_value': sales_value,
-                 'full_sq_group': full_sq_group})
-        print("List of terms: ", list_of_terms, flush=True)
-        return list_of_terms
+            sales_value_1 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                          mm_sold=mm_announce,
+                                                                          rooms=1)
+
+            sales_value_2 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                          mm_sold=mm_announce,
+                                                                          rooms=2)
+            sales_value_3 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                          mm_sold=mm_announce,
+                                                                          rooms=3)
+            sales_value_4 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                          mm_sold=mm_announce,
+                                                                          rooms=4)
+
+            first_graphic.append({'month_announce': mm_announce, 'year_announce': yyyy_announce, -1: sales_value_studio,
+                                  1: sales_value_1, 2: sales_value_2, 3: sales_value_3, 4: sales_value_4})
+            # list_of_terms.append(
+            #     {'type': type, 'mm_announce': mm_announce, 'yyyy_announce': yyyy_announce,
+            #      'full_sq_group': full_sq_group})
+        print("List of terms: ", first_graphic, flush=True)
+        return first_graphic
 
 
     # def train_reg(self, city_id: int, use_trained_models=True):

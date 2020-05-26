@@ -656,9 +656,11 @@ class Developers_API():
         revenue_s, revenue_1, revenue_2, revenue_3, revenue_4 = 0, 0, 0, 0, 0
 
         list_of_months = [i for i in range(sale_start_year+13)]+[i for i in range(1, sale_end_month+1)]
+        print(list_of_months, flush=True)
         # mm_announce = list_of_months[idx]
 
         for mm_announce in list_of_months:
+            print(mm_announce, flush=True)
             yyyy_announce = sale_start_year if mm_announce in [i for i in
                                                                range(sale_start_month, 13)] else sale_end_year
             # get flats parameters for each flat

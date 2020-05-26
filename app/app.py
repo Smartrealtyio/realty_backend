@@ -99,17 +99,17 @@ def map():
 def builder():
     result = json.loads(request.data.decode())
 
-    is_rented = result['is_rented'] if result['is_rented'] is not None else None
-    rent_year = result['rent_year'] if result['rent_year'] is not None else None
-    rent_quarter = result['rent_quarter'] if result['rent_quarter'] is not None else None
-    schools_500m = result['schools_500m'] if result['schools_500m'] is not None else None
-    schools_1000m = result['schools_1000m'] if result['schools_1000m'] is not None else None
-    kindergartens_500m = result['kindergartens_500m'] if result['kindergartens_500m'] is not None else None
-    kindergartens_1000m = result['kindergartens_1000m'] if result['kindergartens_1000m'] is not None else None
-    clinics_500m = result['clinics_500m'] if result['clinics_500m'] is not None else None
-    clinics_1000m = result['clinics_1000m'] if result['clinics_1000m'] is not None else None
-    shops_500m = result['shops_500m'] if result['shops_500m'] is not None else None
-    shops_1000m = result['shops_1000m'] if result['shops_1000m'] is not None else None
+    is_rented = 1
+    rent_year = 1# result['rent_year'] if result['rent_year'] is not None else None
+    rent_quarter = 1 # result['rent_quarter'] if result['rent_quarter'] is not None else None
+    schools_500m = 1 # result['schools_500m'] if result['schools_500m'] is not None else None
+    schools_1000m = 1 #result['schools_1000m'] if result['schools_1000m'] is not None else None
+    kindergartens_500m = 1 #result['kindergartens_500m'] if result['kindergartens_500m'] is not None else None
+    kindergartens_1000m = 1 # result['kindergartens_1000m'] if result['kindergartens_1000m'] is not None else None
+    clinics_500m = 1 # result['clinics_500m'] if result['clinics_500m'] is not None else None
+    clinics_1000m = 1# result['clinics_1000m'] if result['clinics_1000m'] is not None else None
+    shops_500m = 1 #result['shops_500m'] if result['shops_500m'] is not None else None
+    shops_1000m = 1 #result['shops_1000m'] if result['shops_1000m'] is not None else None
 
     try:
         city_id = result['city_id']

@@ -652,10 +652,12 @@ class Developers_API():
         # list for dicts of term-type
         list_of_terms = []
         first_graphic = []
+        second_graphic = []
 
         # price changes per month
         prices_changes = {1: 0, 2: 1.01, 3: 1.05, 4: 1.07, 5: 1.09, 6: 1.15, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17, 11: 1.19, 12: 1.2}
         revenue_s, revenue_1, revenue_2, revenue_3, revenue_4 = 0, 0, 0, 0, 0
+        s_price, one_roomed_price, two_roomed_price, three_roomed_price, four_roomed_price = 0, 0, 0, 0, 0
 
         list_of_months = [i for i in range(sale_start_month, 13)]+[i for i in range(1, sale_end_month+1)]
         print(list_of_months, flush=True)
@@ -702,7 +704,7 @@ class Developers_API():
                 for idx, item in enumerate(self.list_of_squares):
                     if full_sq >= item:
                         full_sq_group = idx + 1
-                        break 
+                        break
 
                 ### Sales value for current sub-group
                 sales_volume_coeff = 1
@@ -736,18 +738,24 @@ class Developers_API():
 
                 # Calculate revenue for each type
 
+                price_meter_sq = price_meter_sq*prices_changes[mm_announce]
                 price = price_meter_sq*full_sq
-                price = price*prices_changes[mm_announce]
+
                 if rooms == 0:
                     revenue_s += price*sales_value_studio
+                    s_price = price_meter_sq
                 if rooms == 1:
                     revenue_1 += price*sales_value_1
+                    one_roomed_price = price_meter_sq
                 if rooms == 2:
                     revenue_2 += price*sales_value_2
+                    two_roomed_price = price_meter_sq
                 if rooms == 3:
                     revenue_3 += price*sales_value_3
+                    three_roomed_price = price_meter_sq
                 if rooms == 4:
                     revenue_4 += price*sales_value_4
+                    four_roomed_price = price_meter_sq
 
 
                 first_graphic.append(
@@ -755,11 +763,17 @@ class Developers_API():
                      '1': sales_value_1, '2': sales_value_2, '3': sales_value_3, '4': sales_value_4, 'revenue_s':
                          revenue_s, 'revenue_1': revenue_1,
                 'revenue_2': revenue_2, 'revenue_3': revenue_3, 'revenue_4': revenue_4})
+
+                second_graphic.append({'s_price': s_price, 's_year': yyyy_announce, 's_month': mm_announce,
+                                       '1_price': one_roomed_price, '1_year': yyyy_announce, '1_month': mm_announce,
+                                       '2_price': two_roomed_price, '2_year': yyyy_announce, '2_month': mm_announce,
+                                       '3_price': three_roomed_price, '3_year': yyyy_announce, '3_month': mm_announce,
+                                       '4_price': four_roomed_price, '4_year': yyyy_announce, '4_month': mm_announce,})
                 # list_of_terms.append(
                 #     {'type': type, 'mm_announce': mm_announce, 'yyyy_announce': yyyy_announce,
                 #      'full_sq_group': full_sq_group})
-        print("List of terms: ", first_graphic, flush=True)
-        return first_graphic
+        # print("first_grapic: ", first_graphic, flush=True)
+        return first_graphic, second_graphic
 
     # def train_reg(self, city_id: int, use_trained_models=True):
     #
@@ -963,7 +977,7 @@ def predict_developers_term(longitude: float, latitude: float, floors_count: int
 
     # Get answer in format: [{'month_announce': mm_announce, 'year_announce': yyyy_announce, '-1': sales_value_studio,
     #                                   '1': sales_value_1, '2': sales_value_2, '3': sales_value_3, '4': sales_value_4}, {...}]
-    answer = devAPI.predict(city_id=city_id, flats=flats, has_elevator=has_elevator,
+    first_graphic, second_graphic = devAPI.predict(city_id=city_id, flats=flats, has_elevator=has_elevator,
                             is_rented=is_rented,
                             latitude=latitude, longitude=longitude, rent_quarter=rent_quarter, rent_year=rent_year,
                             time_to_metro=time_to_metro, schools_500m=schools_500m, schools_1000m=schools_1000m,
@@ -973,4 +987,4 @@ def predict_developers_term(longitude: float, latitude: float, floors_count: int
                             housing_class=housing_class, sale_end_month=sale_end_month, sale_end_year=sale_end_year,
                             sale_start_month=sale_start_month, sale_start_year=sale_start_year)
 
-    return answer
+    return first_graphic, second_graphic

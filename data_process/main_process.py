@@ -645,13 +645,15 @@ class Developers_API():
                 kindergartens_500m=0, kindergartens_1000m=0, clinics_500m=0, clinics_1000m=0, shops_500m=0,
                 shops_1000m=0, city_id=0):
 
-
+        now = datetime.now()
         price_model = 0
         kmeans = 0
 
         # list for dicts of term-type
         list_of_terms = []
         first_graphic = []
+
+        # price changes per month
         prices_changes = {1: 0, 2: 1.01, 3: 1.05, 4: 1.07, 5: 1.09, 6: 1.15, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17, 11: 1.19, 12: 1.2}
         revenue_s, revenue_1, revenue_2, revenue_3, revenue_4 = 0, 0, 0, 0, 0
 
@@ -663,10 +665,10 @@ class Developers_API():
         for mm_announce in list_of_months:
             print(mm_announce, flush=True)
 
-            if (mm_announce in [i for i in range(sale_start_month, 13)]) and yyyy_announce != sale_end_year:
-                yyyy_announce = sale_start_year
-            else:
-                yyyy_announce = sale_end_year
+            # if (mm_announce in [i for i in range(sale_start_month, 13)]) and yyyy_announce != sale_end_year:\
+            if mm_announce == 1:
+                yyyy_announce += 1
+
             # get flats parameters for each flat
             for idx, i in enumerate(flats):
 
@@ -700,34 +702,37 @@ class Developers_API():
                 for idx, item in enumerate(self.list_of_squares):
                     if full_sq >= item:
                         full_sq_group = idx + 1
-                    else:
-                        full_sq_group = 0
+                        break 
 
                 ### Sales value for current sub-group
+                sales_volume_coeff = 1
+                n_years = yyyy_announce - sale_start_year
+                if n_years > 0:
+                    sales_volume_coeff += 0.05*n_years # per one year volume grows by five percent
 
                 # Calculate number of studios
                 sales_value_studio = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                               mm_sold=mm_announce,
-                                                                              rooms=0, housing_class=housing_class)
+                                                                              rooms=0, housing_class=housing_class) * sales_volume_coeff
                 # Calculate number of 1-roomed flats
                 sales_value_1 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                          mm_sold=mm_announce,
-                                                                         rooms=1, housing_class=housing_class)
+                                                                         rooms=1, housing_class=housing_class) * sales_volume_coeff
 
                 # Calculate number of 2-roomed flats
                 sales_value_2 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                          mm_sold=mm_announce,
-                                                                         rooms=2, housing_class=housing_class)
+                                                                         rooms=2, housing_class=housing_class) * sales_volume_coeff
 
                 # Calculate number of 3-roomed flats
                 sales_value_3 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                          mm_sold=mm_announce,
-                                                                         rooms=3, housing_class=housing_class)
+                                                                         rooms=3, housing_class=housing_class) * sales_volume_coeff
 
                 # Calculate number of 4-roomed flats
                 sales_value_4 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                          mm_sold=mm_announce,
-                                                                         rooms=4, housing_class=housing_class)
+                                                                         rooms=4, housing_class=housing_class) * sales_volume_coeff
 
                 # Calculate revenue for each type
 

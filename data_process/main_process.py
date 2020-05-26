@@ -655,9 +655,20 @@ class Developers_API():
         second_graphic = []
 
         # price changes per month
-        prices_changes = {1: 0, 2: 1.01, 3: 1.05, 4: 1.07, 5: 1.09, 6: 1.15, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17, 11: 1.19, 12: 1.2}
-        revenue_s, revenue_1, revenue_2, revenue_3, revenue_4 = 0, 0, 0, 0, 0
-        s_price, one_roomed_price, two_roomed_price, three_roomed_price, four_roomed_price = 0, 0, 0, 0, 0
+        prices_changes_studio = {1: 0, 2: 1.045, 3: 1.095, 4: 1.12, 5: 1.17, 6: 1.19, 7: 1.12, 8: 1.13, 9: 1.14,
+                                 10: 1.155, 11: 1.175, 12: 1.2}
+        prices_changes_1 = {1: 0, 2: 1.035, 3: 1.085, 4: 1.1, 5: 1.15, 6: 1.185, 7: 1.12, 8: 1.14, 9: 1.165, 10: 1.175,
+                                 11: 1.195, 12: 1.22}
+        prices_changes_2 = {1: 0, 2: 1.025, 3: 1.35, 4: 1.12, 5: 1.17, 6: 1.191, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17,
+                                 11: 1.19, 12: 1.21}
+
+        prices_changes_3 = {1: 0, 2: 1.015, 3: 1.015, 4: 1.11, 5: 1.14, 6: 1.175, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17,
+                                 11: 1.195, 12: 1.2}
+        prices_changes_4 = {1: 0, 2: 1.005, 3: 1.01, 4: 1.06, 5: 1.09, 6: 1.15, 7: 1.13, 8: 1.16, 9: 1.17, 10: 1.175,
+                                 11: 1.18, 12: 1.85}
+        revenue_s, revenue_one_roomed, revenue_two_roomed, revenue_three_roomed, revenue_four_roomed = 0, 0, 0, 0, 0
+        s_price_meter_sq, one_roomed_price_meter_sq, two_roomed_price_meter_sq, three_roomed_price_meter_sq, four_roomed_price_meter_sq = 0, 0, 0, 0, 0
+        price = 0
 
         list_of_months = [i for i in range(sale_start_month, 13)]+[i for i in range(1, sale_end_month+1)]
         print(list_of_months, flush=True)
@@ -738,41 +749,42 @@ class Developers_API():
 
                 # Calculate revenue for each type
 
-                price_meter_sq = price_meter_sq*prices_changes[mm_announce]
-                price = price_meter_sq*full_sq
+
 
                 if rooms == 0:
-                    revenue_s += price*sales_value_studio
-                    s_price = price_meter_sq
+                    s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce]
+                    s_full_price = s_price_meter_sq * full_sq
+                    revenue_s += s_full_price*sales_value_studio
                 if rooms == 1:
-                    revenue_1 += price*sales_value_1
-                    one_roomed_price = price_meter_sq
+                    one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce]
+                    one_roomed_full_price = s_price_meter_sq * full_sq
+                    revenue_one_roomed += one_roomed_full_price * sales_value_1
                 if rooms == 2:
-                    revenue_2 += price*sales_value_2
-                    two_roomed_price = price_meter_sq
+                    two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
+                    two_roomed_full_price = two_roomed_price_meter_sq * full_sq
+                    revenue_two_roomed += two_roomed_full_price * sales_value_2
                 if rooms == 3:
-                    revenue_3 += price*sales_value_3
-                    three_roomed_price = price_meter_sq
+                    three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce]
+                    three_roomed_full_price = three_roomed_price_meter_sq * full_sq
+                    revenue_three_roomed += three_roomed_full_price * sales_value_3
                 if rooms == 4:
-                    revenue_4 += price*sales_value_4
-                    four_roomed_price = price_meter_sq
+                    four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce]
+                    four_roomed_full_price = four_roomed_price_meter_sq * full_sq
+                    revenue_four_roomed += four_roomed_full_price * sales_value_4
 
 
                 first_graphic.append(
                     {'month_announce': mm_announce, 'year_announce': yyyy_announce, 's': sales_value_studio,
                      '1': sales_value_1, '2': sales_value_2, '3': sales_value_3, '4': sales_value_4, 'revenue_s':
-                         revenue_s, 'revenue_1': revenue_1,
-                'revenue_2': revenue_2, 'revenue_3': revenue_3, 'revenue_4': revenue_4})
+                         revenue_s, 'revenue_1': revenue_one_roomed,
+                'revenue_2': revenue_two_roomed, 'revenue_3': revenue_three_roomed, 'revenue_4': revenue_four_roomed})
 
-                second_graphic.append({'s_price': s_price, 's_year': yyyy_announce, 's_month': mm_announce,
-                                       '1_price': one_roomed_price, '1_year': yyyy_announce, '1_month': mm_announce,
-                                       '2_price': two_roomed_price, '2_year': yyyy_announce, '2_month': mm_announce,
-                                       '3_price': three_roomed_price, '3_year': yyyy_announce, '3_month': mm_announce,
-                                       '4_price': four_roomed_price, '4_year': yyyy_announce, '4_month': mm_announce,})
-                # list_of_terms.append(
-                #     {'type': type, 'mm_announce': mm_announce, 'yyyy_announce': yyyy_announce,
-                #      'full_sq_group': full_sq_group})
-        # print("first_grapic: ", first_graphic, flush=True)
+                second_graphic.append({'s_price': s_price_meter_sq, 's_year': yyyy_announce, 's_month': mm_announce,
+                                       '1_price': one_roomed_price_meter_sq, '1_year': yyyy_announce, '1_month': mm_announce,
+                                       '2_price': two_roomed_price_meter_sq, '2_year': yyyy_announce, '2_month': mm_announce,
+                                       '3_price': three_roomed_price_meter_sq, '3_year': yyyy_announce, '3_month': mm_announce,
+                                       '4_price': four_roomed_price_meter_sq, '4_year': yyyy_announce, '4_month': mm_announce,})
+
         return first_graphic, second_graphic
 
     # def train_reg(self, city_id: int, use_trained_models=True):

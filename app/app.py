@@ -99,10 +99,41 @@ def map():
 def builder():
     result = json.loads(request.data.decode())
 
+    try:
+        city_id = result['city_id']
+        longitude = result['longitude']
+        latitude = result['latitude']
+        is_rented = result['is_rented']
+        rent_year = result['rent_year']
+        rent_quarter = result['rent_quarter']
+        floors_count = result['floors_count']
+        has_elevator = result['has_elevator']
+        parking = result['parking']
+        time_to_metro = result['time_to_metro']
+        flats = result['flats']
+        sale_start_month = result['sale_start_month']
+        sale_end_month = result['sale_end_month']
+        sale_start_year = result['sale_start_year']
+        sale_end_year = result['sale_end_year']
+        schools_500m = result['schools_500m']
+        schools_1000m = result['schools_1000m']
+        kindergartens_500m = result['kindergartens_500m']
+        kindergartens_1000m = result['kindergartens_1000m']
+        clinics_500m = result['clinics_500m']
+        clinics_1000m = result['clinics_1000m']
+        shops_500m = result['shops_500m']
+        shops_1000m = result['shops_1000m']
+    except KeyError as err:
+        return jsonify({'message': str(err)})
+
+
     image_link = SETTINGS.HOST + SETTINGS.MEDIA_ROOT + 'test.jpg'
     print(image_link, flush=True)
 
-    result = predict_developers_term(result)
+    result = predict_developers_term(city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count,
+                                     has_elevator, parking, time_to_metro, flats, sale_start_month, sale_end_month,
+                                     sale_start_year, sale_end_year, schools_500m, schools_1000m, kindergartens_500m,
+                                     kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m)
 
     print("Result OK. Length: ", len(result), flush=True)
     # print(type(result), flush=True)

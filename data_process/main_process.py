@@ -655,7 +655,7 @@ class Developers_API():
         prices_changes = {1: 0, 2: 1.01, 3: 1.05, 4: 1.07, 5: 1.09, 6: 1.15, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17, 11: 1.19, 12: 1.2}
         revenue_s, revenue_1, revenue_2, revenue_3, revenue_4 = 0, 0, 0, 0, 0
 
-        list_of_months = [i for i in range(sale_start_year+13)]+[i for i in range(1, sale_end_month+1)]
+        list_of_months = [i for i in range(sale_start_month, 13)]+[i for i in range(1, sale_end_month+1)]
         print(list_of_months, flush=True)
         # mm_announce = list_of_months[idx]
 

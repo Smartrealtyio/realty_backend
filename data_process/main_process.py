@@ -921,7 +921,7 @@ class Developers_API():
 
 
 def predict_developers_term(longitude: float, latitude: float, floors_count: int,
-                            has_elevator: int, parking: int, time_to_metro, flats: list, is_rented=0, rent_year=0,
+                            has_elevator: int, parking: int, time_to_metro, flats: list, housing_class: int, is_rented=0, rent_year=0,
                             rent_quarter=0, sale_start_month=0, sale_end_month=0,
                             sale_start_year=0, sale_end_year=0, schools_500m=0, schools_1000m=0, kindergartens_500m=0,
                             kindergartens_1000m=0, clinics_500m=0, clinics_1000m=0, shops_500m=0, shops_1000m=0, city_id=0):
@@ -958,6 +958,8 @@ def predict_developers_term(longitude: float, latitude: float, floors_count: int
                             time_to_metro=time_to_metro, schools_500m=schools_500m, schools_1000m=schools_1000m,
                             kindergartens_500m=kindergartens_500m, kindergartens_1000m=kindergartens_1000m,
                             clinics_500m=clinics_500m,
-                            clinics_1000m=clinics_1000m, shops_500m=shops_500m, shops_1000m=shops_1000m)
+                            clinics_1000m=clinics_1000m, shops_500m=shops_500m, shops_1000m=shops_1000m,
+                            housing_class=housing_class, sale_end_month=sale_end_month, sale_end_year=sale_end_year,
+                            sale_start_month=sale_start_month, sale_start_year=sale_start_year)
 
     return answer

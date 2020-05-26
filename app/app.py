@@ -136,10 +136,14 @@ def builder():
     image_link = SETTINGS.HOST + SETTINGS.MEDIA_ROOT + 'test.jpg'
     print(image_link, flush=True)
 
-    result = predict_developers_term(city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count,
-                                     has_elevator, parking, time_to_metro, flats, mm_start, mm_end,
-                                     yyyy_start, yyyy_end, schools_500m, schools_1000m, kindergartens_500m,
-                                     kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m)
+    result = predict_developers_term(city_id=city_id, longitude=longitude, latitude=latitude, is_rented=is_rented,
+                                     rent_year=rent_year, rent_quarter=rent_quarter, floors_count=floors_count,
+                                     has_elevator=has_elevator, parking=parking, time_to_metro=time_to_metro, flats=flats,
+                                     sale_start_month=mm_start, sale_end_month=mm_end,
+                                     sale_start_year=yyyy_start, sale_end_year=yyyy_end, schools_500m=schools_500m,
+                                     schools_1000m=schools_1000m, kindergartens_500m=kindergartens_500m,
+                                     kindergartens_1000m=kindergartens_1000m, clinics_500m=clinics_500m,
+                                     clinics_1000m=clinics_1000m, shops_500m=shops_500m, shops_1000m=shops_1000m, housing_class=housing_class)
 
     print("Result OK. Length: ", len(result), flush=True)
     # print(type(result), flush=True)

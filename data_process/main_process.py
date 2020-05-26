@@ -402,10 +402,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         list_of_dicts = createListOfDicts(list_of_terms, prices)
 
 
-        # Check if enough data for plotting
-        # oops = 1 if len(list_of_dicts) <= 2 else 0
-        # list_of_dicts = [{"x": 0, 'y': 0}] if oops else list_of_dicts
-
+        # Check if list not empty
         if len(list_of_dicts) <= 2:
             answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
             return answ
@@ -436,19 +433,19 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
             return answ
 
-
+        # Leave only unique pairs [{'x': int1, 'y': int2}, {'x': int3, 'y': int4}]
         def select_unique_term_price_pairs(list_of_dicts: list):
             terms = []
             result = []
 
             for i in range(1, len(list_of_dicts)):
-                if (list_of_dicts[i].get('term') != list_of_dicts[i - 1].get('term')) and list_of_dicts[i].get(
-                        'term') not in terms:
-                    if list_of_dicts[i - 1].get('term') not in terms:
+                if (list_of_dicts[i].get('x') != list_of_dicts[i - 1].get('x')) and list_of_dicts[i].get(
+                        'x') not in terms:
+                    if list_of_dicts[i - 1].get('x') not in terms:
                         result.append(list_of_dicts[i - 1])
-                        terms.append(list_of_dicts[i - 1].get('term'))
+                        terms.append(list_of_dicts[i - 1].get('x'))
                     result.append(list_of_dicts[i])
-                    terms.append(list_of_dicts[i].get('term'))
+                    terms.append(list_of_dicts[i].get('x'))
             return result
 
 
@@ -468,7 +465,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                 if ((i['x'] == current_flat['x']) | (i['y'] == current_flat['y'])):
                     l.remove(i)
             l.append(current_flat)
-            return sorted(l, key=lambda k: k['term'])
+            return sorted(l, key=lambda k: k['x'])
 
         # if not oops:
         print('not oops', flush=True)

@@ -644,10 +644,10 @@ class Developers_API():
                schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, \
                shops_1000m
 
-    def predict(self, city_id: int, flats: list, rent_year: int, longitude: float, latitude: float,
-                time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int, schools_500m: int, schools_1000m: int,
-                kindergartens_500m: int, kindergartens_1000m: int, clinics_500m: int, clinics_1000m: int, shops_500m: int,
-                shops_1000m:int):
+    def predict(self, flats: list, rent_year: int, longitude: float, latitude: float,
+                time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int, schools_500m=0, schools_1000m=0,
+                kindergartens_500m=0, kindergartens_1000m=0, clinics_500m=0, clinics_1000m=0, shops_500m=0,
+                shops_1000m=0, city_id=0):
 
         price_model = 0
         kmeans = 0

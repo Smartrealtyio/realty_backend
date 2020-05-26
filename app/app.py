@@ -4,7 +4,7 @@ import time
 
 from data_process.main_process import mean_estimation, map_estimation
 from data_process.main_process import predict_developers_term
-
+from datetime import datetime
 from app.db_queries import get_other_params
 import settings_local as SETTINGS
 
@@ -99,40 +99,46 @@ def map():
 def builder():
     result = json.loads(request.data.decode())
 
+    is_rented = result['is_rented'] if result['is_rented'] is not None else None
+    rent_year = result['rent_year'] if result['rent_year'] is not None else None
+    rent_quarter = result['rent_quarter'] if result['rent_quarter'] is not None else None
+    schools_500m = result['schools_500m'] if result['schools_500m'] is not None else None
+    schools_1000m = result['schools_1000m'] if result['schools_1000m'] is not None else None
+    kindergartens_500m = result['kindergartens_500m'] if result['kindergartens_500m'] is not None else None
+    kindergartens_1000m = result['kindergartens_1000m'] if result['kindergartens_1000m'] is not None else None
+    clinics_500m = result['clinics_500m'] if result['clinics_500m'] is not None else None
+    clinics_1000m = result['clinics_1000m'] if result['clinics_1000m'] is not None else None
+    shops_500m = result['shops_500m'] if result['shops_500m'] is not None else None
+    shops_1000m = result['shops_1000m'] if result['shops_1000m'] is not None else None
+
     try:
         city_id = result['city_id']
         longitude = result['longitude']
         latitude = result['latitude']
-        is_rented = result['is_rented']
-        rent_year = result['rent_year']
-        rent_quarter = result['rent_quarter']
+        housing_class = result['housing_class']
         floors_count = result['floors_count']
-        has_elevator = result['has_elevator']
+        has_elevator = result['elevator']
         parking = result['parking']
         time_to_metro = result['time_to_metro']
         flats = result['flats']
-        sale_start_month = result['sale_start_month']
-        sale_end_month = result['sale_end_month']
-        sale_start_year = result['sale_start_year']
-        sale_end_year = result['sale_end_year']
-        schools_500m = result['schools_500m']
-        schools_1000m = result['schools_1000m']
-        kindergartens_500m = result['kindergartens_500m']
-        kindergartens_1000m = result['kindergartens_1000m']
-        clinics_500m = result['clinics_500m']
-        clinics_1000m = result['clinics_1000m']
-        shops_500m = result['shops_500m']
-        shops_1000m = result['shops_1000m']
+        start_timestamp = result['start_timestamp']
+        end_timestamp = result['end_timestamp']
+
+
     except KeyError as err:
         return jsonify({'message': str(err)})
 
+    mm_start = int(datetime.utcfromtimestamp(start_timestamp).strftime('%m'))  # Get month from unix
+    yyyy_start = int(datetime.utcfromtimestamp(start_timestamp).strftime('%Y'))  # Get year from unix
+    mm_end = int(datetime.utcfromtimestamp(end_timestamp).strftime('%m'))  # Get month from unix
+    yyyy_end = int(datetime.utcfromtimestamp(end_timestamp).strftime('%Y'))  # Get year from unix
 
     image_link = SETTINGS.HOST + SETTINGS.MEDIA_ROOT + 'test.jpg'
     print(image_link, flush=True)
 
     result = predict_developers_term(city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count,
-                                     has_elevator, parking, time_to_metro, flats, sale_start_month, sale_end_month,
-                                     sale_start_year, sale_end_year, schools_500m, schools_1000m, kindergartens_500m,
+                                     has_elevator, parking, time_to_metro, flats, mm_start, mm_end,
+                                     yyyy_start, yyyy_end, schools_500m, schools_1000m, kindergartens_500m,
                                      kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m)
 
     print("Result OK. Length: ", len(result), flush=True)

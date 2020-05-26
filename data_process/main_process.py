@@ -538,19 +538,19 @@ class Developers_API():
                 'price_meter_sq'].transform(lambda x: x.quantile(.95))
 
         # Set new column value: flat_class. 0 = econom, 1 = comfort, 2 = business, 3 = elite
-        msc_new.loc[:, 'flat_class'] = 0  # Set to econom by default
-        msc_new.loc[:, 'flat_class'] = np.where(
+        msc_new.loc[:, 'housing_class'] = 0  # Set to econom by default
+        msc_new.loc[:, 'housing_class'] = np.where(
             msc_new['price_meter_sq'] >= msc_new['price_meter_sq_06q'], 1,
-            msc_new['flat_class'])  # Set to comfort
-        msc_new.loc[:, 'flat_class'] = np.where(
+            msc_new['housing_class'])  # Set to comfort
+        msc_new.loc[:, 'housing_class'] = np.where(
             msc_new['price_meter_sq'] >= msc_new['price_meter_sq_09q'], 2,
-            msc_new['flat_class'])  # Set to business
-        msc_new.loc[:, 'flat_class'] = np.where(
+            msc_new['housing_class'])  # Set to business
+        msc_new.loc[:, 'housing_class'] = np.where(
             msc_new['price_meter_sq'] >= msc_new['price_meter_sq_095q'], 3,
-            msc_new['flat_class'])  # Set to elite
+            msc_new['housing_class'])  # Set to elite
 
         # Remove price outliers within the groups
-        std_data_new_msc = msc_new.groupby(['full_sq_group', 'rooms', 'flat_class', 'yyyy_sold', 'mm_sold'])[
+        std_data_new_msc = msc_new.groupby(['full_sq_group', 'rooms', 'housing_class', 'yyyy_sold', 'mm_sold'])[
             'price'].transform(
             stats.zscore)
 
@@ -563,7 +563,7 @@ class Developers_API():
 
         # Count number of flats in sub-group
         msc_new['mean_price_group_count'] = \
-            msc_new.groupby(['full_sq_group', 'rooms', 'flat_class', 'yyyy_sold', 'mm_sold'])[
+            msc_new.groupby(['full_sq_group', 'rooms', 'housing_class', 'yyyy_sold', 'mm_sold'])[
                 'price'].transform('count')
 
         msc_new.price = msc_new.price.round()
@@ -640,16 +640,11 @@ class Developers_API():
                shops_1000m
 
     def predict(self, flats: list, rent_year: int, longitude: float, latitude: float,
-                time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int, schools_500m=0, schools_1000m=0,
+                time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int, sale_start_month: int,
+                sale_end_month: int, sale_start_year: int, sale_end_year: int, housing_class: int, schools_500m=0, schools_1000m=0,
                 kindergartens_500m=0, kindergartens_1000m=0, clinics_500m=0, clinics_1000m=0, shops_500m=0,
                 shops_1000m=0, city_id=0):
 
-    def predict(self, city_id: int, flats: list, rent_year: int, longitude: float, latitude: float,
-                time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int, schools_500m: int,
-                schools_1000m: int,
-                kindergartens_500m: int, kindergartens_1000m: int, clinics_500m: int, clinics_1000m: int,
-                shops_500m: int,
-                shops_1000m: int):
 
         price_model = 0
         kmeans = 0
@@ -657,74 +652,101 @@ class Developers_API():
         # list for dicts of term-type
         list_of_terms = []
         first_graphic = []
+        prices_changes = {1: 0, 2: 1.01, 3: 1.05, 4: 1.07, 5: 1.09, 6: 1.15, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17, 11: 1.19, 12: 1.2}
+        revenue_s, revenue_1, revenue_2, revenue_3, revenue_4 = 0, 0, 0, 0, 0
 
-        # get flats parameters for each flat
-        for i in flats:
-            price_meter_sq = i['price_meter_sq']
-            mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m'))  # Get month from unix
-            yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y'))  # Get year from unix
-            life_sq = i['life_sq']
-            rooms = i['rooms']
-            renovation = i['renovation']
-            renovation_type = i['renovation_type']
-            longitude = longitude
-            latitude = latitude
-            full_sq = i['full_sq']
-            kitchen_sq = i['kitchen_sq']
-            time_to_metro = time_to_metro
-            floor_last = i['floor_last']
-            floor_first = i['floor_first']
-            windows_view = i['windows_view']
-            type = i['type']
-            is_rented = is_rented
-            rent_year = rent_year
-            rent_quarter = rent_quarter
-            has_elevator = has_elevator
+        list_of_months = [i for i in range(sale_start_year+13)]+[i for i in range(1, sale_end_month+1)]
+        # mm_announce = list_of_months[idx]
 
-            # calculate sales values based on prev year
-            # current_cluster = kmeans.predict([[longitude, latitude]])
+        for mm_announce in list_of_months:
+            yyyy_announce = sale_start_year if mm_announce in [i for i in
+                                                               range(sale_start_month, 13)] else sale_end_year
+            # get flats parameters for each flat
+            for idx, i in enumerate(flats):
 
-            # Determine appropriate full_sq_group based on full_sq
-            full_sq_group = 0
+                price_meter_sq = i['price_meter_sq']
+                # mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m'))  # Get month from unix
+                # yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y'))  # Get year from unix
+                # life_sq = i['life_sq']
+                rooms = i['rooms']
+                # renovation = i['renovation']
+                # renovation_type = i['renovation_type']
+                # longitude = longitude
+                # latitude = latitude
+                full_sq = i['full_sq']
+                # kitchen_sq = i['kitchen_sq']
+                # time_to_metro = time_to_metro
+                # floor_last = i['floor_last']
+                # floor_first = i['floor_first']
+                # windows_view = i['windows_view']
+                type = i['type']
+                # is_rented = is_rented
+                # rent_year = rent_year
+                # rent_quarter = rent_quarter
+                # has_elevator = has_elevator
 
-            for idx, item in enumerate(self.list_of_squares):
-                if full_sq >= item:
-                    full_sq_group = idx + 1
-                else:
-                    full_sq_group = 0
+                # calculate sales values based on prev year
+                # current_cluster = kmeans.predict([[longitude, latitude]])
 
-            ### Sales value for current sub-group
+                # Determine appropriate full_sq_group based on full_sq
+                full_sq_group = 0
 
-            # Calculate number of studios
-            sales_value_studio = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                          mm_sold=mm_announce,
-                                                                          rooms=0)
-            # Calculate number of 1-roomed flats
-            sales_value_1 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                     mm_sold=mm_announce,
-                                                                     rooms=1)
+                for idx, item in enumerate(self.list_of_squares):
+                    if full_sq >= item:
+                        full_sq_group = idx + 1
+                    else:
+                        full_sq_group = 0
 
-            # Calculate number of 2-roomed flats
-            sales_value_2 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                     mm_sold=mm_announce,
-                                                                     rooms=2)
+                ### Sales value for current sub-group
 
-            # Calculate number of 3-roomed flats
-            sales_value_3 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                     mm_sold=mm_announce,
-                                                                     rooms=3)
+                # Calculate number of studios
+                sales_value_studio = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                              mm_sold=mm_announce,
+                                                                              rooms=0, housing_class=housing_class)
+                # Calculate number of 1-roomed flats
+                sales_value_1 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                         mm_sold=mm_announce,
+                                                                         rooms=1, housing_class=housing_class)
 
-            # Calculate number of 4-roomed flats
-            sales_value_4 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                     mm_sold=mm_announce,
-                                                                     rooms=4)
+                # Calculate number of 2-roomed flats
+                sales_value_2 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                         mm_sold=mm_announce,
+                                                                         rooms=2, housing_class=housing_class)
 
-            first_graphic.append(
-                {'month_announce': mm_announce, 'year_announce': yyyy_announce, '-1': sales_value_studio,
-                 '1': sales_value_1, '2': sales_value_2, '3': sales_value_3, '4': sales_value_4})
-            # list_of_terms.append(
-            #     {'type': type, 'mm_announce': mm_announce, 'yyyy_announce': yyyy_announce,
-            #      'full_sq_group': full_sq_group})
+                # Calculate number of 3-roomed flats
+                sales_value_3 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                         mm_sold=mm_announce,
+                                                                         rooms=3, housing_class=housing_class)
+
+                # Calculate number of 4-roomed flats
+                sales_value_4 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                         mm_sold=mm_announce,
+                                                                         rooms=4, housing_class=housing_class)
+
+                # Calculate revenue for each type
+
+                price = price_meter_sq*full_sq
+                price = price*prices_changes[mm_announce]
+                if rooms == 0:
+                    revenue_s += price*sales_value_studio
+                if rooms == 1:
+                    revenue_1 += price*sales_value_1
+                if rooms == 2:
+                    revenue_2 += price*sales_value_2
+                if rooms == 3:
+                    revenue_3 += price*sales_value_3
+                if rooms == 4:
+                    revenue_4 += price*sales_value_4
+
+
+                first_graphic.append(
+                    {'month_announce': mm_announce, 'year_announce': yyyy_announce, 's': sales_value_studio,
+                     '1': sales_value_1, '2': sales_value_2, '3': sales_value_3, '4': sales_value_4, 'revenue_s':
+                         revenue_s, 'revenue_1': revenue_1,
+                'revenue_2': revenue_2, 'revenue_3': revenue_3, 'revenue_4': revenue_4})
+                # list_of_terms.append(
+                #     {'type': type, 'mm_announce': mm_announce, 'yyyy_announce': yyyy_announce,
+                #      'full_sq_group': full_sq_group})
         print("List of terms: ", first_graphic, flush=True)
         return first_graphic
 
@@ -783,7 +805,7 @@ class Developers_API():
     # Расчёт месяца и года продажи при известном сроке(в днях). Предполгается, что квартиры вымещаются на продажу только в начале месяца.
 
     # Calculate sales volume for each flat sub-group based on its group, number of rooms, sale month
-    def calculate_sales_volume_previos_year(self, rooms: int, full_sq_group: int, mm_sold: int):
+    def calculate_sales_volume_previos_year(self, rooms: int, full_sq_group: int, mm_sold: int, housing_class: int):
 
         # Only closed offers
         sale_volume_data = self.msc_new[(
@@ -793,7 +815,8 @@ class Developers_API():
         volume_19 = sale_volume_data[
             ((sale_volume_data.rooms == rooms) & (sale_volume_data.yyyy_sold == 19) & (
                     sale_volume_data.full_sq_group == full_sq_group) & (
-                     sale_volume_data.mm_sold == mm_sold))].shape[0]
+                     sale_volume_data.mm_sold == mm_sold)& (
+                    sale_volume_data.housing_class == housing_class))].shape[0]
 
         return volume_19
 
@@ -897,10 +920,11 @@ class Developers_API():
     #         img.figure.savefig('/home/realtyai/smartrealty/realty/media/test.png')
 
 
-def predict_developers_term(city_id, longitude, latitude, is_rented, rent_year, rent_quarter, floors_count,
-                            has_elevator, parking, time_to_metro, flats, sale_start_month, sale_end_month,
-                            sale_start_year, sale_end_year, schools_500m, schools_1000m, kindergartens_500m,
-                            kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m):
+def predict_developers_term(longitude: float, latitude: float, floors_count: int,
+                            has_elevator: int, parking: int, time_to_metro, flats: list, is_rented=0, rent_year=0,
+                            rent_quarter=0, sale_start_month=0, sale_end_month=0,
+                            sale_start_year=0, sale_end_year=0, schools_500m=0, schools_1000m=0, kindergartens_500m=0,
+                            kindergartens_1000m=0, clinics_500m=0, clinics_1000m=0, shops_500m=0, shops_1000m=0, city_id=0):
     # Create Class
     devAPI = Developers_API()
 

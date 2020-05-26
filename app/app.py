@@ -99,6 +99,8 @@ def map():
 def builder():
     result = json.loads(request.data.decode())
 
+    print('query params', result, flush=True)
+
     is_rented = 1
     rent_year = 1# result['rent_year'] if result['rent_year'] is not None else None
     rent_quarter = 1 # result['rent_quarter'] if result['rent_quarter'] is not None else None

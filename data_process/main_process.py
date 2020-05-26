@@ -658,11 +658,15 @@ class Developers_API():
         list_of_months = [i for i in range(sale_start_month, 13)]+[i for i in range(1, sale_end_month+1)]
         print(list_of_months, flush=True)
         # mm_announce = list_of_months[idx]
+        yyyy_announce= sale_start_year
 
         for mm_announce in list_of_months:
             print(mm_announce, flush=True)
-            yyyy_announce = sale_start_year if mm_announce in [i for i in
-                                                               range(sale_start_month, 13)] else sale_end_year
+
+            if (mm_announce in [i for i in range(sale_start_month, 13)]) and yyyy_announce != sale_end_year:
+                yyyy_announce = sale_start_year
+            else:
+                yyyy_announce = sale_end_year
             # get flats parameters for each flat
             for idx, i in enumerate(flats):
 

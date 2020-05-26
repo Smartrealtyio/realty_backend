@@ -369,9 +369,6 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                 profit = i / price_meter_sq
                 # Calculate term based on profit for each price
                 term_on_profit = np.expm1(reg.predict([[np.log1p(profit), np.log1p(i)]]))
-                # print(
-                #     "Predicted term is {0} based on {1} profit and price_meter_sq {2}: ".format(term_on_profit, profit,
-                #                                                                                 i), flush=True)
                 list_of_terms.append(term_on_profit)
 
             return list_of_terms
@@ -565,10 +562,11 @@ class Developers_API():
         # Construct a Boolean Series to identify outliers: outliers
         outliers = (std_data_new_msc < -3) | (std_data_new_msc > 3)
 
-        # Filter
+        # Drop outliers
         msc_new = msc_new[~outliers]
         print('without outliers: ', msc_new.shape, flush=True)
 
+        # Count number of flats in sub-group
         msc_new['mean_price_group_count'] = \
         msc_new.groupby(['full_sq_group', 'rooms', 'flat_class', 'yyyy_sold', 'mm_sold'])[
             'price'].transform('count')
@@ -686,7 +684,7 @@ class Developers_API():
             # current_cluster = kmeans.predict([[longitude, latitude]])
 
 
-            # Determine appropriate full_sq_group based on
+            # Determine appropriate full_sq_group based on full_sq
             full_sq_group = 0
 
             for idx, item in enumerate(self.list_of_squares):
@@ -696,20 +694,27 @@ class Developers_API():
                     full_sq_group = 0
 
 
-            # Sales value for current sub-group
+            ### Sales value for current sub-group
+
+            # Calculate number of studios
             sales_value_studio = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group, mm_sold=mm_announce,
                                                                    rooms=0)
-
+            # Calculate number of 1-roomed flats
             sales_value_1 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                           mm_sold=mm_announce,
                                                                           rooms=1)
 
+            # Calculate number of 2-roomed flats
             sales_value_2 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                           mm_sold=mm_announce,
                                                                           rooms=2)
+
+            # Calculate number of 3-roomed flats
             sales_value_3 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                           mm_sold=mm_announce,
                                                                           rooms=3)
+
+            # Calculate number of 4-roomed flats
             sales_value_4 = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                           mm_sold=mm_announce,
                                                                           rooms=4)
@@ -897,7 +902,7 @@ def predict_developers_term(json_file=0):
     # Create Class
     devAPI = Developers_API()
 
-    # Load CSV data
+    # Load CSV data. Check if it's local machine or remote server
     if "Storage" in machine:
         devAPI.load_data(spb_new=SPB_DATA_NEW, spb_vtor=SPB_DATA_SECONDARY, msc_new='None',
                          msc_vtor='None')
@@ -919,10 +924,9 @@ def predict_developers_term(json_file=0):
     # else:
     #     reg = devAPI.train_reg(city_id=city_id)
 
-    # Predict
 
-
-
+    # Get answer in format: [{'month_announce': mm_announce, 'year_announce': yyyy_announce, '-1': sales_value_studio,
+    #                                   '1': sales_value_1, '2': sales_value_2, '3': sales_value_3, '4': sales_value_4}, {...}]
     answer = devAPI.predict(city_id=city_id, flats=flats, has_elevator=has_elevator,
                             is_rented=is_rented,
                             latitude=latitude, longitude=longitude, rent_quarter=rent_quarter, rent_year=rent_year,

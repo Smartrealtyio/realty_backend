@@ -107,6 +107,7 @@ def builder():
     print("Result OK. Length: ", len(result), flush=True)
     # print(type(result), flush=True)
 
+
     return jsonify({'result': result, 'image_link': image_link})
 
 

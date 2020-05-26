@@ -32,6 +32,3 @@ python3 /home/realtyai/smartrealty/realty/data_process/DATA_PREP_SPB.py
 
 python3 /home/realtyai/smartrealty/realty/data_process/PRICE_MOSCOW.py
 python3 /home/realtyai/smartrealty/realty/data_process/PRICE_SPB.py
-
-python3 /home/realtyai/smartrealty/realty/data_process/TERM_MOSCOW.py
-python3 /home/realtyai/smartrealty/realty/data_process/TERM_SPB.py

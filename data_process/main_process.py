@@ -649,36 +649,35 @@ class Developers_API():
         price_model = 0
         kmeans = 0
 
-        # list for dicts of term-type
-        list_of_terms = []
+        # lists for answer
         first_graphic = []
         second_graphic = []
 
-        # price changes per month
+        # price changes per month for each flat type
         prices_changes_studio = {1: 0, 2: 1.045, 3: 1.095, 4: 1.12, 5: 1.17, 6: 1.19, 7: 1.12, 8: 1.13, 9: 1.14,
                                  10: 1.155, 11: 1.175, 12: 1.2}
         prices_changes_1 = {1: 0, 2: 1.035, 3: 1.085, 4: 1.1, 5: 1.15, 6: 1.185, 7: 1.12, 8: 1.14, 9: 1.165, 10: 1.175,
                                  11: 1.195, 12: 1.22}
         prices_changes_2 = {1: 0, 2: 1.025, 3: 1.35, 4: 1.12, 5: 1.17, 6: 1.191, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17,
                                  11: 1.19, 12: 1.21}
-
         prices_changes_3 = {1: 0, 2: 1.015, 3: 1.015, 4: 1.11, 5: 1.14, 6: 1.175, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17,
                                  11: 1.195, 12: 1.2}
         prices_changes_4 = {1: 0, 2: 1.005, 3: 1.01, 4: 1.06, 5: 1.09, 6: 1.15, 7: 1.13, 8: 1.16, 9: 1.17, 10: 1.175,
                                  11: 1.18, 12: 1.85}
+
+        # Define variables for plot
         revenue_s, revenue_one_roomed, revenue_two_roomed, revenue_three_roomed, revenue_four_roomed = 0, 0, 0, 0, 0
         s_price_meter_sq, one_roomed_price_meter_sq, two_roomed_price_meter_sq, three_roomed_price_meter_sq, four_roomed_price_meter_sq = 0, 0, 0, 0, 0
-        price = 0
 
+        # Create sequence of months depending on start sale date and end sale date
         list_of_months = [i for i in range(sale_start_month, 13)]+[i for i in range(1, sale_end_month+1)]
-        print(list_of_months, flush=True)
-        # mm_announce = list_of_months[idx]
+        print('List of months: ', list_of_months, flush=True)
         yyyy_announce= sale_start_year
 
+        # For each month in month sequence define sales volume
         for mm_announce in list_of_months:
-            print(mm_announce, flush=True)
 
-            # if (mm_announce in [i for i in range(sale_start_month, 13)]) and yyyy_announce != sale_end_year:\
+            # Check if current month is January, change year + 1
             if mm_announce == 1:
                 yyyy_announce += 1
 
@@ -711,13 +710,14 @@ class Developers_API():
 
                 # Determine appropriate full_sq_group based on full_sq
                 full_sq_group = 0
-
                 for idx, item in enumerate(self.list_of_squares):
                     if full_sq >= item:
                         full_sq_group = idx + 1
                         break
 
                 ### Sales value for current sub-group
+
+                # Determine the growth rate depending on year
                 sales_volume_coeff = 1
                 n_years = yyyy_announce - sale_start_year
                 if n_years > 0:
@@ -747,10 +747,7 @@ class Developers_API():
                                                                          mm_sold=mm_announce,
                                                                          rooms=4, housing_class=housing_class) * sales_volume_coeff
 
-                # Calculate revenue for each type
-
-
-
+                # Calculate revenue for each type and change price depeneding on the month
                 if rooms == 0:
                     s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce]
                     s_full_price = s_price_meter_sq * full_sq
@@ -772,13 +769,14 @@ class Developers_API():
                     four_roomed_full_price = four_roomed_price_meter_sq * full_sq
                     revenue_four_roomed += four_roomed_full_price * sales_value_4
 
-
+                # Collect data for first graphic
                 first_graphic.append(
                     {'month_announce': mm_announce, 'year_announce': yyyy_announce, 's': sales_value_studio,
                      '1': sales_value_1, '2': sales_value_2, '3': sales_value_3, '4': sales_value_4, 'revenue_s':
                          revenue_s, 'revenue_1': revenue_one_roomed,
                 'revenue_2': revenue_two_roomed, 'revenue_3': revenue_three_roomed, 'revenue_4': revenue_four_roomed})
 
+                # Collect data for second graphic
                 second_graphic.append({'s_price': s_price_meter_sq, 's_year': yyyy_announce, 's_month': mm_announce,
                                        '1_price': one_roomed_price_meter_sq, '1_year': yyyy_announce, '1_month': mm_announce,
                                        '2_price': two_roomed_price_meter_sq, '2_year': yyyy_announce, '2_month': mm_announce,

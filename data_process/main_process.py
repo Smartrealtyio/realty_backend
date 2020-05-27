@@ -693,7 +693,7 @@ class Developers_API():
         counter = 0
 
         # For each month in month sequence define sales volume
-        for idx, mm_announce in list_of_months:
+        for idx, mm_announce in enumerate(list_of_months):
 
             # Check if current month is January, change year + 1
 

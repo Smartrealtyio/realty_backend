@@ -1046,7 +1046,7 @@ def predict_developers_term(longitude: float, latitude: float, floors_count: int
 
     # Get answer in format: [{'month_announce': mm_announce, 'year_announce': yyyy_announce, '-1': sales_value_studio,
     #                                   '1': sales_value_1, '2': sales_value_2, '3': sales_value_3, '4': sales_value_4}, {...}]
-    first_graphic, second_graphic = devAPI.predict(city_id=city_id, flats=flats, has_elevator=has_elevator,
+    first_graphic, second_graphic, third_graphic = devAPI.predict(city_id=city_id, flats=flats, has_elevator=has_elevator,
                             is_rented=is_rented,
                             latitude=latitude, longitude=longitude, rent_quarter=rent_quarter, rent_year=rent_year,
                             time_to_metro=time_to_metro, schools_500m=schools_500m, schools_1000m=schools_1000m,
@@ -1056,4 +1056,4 @@ def predict_developers_term(longitude: float, latitude: float, floors_count: int
                             housing_class=housing_class, sale_end_month=sale_end_month, sale_end_year=sale_end_year,
                             sale_start_month=sale_start_month, sale_start_year=sale_start_year)
 
-    return first_graphic, second_graphic
+    return first_graphic, second_graphic, third_graphic

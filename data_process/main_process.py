@@ -678,6 +678,7 @@ class Developers_API():
         # Initial flats_count parameter value for each flat type
         flats_count_s, flats_count_1, flats_count_2, flats_count_3, flats_count_4 = 0, 0, 0, 0, 0
         flats_count = 0
+        day = 1
 
         #
         sales_volume_coeff_s, sales_volume_coeff_1, sales_volume_coeff_2, sales_volume_coeff_3, sales_volume_coeff_4 = 1, 1, 1, 1, 1
@@ -819,7 +820,8 @@ class Developers_API():
 
 
             # Convert mm and year to datetime format
-            dt_stamp = datetime(yyyy_announce, mm_announce, rooms)if rooms != 's' else 9
+
+            dt_stamp = datetime(yyyy_announce, mm_announce, 1)
             print('Dt_stamp: ', dt_stamp.strftime('%Y.%m.%d'))
 
             # Collect data for second graphic
@@ -846,15 +848,19 @@ class Developers_API():
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   's_sold': sales_value_studio_acc,
                                   's_all': flats_count_s})
+            dt_stamp = datetime(yyyy_announce, mm_announce, 2)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   '1_sold': sales_value_1_acc,
                                   '1_all': flats_count_1})
+            dt_stamp = datetime(yyyy_announce, mm_announce, 3)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   '2_sold': sales_value_2_acc,
                                   '2_all': flats_count_2})
+            dt_stamp = datetime(yyyy_announce, mm_announce, 4)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   '3_sold': sales_value_3_acc,
                                   '3_all': flats_count_3})
+            dt_stamp = datetime(yyyy_announce, mm_announce, 5)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   '4_sold': sales_value_4_acc,
                                   '4_all': flats_count_4})

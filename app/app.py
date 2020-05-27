@@ -136,7 +136,7 @@ def builder():
     yyyy_end = int(datetime.utcfromtimestamp(end_timestamp).strftime('%Y'))  # Get year from unix
 
     image_link = SETTINGS.HOST + SETTINGS.MEDIA_ROOT + 'test.jpg'
-    print(image_link, flush=True)
+    # print(image_link, flush=True)
 
     first_graphic, second_graphic, third_graphic = predict_developers_term(city_id=city_id, longitude=longitude, latitude=latitude, is_rented=is_rented,
                                      rent_year=rent_year, rent_quarter=rent_quarter, floors_count=floors_count,
@@ -147,7 +147,7 @@ def builder():
                                      kindergartens_1000m=kindergartens_1000m, clinics_500m=clinics_500m,
                                      clinics_1000m=clinics_1000m, shops_500m=shops_500m, shops_1000m=shops_1000m, housing_class=housing_class)
 
-    print("Result OK. Length: ", len(result), flush=True)
+    print("Result OK.", flush=True)
     # print(type(result), flush=True)
 
 

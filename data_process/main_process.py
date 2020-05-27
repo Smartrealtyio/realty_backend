@@ -816,7 +816,7 @@ class Developers_API():
 
             # Collect data for third graphic
             # Accumulated sales values for each flat_type
-            sales_value_studio_acc += sales_value_studio
+            sales_value_studio_acc += sum(sales_value_studio)
             sales_value_1_acc += sum(sales_value_1)
             sales_value_2_acc += sum(sales_value_2)
             sales_value_3_acc += sum(sales_value_3)

@@ -670,12 +670,13 @@ class Developers_API():
         revenue_s, revenue_one_roomed, revenue_two_roomed, revenue_three_roomed, revenue_four_roomed = 0, 0, 0, 0, 0
         s_price_meter_sq, one_roomed_price_meter_sq, two_roomed_price_meter_sq, three_roomed_price_meter_sq, four_roomed_price_meter_sq = 0, 0, 0, 0, 0
         sales_value_studio, sales_value_1,  sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
+        sales_value_studio_acc, sales_value_1_acc, sales_value_2_acc, sales_value_3_acc, sales_value_4_acc = 0, 0, 0, 0, 0
         sales_value= 0
         flats_count = 0
         rooms = ''
-        sales_value_studio_acc, sales_value_studio_1,sales_value_studio_2, sales_value_studio_3, sales_value_studio_4 = 0, 0, 0, 0, 0
+        sales_value_studio_acc, sales_value_1_acc,sales_value_studio_2, sales_value_studio_3, sales_value_studio_4 = 0, 0, 0, 0, 0
         flats_count_s, flats_count_1, flats_count_2, flats_count_3, flats_count_4 = 0, 0, 0, 0, 0
-        sales_value_studio_acc, sales_value_1_acc, sales_value_2_acc, sales_value_3_acc, sales_value_4_acc = 0, 0, 0, 0, 0
+
         # Create sequence of months depending on start sale date and end sale date
         list_of_months = [i for i in range(sale_start_month, 13)]+[i for i in range(1, sale_end_month+1)]
         print('List of months: ', list_of_months, flush=True)
@@ -814,11 +815,12 @@ class Developers_API():
                                    '4_price': four_roomed_price_meter_sq})
 
             # Collect data for third graphic
+            # Accumulated sales values for each flat_type
             sales_value_studio_acc += sales_value_studio
-            sales_value_1_acc += sales_value_1
-            sales_value_2_acc += sales_value_2
-            sales_value_3_acc += sales_value_3
-            sales_value_4_acc += sales_value_4
+            sales_value_1_acc += sum(sales_value_1)
+            sales_value_2_acc += sum(sales_value_2)
+            sales_value_3_acc += sum(sales_value_3)
+            sales_value_4_acc += sum(sales_value_4)
             flats_count_s = flats_count if rooms == 0 else flats_count_s
             flats_count_1 = flats_count if rooms == 1 else flats_count_1
             flats_count_2 = flats_count if rooms == 2 else flats_count_2

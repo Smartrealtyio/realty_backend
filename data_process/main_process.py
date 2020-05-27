@@ -845,15 +845,28 @@ class Developers_API():
 
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   's_sold': sales_value_studio_acc,
-                                  's_all': flats_count_s,
+                                  's_all': flats_count_s})
+            third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   '1_sold': sales_value_1_acc,
-                                  '1_all': flats_count_1,
+                                  '1_all': flats_count_1})
+            third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   '2_sold': sales_value_2_acc,
-                                  '2_all': flats_count_2,
+                                  '2_all': flats_count_2})
+            third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   '3_sold': sales_value_3_acc,
-                                  '3_all': flats_count_3,
+                                  '3_all': flats_count_3})
+            third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   '4_sold': sales_value_4_acc,
                                   '4_all': flats_count_4})
+            # '1_sold': sales_value_1_acc,
+            #                                   '1_all': flats_count_1,
+            #                                   '2_sold': sales_value_2_acc,
+            #                                   '2_all': flats_count_2,
+            #                                   '3_sold': sales_value_3_acc,
+            #                                   '3_all': flats_count_3,
+            #                                   '4_sold': sales_value_4_acc,
+            #                                   '4_all': flats_count_4})
+
 
             # Update
             sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []

@@ -667,15 +667,19 @@ class Developers_API():
                                  11: 1.18, 12: 1.85}
 
         # Define variables for plot
+        # Accumulated revenue for each flat type
         revenue_s, revenue_one_roomed, revenue_two_roomed, revenue_three_roomed, revenue_four_roomed = 0, 0, 0, 0, 0
+        # Initial price_meter_sq for each flat_type
         s_price_meter_sq, one_roomed_price_meter_sq, two_roomed_price_meter_sq, three_roomed_price_meter_sq, four_roomed_price_meter_sq = 0, 0, 0, 0, 0
+        # Initial sales value for each flat_type
         sales_value_studio, sales_value_1,  sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
+        # Accumulated sales value for each flat_type
         sales_value_studio_acc, sales_value_1_acc, sales_value_2_acc, sales_value_3_acc, sales_value_4_acc = 0, 0, 0, 0, 0
-        sales_value= 0
+        # Initial flats_count parameter value for each flat type
+        flats_count_s, flats_count_1, flats_count_2, flats_count_3, flats_count_4 = 0, 0, 0, 0, 0
         flats_count = 0
         rooms = ''
-        sales_value_studio_acc, sales_value_1_acc,sales_value_studio_2, sales_value_studio_3, sales_value_studio_4 = 0, 0, 0, 0, 0
-        flats_count_s, flats_count_1, flats_count_2, flats_count_3, flats_count_4 = 0, 0, 0, 0, 0
+
 
         # Create sequence of months depending on start sale date and end sale date
         list_of_months = [i for i in range(sale_start_month, 13)]+[i for i in range(1, sale_end_month+1)]
@@ -738,7 +742,7 @@ class Developers_API():
                     sales_volume_coeff += 0.05*n_years # per one year volume grows by five percent
 
                 # Calculate number of studios
-                if rooms == 0:
+                if rooms == 's':
                     sales_value = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                                   mm_sold=mm_announce,
                                                                                   rooms=0, housing_class=housing_class) * sales_volume_coeff
@@ -773,7 +777,7 @@ class Developers_API():
 
 
                 # Calculate revenue for each type and change price depeneding on the month
-                if rooms == 0:
+                if rooms == 's':
                     s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce]
                     s_full_price = s_price_meter_sq * full_sq
                     revenue_s += s_full_price*sum(sales_value_studio)
@@ -821,7 +825,7 @@ class Developers_API():
             sales_value_2_acc += sum(sales_value_2)
             sales_value_3_acc += sum(sales_value_3)
             sales_value_4_acc += sum(sales_value_4)
-            flats_count_s = flats_count if rooms == 0 else flats_count_s
+            flats_count_s = flats_count if rooms == 's' else flats_count_s
             flats_count_1 = flats_count if rooms == 1 else flats_count_1
             flats_count_2 = flats_count if rooms == 2 else flats_count_2
             flats_count_3 = flats_count if rooms == 3 else flats_count_3

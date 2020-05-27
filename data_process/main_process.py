@@ -812,7 +812,7 @@ class Developers_API():
 
             # Collect data for first graphic
             first_graphic.append(
-                {'month_announce': mm_announce, 'year_announce': yyyy_announce, 's': sum(sales_value_studio),
+                {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx ,'s': sum(sales_value_studio),
                  '1': sum(sales_value_1), '2': sum(sales_value_2), '3': sum(sales_value_3), '4': sum(sales_value_4), 'revenue_s':
                      float('{:.2f}'.format(revenue_s/1000000)), 'revenue_1': float('{:.2f}'.format(revenue_one_roomed/1000000)),
             'revenue_2': float('{:.2f}'.format(revenue_two_roomed/1000000)), 'revenue_3': float('{:.2f}'.format(revenue_three_roomed/1000000)),

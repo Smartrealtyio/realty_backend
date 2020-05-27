@@ -678,6 +678,9 @@ class Developers_API():
         # Initial flats_count parameter value for each flat type
         flats_count_s, flats_count_1, flats_count_2, flats_count_3, flats_count_4 = 0, 0, 0, 0, 0
         flats_count = 0
+
+        #
+        sales_volume_coeff_s, sales_volume_coeff_1, sales_volume_coeff_2, sales_volume_coeff_3, sales_volume_coeff_4 = 1, 1, 1, 1, 1
         rooms = ''
 
 
@@ -690,11 +693,11 @@ class Developers_API():
         counter = 0
 
         # For each month in month sequence define sales volume
-        for mm_announce in list_of_months:
+        for idx, mm_announce in list_of_months:
 
             # Check if current month is January, change year + 1
 
-            if mm_announce == 1:
+            if mm_announce == 1 and idx != 0:
                 yyyy_announce += 1
 
 
@@ -707,6 +710,7 @@ class Developers_API():
                 # life_sq = i['life_sq']
                 flats_count = i['flats_count']
                 rooms = i['rooms']
+                print('Rooms: ', rooms, flush=True)
                 # renovation = i['renovation']
                 # renovation_type = i['renovation_type']
                 # longitude = longitude
@@ -732,6 +736,7 @@ class Developers_API():
                     if full_sq >= item:
                         full_sq_group = idx + 1
                         break
+                print('full_sq_group={0}, full_sq={1}'.format(full_sq_group, full_sq), flush=True)
 
                 ### Sales value for current sub-group
 
@@ -739,40 +744,46 @@ class Developers_API():
                 sales_volume_coeff = 1
                 n_years = yyyy_announce - sale_start_year
                 if n_years > 0:
-                    sales_volume_coeff += 0.05*n_years # per one year volume grows by five percent
+                    sales_volume_coeff_s += 0.1 * n_years # per one year volume grows by five percent
+                    sales_volume_coeff_1 += 0.09 * n_years  # per one year volume grows by five percent
+                    sales_volume_coeff_2 += 0.07 * n_years  # per one year volume grows by five percent
+                    sales_volume_coeff_3 += 0.06 * n_years  # per one year volume grows by five percent
+                    sales_volume_coeff_4 += 0.05 * n_years  # per one year volume grows by five percent
+
+
 
                 # Calculate number of studios
                 if rooms == 's':
                     sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                                   mm_sold=mm_announce,
-                                                                                  rooms=0, housing_class=housing_class) * sales_volume_coeff)
+                                                                                  rooms=0, housing_class=housing_class) * sales_volume_coeff_s)
                     sales_value_studio.append(sales_value)
                 # Calculate number of 1-roomed flats
                 if rooms == 1:
                     sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
-                                                                             rooms=1, housing_class=housing_class) * sales_volume_coeff)
+                                                                             rooms=1, housing_class=housing_class) * sales_volume_coeff_1)
                     sales_value_1.append(sales_value)
 
                 # Calculate number of 2-roomed flats
                 if rooms == 2:
                     sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
-                                                                             rooms=2, housing_class=housing_class) * sales_volume_coeff)
+                                                                             rooms=2, housing_class=housing_class) * sales_volume_coeff_2)
                     sales_value_2.append(sales_value)
 
                 # Calculate number of 3-roomed flats
                 if rooms == 3:
                     sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
-                                                                             rooms=3, housing_class=housing_class) * sales_volume_coeff)
+                                                                             rooms=3, housing_class=housing_class) * sales_volume_coeff_3)
                     sales_value_3.append(sales_value)
 
                 # Calculate number of 4-roomed flats
                 if rooms == 4:
                     sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
-                                                                             rooms=4, housing_class=housing_class) * sales_volume_coeff)
+                                                                             rooms=4, housing_class=housing_class) * sales_volume_coeff_4)
                     sales_value_4.append(sales_value)
 
 
@@ -802,8 +813,8 @@ class Developers_API():
             first_graphic.append(
                 {'month_announce': mm_announce, 'year_announce': yyyy_announce, 's': sum(sales_value_studio),
                  '1': sum(sales_value_1), '2': sum(sales_value_2), '3': sum(sales_value_3), '4': sum(sales_value_4), 'revenue_s':
-                     revenue_s, 'revenue_1': revenue_one_roomed,
-            'revenue_2': revenue_two_roomed, 'revenue_3': revenue_three_roomed, 'revenue_4': revenue_four_roomed})
+                     revenue_s, 'revenue_1': revenue_one_roomed/1000000,
+            'revenue_2': revenue_two_roomed/1000000, 'revenue_3': revenue_three_roomed/1000000, 'revenue_4': revenue_four_roomed/1000000})
 
 
             # Convert mm and year to datetime format

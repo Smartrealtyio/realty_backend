@@ -776,12 +776,18 @@ class Developers_API():
                          revenue_s, 'revenue_1': revenue_one_roomed,
                 'revenue_2': revenue_two_roomed, 'revenue_3': revenue_three_roomed, 'revenue_4': revenue_four_roomed})
 
+
+                # Convert mm and year to datetime format
+
+                dt_stamp = datetime(yyyy_announce, mm_announce, 1)
+                print('Dt_stamp: ', dt_stamp.strftime('%Y.%m.%d'))
                 # Collect data for second graphic
-                second_graphic.append({'s_price': s_price_meter_sq, 's_year': yyyy_announce, 's_month': mm_announce,
-                                       '1_price': one_roomed_price_meter_sq, '1_year': yyyy_announce, '1_month': mm_announce,
-                                       '2_price': two_roomed_price_meter_sq, '2_year': yyyy_announce, '2_month': mm_announce,
-                                       '3_price': three_roomed_price_meter_sq, '3_year': yyyy_announce, '3_month': mm_announce,
-                                       '4_price': four_roomed_price_meter_sq, '4_year': yyyy_announce, '4_month': mm_announce,})
+                second_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
+                    's_price': s_price_meter_sq,
+                                       '1_price': one_roomed_price_meter_sq,
+                                       '2_price': two_roomed_price_meter_sq,
+                                       '3_price': three_roomed_price_meter_sq,
+                                       '4_price': four_roomed_price_meter_sq})
 
         return first_graphic, second_graphic
 

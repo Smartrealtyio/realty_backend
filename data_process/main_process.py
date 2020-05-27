@@ -652,6 +652,7 @@ class Developers_API():
         # lists for answer
         first_graphic = []
         second_graphic = []
+        third_graphic = []
 
         # price changes per month for each flat type
         prices_changes_studio = {1: 0, 2: 1.045, 3: 1.095, 4: 1.12, 5: 1.17, 6: 1.19, 7: 1.12, 8: 1.13, 9: 1.14,
@@ -670,6 +671,11 @@ class Developers_API():
         s_price_meter_sq, one_roomed_price_meter_sq, two_roomed_price_meter_sq, three_roomed_price_meter_sq, four_roomed_price_meter_sq = 0, 0, 0, 0, 0
         sales_value_studio, sales_value_1,  sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
         sales_value= 0
+        flats_count = 0
+        rooms = ''
+        sales_value_studio_acc, sales_value_studio_1,sales_value_studio_2, sales_value_studio_3, sales_value_studio_4 = 0, 0, 0, 0, 0
+        flats_count_s, flats_count_1, flats_count_2, flats_count_3, flats_count_4 = 0, 0, 0, 0, 0
+        sales_value_studio_acc, sales_value_1_acc, sales_value_2_acc, sales_value_3_acc, sales_value_4_acc = 0, 0, 0, 0, 0
         # Create sequence of months depending on start sale date and end sale date
         list_of_months = [i for i in range(sale_start_month, 13)]+[i for i in range(1, sale_end_month+1)]
         print('List of months: ', list_of_months, flush=True)
@@ -694,6 +700,7 @@ class Developers_API():
                 # mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m'))  # Get month from unix
                 # yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y'))  # Get year from unix
                 # life_sq = i['life_sq']
+                flats_count = i['flats_count']
                 rooms = i['rooms']
                 # renovation = i['renovation']
                 # renovation_type = i['renovation_type']
@@ -793,13 +800,11 @@ class Developers_API():
                      revenue_s, 'revenue_1': revenue_one_roomed,
             'revenue_2': revenue_two_roomed, 'revenue_3': revenue_three_roomed, 'revenue_4': revenue_four_roomed})
 
-            sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
-
 
             # Convert mm and year to datetime format
-
             dt_stamp = datetime(yyyy_announce, mm_announce, 1)
             print('Dt_stamp: ', dt_stamp.strftime('%Y.%m.%d'))
+
             # Collect data for second graphic
             second_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                 's_price': s_price_meter_sq,
@@ -808,7 +813,34 @@ class Developers_API():
                                    '3_price': three_roomed_price_meter_sq,
                                    '4_price': four_roomed_price_meter_sq})
 
-        return first_graphic, second_graphic
+            # Collect data for third graphic
+            sales_value_studio_acc += sales_value_studio
+            sales_value_1_acc += sales_value_1
+            sales_value_2_acc += sales_value_2
+            sales_value_3_acc += sales_value_3
+            sales_value_4_acc += sales_value_4
+            flats_count_s = flats_count if rooms == 0 else flats_count_s
+            flats_count_1 = flats_count if rooms == 1 else flats_count_1
+            flats_count_2 = flats_count if rooms == 2 else flats_count_2
+            flats_count_3 = flats_count if rooms == 3 else flats_count_3
+            flats_count_4 = flats_count if rooms == 4 else flats_count_4
+
+            third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
+                                  's_sold': sales_value_studio_acc,
+                                  's_all': flats_count_s,
+                                  '1_sold': sales_value_1_acc,
+                                  '1_all': flats_count_1,
+                                  '2_sold': sales_value_2_acc,
+                                  '2_all': flats_count_2,
+                                  '3_sold': sales_value_3_acc,
+                                  '3_all': flats_count_3,
+                                  '4_sold': sales_value_4_acc,
+                                  '4_all': flats_count_4})
+
+            # Update
+            sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
+
+        return first_graphic, second_graphic, third_graphic
 
     # def train_reg(self, city_id: int, use_trained_models=True):
     #

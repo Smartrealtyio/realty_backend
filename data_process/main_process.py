@@ -680,9 +680,8 @@ class Developers_API():
         for mm_announce in list_of_months:
 
             # Check if current month is January, change year + 1
-            if yyyy_announce >= sale_start_year:
-                counter = yyyy_announce - sale_start_year
-            if mm_announce == 1 and counter > 0:
+
+            if mm_announce == 1:
                 yyyy_announce += 1
 
 

@@ -736,7 +736,7 @@ class Developers_API():
                     if full_sq >= item:
                         full_sq_group = idx + 1
                         break
-                print('full_sq_group={0}, full_sq={1}'.format(full_sq_group, full_sq), flush=True)
+                # print('full_sq_group={0}, full_sq={1}'.format(full_sq_group, full_sq), flush=True)
 
                 ### Sales value for current sub-group
 
@@ -791,23 +791,23 @@ class Developers_API():
                 if rooms == 's':
                     s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce]
                     s_full_price = s_price_meter_sq * full_sq
-                    revenue_s += s_full_price*sum(sales_value_studio)
+                    revenue_s += s_full_price*sales_value_studio[-1] if len(sales_value_studio) !=0 else 0
                 if rooms == 1:
                     one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce]
                     one_roomed_full_price = s_price_meter_sq * full_sq
-                    revenue_one_roomed += one_roomed_full_price * sum(sales_value_1)
+                    revenue_one_roomed += one_roomed_full_price * sales_value_1[-1] if len(sales_value_1) !=0 else 0
                 if rooms == 2:
                     two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
                     two_roomed_full_price = two_roomed_price_meter_sq * full_sq
-                    revenue_two_roomed += two_roomed_full_price * sum(sales_value_2)
+                    revenue_two_roomed += two_roomed_full_price * sales_value_2[-1] if len(sales_value_2) !=0 else 0
                 if rooms == 3:
                     three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce]
                     three_roomed_full_price = three_roomed_price_meter_sq * full_sq
-                    revenue_three_roomed += three_roomed_full_price * sum(sales_value_3)
+                    revenue_three_roomed += three_roomed_full_price * sales_value_3[-1] if len(sales_value_3) !=0 else 0
                 if rooms == 4:
                     four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce]
                     four_roomed_full_price = four_roomed_price_meter_sq * full_sq
-                    revenue_four_roomed += four_roomed_full_price * sum(sales_value_4)
+                    revenue_four_roomed += four_roomed_full_price * sales_value_4[-1] if len(sales_value_4) !=0 else 0
 
             # Collect data for first graphic
             first_graphic.append(

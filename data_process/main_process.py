@@ -710,7 +710,7 @@ class Developers_API():
                 # life_sq = i['life_sq']
                 flats_count = i['flats_count']
                 rooms = i['rooms']
-                print('Rooms: ', rooms, flush=True)
+                # print('Rooms: ', rooms, flush=True)
                 # renovation = i['renovation']
                 # renovation_type = i['renovation_type']
                 # longitude = longitude
@@ -819,7 +819,7 @@ class Developers_API():
 
 
             # Convert mm and year to datetime format
-            dt_stamp = datetime(yyyy_announce, mm_announce, 1)
+            dt_stamp = datetime(yyyy_announce, mm_announce, rooms)if rooms != 's' else 9
             print('Dt_stamp: ', dt_stamp.strftime('%Y.%m.%d'))
 
             # Collect data for second graphic

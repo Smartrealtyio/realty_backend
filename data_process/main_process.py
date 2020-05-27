@@ -673,7 +673,9 @@ class Developers_API():
         # Create sequence of months depending on start sale date and end sale date
         list_of_months = [i for i in range(sale_start_month, 13)]+[i for i in range(1, sale_end_month+1)]
         print('List of months: ', list_of_months, flush=True)
-        yyyy_announce= sale_start_year
+        yyyy_announce = sale_start_year
+        if yyyy_announce not in [2019, 2020, 2021, 2022, 2023]:
+            return ['Error'], ['Error']
         counter = 0
 
         # For each month in month sequence define sales volume

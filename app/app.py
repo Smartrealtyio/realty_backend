@@ -138,7 +138,7 @@ def builder():
     image_link = SETTINGS.HOST + SETTINGS.MEDIA_ROOT + 'test.jpg'
     print(image_link, flush=True)
 
-    first_graphic, second_graphic = predict_developers_term(city_id=city_id, longitude=longitude, latitude=latitude, is_rented=is_rented,
+    first_graphic, second_graphic, third_graphic = predict_developers_term(city_id=city_id, longitude=longitude, latitude=latitude, is_rented=is_rented,
                                      rent_year=rent_year, rent_quarter=rent_quarter, floors_count=floors_count,
                                      has_elevator=has_elevator, parking=parking, time_to_metro=time_to_metro, flats=flats,
                                      sale_start_month=mm_start, sale_end_month=mm_end,
@@ -151,7 +151,7 @@ def builder():
     # print(type(result), flush=True)
 
 
-    return jsonify({'first_graphic': first_graphic, 'image_link': image_link, 'second_graphic': second_graphic})
+    return jsonify({'first_graphic': first_graphic, 'image_link': image_link, 'second_graphic': second_graphic, 'third_graphic': third_graphic})
 
 
 @app.route('/test-route/')

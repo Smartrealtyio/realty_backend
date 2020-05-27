@@ -694,16 +694,16 @@ class Developers_API():
         counter = 0
 
         # For each month in month sequence define sales volume
-        for idx, mm_announce in enumerate(list_of_months):
+        for idx_month, mm_announce in enumerate(list_of_months):
 
             # Check if current month is January, change year + 1
 
-            if mm_announce == 1 and idx != 0:
+            if mm_announce == 1 and idx_month != 0:
                 yyyy_announce += 1
 
 
             # get flats parameters for each flat
-            for idx, i in enumerate(flats):
+            for idx_flats, i in enumerate(flats):
 
                 price_meter_sq = i['price_meter_sq']
                 # mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m'))  # Get month from unix
@@ -812,7 +812,7 @@ class Developers_API():
 
             # Collect data for first graphic
             first_graphic.append(
-                {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx ,'s': sum(sales_value_studio),
+                {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month +1,'s': sum(sales_value_studio),
                  '1': sum(sales_value_1), '2': sum(sales_value_2), '3': sum(sales_value_3), '4': sum(sales_value_4), 'revenue_s':
                      float('{:.2f}'.format(revenue_s/1000000)), 'revenue_1': float('{:.2f}'.format(revenue_one_roomed/1000000)),
             'revenue_2': float('{:.2f}'.format(revenue_two_roomed/1000000)), 'revenue_3': float('{:.2f}'.format(revenue_three_roomed/1000000)),

@@ -686,7 +686,8 @@ class Developers_API():
 
 
         # Create sequence of months depending on start sale date and end sale date
-
+        print('sale_start_month={0}, sale_end_month={1}'.format(sale_start_month, sale_end_month), flush=True)
+        print('sale_start_year={0}, sale_end_year={1}'.format(sale_start_year, sale_end_year), flush=True)
         n_years = sale_end_year - sale_start_year
         list_of_months = ([i for i in range(sale_start_month, 13)] + [i for i in range(1, sale_end_month + 1)])\
             if n_years != 0 else [i for i in range(sale_start_month, 13)]

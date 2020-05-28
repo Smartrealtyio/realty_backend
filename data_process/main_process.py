@@ -655,15 +655,15 @@ class Developers_API():
         third_graphic = []
 
         # price changes per month for each flat type
-        prices_changes_studio = {1: 0, 2: 1.045, 3: 1.095, 4: 1.12, 5: 1.17, 6: 1.19, 7: 1.12, 8: 1.13, 9: 1.14,
+        prices_changes_studio = {1: 1, 2: 1.045, 3: 1.095, 4: 1.12, 5: 1.17, 6: 1.19, 7: 1.12, 8: 1.13, 9: 1.14,
                                  10: 1.155, 11: 1.175, 12: 1.2}
-        prices_changes_1 = {1: 0, 2: 1.035, 3: 1.085, 4: 1.1, 5: 1.15, 6: 1.185, 7: 1.12, 8: 1.14, 9: 1.165, 10: 1.175,
+        prices_changes_1 = {1: 1, 2: 1.035, 3: 1.085, 4: 1.1, 5: 1.15, 6: 1.185, 7: 1.12, 8: 1.14, 9: 1.165, 10: 1.175,
                                  11: 1.195, 12: 1.22}
-        prices_changes_2 = {1: 0, 2: 1.025, 3: 1.35, 4: 1.12, 5: 1.17, 6: 1.191, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17,
+        prices_changes_2 = {1: 1, 2: 1.025, 3: 1.35, 4: 1.12, 5: 1.17, 6: 1.191, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17,
                                  11: 1.19, 12: 1.21}
-        prices_changes_3 = {1: 0, 2: 1.015, 3: 1.015, 4: 1.11, 5: 1.14, 6: 1.175, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17,
+        prices_changes_3 = {1: 1, 2: 1.015, 3: 1.015, 4: 1.11, 5: 1.14, 6: 1.175, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17,
                                  11: 1.195, 12: 1.2}
-        prices_changes_4 = {1: 0, 2: 1.005, 3: 1.01, 4: 1.06, 5: 1.09, 6: 1.15, 7: 1.13, 8: 1.16, 9: 1.17, 10: 1.175,
+        prices_changes_4 = {1: 1, 2: 1.005, 3: 1.01, 4: 1.06, 5: 1.09, 6: 1.15, 7: 1.13, 8: 1.16, 9: 1.17, 10: 1.175,
                                  11: 1.18, 12: 1.85}
 
         # Define variables for plot
@@ -804,6 +804,9 @@ class Developers_API():
                     one_roomed_full_price = s_price_meter_sq * full_sq
                     revenue_one_roomed += one_roomed_full_price * sales_value_1[-1] if len(sales_value_1) !=0 else 0
                 if rooms == 2:
+                    print('Calculating revenue: price_meter_sq={0}, mm_announce={1}, price_changes={2}'.format(
+                        price_meter_sq, mm_announce, prices_changes_2[mm_announce]
+                    ))
                     two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
                     two_roomed_full_price = two_roomed_price_meter_sq * full_sq
                     revenue_two_roomed += two_roomed_full_price * sales_value_2[-1] if len(sales_value_2) !=0 else 0

@@ -806,7 +806,7 @@ class Developers_API():
                 if rooms == 2:
                     print('Calculating revenue: price_meter_sq={0}, mm_announce={1}, price_changes={2}'.format(
                         price_meter_sq, mm_announce, prices_changes_2[mm_announce]
-                    ))
+                    ), flush=True)
                     two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
                     two_roomed_full_price = two_roomed_price_meter_sq * full_sq
                     revenue_two_roomed += two_roomed_full_price * sales_value_2[-1] if len(sales_value_2) !=0 else 0

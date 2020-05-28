@@ -666,11 +666,12 @@ class Developers_API():
         prices_changes_4 = {1: 1, 2: 1.005, 3: 1.01, 4: 1.06, 5: 1.09, 6: 1.15, 7: 1.13, 8: 1.16, 9: 1.17, 10: 1.175,
                                  11: 1.18, 12: 1.85}
 
-        # Define variables for plot
+        # INITIALIZE VARIABLES FOR GRAPHICS
         # Accumulated revenue for each flat type
         revenue_s, revenue_one_roomed, revenue_two_roomed, revenue_three_roomed, revenue_four_roomed = 0, 0, 0, 0, 0
         # Initial price_meter_sq for each flat_type
-        s_price_meter_sq, one_roomed_price_meter_sq, two_roomed_price_meter_sq, three_roomed_price_meter_sq, four_roomed_price_meter_sq = 0, 0, 0, 0, 0
+        s_price_meter_sq, one_roomed_price_meter_sq, two_roomed_price_meter_sq, three_roomed_price_meter_sq, \
+        four_roomed_price_meter_sq = 0, 0, 0, 0, 0
         # Initial sales value for each flat_type
         sales_value_studio, sales_value_1,  sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
         # Accumulated sales value for each flat_type
@@ -678,17 +679,19 @@ class Developers_API():
         # Initial flats_count parameter value for each flat type
         flats_count_s, flats_count_1, flats_count_2, flats_count_3, flats_count_4 = 0, 0, 0, 0, 0
         flats_count = 0
-        day = 1
-
-        #
-        sales_volume_coeff_s, sales_volume_coeff_1, sales_volume_coeff_2, sales_volume_coeff_3, sales_volume_coeff_4 = 1, 1, 1, 1, 1
+        # Growth rate depending on flat_type
+        sales_volume_coeff_s, sales_volume_coeff_1, sales_volume_coeff_2, sales_volume_coeff_3, \
+        sales_volume_coeff_4 = 1, 1, 1, 1, 1
         rooms = ''
 
 
-        # Create sequence of months depending on start sale date and end sale date
-        print('sale_start_month={0}, sale_end_month={1}'.format(sale_start_month, sale_end_month), flush=True)
-        print('sale_start_year={0}, sale_end_year={1}'.format(sale_start_year, sale_end_year), flush=True)
+
+        print('sale_start={0}.{1}, sale_end={2}.{3}'.format(sale_start_month, sale_start_year, sale_end_month,
+                                                            sale_end_year), flush=True)
+        # Calculate number of sale years
         n_years = sale_end_year - sale_start_year
+
+        # Create sequence of months depending on start sale date and end sale date
         list_of_months = ([i for i in range(sale_start_month, 13)] + [i for i in range(1, sale_end_month + 1)])\
             if n_years != 0 else [i for i in range(sale_start_month, 13)]
         list_of_months += ([i for i in range(1, 13)]) * int(n_years - 1)
@@ -697,18 +700,15 @@ class Developers_API():
         yyyy_announce = sale_start_year
         if yyyy_announce not in [2019, 2020, 2021, 2022, 2023]:
             return ['Error'], ['Error']
-        counter = 0
 
         # For each month in month sequence define sales volume
         for idx_month, mm_announce in enumerate(list_of_months):
 
             # Check if current month is January, change year + 1
-
             if mm_announce == 1 and idx_month != 0:
                 yyyy_announce += 1
 
-
-            # get flats parameters for each flat
+            # Get flat parameters for each flat
             for idx_flats, i in enumerate(flats):
 
                 price_meter_sq = int(i['price_meter_sq'])
@@ -734,7 +734,6 @@ class Developers_API():
                 # rent_quarter = rent_quarter
                 # has_elevator = has_elevator
 
-                # calculate sales values based on prev year
 
                 # current_cluster = kmeans.predict([[longitude, latitude]])
 
@@ -746,10 +745,8 @@ class Developers_API():
                         break
                 # print('full_sq_group={0}, full_sq={1}'.format(full_sq_group, full_sq), flush=True)
 
-                ### Sales value for current sub-group
-
+                # CALCULATE SALES VOLUME FOR EACH FLAT TYPE
                 # Determine the growth rate depending on year
-                sales_volume_coeff = 1
                 n_years = yyyy_announce - sale_start_year
                 if n_years > 0:
                     sales_volume_coeff_s += 0.1 * n_years # per one year volume grows by five percent
@@ -766,6 +763,7 @@ class Developers_API():
                                                                                   mm_sold=mm_announce,
                                                                                   rooms=0, housing_class=housing_class) * sales_volume_coeff_s)
                     sales_value_studio.append(sales_value)
+
                 # Calculate number of 1-roomed flats
                 if rooms == 1:
                     sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
@@ -820,6 +818,13 @@ class Developers_API():
                     four_roomed_full_price = four_roomed_price_meter_sq * full_sq
                     revenue_four_roomed += four_roomed_full_price * sales_value_4[-1] if len(sales_value_4) !=0 else 0
 
+            print('\nFirst graphic: \nMonth_graphic={0} '.format(idx_month))
+            print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month +1,'s': sum(sales_value_studio),
+                 '1': sum(sales_value_1), '2': sum(sales_value_2), '3': sum(sales_value_3), '4': sum(sales_value_4), 'revenue_s':
+                     float('{:.2f}'.format(revenue_s/1000000)), 'revenue_1': float('{:.2f}'.format(revenue_one_roomed/1000000)),
+            'revenue_2': float('{:.2f}'.format(revenue_two_roomed/1000000)), 'revenue_3': float('{:.2f}'.format(revenue_three_roomed/1000000)),
+                 'revenue_4': float('{:.2f}'.format(revenue_four_roomed/1000000))})
+
             # Collect data for first graphic
             first_graphic.append(
                 {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month +1,'s': sum(sales_value_studio),
@@ -828,11 +833,19 @@ class Developers_API():
             'revenue_2': float('{:.2f}'.format(revenue_two_roomed/1000000)), 'revenue_3': float('{:.2f}'.format(revenue_three_roomed/1000000)),
                  'revenue_4': float('{:.2f}'.format(revenue_four_roomed/1000000))})
 
-            print('\nFirst graphic: ', first_graphic, flush=True)
+            # print('\nFirst graphic: ', first_graphic, flush=True)
             # Convert mm and year to datetime format
 
             dt_stamp = datetime(yyyy_announce, mm_announce, 1)
             print('Dt_stamp: ', dt_stamp.strftime('%Y.%m.%d'))
+
+            print('\nSecond graphic: \nMonth_graphic={0} '.format(idx_month))
+            print({'date': dt_stamp.strftime('%Y.%m.%d'),
+                's_price': s_price_meter_sq,
+                                   '1_price': one_roomed_price_meter_sq,
+                                   '2_price': two_roomed_price_meter_sq,
+                                   '3_price': three_roomed_price_meter_sq,
+                                   '4_price': four_roomed_price_meter_sq})
 
             # Collect data for second graphic
             second_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
@@ -842,7 +855,7 @@ class Developers_API():
                                    '3_price': three_roomed_price_meter_sq,
                                    '4_price': four_roomed_price_meter_sq})
 
-            print('\nSecond graphic: ', second_graphic, flush=True)
+            # print('\nSecond graphic: ', second_graphic, flush=True)
 
             # Collect data for third graphic
             # Accumulated sales values for each flat_type
@@ -876,7 +889,20 @@ class Developers_API():
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   '4_sold': sales_value_4_acc,
                                   '4_all': flats_count_4})
-            print('\nThird graphic: ', third_graphic, flush=True)
+
+            print('\nThird graphic: \nMonth_graphic={0} '.format(idx_month))
+            print({'date': dt_stamp.strftime('%Y.%m.%d'),
+                                  's_sold': sales_value_studio_acc,
+                                  's_all': flats_count_s}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                                  '1_sold': sales_value_1_acc,
+                                  '1_all': flats_count_1}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                                  '2_sold': sales_value_2_acc,
+                                  '2_all': flats_count_2}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                                  '3_sold': sales_value_3_acc,
+                                  '3_all': flats_count_3}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                                  '4_sold': sales_value_4_acc,
+                                  '4_all': flats_count_4})
+            # print('\nThird graphic: ', third_graphic, flush=True)
 
             # '1_sold': sales_value_1_acc,
             #                                   '1_all': flats_count_1,

@@ -710,24 +710,24 @@ class Developers_API():
             # get flats parameters for each flat
             for idx_flats, i in enumerate(flats):
 
-                price_meter_sq = i['price_meter_sq']
+                price_meter_sq = int(i['price_meter_sq'])
                 # mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m'))  # Get month from unix
                 # yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y'))  # Get year from unix
                 # life_sq = i['life_sq']
-                flats_count = i['flats_count']
-                rooms = i['rooms']
+                flats_count = int(i['flats_count'])
+                rooms = int(i['rooms'])
                 # print('Rooms: ', rooms, flush=True)
                 # renovation = i['renovation']
                 # renovation_type = i['renovation_type']
                 # longitude = longitude
                 # latitude = latitude
-                full_sq = i['full_sq']
+                full_sq = int(i['full_sq'])
                 # kitchen_sq = i['kitchen_sq']
                 # time_to_metro = time_to_metro
                 # floor_last = i['floor_last']
                 # floor_first = i['floor_first']
                 # windows_view = i['windows_view']
-                type = i['type']
+                type = int(i['type'])
                 # is_rented = is_rented
                 # rent_year = rent_year
                 # rent_quarter = rent_quarter

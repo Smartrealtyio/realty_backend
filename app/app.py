@@ -123,22 +123,22 @@ def builder():
         parking = int(result['parking'])
         time_to_metro = result['time_to_metro']
         flats = result['flats']
-        start_timestamp = str(result['start_timestamp']) # Actually string
-        end_timestamp = str(result['end_timestamp']) # Actually string dd.mm.yyyy
+        start_timestamp = result['start_timestamp'] # Actually string
+        end_timestamp = result['end_timestamp'] # Actually string dd.mm.yyyy
 
 
     except KeyError as err:
         return jsonify({'message': str(err)})
     print(start_timestamp, end_timestamp, flush=True)
 
-    # mm_start = int(datetime.utcfromtimestamp(start_timestamp).strftime('%m'))  # Get month from unix
-    mm_start = int(start_timestamp[3:5])
-    # yyyy_start = int(datetime.utcfromtimestamp(start_timestamp).strftime('%Y'))  # Get year from unix
-    yyyy_start = int(start_timestamp[-4:])
-    # mm_end = int(datetime.utcfromtimestamp(end_timestamp).strftime('%m'))  # Get month from unix
-    mm_end = int(end_timestamp[3:5])
-    # yyyy_end = int(datetime.utcfromtimestamp(end_timestamp).strftime('%Y'))  # Get year from unix
-    yyyy_end = int(end_timestamp[-4:])
+    mm_start = int(datetime.utcfromtimestamp(start_timestamp).strftime('%m'))  # Get month from unix
+    # mm_start = int(start_timestamp[3:5])
+    yyyy_start = int(datetime.utcfromtimestamp(start_timestamp).strftime('%Y'))  # Get year from unix
+    # yyyy_start = int(start_timestamp[-4:])
+    mm_end = int(datetime.utcfromtimestamp(end_timestamp).strftime('%m'))  # Get month from unix
+    # mm_end = int(end_timestamp[3:5])
+    yyyy_end = int(datetime.utcfromtimestamp(end_timestamp).strftime('%Y'))  # Get year from unix
+    # yyyy_end = int(end_timestamp[-4:])
 
     image_link = SETTINGS.HOST + SETTINGS.MEDIA_ROOT + 'test.jpg'
     # print(image_link, flush=True)

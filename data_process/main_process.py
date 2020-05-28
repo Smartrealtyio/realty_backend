@@ -827,7 +827,7 @@ class Developers_API():
             'revenue_2': float('{:.2f}'.format(revenue_two_roomed/1000000)), 'revenue_3': float('{:.2f}'.format(revenue_three_roomed/1000000)),
                  'revenue_4': float('{:.2f}'.format(revenue_four_roomed/1000000))})
 
-
+            print('\nFirst graphic: ', first_graphic, flush=True)
             # Convert mm and year to datetime format
 
             dt_stamp = datetime(yyyy_announce, mm_announce, 1)
@@ -840,6 +840,8 @@ class Developers_API():
                                    '2_price': two_roomed_price_meter_sq,
                                    '3_price': three_roomed_price_meter_sq,
                                    '4_price': four_roomed_price_meter_sq})
+
+            print('\nSecond graphic: ', second_graphic, flush=True)
 
             # Collect data for third graphic
             # Accumulated sales values for each flat_type
@@ -873,6 +875,8 @@ class Developers_API():
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   '4_sold': sales_value_4_acc,
                                   '4_all': flats_count_4})
+            print('\nThird graphic: ', third_graphic, flush=True)
+
             # '1_sold': sales_value_1_acc,
             #                                   '1_all': flats_count_1,
             #                                   '2_sold': sales_value_2_acc,

@@ -129,6 +129,7 @@ def builder():
 
     except KeyError as err:
         return jsonify({'message': str(err)})
+    print(start_timestamp, end_timestamp, flush=True)
 
     # mm_start = int(datetime.utcfromtimestamp(start_timestamp).strftime('%m'))  # Get month from unix
     mm_start = int(start_timestamp[3:5])

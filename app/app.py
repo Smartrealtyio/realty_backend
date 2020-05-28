@@ -123,8 +123,8 @@ def builder():
         parking = int(result['parking'])
         time_to_metro = result['time_to_metro']
         flats = result['flats']
-        start_timestamp = result['start_timestamp'] # Actually string
-        end_timestamp = result['end_timestamp'] # Actually string dd.mm.yyyy
+        start_timestamp = str(result['start_timestamp']) # Actually string
+        end_timestamp = str(result['end_timestamp']) # Actually string dd.mm.yyyy
 
 
     except KeyError as err:

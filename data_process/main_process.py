@@ -698,8 +698,8 @@ class Developers_API():
         print('List of months: ', list_of_months, flush=True)
 
         yyyy_announce = sale_start_year
-        if yyyy_announce not in [2019, 2020, 2021, 2022, 2023]:
-            return ['Error'], ['Error']
+        # if yyyy_announce not in [2019, 2020, 2021, 2022, 2023]:
+        #     return ['Error'], ['Error']
 
         # For each month in month sequence define sales volume
         for idx_month, mm_announce in enumerate(list_of_months):

@@ -554,7 +554,7 @@ class Developers_API():
             'price'].transform(
             stats.zscore)
 
-        # Construct a Boolean Series to identify outliers: outliers
+        # Construct a Boolean Series to identify outliers
         outliers = (std_data_new_msc < -3) | (std_data_new_msc > 3)
 
         # Drop outliers
@@ -566,9 +566,9 @@ class Developers_API():
             msc_new.groupby(['full_sq_group', 'rooms', 'housing_class', 'yyyy_sold', 'mm_sold'])[
                 'price'].transform('count')
 
+        # Round price values
         msc_new.price = msc_new.price.round()
 
-        print("Loaded data shape: {0}".format(msc_new.shape))
 
         # Transform dtype
         msc_new['mm_sold'] = msc_new['mm_sold'].astype('int')
@@ -647,7 +647,7 @@ class Developers_API():
 
         now = datetime.now()
         price_model = 0
-        kmeans = 0
+
 
         # lists for answer
         first_graphic = []
@@ -686,8 +686,13 @@ class Developers_API():
 
 
         # Create sequence of months depending on start sale date and end sale date
-        list_of_months = [i for i in range(sale_start_month, 13)]+[i for i in range(1, sale_end_month+1)]
+
+        n_years = sale_end_year - sale_start_year
+        list_of_months = ([i for i in range(sale_start_month, 13)] + [i for i in range(1, sale_end_month + 1)])\
+            if n_years != 0 else [i for i in range(sale_start_month, 13)]
+        list_of_months += ([i for i in range(1, 13)]) * int(n_years - 1)
         print('List of months: ', list_of_months, flush=True)
+        
         yyyy_announce = sale_start_year
         if yyyy_announce not in [2019, 2020, 2021, 2022, 2023]:
             return ['Error'], ['Error']
@@ -729,7 +734,8 @@ class Developers_API():
                 # has_elevator = has_elevator
 
                 # calculate sales values based on prev year
-                # current_cluster = kmeans.predict([[longitude, latitude]])
+
+                current_cluster = kmeans.predict([[longitude, latitude]])
 
                 # Determine appropriate full_sq_group based on full_sq
                 full_sq_group = 0

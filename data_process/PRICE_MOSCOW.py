@@ -32,7 +32,8 @@ PATH_TO_PRICE_MODEL_LGBM = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_LGBM_D.jo
 def Price_Main(data: pd.DataFrame):
 
     # Remove price and term outliers (out of 3 sigmas)
-    data = data[((np.abs(stats.zscore(data.price)) < 2.5)&(np.abs(stats.zscore(data.term)) < 2.5) & (np.abs(stats.zscore(data.full_sq)) < 2.5))]
+    data = data[((np.abs(stats.zscore(data.price)) < 2.5)&(np.abs(stats.zscore(data.term)) < 2.5) &
+                 (np.abs(stats.zscore(data.full_sq)) < 2.5))]
 
 
     # Fill NaN if it appears after merging
@@ -53,7 +54,7 @@ def Price_Main(data: pd.DataFrame):
               'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year']]
 
     y = data[['price']].values.ravel()
-    print(X.shape, y.shape, flush=True)
+
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 

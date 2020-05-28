@@ -715,7 +715,7 @@ class Developers_API():
                 # yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y'))  # Get year from unix
                 # life_sq = i['life_sq']
                 flats_count = int(i['flats_count'])
-                rooms = int(i['rooms'])
+                rooms = int(i['rooms']) if i['rooms'] != 's' else i['rooms']
                 # print('Rooms: ', rooms, flush=True)
                 # renovation = i['renovation']
                 # renovation_type = i['renovation_type']

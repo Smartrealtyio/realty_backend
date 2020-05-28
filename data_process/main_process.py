@@ -803,9 +803,6 @@ class Developers_API():
                     one_roomed_full_price = s_price_meter_sq * full_sq
                     revenue_one_roomed += one_roomed_full_price * sales_value_1[-1] if len(sales_value_1) !=0 else 0
                 if rooms == 2:
-                    print('Calculating revenue: price_meter_sq={0}, mm_announce={1}, price_changes={2}'.format(
-                        price_meter_sq, mm_announce, prices_changes_2[mm_announce]
-                    ), flush=True)
                     two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
                     two_roomed_full_price = two_roomed_price_meter_sq * full_sq
                     revenue_two_roomed += two_roomed_full_price * sales_value_2[-1] if len(sales_value_2) !=0 else 0
@@ -837,7 +834,7 @@ class Developers_API():
             # Convert mm and year to datetime format
 
             dt_stamp = datetime(yyyy_announce, mm_announce, 1)
-            print('Dt_stamp: ', dt_stamp.strftime('%Y.%m.%d'))
+
 
             print('\nSecond graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'date': dt_stamp.strftime('%Y.%m.%d'),

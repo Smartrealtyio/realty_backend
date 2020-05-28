@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, url_for
 import json
 import time
-import math
 
 from data_process.main_process import mean_estimation, map_estimation
 from data_process.main_process import predict_developers_term
@@ -41,11 +40,19 @@ def mean():
                             floor_first,
                             floor_last, time_to_metro, city_id)
 
+    # print('flats info', flats, flush=True)
 
     flats_count = len(flats)
-    max_page = math.ceil(len(flats) / SETTINGS.FLATS_PAGE_COUNT)
+    flats_page_count = 10
+    # max_page = math.ceil(len(flats) / flats_page_count)
+    max_page = 1
     page = page if page <= max_page else 1
-    flats = flats[(page - 1) * SETTINGS.FLATS_PAGE_COUNT: page * SETTINGS.FLATS_PAGE_COUNT]
+    '''
+    if sort_type == 0:
+        flats = sorted(flats, key=lambda x: x['price'])[(page - 1) * flats_page_count:page * flats_page_count]
+    else:
+        flats = sorted(flats, key=lambda x: x['price'])[(page - 1) * flats_page_count:page * flats_page_count]
+    '''
 
     flats = get_other_params(flats)
 
@@ -95,16 +102,16 @@ def builder():
     print('query params', result, flush=True)
 
     is_rented = 1
-    rent_year = 1  # result['rent_year'] if result['rent_year'] is not None else None
-    rent_quarter = 1  # result['rent_quarter'] if result['rent_quarter'] is not None else None
-    schools_500m = 1  # result['schools_500m'] if result['schools_500m'] is not None else None
-    schools_1000m = 1  # result['schools_1000m'] if result['schools_1000m'] is not None else None
-    kindergartens_500m = 1  # result['kindergartens_500m'] if result['kindergartens_500m'] is not None else None
-    kindergartens_1000m = 1  # result['kindergartens_1000m'] if result['kindergartens_1000m'] is not None else None
-    clinics_500m = 1  # result['clinics_500m'] if result['clinics_500m'] is not None else None
-    clinics_1000m = 1  # result['clinics_1000m'] if result['clinics_1000m'] is not None else None
-    shops_500m = 1  # result['shops_500m'] if result['shops_500m'] is not None else None
-    shops_1000m = 1  # result['shops_1000m'] if result['shops_1000m'] is not None else None
+    rent_year = 1# result['rent_year'] if result['rent_year'] is not None else None
+    rent_quarter = 1 # result['rent_quarter'] if result['rent_quarter'] is not None else None
+    schools_500m = 1 # result['schools_500m'] if result['schools_500m'] is not None else None
+    schools_1000m = 1 #result['schools_1000m'] if result['schools_1000m'] is not None else None
+    kindergartens_500m = 1 #result['kindergartens_500m'] if result['kindergartens_500m'] is not None else None
+    kindergartens_1000m = 1 # result['kindergartens_1000m'] if result['kindergartens_1000m'] is not None else None
+    clinics_500m = 1 # result['clinics_500m'] if result['clinics_500m'] is not None else None
+    clinics_1000m = 1# result['clinics_1000m'] if result['clinics_1000m'] is not None else None
+    shops_500m = 1 #result['shops_500m'] if result['shops_500m'] is not None else None
+    shops_1000m = 1 #result['shops_1000m'] if result['shops_1000m'] is not None else None
 
     try:
         city_id = result['city_id']
@@ -131,32 +138,20 @@ def builder():
     image_link = SETTINGS.HOST + SETTINGS.MEDIA_ROOT + 'test.jpg'
     # print(image_link, flush=True)
 
-    first_graphic, second_graphic, third_graphic = predict_developers_term(city_id=city_id, longitude=longitude,
-                                                                           latitude=latitude, is_rented=is_rented,
-                                                                           rent_year=rent_year,
-                                                                           rent_quarter=rent_quarter,
-                                                                           floors_count=floors_count,
-                                                                           has_elevator=has_elevator, parking=parking,
-                                                                           time_to_metro=time_to_metro, flats=flats,
-                                                                           sale_start_month=mm_start,
-                                                                           sale_end_month=mm_end,
-                                                                           sale_start_year=yyyy_start,
-                                                                           sale_end_year=yyyy_end,
-                                                                           schools_500m=schools_500m,
-                                                                           schools_1000m=schools_1000m,
-                                                                           kindergartens_500m=kindergartens_500m,
-                                                                           kindergartens_1000m=kindergartens_1000m,
-                                                                           clinics_500m=clinics_500m,
-                                                                           clinics_1000m=clinics_1000m,
-                                                                           shops_500m=shops_500m,
-                                                                           shops_1000m=shops_1000m,
-                                                                           housing_class=housing_class)
+    first_graphic, second_graphic, third_graphic = predict_developers_term(city_id=city_id, longitude=longitude, latitude=latitude, is_rented=is_rented,
+                                     rent_year=rent_year, rent_quarter=rent_quarter, floors_count=floors_count,
+                                     has_elevator=has_elevator, parking=parking, time_to_metro=time_to_metro, flats=flats,
+                                     sale_start_month=mm_start, sale_end_month=mm_end,
+                                     sale_start_year=yyyy_start, sale_end_year=yyyy_end, schools_500m=schools_500m,
+                                     schools_1000m=schools_1000m, kindergartens_500m=kindergartens_500m,
+                                     kindergartens_1000m=kindergartens_1000m, clinics_500m=clinics_500m,
+                                     clinics_1000m=clinics_1000m, shops_500m=shops_500m, shops_1000m=shops_1000m, housing_class=housing_class)
 
     print("Result OK.", flush=True)
     # print(type(result), flush=True)
 
-    return jsonify({'first_graphic': first_graphic, 'image_link': image_link, 'second_graphic': second_graphic,
-                    'third_graphic': third_graphic})
+
+    return jsonify({'first_graphic': first_graphic, 'image_link': image_link, 'second_graphic': second_graphic, 'third_graphic': third_graphic})
 
 
 @app.route('/test-route/')

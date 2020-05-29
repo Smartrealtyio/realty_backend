@@ -214,7 +214,7 @@ class Developers_API():
         # Accumulated sales value for each flat_type
         sales_value_studio_acc, sales_value_1_acc, sales_value_2_acc, sales_value_3_acc, sales_value_4_acc = 0, 0, 0, 0, 0
         # Initial flats_count parameter value for each flat type
-        flats_count_s, flats_count_1, flats_count_2, flats_count_3, flats_count_4 = 0, 0, 0, 0, 0
+        s_answ, answ_1, answ_2, answ_3, answ_4 = 0, 0, 0, 0, 0
         flats_count = 0
         # Growth rate depending on flat_type
         sales_volume_coeff_s, sales_volume_coeff_1, sales_volume_coeff_2, sales_volume_coeff_3, \
@@ -425,14 +425,48 @@ class Developers_API():
                  'revenue_4': float('{:.2f}'.format(revenue_four_roomed / 1000000))})
 
 
+            if sum(sales_value_studio) >= max_flats_count_s and idx_month==0:
+                s_answ = max_flats_count_s
+            elif sum(sales_value_studio) >= max_flats_count_s and idx_month!=0:
+                s_answ = 0
+            elif sum(sales_value_studio) < max_flats_count_s:
+                s_answ = sum(sales_value_studio)
+
+            if sum(sales_value_1) >= max_flats_count_1 and idx_month==0:
+                answ_1 = max_flats_count_1
+            elif sum(sales_value_1) >= max_flats_count_1 and idx_month!=0:
+                answ_1 = 0
+            elif sum(sales_value_1) < max_flats_count_1:
+                answ_1 = sum(sales_value_1)
+
+            if sum(sales_value_2) >= max_flats_count_2 and idx_month==0:
+                answ_2 = max_flats_count_2
+            elif sum(sales_value_2) >= max_flats_count_2 and idx_month!=0:
+                answ_2 = 0
+            elif sum(sales_value_2) < max_flats_count_2:
+                answ_2 = sum(sales_value_2)
+
+            if sum(sales_value_3) >= max_flats_count_3 and idx_month==0:
+                answ_3 = max_flats_count_3
+            elif sum(sales_value_3) >= max_flats_count_3 and idx_month!=0:
+                answ_3 = 0
+            elif sum(sales_value_3) < max_flats_count_3:
+                answ_3 = sum(sales_value_3)
+
+            if sum(sales_value_4) >= max_flats_count_4 and idx_month==0:
+                answ_4 = max_flats_count_4
+            elif sum(sales_value_4) >= max_flats_count_4 and idx_month!=0:
+                answ_4 = 0
+            elif sum(sales_value_4) < max_flats_count_4:
+                answ_4 = sum(sales_value_4)
             # Collect data for first graphic
             first_graphic.append(
                 {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
-                 's': sum(sales_value_studio) if sum(sales_value_studio) <= max_flats_count_s else 0,
-                 '1': sum(sales_value_1) if sum(sales_value_1) <= max_flats_count_1 else 0,
-                 '2': sum(sales_value_2) if sum(sales_value_2) <= max_flats_count_2 else 0,
-                 '3': sum(sales_value_3) if sum(sales_value_3) <= max_flats_count_3 else 0,
-                 '4': sum(sales_value_4) if sum(sales_value_4) <= max_flats_count_4 else 0,
+                 's': s_answ,
+                 '1': answ_1,
+                 '2': answ_2,
+                 '3': answ_3,
+                 '4': answ_4,
                  'revenue_s':
                      float('{:.2f}'.format(revenue_s / 1000000)),
                  'revenue_1': float('{:.2f}'.format(revenue_one_roomed / 1000000)),

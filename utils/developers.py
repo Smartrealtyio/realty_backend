@@ -249,7 +249,7 @@ class Developers_API():
             # sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
 
             # Check if current month is January, change year + 1
-            if mm_announce == 1 and idx_month != 0:
+            if mm_announce == 1:
                 yyyy_announce += 1
                 sales_volume_coeff_s += 0.1  # per one year volume grows by five percent
                 sales_volume_coeff_1 += 0.09  # per one year volume grows by five percent

@@ -258,7 +258,7 @@ class Developers_API():
                 sales_volume_coeff_2 += 0.07  # per one year volume grows by five percent
                 sales_volume_coeff_3 += 0.06  # per one year volume grows by five percent
                 sales_volume_coeff_4 += 0.05  # per one year volume grows by five percent
-                max_revenue_4, max_revenue_3, max_revenue_2, max_revenue_1, max_revenue_s = 0, 0, 0, 0, 0
+                # max_revenue_4, max_revenue_3, max_revenue_2, max_revenue_1, max_revenue_s = 0, 0, 0, 0, 0
 
 
             # Get flat parameters for each flat
@@ -409,24 +409,16 @@ class Developers_API():
             sales_value_4_acc += sum(sales_value_4)
 
             print('\nFirst graphic: \nMonth_graphic={0} '.format(idx_month))
-            print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
-                   's': sales_value_studio_acc,
-                   '1': sales_value_1_acc, '2': sales_value_2_acc, '3': sales_value_3_acc, '4': sales_value_4_acc,
-                   'revenue_s':
-                       float('{:.2f}'.format(revenue_s / 1000000)),
-                   'revenue_1': float('{:.2f}'.format(revenue_one_roomed / 1000000)),
-                   'revenue_2': float('{:.2f}'.format(revenue_two_roomed / 1000000)),
-                   'revenue_3': float('{:.2f}'.format(revenue_three_roomed / 1000000)),
-                   'revenue_4': float('{:.2f}'.format(revenue_four_roomed / 1000000))})
+
 
             # Collect data for first graphic
             first_graphic.append(
                 {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
-                 's': sales_value_studio_acc,
-                 '1': sales_value_1_acc if sales_value_1_acc < max_flats_count_1 else max_flats_count_1,
-                 '2': sales_value_2_acc if sales_value_2_acc < max_flats_count_2 else max_flats_count_2,
-                 '3': sales_value_3_acc if sales_value_3_acc < max_flats_count_3 else max_flats_count_3,
-                 '4': sales_value_4_acc if sales_value_4_acc < max_flats_count_4 else max_flats_count_4,
+                 's': sales_value_studio if sales_value_studio < max_flats_count_s else max_flats_count_s,
+                 '1': sales_value_1 if sales_value_1 < max_flats_count_1 else max_flats_count_1,
+                 '2': sales_value_2 if sales_value_2 < max_flats_count_2 else max_flats_count_2,
+                 '3': sales_value_3 if sales_value_3 < max_flats_count_3 else max_flats_count_3,
+                 '4': sales_value_4 if sales_value_4 < max_flats_count_4 else max_flats_count_4,
                  'revenue_s':
                      float('{:.2f}'.format(revenue_s / 1000000)),
                  'revenue_1': float('{:.2f}'.format(revenue_one_roomed / 1000000)),

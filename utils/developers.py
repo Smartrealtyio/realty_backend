@@ -246,7 +246,7 @@ class Developers_API():
         for idx_month, mm_announce in enumerate(list_of_months):
 
             # Update values with zero
-            sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
+            # sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
 
             # Check if current month is January, change year + 1
             if mm_announce == 1 and idx_month != 0:

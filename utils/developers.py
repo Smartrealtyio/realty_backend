@@ -422,7 +422,10 @@ class Developers_API():
             first_graphic.append(
                 {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
                  's': sales_value_studio_acc,
-                 '1': sales_value_1_acc, '2': sales_value_2_acc, '3': sales_value_3_acc, '4': sales_value_4_acc,
+                 '1': sales_value_1_acc if sales_value_1_acc < max_flats_count_1 else max_flats_count_1,
+                 '2': sales_value_2_acc if sales_value_2_acc < max_flats_count_2 else max_flats_count_2,
+                 '3': sales_value_3_acc if sales_value_3_acc < max_flats_count_3 else max_flats_count_3,
+                 '4': sales_value_4_acc if sales_value_4_acc < max_flats_count_4 else max_flats_count_4,
                  'revenue_s':
                      float('{:.2f}'.format(revenue_s / 1000000)),
                  'revenue_1': float('{:.2f}'.format(revenue_one_roomed / 1000000)),

@@ -411,9 +411,9 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             term = 0
             if l[-1].get('y') > current_flat.get('y') > l[0].get('y'):
                 for i in enumerate(l):
-                    print(i)
-                    if l[i[0]].get('x') <= current_flat.get('x') < l[i[0] + 1].get('x'):
-                        print('!')
+
+                    if l[i[0]].get('y') <= current_flat.get('y') < l[i[0] + 1].get('x'):
+
                         current_flat['x'] = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
                         term = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
                         break

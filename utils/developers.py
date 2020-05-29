@@ -414,11 +414,11 @@ class Developers_API():
             # Collect data for first graphic
             first_graphic.append(
                 {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
-                 's': sales_value_studio if sales_value_studio < max_flats_count_s else max_flats_count_s,
-                 '1': sales_value_1 if sales_value_1 < max_flats_count_1 else max_flats_count_1,
-                 '2': sales_value_2 if sales_value_2 < max_flats_count_2 else max_flats_count_2,
-                 '3': sales_value_3 if sales_value_3 < max_flats_count_3 else max_flats_count_3,
-                 '4': sales_value_4 if sales_value_4 < max_flats_count_4 else max_flats_count_4,
+                 's': sum(sales_value_studio) if sum(sales_value_studio) < max_flats_count_s else max_flats_count_s,
+                 '1': sum(sales_value_1) if sum(sales_value_1) < max_flats_count_1 else max_flats_count_1,
+                 '2': sum(sales_value_2) if sum(sales_value_2) < max_flats_count_2 else max_flats_count_2,
+                 '3': sum(sales_value_3) if sum(sales_value_3) < max_flats_count_3 else max_flats_count_3,
+                 '4': sum(sales_value_4) if sum(sales_value_4) < max_flats_count_4 else max_flats_count_4,
                  'revenue_s':
                      float('{:.2f}'.format(revenue_s / 1000000)),
                  'revenue_1': float('{:.2f}'.format(revenue_one_roomed / 1000000)),

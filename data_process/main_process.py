@@ -769,7 +769,7 @@ class Developers_API():
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=1,
                                                                                      housing_class=housing_class) * sales_volume_coeff_1)
-                        print('mm_graphic={0}, sales_value_1={1}'.format(idx_month+1, sales_value))
+                        print('mm_graphic={0}, sales_value_1={1}'.format(idx_month+1, sales_value), flush=True)
                         sales_value_1.append(sales_value)
 
                     # Calculate number of 2-roomed flats
@@ -778,7 +778,7 @@ class Developers_API():
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=2,
                                                                                      housing_class=housing_class) * sales_volume_coeff_2)
-                        print('mm_graphic={0}, sales_value_2={1}'.format(idx_month + 1, sales_value))
+                        print('mm_graphic={0}, sales_value_2={1}'.format(idx_month + 1, sales_value), flush=True)
                         sales_value_2.append(sales_value)
 
                     # Calculate number of 3-roomed flats
@@ -787,7 +787,7 @@ class Developers_API():
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=3,
                                                                                      housing_class=housing_class) * sales_volume_coeff_3)
-                        print('mm_graphic={0}, sales_value_3={1}'.format(idx_month + 1, sales_value))
+                        print('mm_graphic={0}, sales_value_3={1}'.format(idx_month + 1, sales_value), flush=True)
                         sales_value_3.append(sales_value)
 
                     # Calculate number of 4-roomed flats

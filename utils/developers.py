@@ -342,48 +342,54 @@ class Developers_API():
                     if rooms == 's':
                         s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce]
                         s_full_price = s_price_meter_sq * full_sq
-                        if (sum(sales_value_studio) <= flats_count_s) and (sum(sales_value_studio)!=0):
-                            revenue_s += s_full_price * sales_value_studio[-1]
+                        if (sum(sales_value_studio) >= flats_count_s) and (sum(sales_value_studio)!=0):
+                            revenue_s = s_full_price * flats_count_s
+
                         elif sum(sales_value_studio)==0:
                             revenue_s+=0
                         else:
-                            revenue_s=s_full_price*flats_count_s
+                            revenue_s += s_full_price * sales_value_studio[-1]
+
                     if rooms == 1:
                         one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce]
                         one_roomed_full_price = one_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_1) <= flats_count_1) and (sum(sales_value_1) != 0):
-                            revenue_one_roomed += one_roomed_full_price * sales_value_1[-1]
+                        if (sum(sales_value_1) >= flats_count_1) and (sum(sales_value_1) != 0):
+                            revenue_one_roomed = one_roomed_full_price * flats_count_1
+
                         elif sum(sales_value_1) == 0:
                             revenue_one_roomed += 0
                         else:
-                            revenue_one_roomed = one_roomed_full_price * flats_count_1
+                            revenue_one_roomed += one_roomed_full_price * sales_value_1[-1]
                     if rooms == 2:
                         two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
                         two_roomed_full_price = two_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_2) <= flats_count_2) and (sum(sales_value_2) != 0):
+                        if (sum(sales_value_2) >= flats_count_2) and (sum(sales_value_2) != 0):
+                            revenue_two_roomed = two_roomed_full_price * flats_count_2
                             revenue_two_roomed += two_roomed_full_price * sales_value_2[-1]
                         elif sum(sales_value_2) == 0:
                             revenue_two_roomed += 0
                         else:
-                            revenue_two_roomed = two_roomed_full_price * flats_count_2
+                            revenue_two_roomed += two_roomed_full_price * sales_value_2[-1]
                     if rooms == 3:
                         three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce]
                         three_roomed_full_price = three_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_3) <= flats_count_3) and (sum(sales_value_3) != 0):
-                            revenue_three_roomed += three_roomed_full_price * sales_value_3[-1]
+                        if (sum(sales_value_3) >= flats_count_3) and (sum(sales_value_3) != 0):
+                            revenue_three_roomed = three_roomed_full_price * flats_count_3
                         elif sum(sales_value_3) == 0:
                             revenue_three_roomed += 0
                         else:
-                            revenue_three_roomed = three_roomed_full_price * flats_count_3
+                            revenue_three_roomed += three_roomed_full_price * sales_value_3[-1]
+
                     if rooms == 4:
                         four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce]
                         four_roomed_full_price = four_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_4) <= flats_count_4) and (sum(sales_value_4) != 0):
-                            revenue_four_roomed += four_roomed_full_price * sales_value_4[-1]
+                        if (sum(sales_value_4) >= flats_count_4) and (sum(sales_value_4) != 0):
+                            revenue_four_roomed = four_roomed_full_price * flats_count_4
+                            # revenue_four_roomed += four_roomed_full_price * sales_value_4[-1]
                         elif sum(sales_value_4) == 0:
                             revenue_four_roomed += 0
                         else:
-                            revenue_four_roomed = four_roomed_full_price * flats_count_4
+                            revenue_four_roomed += four_roomed_full_price * sales_value_4[-1]
 
 
 

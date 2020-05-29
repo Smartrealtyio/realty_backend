@@ -219,6 +219,7 @@ class Developers_API():
         # Growth rate depending on flat_type
         sales_volume_coeff_s, sales_volume_coeff_1, sales_volume_coeff_2, sales_volume_coeff_3, \
         sales_volume_coeff_4 = 1, 1, 1, 1, 1
+        max_revenue_4, max_revenue_3, max_revenue_2, max_revenue_1, max_revenue_s = 0, 0, 0, 0, 0
         rooms = ''
 
         print('sale_start={0}.{1}, sale_end={2}.{3}'.format(sale_start_month, sale_start_year, sale_end_month,
@@ -242,6 +243,12 @@ class Developers_API():
             # Check if current month is January, change year + 1
             if mm_announce == 1 and idx_month != 0:
                 yyyy_announce += 1
+                sales_volume_coeff_s += 0.1  # per one year volume grows by five percent
+                sales_volume_coeff_1 += 0.09  # per one year volume grows by five percent
+                sales_volume_coeff_2 += 0.07  # per one year volume grows by five percent
+                sales_volume_coeff_3 += 0.06  # per one year volume grows by five percent
+                sales_volume_coeff_4 += 0.05  # per one year volume grows by five percent
+
 
             # Get flat parameters for each flat
             for idx_flats, i in enumerate(flats):
@@ -283,11 +290,7 @@ class Developers_API():
                 # Determine the growth rate depending on year
                 n_years = yyyy_announce - sale_start_year
                 if n_years >= 0:
-                    sales_volume_coeff_s += 0.1  # per one year volume grows by five percent
-                    sales_volume_coeff_1 += 0.09  # per one year volume grows by five percent
-                    sales_volume_coeff_2 += 0.07  # per one year volume grows by five percent
-                    sales_volume_coeff_3 += 0.06  # per one year volume grows by five percent
-                    sales_volume_coeff_4 += 0.05  # per one year volume grows by five percent
+
 
                     flats_count_s = flats_count if rooms == 's' else flats_count_s
                     flats_count_1 = flats_count if rooms == 1 else flats_count_1
@@ -344,10 +347,10 @@ class Developers_API():
                         s_full_price = s_price_meter_sq * full_sq
                         if (sum(sales_value_studio) >= flats_count_s) and (sum(sales_value_studio)!=0):
                             revenue_s = s_full_price * flats_count_s
-
+                            max_revenue_s = True
                         elif sum(sales_value_studio)==0:
                             revenue_s+=0
-                        else:
+                        elif not max_revenue_s:
                             revenue_s += s_full_price * sales_value_studio[-1]
 
                     if rooms == 1:
@@ -355,29 +358,30 @@ class Developers_API():
                         one_roomed_full_price = one_roomed_price_meter_sq * full_sq
                         if (sum(sales_value_1) >= flats_count_1) and (sum(sales_value_1) != 0):
                             revenue_one_roomed = one_roomed_full_price * flats_count_1
-
+                            max_revenue_1 = True
                         elif sum(sales_value_1) == 0:
                             revenue_one_roomed += 0
-                        else:
+                        elif not max_revenue_1:
                             revenue_one_roomed += one_roomed_full_price * sales_value_1[-1]
                     if rooms == 2:
                         two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
                         two_roomed_full_price = two_roomed_price_meter_sq * full_sq
                         if (sum(sales_value_2) >= flats_count_2) and (sum(sales_value_2) != 0):
                             revenue_two_roomed = two_roomed_full_price * flats_count_2
-                            revenue_two_roomed += two_roomed_full_price * sales_value_2[-1]
+                            max_revenue_2 = True
                         elif sum(sales_value_2) == 0:
                             revenue_two_roomed += 0
-                        else:
+                        elif not max_revenue_2:
                             revenue_two_roomed += two_roomed_full_price * sales_value_2[-1]
                     if rooms == 3:
                         three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce]
                         three_roomed_full_price = three_roomed_price_meter_sq * full_sq
                         if (sum(sales_value_3) >= flats_count_3) and (sum(sales_value_3) != 0):
                             revenue_three_roomed = three_roomed_full_price * flats_count_3
+                            max_revenue_3 = True
                         elif sum(sales_value_3) == 0:
                             revenue_three_roomed += 0
-                        else:
+                        elif not max_revenue_3:
                             revenue_three_roomed += three_roomed_full_price * sales_value_3[-1]
 
                     if rooms == 4:
@@ -385,10 +389,10 @@ class Developers_API():
                         four_roomed_full_price = four_roomed_price_meter_sq * full_sq
                         if (sum(sales_value_4) >= flats_count_4) and (sum(sales_value_4) != 0):
                             revenue_four_roomed = four_roomed_full_price * flats_count_4
-                            # revenue_four_roomed += four_roomed_full_price * sales_value_4[-1]
+                            max_revenue_4 = True
                         elif sum(sales_value_4) == 0:
                             revenue_four_roomed += 0
-                        else:
+                        elif not max_revenue_4:
                             revenue_four_roomed += four_roomed_full_price * sales_value_4[-1]
 
 

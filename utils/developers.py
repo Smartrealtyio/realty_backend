@@ -409,6 +409,18 @@ class Developers_API():
             sales_value_4_acc += sum(sales_value_4)
 
             print('\nFirst graphic: \nMonth_graphic={0} '.format(idx_month))
+            print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
+                 's': sum(sales_value_studio) if sum(sales_value_studio) < max_flats_count_s else max_flats_count_s,
+                 '1': sum(sales_value_1) if sum(sales_value_1) < max_flats_count_1 else max_flats_count_1,
+                 '2': sum(sales_value_2) if sum(sales_value_2) < max_flats_count_2 else max_flats_count_2,
+                 '3': sum(sales_value_3) if sum(sales_value_3) < max_flats_count_3 else max_flats_count_3,
+                 '4': sum(sales_value_4) if sum(sales_value_4) < max_flats_count_4 else max_flats_count_4,
+                 'revenue_s':
+                     float('{:.2f}'.format(revenue_s / 1000000)),
+                 'revenue_1': float('{:.2f}'.format(revenue_one_roomed / 1000000)),
+                 'revenue_2': float('{:.2f}'.format(revenue_two_roomed / 1000000)),
+                 'revenue_3': float('{:.2f}'.format(revenue_three_roomed / 1000000)),
+                 'revenue_4': float('{:.2f}'.format(revenue_four_roomed / 1000000))})
 
 
             # Collect data for first graphic
@@ -475,17 +487,17 @@ class Developers_API():
 
             print('\nThird graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'date': dt_stamp.strftime('%Y.%m.%d'),
-                   's_sold': sales_value_studio_acc,
-                   's_all': max_flats_count_s}, {'date': dt_stamp.strftime('%Y.%m.%d'),
-                                             '1_sold': sales_value_1_acc,
-                                             '1_all': max_flats_count_1}, {'date': dt_stamp.strftime('%Y.%m.%d'),
-                                                                       '2_sold': sales_value_2_acc,
-                                                                       '2_all': max_flats_count_2},
+                                  's_sold':  sales_value_studio_acc if sales_value_studio_acc < max_flats_count_s else max_flats_count_s,
+                                  's_all': max_flats_count_s}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                                  '1_sold':  sales_value_1_acc if sales_value_1_acc < max_flats_count_1 else max_flats_count_1,
+                                  '1_all': max_flats_count_1}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                                  '2_sold':  sales_value_2_acc if sales_value_2_acc < max_flats_count_2 else max_flats_count_2,
+                                  '2_all': max_flats_count_2},
                   {'date': dt_stamp.strftime('%Y.%m.%d'),
                    '3_sold': sales_value_3_acc,
                    '3_all': max_flats_count_3}, {'date': dt_stamp.strftime('%Y.%m.%d'),
-                                             '4_sold': sales_value_4_acc,
-                                             '4_all': max_flats_count_4})
+                                  '4_sold':  sales_value_4_acc if sales_value_4_acc < max_flats_count_4 else max_flats_count_4,
+                                  '4_all': max_flats_count_4})
             # print('\nThird graphic: ', third_graphic, flush=True)
 
 

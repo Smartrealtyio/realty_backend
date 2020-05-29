@@ -296,11 +296,11 @@ class Developers_API():
                 if n_years >= 0:
 
 
-                    flats_count_s += flats_count if rooms == 's' else flats_count_s
-                    flats_count_1 += flats_count if rooms == 1 else flats_count_1
-                    flats_count_2 += flats_count if rooms == 2 else flats_count_2
-                    flats_count_3 += flats_count if rooms == 3 else flats_count_3
-                    flats_count_4 += flats_count if rooms == 4 else flats_count_4
+                    flats_count_s += flats_count if rooms == 's' and idx_month == 0 else flats_count_s
+                    flats_count_1 += flats_count if rooms == 1 and idx_month == 0 else flats_count_1
+                    flats_count_2 += flats_count if rooms == 2 and idx_month == 0 else flats_count_2
+                    flats_count_3 += flats_count if rooms == 3 and idx_month == 0 else flats_count_3
+                    flats_count_4 += flats_count if rooms == 4 and idx_month == 0 else flats_count_4
 
                     # Calculate number of studios
                     if rooms == 's':

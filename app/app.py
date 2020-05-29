@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify
 import json
 import time
 
-from data_process.main_process import mean_estimation, map_estimation
-from data_process.main_process import predict_developers_term
-from datetime import datetime
+from utils.developers import predict_developers_term
+from utils.price_term import map_estimation
+from utils.profitable_offers import mean_estimation
 from app.db_queries import get_other_params
 import settings_local as SETTINGS
 
@@ -140,8 +140,6 @@ def builder():
     yyyy_end = int(datetime.utcfromtimestamp(end_timestamp).strftime('%Y'))  # Get year from unix
     # yyyy_end = int(end_timestamp[-4:])
 
-    image_link = SETTINGS.HOST + SETTINGS.MEDIA_ROOT + 'test.jpg'
-    # print(image_link, flush=True)
 
     first_graphic, second_graphic, third_graphic = predict_developers_term(city_id=city_id, longitude=longitude, latitude=latitude, is_rented=is_rented,
                                      rent_year=rent_year, rent_quarter=rent_quarter, floors_count=floors_count,
@@ -156,7 +154,7 @@ def builder():
     # print(type(result), flush=True)
 
 
-    return jsonify({'first_graphic': first_graphic, 'image_link': image_link, 'second_graphic': second_graphic, 'third_graphic': third_graphic})
+    return jsonify({'first_graphic': first_graphic, 'second_graphic': second_graphic, 'third_graphic': third_graphic})
 
 
 @app.route('/test-route/')

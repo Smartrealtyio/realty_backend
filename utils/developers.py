@@ -1,486 +1,22 @@
-from scipy import stats
-from lightgbm import LGBMRegressor
-from sklearn.linear_model import LinearRegression
-from sklearn.cluster import KMeans
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
-from joblib import dump, load
-from datetime import datetime
 import pandas as pd
-import numpy as np
-import sys
+from scipy import stats
+from datetime import datetime
 import os
-from math import sin, cos, sqrt, atan2, radians
 import json
-
-machine = os.path.abspath(os.getcwd())
+import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
 import settings_local as SETTINGS
 
-# Define paths to Moscow and Spb Secondary flats models DUMMIES
-PATH_PRICE_GBR_MOSCOW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_GBR_D.joblib'
-PATH_PRICE_RF_MOSCOW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_RF_D.joblib'
-PATH_PRICE_LGBM_MOSCOW_D = SETTINGS.MODEL_MOSCOW + '/PriceModel_MOSCOW_LGBM_D.joblib'
-PATH_PRICE_GBR_SPB_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_GBR_D.joblib'
-PATH_PRICE_RF_SPB_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_RF_D.joblib'
-PATH_PRICE_LGBM_SPB_D = SETTINGS.MODEL_SPB + '/PriceModel_SPB_LGBM_D.joblib'
-
-# Define paths to Moscow and Spb clustering models
-KMEANS_CLUSTERING_MOSCOW_MAIN = SETTINGS.MODEL_MOSCOW + '/KMEANS_CLUSTERING_MOSCOW_MAIN.joblib'
-KMEANS_CLUSTERING_SPB_MAIN = SETTINGS.MODEL_SPB + '/KMEANS_CLUSTERING_SPB_MAIN.joblib'
+machine = os.path.abspath(os.getcwd())
 
 # Define paths to Moscow and Spb data
 MOSCOW_DATA_NEW = SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv'
 MOSCOW_DATA_SECONDARY = SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv'
 SPB_DATA_NEW = SETTINGS.DATA_SPB + '/SPB_NEW_FLATS.csv'
 SPB_DATA_SECONDARY = SETTINGS.DATA_SPB + '/SPB_VTOR.csv'
-
-
-# Find profitable offers
-def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longitude_from, longitude_to, rooms,
-                    price_from, price_to, building_type_str, kitchen_sq, life_sq, renovation, has_elevator, floor_first,
-                    floor_last, time_to_metro, city_id):
-    # Initialize DF
-    data_offers = pd.DataFrame()
-
-    # Set paths to data and price prediction models, depending on city:  0 = Moscow, 1 = Spb
-    if city_id == 0:
-        data_offers = pd.read_csv(MOSCOW_DATA_SECONDARY)
-        # data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
-        gbr = load(PATH_PRICE_GBR_MOSCOW_D)
-        rf = load(PATH_PRICE_RF_MOSCOW_D)
-        lgbm = load(PATH_PRICE_LGBM_MOSCOW_D)
-    elif city_id == 1:
-        data_offers = pd.read_csv(SPB_DATA_SECONDARY)
-        # data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
-        gbr = load(PATH_PRICE_GBR_SPB_D)
-        rf = load(PATH_PRICE_RF_SPB_D)
-        lgbm = load(PATH_PRICE_LGBM_SPB_D)
-
-    # Apply filtering flats in database on parameters: full_sq range, coordinates scope
-    filter = (((data_offers.full_sq >= full_sq_from) & (data_offers.full_sq <= full_sq_to)) & (
-            data_offers.rooms == rooms) &
-              ((data_offers.latitude >= latitude_from) & (data_offers.latitude <= latitude_to))
-              & ((data_offers.longitude >= longitude_from) & (data_offers.longitude <= longitude_to)))
-    data_offers = data_offers[filter]
-
-    # Use only open offers
-    data_offers = data_offers[data_offers['closed'] == False]
-
-    print('columns ', data_offers.columns, flush=True)
-
-    if time_to_metro != None:
-        data_offers = data_offers[(data_offers.time_to_metro <= time_to_metro)]
-    if rooms != None:
-        data_offers = data_offers[data_offers.rooms == rooms]
-    if building_type_str != None:
-        data_offers = data_offers[data_offers.building_type_str == building_type_str]
-    if kitchen_sq != None:
-        data_offers = data_offers[
-            (data_offers.kitchen_sq >= kitchen_sq - 1) & (data_offers.kitchen_sq <= kitchen_sq + 1)]
-    if life_sq != None:
-        data_offers = data_offers[(data_offers.life_sq >= life_sq - 5) & (data_offers.life_sq <= life_sq + 5)]
-    if renovation != None:
-        data_offers = data_offers[data_offers.renovation == renovation]
-    if has_elevator != None:
-        data_offers = data_offers[data_offers.has_elevator == has_elevator]
-    if floor_first != None:
-        data_offers = data_offers[data_offers.floor_first == 0]
-    if floor_last != None:
-        data_offers = data_offers[data_offers.floor_last == 0]
-    if price_from != None:
-        data_offers = data_offers[data_offers.price >= price_from]
-    if price_to != None:
-        data_offers = data_offers[data_offers.price <= price_to]
-
-    # PRICE PREDICTION
-    # data_offers['pred_price'] = data_offers[
-    #     ['life_sq', 'to_center', 'mm_announce', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-    #      'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year']].apply(
-    #     lambda row:
-    #     int((np.expm1(
-    #         rf.predict([[np.log1p(row.life_sq), np.log1p(row.to_center), row.mm_announce, row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
-    #                      np.log1p(row.latitude), np.log1p(row.latitude),
-    #                      np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last,
-    #                      row.clusters, row.is_rented, row.rent_quarter, row.rent_year]])) + np.expm1(
-    #         lgbm.predict([[np.log1p(row.life_sq), np.log1p(row.to_center), row.mm_announce, row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
-    #                        np.log1p(row.latitude), np.log1p(row.latitude),
-    #                        np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last,
-    #                        row.clusters, row.is_rented, row.rent_quarter, row.rent_year]])))[0] / 2), axis=1)
-    #
-    # # Calculate the profitability for each flat knowing current and the price that our model predicted
-    # data_offers['profit'] = data_offers[['pred_price', 'price']].apply(
-    #     lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)
-
-    # Set threshold for showing profitable offers
-    print(data_offers.shape, flush=True)
-    data_offers = data_offers[(data_offers.profit >= 5)]
-    print(data_offers.shape, flush=True)
-    data_offers = data_offers.sort_values(by=['profit'], ascending=False)
-    print("Profitable offers: ", data_offers[['pred_price', "price", 'profit']].head(3), flush=True)
-
-    flats = data_offers.to_dict('record')
-
-    return flats
-
-
-# Predict price and term
-def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, renovation, secondary, has_elevator,
-                   floor_first, floor_last, time_to_metro, is_rented, rent_year, rent_quarter, city_id):
-    # Get current time
-    now = datetime.now()
-
-    # City_id: 0 = Moscow, 1 = Spb
-
-    def define_city(city_id: int, secondary: int):
-
-        city_center_lon = 0
-        city_center_lat = 0
-
-        data = pd.DataFrame()
-        kmeans, gbr, rf, lgbm = 0, 0, 0, 0
-        if city_id == 0:
-            # Load data Moscow flats
-            data1 = pd.read_csv(MOSCOW_DATA_NEW)
-            data2 = pd.read_csv(MOSCOW_DATA_SECONDARY)
-            data = pd.concat([data1, data2], ignore_index=True)
-
-            # Load KMean Clustering model
-            kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
-
-            # Load Price Models Moscow Secondary
-            gbr = load(PATH_PRICE_GBR_MOSCOW_D)
-            rf = load(PATH_PRICE_RF_MOSCOW_D)
-            lgbm = load(PATH_PRICE_LGBM_MOSCOW_D)
-
-            city_center_lon = 37.619291
-            city_center_lat = 55.751474
-
-
-        # # Москва вторичка
-        # elif city_id == 0 and secondary == 1:
-        #     # Load data Moscow secondary
-        #     data = pd.read_csv(MOSCOW_DATA_SECONDARY)
-        #
-        #     # Load KMean Clustering model
-        #     kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
-        #
-        #     # Load Price Models Moscow Secondary
-        #     gbr = load(PATH_PRICE_GBR_MOSCOW_VTOR)
-        #     rf = load(PATH_PRICE_GBR_MOSCOW_VTOR)
-        #     lgbm = load(PATH_PRICE_GBR_MOSCOW_VTOR)
-
-        # Санкт-Петербург новостройки
-        elif city_id == 1:
-            # Load data SPb
-            data1 = pd.read_csv(SPB_DATA_NEW)
-            data2 = pd.read_csv(SPB_DATA_SECONDARY)
-            data = pd.concat([data1, data2], ignore_index=True)
-
-            # Load KMean Clustering model
-            kmeans = load(KMEANS_CLUSTERING_SPB_MAIN)
-
-            # Load Price Models Spb Secondary
-            gbr = load(PATH_PRICE_GBR_SPB_D)
-            rf = load(PATH_PRICE_RF_SPB_D)
-            lgbm = load(PATH_PRICE_LGBM_SPB_D)
-
-            city_center_lon = 30.315239
-            city_center_lat = 59.940735
-
-        # # Санкт-Петербург вторичка
-        # elif city_id == 1 and secondary == 1:
-        #     data = pd.read_csv(SPB_DATA_SECONDARY)
-        #     # Load KMean Clustering model
-        #     kmeans = load(KMEANS_CLUSTERING_SPB_MAIN)
-        #
-        #     # Load Price Models Spb Secondary
-        #     gbr = load(PATH_PRICE_GBR_SPB_VTOR)
-        #     rf = load(PATH_PRICE_RF_SPB_VTOR)
-        #     lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
-
-        print("Initial shape: ", data.shape, flush=True)
-        return data, kmeans, gbr, rf, lgbm, city_center_lon, city_center_lat
-
-    # Call define function
-    data, kmeans, gbr, rf, lgbm, city_center_lon, city_center_lat = define_city(city_id=city_id, secondary=secondary)
-
-    ####################
-    #                  #
-    # PRICE PREDICTION #
-    #                  #
-    ####################
-
-    # Calculate distance to city_center
-    # No 1. Distance from city center in km
-
-    # approximate radius of earth in km
-    R = 6373.0
-
-    to_city_center_distance = R * 2 * atan2(sqrt(sin((radians(latitude) - radians(city_center_lat)) / 2)
-                                                 ** 2 + cos(radians(city_center_lat)) * cos(radians(city_center_lat))
-                                                 * sin((radians(longitude) - radians(city_center_lon)) / 2) ** 2),
-                                            sqrt(1 - (sin((radians(latitude) - radians(city_center_lat)) / 2)
-                                                      ** 2 + cos(radians(city_center_lat)) * cos(radians(latitude))
-                                                      * sin((radians(longitude) - radians(city_center_lon)) / 2) ** 2)))
-
-    # Predict Cluster for current flat
-    def define_cluster(km_model: KMeans, lon: float, lat: float):
-        current_cluster = km_model.predict([[lon, lat]])
-        return current_cluster
-
-    current_cluster = define_cluster(km_model=kmeans, lon=longitude, lat=latitude)
-
-    print("Current cluster is : ", current_cluster, flush=True)
-
-    # Define current month
-    mm_announce = now.month
-
-    # Predict Price using gbr, rf, lgmb if not secondary
-    def calculate_price(gbr_model: GradientBoostingRegressor, rf_model: RandomForestRegressor,
-                        lgbm_model: LGBMRegressor, secondary: int):
-        gbr_predicted_price, lgbm_pedicted_price, rf_predicted_price = 0, 0, 0
-        # New
-        gbr_predicted_price = np.expm1(gbr_model.predict(
-            [[np.log1p(life_sq), np.log1p(to_city_center_distance), mm_announce, rooms, renovation, has_elevator,
-              np.log1p(longitude), np.log1p(latitude),
-              np.log1p(full_sq),
-              np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter,
-              rent_year]]))
-        print("Gbr predicted price ", gbr_predicted_price, flush=True)
-
-        rf_predicted_price = np.expm1(rf_model.predict(
-            [[np.log1p(life_sq), np.log1p(to_city_center_distance), mm_announce, rooms, renovation, has_elevator,
-              np.log1p(longitude), np.log1p(latitude),
-              np.log1p(full_sq),
-              np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter,
-              rent_year]]))
-        print("rf predicted price ", rf_predicted_price, flush=True)
-
-        lgbm_pedicted_price = np.expm1(lgbm_model.predict(
-            [[np.log1p(life_sq), np.log1p(to_city_center_distance), mm_announce, rooms, renovation, has_elevator,
-              np.log1p(longitude), np.log1p(latitude),
-              np.log1p(full_sq),
-              np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter,
-              rent_year]]))
-        print("Lgbm predicted price ", lgbm_pedicted_price, flush=True)
-
-        # Calculate mean price value based on three algorithms
-        price_main = (gbr_predicted_price + lgbm_pedicted_price + rf_predicted_price) / 3
-        price = int(price_main[0])
-        print("Predicted Price: ", price, flush=True)
-
-        price_meter_sq = price / full_sq
-        return price, price_meter_sq
-
-    # Calculate price
-    price, price_meter_sq = calculate_price(gbr_model=gbr, rf_model=rf, lgbm_model=lgbm, secondary=secondary)
-
-    ####################
-    #                  #
-    # TERM CALCULATING #
-    #                  #
-    ####################
-
-    # Remove price and term outliers (out of 3 sigmas)
-    data1 = data[(np.abs(stats.zscore(data.price)) < 3)]
-    data2 = data[(np.abs(stats.zscore(data.term)) < 3)]
-
-    data = pd.merge(data1, data2, on=list(data.columns), how='left')
-
-    # Fill NaN if it appears after merging
-    data[['term']] = data[['term']].fillna(data[['term']].mean())
-
-    # Create subsample of flats from same cluster (from same "geographical" district)
-    df_for_current_label = data[data.clusters == current_cluster[0]]
-    print('Shape of current cluster: {0}'.format(df_for_current_label.shape))
-
-    # Check if subsample size have more than 3 samples
-    if df_for_current_label.shape[0] < 3:
-        answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
-        return answ
-
-    # Drop flats which sold more than 600 days
-    df_for_current_label = df_for_current_label[df_for_current_label.term <= 600]
-
-    # Check if still enough samples
-    if df_for_current_label.shape[0] > 1:
-
-        def LinearReg_Term(data: pd.DataFrame):
-
-            # Handle with negative term values
-            # way no1
-            data = data._get_numeric_data()  # <- this increase accuracy
-            data[data < 0] = 0
-
-            # way no2
-            # data['profit'] = data['profit'] + 1 - data['profit'].min()
-
-            # Log Transformation
-            data['price'] = np.log1p(data['price_meter_sq'])
-            data['profit'] = np.log1p(data['profit'])
-            data['term'] = np.log1p(data['term'])
-
-            # Create X and y for Linear Model training
-            X = data[['profit', 'price_meter_sq']]
-            y = data[['term']].values.ravel()
-
-            # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
-
-            # Create LinearModel and fitting
-            reg = LinearRegression().fit(X, y)
-            return reg
-
-        def larger(p=0, percent=2):
-            larger_prices = []
-            for _ in range(15):
-                new_p = p + p * percent / 100
-                larger_prices.append(new_p)
-                percent += 2
-            return larger_prices
-
-        # Create list of N larger prices than predicted
-        list_of_larger_prices = larger(int(price_meter_sq))
-
-        def smaller(p=0, percent=2):
-            smaller_prices = []
-            for _ in range(15):
-                new_p = p - p * percent / 100
-                smaller_prices.append(new_p)
-                percent += 2
-            return smaller_prices[::-1]
-
-        # Create list of N smaller prices than predicted
-        list_of_smaller_prices = smaller(int(price_meter_sq))
-
-        # Create list of N prices: which are larger and smaller than predicted
-        list_of_prices = list_of_smaller_prices + list_of_larger_prices
-        list_of_prices = [int(i) for i in list_of_prices]
-
-        # Call LinearReg on term
-        reg = LinearReg_Term(df_for_current_label)
-
-        def CalculateProfit(l: list):
-            list_of_terms = []
-            for i in l:
-                profit = i / price_meter_sq
-                # Calculate term based on profit for each price
-                term_on_profit = np.expm1(reg.predict([[np.log1p(profit), np.log1p(i)]]))
-                list_of_terms.append(term_on_profit)
-
-            return list_of_terms
-
-        # Calculating term for each price from generated list of prices based on associated profit -> returns list of terms
-        list_of_terms = CalculateProfit(list_of_prices)
-
-        # Add links to flats
-        # term_links = df_for_current_label.to_dict('record')
-
-        list_of_terms = [int(i.tolist()[0]) for i in list_of_terms]
-        print("Terms: ", list_of_terms, flush=True)
-
-        prices = list_of_prices
-        prices = [int(i * full_sq) for i in prices]
-        print("Prices: ", prices, flush=True)
-
-        # Define function for creating list of dicts
-        # x=term, y=price
-        # Example: [{'x': int, 'y': int}, {'x': int, 'y': int}]
-        def createListOfDicts(terms: list, prices: list):
-            list_of_dicts = []
-            list_of_dicts += ({'y': int(prc), 'x': int(trm)} for prc, trm in zip(prices, terms))
-            return list_of_dicts
-
-        # Create list of dicts
-        list_of_dicts = createListOfDicts(list_of_terms, prices)
-
-        # Check if list not empty
-        if len(list_of_dicts) <= 2:
-            answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
-            return answ
-
-        print('list_of_dicts: ', list_of_dicts, flush=True)
-
-        # Define current flat with predicted price and initial term = minimal value from list of term
-        current_flat = {'x': min(list_of_terms), 'y': price}
-
-        # Iterate over the list of dicts and try to find suitable term based on prices values
-        def find_term(l: list, current_flat: dict):
-            term = 0
-            if l[-1].get('y') > current_flat.get('y') > l[0].get('y'):
-                for i in enumerate(l):
-                    print(i)
-                    if l[i[0]].get('y') <= current_flat.get('y') < l[i[0] + 1].get('y'):
-                        print('!')
-                        current_flat['x'] = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
-                        term = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
-                        break
-                print("New term: ", current_flat, flush=True)
-            return current_flat, term
-
-        # Find actual term for current flat price
-        if (list_of_dicts[-1].get('y') > current_flat.get('y') > list_of_dicts[0].get('y')) and \
-                len(set([i['x'] for  i in list_of_dicts])) > 2 and list_of_terms[-1] > list_of_terms[0]:
-            print('Number of unique term valus in list_of_dicts = {0}'.format(len(set([i['x'] for  i in list_of_dicts]))))
-            current_flat, term = find_term(l=list_of_dicts, current_flat=current_flat)
-        else:
-            answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
-            return answ
-
-        # Leave only unique pairs [{'x': int1, 'y': int2}, {'x': int3, 'y': int4}]
-        def select_unique_term_price_pairs(list_of_dicts: list):
-            terms = []
-            result = []
-
-            for i in range(1, len(list_of_dicts)):
-                if (list_of_dicts[i].get('x') != list_of_dicts[i - 1].get('x')) and list_of_dicts[i].get(
-                        'x') not in terms:
-                    if list_of_dicts[i - 1].get('x') not in terms:
-                        result.append(list_of_dicts[i - 1])
-                        terms.append(list_of_dicts[i - 1].get('x'))
-                    result.append(list_of_dicts[i])
-                    terms.append(list_of_dicts[i].get('x'))
-            return result
-
-        if len(set([i['x'] for  i in list_of_dicts])) > 2:
-            list_of_dicts = select_unique_term_price_pairs(list_of_dicts)
-        else:
-            answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
-            return answ
-
-
-
-        def check(l: list, current_flat):
-            for i in l:
-                if ((i['x'] == current_flat['x']) | (i['y'] == current_flat['y'])):
-                    l.remove(i)
-            l.append(current_flat)
-            return sorted(l, key=lambda k: k['x'])
-
-        # if not oops:
-        print('not oops', flush=True)
-        # Check if all dict's keys and values in list are unique
-        list_of_dicts = check(list_of_dicts, current_flat)
-
-        # # Update list of dicts with current flat
-        # list_of_dicts.insert(0, current_flat)
-        #
-        # # Finally sort
-        # list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
-        print('Answer: ', list_of_dicts, flush=True)
-
-        # Check if final list have items in it, otherwise set parameter "OOPS" to 1
-        oops = 1 if len(list_of_dicts) <= 2 else 0
-        term = 0 if len(list_of_dicts) <= 2 else term
-        answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': 0, "OOPS": oops}
-        print('answ: ', price, term, list_of_dicts, oops, sep='\n', flush=True)
-    else:
-        print("Not enough data to plot", flush=True)
-        answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
-
-    return answ
 
 
 # Class for developers page
@@ -569,7 +105,6 @@ class Developers_API():
         # Round price values
         msc_new.price = msc_new.price.round()
 
-
         # Transform dtype
         msc_new['mm_sold'] = msc_new['mm_sold'].astype('int')
         msc_new['mm_announce'] = msc_new['mm_announce'].astype('int')
@@ -604,9 +139,10 @@ class Developers_API():
                 sale_start_year = int(datetime.utcfromtimestamp(data['start_timestamp']).strftime('%Y'))
                 sale_end_year = int(datetime.utcfromtimestamp(data['end_timestamp']).strftime('%Y'))
                 schools_500m, schools_1000m, kindergartens_500m, kindergartens_1000m, clinics_500m, clinics_1000m, shops_500m, shops_1000m = \
-                data['schools_500m'], data['schools_1000m'], data['kindergartens_500m'], data['kindergartens_1000m'], \
-                data['clinics_500m'], data['clinics_1000m'], \
-                data['shops_500m'], data['shops_1000m']
+                    data['schools_500m'], data['schools_1000m'], data['kindergartens_500m'], data[
+                        'kindergartens_1000m'], \
+                    data['clinics_500m'], data['clinics_1000m'], \
+                    data['shops_500m'], data['shops_1000m']
 
         else:
             # city_id = data["city_id"]
@@ -641,13 +177,13 @@ class Developers_API():
 
     def predict(self, flats: list, rent_year: int, longitude: float, latitude: float,
                 time_to_metro: int, is_rented: int, rent_quarter: int, has_elevator: int, sale_start_month: int,
-                sale_end_month: int, sale_start_year: int, sale_end_year: int, housing_class: int, schools_500m=0, schools_1000m=0,
+                sale_end_month: int, sale_start_year: int, sale_end_year: int, housing_class: int, schools_500m=0,
+                schools_1000m=0,
                 kindergartens_500m=0, kindergartens_1000m=0, clinics_500m=0, clinics_1000m=0, shops_500m=0,
                 shops_1000m=0, city_id=0):
 
         now = datetime.now()
         price_model = 0
-
 
         # lists for answer
         first_graphic = []
@@ -658,13 +194,13 @@ class Developers_API():
         prices_changes_studio = {1: 1, 2: 1.045, 3: 1.095, 4: 1.12, 5: 1.17, 6: 1.19, 7: 1.12, 8: 1.13, 9: 1.14,
                                  10: 1.155, 11: 1.175, 12: 1.2}
         prices_changes_1 = {1: 1, 2: 1.035, 3: 1.085, 4: 1.1, 5: 1.15, 6: 1.185, 7: 1.12, 8: 1.14, 9: 1.165, 10: 1.175,
-                                 11: 1.195, 12: 1.22}
+                            11: 1.195, 12: 1.22}
         prices_changes_2 = {1: 1, 2: 1.025, 3: 1.35, 4: 1.12, 5: 1.17, 6: 1.191, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17,
-                                 11: 1.19, 12: 1.21}
+                            11: 1.19, 12: 1.21}
         prices_changes_3 = {1: 1, 2: 1.015, 3: 1.015, 4: 1.11, 5: 1.14, 6: 1.175, 7: 1.12, 8: 1.13, 9: 1.14, 10: 1.17,
-                                 11: 1.195, 12: 1.2}
+                            11: 1.195, 12: 1.2}
         prices_changes_4 = {1: 1, 2: 1.005, 3: 1.01, 4: 1.06, 5: 1.09, 6: 1.15, 7: 1.13, 8: 1.16, 9: 1.17, 10: 1.175,
-                                 11: 1.18, 12: 1.85}
+                            11: 1.18, 12: 1.85}
 
         # INITIALIZE VARIABLES FOR GRAPHICS
         # Accumulated revenue for each flat type
@@ -673,7 +209,7 @@ class Developers_API():
         s_price_meter_sq, one_roomed_price_meter_sq, two_roomed_price_meter_sq, three_roomed_price_meter_sq, \
         four_roomed_price_meter_sq = 0, 0, 0, 0, 0
         # Initial sales value for each flat_type
-        sales_value_studio, sales_value_1,  sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
+        sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
         # Accumulated sales value for each flat_type
         sales_value_studio_acc, sales_value_1_acc, sales_value_2_acc, sales_value_3_acc, sales_value_4_acc = 0, 0, 0, 0, 0
         # Initial flats_count parameter value for each flat type
@@ -684,15 +220,13 @@ class Developers_API():
         sales_volume_coeff_4 = 1, 1, 1, 1, 1
         rooms = ''
 
-
-
         print('sale_start={0}.{1}, sale_end={2}.{3}'.format(sale_start_month, sale_start_year, sale_end_month,
                                                             sale_end_year), flush=True)
         # Calculate number of sale years
         n_years = sale_end_year - sale_start_year
 
         # Create sequence of months depending on start sale date and end sale date
-        list_of_months = ([i for i in range(sale_start_month, 13)] + [i for i in range(1, sale_end_month + 1)])\
+        list_of_months = ([i for i in range(sale_start_month, 13)] + [i for i in range(1, sale_end_month + 1)]) \
             if n_years != 0 else [i for i in range(sale_start_month, 13)]
         list_of_months += ([i for i in range(1, 13)]) * int(n_years - 1)
         print('List of months: ', list_of_months, flush=True)
@@ -710,7 +244,7 @@ class Developers_API():
 
             # Get flat parameters for each flat
             for idx_flats, i in enumerate(flats):
-                print(20*'-', 'check front: ', idx_flats, i, flush=True)
+                print(20 * '-', 'check front: ', idx_flats, i, flush=True)
                 price_meter_sq = int(i['price_meter_sq'])
                 # mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m'))  # Get month from unix
                 # yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y'))  # Get year from unix
@@ -734,7 +268,6 @@ class Developers_API():
                 # rent_quarter = rent_quarter
                 # has_elevator = has_elevator
 
-
                 # current_cluster = kmeans.predict([[longitude, latitude]])
 
                 # Determine appropriate full_sq_group based on full_sq
@@ -751,8 +284,8 @@ class Developers_API():
                 if n_years >= 0:
                     sales_volume_coeff_s += 0.1  # per one year volume grows by five percent
                     sales_volume_coeff_1 += 0.09  # per one year volume grows by five percent
-                    sales_volume_coeff_2 += 0.07   # per one year volume grows by five percent
-                    sales_volume_coeff_3 += 0.06   # per one year volume grows by five percent
+                    sales_volume_coeff_2 += 0.07  # per one year volume grows by five percent
+                    sales_volume_coeff_3 += 0.06  # per one year volume grows by five percent
                     sales_volume_coeff_4 += 0.05  # per one year volume grows by five percent
 
                     # Calculate number of studios
@@ -769,7 +302,7 @@ class Developers_API():
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=1,
                                                                                      housing_class=housing_class) * sales_volume_coeff_1)
-                        print('mm_graphic={0}, sales_value_1={1}'.format(idx_month+1, sales_value), flush=True)
+                        print('mm_graphic={0}, sales_value_1={1}'.format(idx_month + 1, sales_value), flush=True)
                         sales_value_1.append(sales_value)
 
                     # Calculate number of 2-roomed flats
@@ -852,18 +385,17 @@ class Developers_API():
 
             dt_stamp = datetime(yyyy_announce, mm_announce, 1)
 
-
             print('\nSecond graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'date': dt_stamp.strftime('%Y.%m.%d'),
-                's_price': s_price_meter_sq,
-                                   '1_price': one_roomed_price_meter_sq,
-                                   '2_price': two_roomed_price_meter_sq,
-                                   '3_price': three_roomed_price_meter_sq,
-                                   '4_price': four_roomed_price_meter_sq})
+                   's_price': s_price_meter_sq,
+                   '1_price': one_roomed_price_meter_sq,
+                   '2_price': two_roomed_price_meter_sq,
+                   '3_price': three_roomed_price_meter_sq,
+                   '4_price': four_roomed_price_meter_sq})
 
             # Collect data for second graphic
             second_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                's_price': s_price_meter_sq,
+                                   's_price': s_price_meter_sq,
                                    '1_price': one_roomed_price_meter_sq,
                                    '2_price': two_roomed_price_meter_sq,
                                    '3_price': three_roomed_price_meter_sq,
@@ -906,16 +438,17 @@ class Developers_API():
 
             print('\nThird graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  's_sold': sales_value_studio_acc,
-                                  's_all': flats_count_s}, {'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '1_sold': sales_value_1_acc,
-                                  '1_all': flats_count_1}, {'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '2_sold': sales_value_2_acc,
-                                  '2_all': flats_count_2}, {'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '3_sold': sales_value_3_acc,
-                                  '3_all': flats_count_3}, {'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '4_sold': sales_value_4_acc,
-                                  '4_all': flats_count_4})
+                   's_sold': sales_value_studio_acc,
+                   's_all': flats_count_s}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                                             '1_sold': sales_value_1_acc,
+                                             '1_all': flats_count_1}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                                                                       '2_sold': sales_value_2_acc,
+                                                                       '2_all': flats_count_2},
+                  {'date': dt_stamp.strftime('%Y.%m.%d'),
+                   '3_sold': sales_value_3_acc,
+                   '3_all': flats_count_3}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                                             '4_sold': sales_value_4_acc,
+                                             '4_all': flats_count_4})
             # print('\nThird graphic: ', third_graphic, flush=True)
 
             # '1_sold': sales_value_1_acc,
@@ -926,7 +459,6 @@ class Developers_API():
             #                                   '3_all': flats_count_3,
             #                                   '4_sold': sales_value_4_acc,
             #                                   '4_all': flats_count_4})
-
 
             # Update
             sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
@@ -998,8 +530,8 @@ class Developers_API():
         volume_19 = sale_volume_data[
             ((sale_volume_data.rooms == rooms) & (sale_volume_data.yyyy_sold == 19) & (
                     sale_volume_data.full_sq_group == full_sq_group) & (
-                     sale_volume_data.mm_sold == mm_sold)& (
-                    sale_volume_data.housing_class == housing_class))].shape[0]
+                     sale_volume_data.mm_sold == mm_sold) & (
+                     sale_volume_data.housing_class == housing_class))].shape[0]
 
         return volume_19
 
@@ -1104,10 +636,12 @@ class Developers_API():
 
 
 def predict_developers_term(longitude: float, latitude: float, floors_count: int,
-                            has_elevator: int, parking: int, time_to_metro, flats: list, housing_class: int, is_rented=0, rent_year=0,
+                            has_elevator: int, parking: int, time_to_metro, flats: list, housing_class: int,
+                            is_rented=0, rent_year=0,
                             rent_quarter=0, sale_start_month=0, sale_end_month=0,
                             sale_start_year=0, sale_end_year=0, schools_500m=0, schools_1000m=0, kindergartens_500m=0,
-                            kindergartens_1000m=0, clinics_500m=0, clinics_1000m=0, shops_500m=0, shops_1000m=0, city_id=0):
+                            kindergartens_1000m=0, clinics_500m=0, clinics_1000m=0, shops_500m=0, shops_1000m=0,
+                            city_id=0):
     # Create Class
     devAPI = Developers_API()
 
@@ -1135,14 +669,23 @@ def predict_developers_term(longitude: float, latitude: float, floors_count: int
 
     # Get answer in format: [{'month_announce': mm_announce, 'year_announce': yyyy_announce, '-1': sales_value_studio,
     #                                   '1': sales_value_1, '2': sales_value_2, '3': sales_value_3, '4': sales_value_4}, {...}]
-    first_graphic, second_graphic, third_graphic = devAPI.predict(city_id=city_id, flats=flats, has_elevator=has_elevator,
-                            is_rented=is_rented,
-                            latitude=latitude, longitude=longitude, rent_quarter=rent_quarter, rent_year=rent_year,
-                            time_to_metro=time_to_metro, schools_500m=schools_500m, schools_1000m=schools_1000m,
-                            kindergartens_500m=kindergartens_500m, kindergartens_1000m=kindergartens_1000m,
-                            clinics_500m=clinics_500m,
-                            clinics_1000m=clinics_1000m, shops_500m=shops_500m, shops_1000m=shops_1000m,
-                            housing_class=housing_class, sale_end_month=sale_end_month, sale_end_year=sale_end_year,
-                            sale_start_month=sale_start_month, sale_start_year=sale_start_year)
+    first_graphic, second_graphic, third_graphic = devAPI.predict(city_id=city_id, flats=flats,
+                                                                  has_elevator=has_elevator,
+                                                                  is_rented=is_rented,
+                                                                  latitude=latitude, longitude=longitude,
+                                                                  rent_quarter=rent_quarter, rent_year=rent_year,
+                                                                  time_to_metro=time_to_metro,
+                                                                  schools_500m=schools_500m,
+                                                                  schools_1000m=schools_1000m,
+                                                                  kindergartens_500m=kindergartens_500m,
+                                                                  kindergartens_1000m=kindergartens_1000m,
+                                                                  clinics_500m=clinics_500m,
+                                                                  clinics_1000m=clinics_1000m, shops_500m=shops_500m,
+                                                                  shops_1000m=shops_1000m,
+                                                                  housing_class=housing_class,
+                                                                  sale_end_month=sale_end_month,
+                                                                  sale_end_year=sale_end_year,
+                                                                  sale_start_month=sale_start_month,
+                                                                  sale_start_year=sale_start_year)
 
     return first_graphic, second_graphic, third_graphic

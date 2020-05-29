@@ -421,11 +421,8 @@ class Developers_API():
             # Collect data for first graphic
             first_graphic.append(
                 {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
-                 's': sum(sales_value_studio) if sum(sales_value_studio) <= flats_count_s else sales_value_studio_acc,
-                 '1': sum(sales_value_1) if sum(sales_value_1) <= max_flats_count_1 else sales_value_1_acc,
-                 '2': sum(sales_value_2) if sum(sales_value_2) <= max_flats_count_2 else sales_value_2_acc,
-                 '3': sum(sales_value_3) if sum(sales_value_3) <= max_flats_count_3 else sales_value_3_acc,
-                 '4': sum(sales_value_4) if sum(sales_value_4) <= max_flats_count_4 else sales_value_4_acc,
+                 's': sales_value_studio_acc,
+                 '1': sales_value_1_acc, '2': sales_value_2_acc, '3': sales_value_3_acc, '4': sales_value_4_acc,
                  'revenue_s':
                      float('{:.2f}'.format(revenue_s / 1000000)),
                  'revenue_1': float('{:.2f}'.format(revenue_one_roomed / 1000000)),

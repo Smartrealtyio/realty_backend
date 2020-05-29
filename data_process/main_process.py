@@ -710,7 +710,7 @@ class Developers_API():
 
             # Get flat parameters for each flat
             for idx_flats, i in enumerate(flats):
-
+                print(20*'-', 'check front: ', idx_flats, i, flush=True)
                 price_meter_sq = int(i['price_meter_sq'])
                 # mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m'))  # Get month from unix
                 # yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y'))  # Get year from unix
@@ -748,7 +748,7 @@ class Developers_API():
                 # CALCULATE SALES VOLUME FOR EACH FLAT TYPE
                 # Determine the growth rate depending on year
                 n_years = yyyy_announce - sale_start_year
-                if n_years > 0:
+                if n_years >= 0:
                     sales_volume_coeff_s += 0.1  # per one year volume grows by five percent
                     sales_volume_coeff_1 += 0.09  # per one year volume grows by five percent
                     sales_volume_coeff_2 += 0.07   # per one year volume grows by five percent

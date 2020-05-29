@@ -220,6 +220,11 @@ class Developers_API():
         sales_volume_coeff_s, sales_volume_coeff_1, sales_volume_coeff_2, sales_volume_coeff_3, \
         sales_volume_coeff_4 = 1, 1, 1, 1, 1
         max_revenue_4, max_revenue_3, max_revenue_2, max_revenue_1, max_revenue_s = 0, 0, 0, 0, 0
+        max_flats_count_s = sum([int(i['flats_count']) for i in flats if i['rooms'] == 's'])
+        max_flats_count_1 = sum([int(i['flats_count']) for i in flats if i['rooms'] == 1])
+        max_flats_count_2 = sum([int(i['flats_count']) for i in flats if i['rooms'] == 2])
+        max_flats_count_3 = sum([int(i['flats_count']) for i in flats if i['rooms'] == 3])
+        max_flats_count_4 = sum([int(i['flats_count']) for i in flats if i['rooms'] == 4])
         rooms = ''
 
         print('sale_start={0}.{1}, sale_end={2}.{3}'.format(sale_start_month, sale_start_year, sale_end_month,
@@ -241,7 +246,6 @@ class Developers_API():
         for idx_month, mm_announce in enumerate(list_of_months):
 
             # Update values with zero
-            # flats_count_s, flats_count_1, flats_count_2, flats_count_3, flats_count_4 = 0, 0, 0, 0, 0
             sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
 
             # Check if current month is January, change year + 1
@@ -295,11 +299,7 @@ class Developers_API():
                 n_years = yyyy_announce - sale_start_year
                 if n_years >= 0:
 
-                    flats_count_s += flats_count if rooms == 's' and idx_month == 0 else 0
-                    flats_count_1 += flats_count if rooms == 1 and idx_month == 0 else 0
-                    flats_count_2 += flats_count if rooms == 2 and idx_month == 0 else 0
-                    flats_count_3 += flats_count if rooms == 3 and idx_month == 0 else 0
-                    flats_count_4 += flats_count if rooms == 4 and idx_month == 0 else 0
+
 
                     # Calculate number of studios
                     if rooms == 's':
@@ -348,8 +348,8 @@ class Developers_API():
                     if rooms == 's':
                         s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce]
                         s_full_price = s_price_meter_sq * full_sq
-                        if (sum(sales_value_studio) >= flats_count_s) and (sum(sales_value_studio)!=0):
-                            revenue_s = s_full_price * flats_count_s
+                        if (sum(sales_value_studio) >= max_flats_count_s) and (sum(sales_value_studio)!=0):
+                            revenue_s = s_full_price * max_flats_count_s
                             max_revenue_s = True
                         elif sum(sales_value_studio)==0:
                             revenue_s+=0
@@ -359,8 +359,8 @@ class Developers_API():
                     if rooms == 1:
                         one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce]
                         one_roomed_full_price = one_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_1) >= flats_count_1) and (sum(sales_value_1) != 0):
-                            revenue_one_roomed = one_roomed_full_price * flats_count_1
+                        if (sum(sales_value_1) >= max_flats_count_1) and (sum(sales_value_1) != 0):
+                            revenue_one_roomed = one_roomed_full_price * max_flats_count_1
                             max_revenue_1 = True
                         elif sum(sales_value_1) == 0:
                             revenue_one_roomed += 0
@@ -369,8 +369,8 @@ class Developers_API():
                     if rooms == 2:
                         two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
                         two_roomed_full_price = two_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_2) >= flats_count_2) and (sum(sales_value_2) != 0):
-                            revenue_two_roomed = two_roomed_full_price * flats_count_2
+                        if (sum(sales_value_2) >= max_flats_count_2) and (sum(sales_value_2) != 0):
+                            revenue_two_roomed = two_roomed_full_price * max_flats_count_2
                             max_revenue_2 = True
                         elif sum(sales_value_2) == 0:
                             revenue_two_roomed += 0
@@ -379,8 +379,8 @@ class Developers_API():
                     if rooms == 3:
                         three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce]
                         three_roomed_full_price = three_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_3) >= flats_count_3) and (sum(sales_value_3) != 0):
-                            revenue_three_roomed = three_roomed_full_price * flats_count_3
+                        if (sum(sales_value_3) >= max_flats_count_3) and (sum(sales_value_3) != 0):
+                            revenue_three_roomed = three_roomed_full_price * max_flats_count_3
                             max_revenue_3 = True
                         elif sum(sales_value_3) == 0:
                             revenue_three_roomed += 0
@@ -390,8 +390,8 @@ class Developers_API():
                     if rooms == 4:
                         four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce]
                         four_roomed_full_price = four_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_4) >= flats_count_4) and (sum(sales_value_4) != 0):
-                            revenue_four_roomed = four_roomed_full_price * flats_count_4
+                        if (sum(sales_value_4) >= max_flats_count_4) and (sum(sales_value_4) != 0):
+                            revenue_four_roomed = four_roomed_full_price * max_flats_count_4
                             max_revenue_4 = True
                         elif sum(sales_value_4) == 0:
                             revenue_four_roomed += 0
@@ -414,12 +414,11 @@ class Developers_API():
             # Collect data for first graphic
             first_graphic.append(
                 {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
-                 's': sum(sales_value_studio) if sum(sales_value_studio) <= flats_count_s else flats_count_s,
-                 '1': sum(sales_value_1) if sum(sales_value_1) <= flats_count_1 else flats_count_1,
-                 '2': sum(sales_value_2) if sum(sales_value_2) <= flats_count_2 else flats_count_2,
-                 '3': sum(sales_value_3) if sum(sales_value_3) <= flats_count_3 else flats_count_3,
-                 '4': sum(sales_value_4)
-                 if sum(sales_value_4) <= flats_count_4 else flats_count_4,
+                 's': sum(sales_value_studio) if sum(sales_value_studio) <= flats_count_s else max_flats_count_s,
+                 '1': sum(sales_value_1) if sum(sales_value_1) <= max_flats_count_1 else max_flats_count_1,
+                 '2': sum(sales_value_2) if sum(sales_value_2) <= max_flats_count_2 else max_flats_count_2,
+                 '3': sum(sales_value_3) if sum(sales_value_3) <= max_flats_count_3 else max_flats_count_3,
+                 '4': sum(sales_value_4) if sum(sales_value_4) <= max_flats_count_4 else max_flats_count_4,
                  'revenue_s':
                      float('{:.2f}'.format(revenue_s / 1000000)),
                  'revenue_1': float('{:.2f}'.format(revenue_one_roomed / 1000000)),
@@ -460,48 +459,41 @@ class Developers_API():
 
 
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  's_sold': sales_value_studio_acc if sales_value_studio_acc <= flats_count_s else flats_count_s,
-                                  's_all': flats_count_s})
+                                  's_sold': sales_value_studio_acc if sales_value_studio_acc <= max_flats_count_s else max_flats_count_s,
+                                  's_all': max_flats_count_s})
             dt_stamp = datetime(yyyy_announce, mm_announce, 2)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '1_sold': sales_value_1_acc if sales_value_1_acc <= flats_count_1 else flats_count_1,
-                                  '1_all': flats_count_1})
+                                  '1_sold': sales_value_1_acc if sales_value_1_acc <= max_flats_count_1 else max_flats_count_1,
+                                  '1_all': max_flats_count_1})
             dt_stamp = datetime(yyyy_announce, mm_announce, 3)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '2_sold': sales_value_2_acc if sales_value_2_acc <= flats_count_2 else flats_count_2,
-                                  '2_all': flats_count_2})
+                                  '2_sold': sales_value_2_acc if sales_value_2_acc <= max_flats_count_2 else max_flats_count_2,
+                                  '2_all': max_flats_count_2})
             dt_stamp = datetime(yyyy_announce, mm_announce, 4)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '3_sold': sales_value_3_acc if sales_value_3_acc <= flats_count_3 else flats_count_3,
-                                  '3_all': flats_count_3})
+                                  '3_sold': sales_value_3_acc if sales_value_3_acc <= max_flats_count_3 else max_flats_count_3,
+                                  '3_all': max_flats_count_3})
             dt_stamp = datetime(yyyy_announce, mm_announce, 5)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '4_sold': sales_value_4_acc if sales_value_4_acc <= flats_count_4 else flats_count_4,
-                                  '4_all': flats_count_4})
+                                  '4_sold': sales_value_4_acc if sales_value_4_acc <= max_flats_count_4 else max_flats_count_4,
+                                  '4_all': max_flats_count_4})
 
             print('\nThird graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'date': dt_stamp.strftime('%Y.%m.%d'),
                    's_sold': sales_value_studio_acc,
-                   's_all': flats_count_s}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                   's_all': max_flats_count_s}, {'date': dt_stamp.strftime('%Y.%m.%d'),
                                              '1_sold': sales_value_1_acc,
-                                             '1_all': flats_count_1}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                                             '1_all': max_flats_count_1}, {'date': dt_stamp.strftime('%Y.%m.%d'),
                                                                        '2_sold': sales_value_2_acc,
-                                                                       '2_all': flats_count_2},
+                                                                       '2_all': max_flats_count_2},
                   {'date': dt_stamp.strftime('%Y.%m.%d'),
                    '3_sold': sales_value_3_acc,
-                   '3_all': flats_count_3}, {'date': dt_stamp.strftime('%Y.%m.%d'),
+                   '3_all': max_flats_count_3}, {'date': dt_stamp.strftime('%Y.%m.%d'),
                                              '4_sold': sales_value_4_acc,
-                                             '4_all': flats_count_4})
+                                             '4_all': max_flats_count_4})
             # print('\nThird graphic: ', third_graphic, flush=True)
 
-            # '1_sold': sales_value_1_acc,
-            #                                   '1_all': flats_count_1,
-            #                                   '2_sold': sales_value_2_acc,
-            #                                   '2_all': flats_count_2,
-            #                                   '3_sold': sales_value_3_acc,
-            #                                   '3_all': flats_count_3,
-            #                                   '4_sold': sales_value_4_acc,
-            #                                   '4_all': flats_count_4})
+
 
 
 

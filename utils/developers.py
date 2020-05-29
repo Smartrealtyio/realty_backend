@@ -358,6 +358,12 @@ class Developers_API():
                         revenue_four_roomed += four_roomed_full_price * sales_value_4[-1] if len(
                             sales_value_4) != 0 else 0
 
+                flats_count_s = flats_count if rooms == 's' else flats_count_s
+                flats_count_1 = flats_count if rooms == 1 else flats_count_1
+                flats_count_2 = flats_count if rooms == 2 else flats_count_2
+                flats_count_3 = flats_count if rooms == 3 else flats_count_3
+                flats_count_4 = flats_count if rooms == 4 else flats_count_4
+
             print('\nFirst graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
                    's': sum(sales_value_studio),
@@ -415,11 +421,7 @@ class Developers_API():
             sales_value_2_acc += sum(sales_value_2)
             sales_value_3_acc += sum(sales_value_3)
             sales_value_4_acc += sum(sales_value_4)
-            flats_count_s = flats_count if rooms == 's' else flats_count_s
-            flats_count_1 = flats_count if rooms == 1 else flats_count_1
-            flats_count_2 = flats_count if rooms == 2 else flats_count_2
-            flats_count_3 = flats_count if rooms == 3 else flats_count_3
-            flats_count_4 = flats_count if rooms == 4 else flats_count_4
+
 
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   's_sold': sales_value_studio_acc,

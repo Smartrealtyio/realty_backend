@@ -411,9 +411,9 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             term = 0
             if l[-1].get('y') > current_flat.get('y') > l[0].get('y'):
                 for i in enumerate(l):
-
-                    if l[i[0]].get('y') <= current_flat.get('y') < l[i[0] + 1].get('x'):
-
+                    print(i)
+                    if l[i[0]].get('y') <= current_flat.get('y') < l[i[0] + 1].get('y'):
+                        print('!')
                         current_flat['x'] = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
                         term = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
                         break
@@ -421,7 +421,8 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             return current_flat, term
 
         # Find actual term for current flat price
-        if (list_of_dicts[-1].get('y') > current_flat.get('y') > list_of_dicts[0].get('y')) and len(list_of_dicts) > 2:
+        if (list_of_dicts[-1].get('y') > current_flat.get('y') > list_of_dicts[0].get('y')) and len(set([i['x'] for  i in list_of_dicts])) > 2:
+            print('length unique list_of_dicts = {0}'.format(len(set([i['x'] for  i in list_of_dicts]))))
             current_flat, term = find_term(l=list_of_dicts, current_flat=current_flat)
         else:
             answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}

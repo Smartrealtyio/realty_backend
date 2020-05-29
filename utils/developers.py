@@ -359,12 +359,7 @@ class Developers_API():
                         elif not max_revenue_s:
                             revenue_s += s_full_price * sales_value_studio[-1]
 
-                        if sum(sales_value_studio) >= max_flats_count_s and idx_month == 0:
-                            s_answ = max_flats_count_s
-                        elif sum(sales_value_studio) >= max_flats_count_s and idx_month != 0:
-                            s_answ = 0
-                        elif sum(sales_value_studio) < max_flats_count_s:
-                            s_answ = sales_value_studio[-1]
+
 
                     if rooms == 1:
                         one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce] * price_coeff
@@ -377,12 +372,7 @@ class Developers_API():
                         elif not max_revenue_1:
                             revenue_one_roomed += one_roomed_full_price * sales_value_1[-1]
 
-                        if sum(sales_value_1) >= max_flats_count_1 and idx_month == 0:
-                            answ_1 = max_flats_count_1
-                        elif sum(sales_value_1) >= max_flats_count_1 and idx_month != 0:
-                            answ_1 = 0
-                        elif sum(sales_value_1) < max_flats_count_1:
-                            answ_1 = sales_value_1[-1]
+
 
                     if rooms == 2:
                         two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce] * price_coeff
@@ -395,12 +385,7 @@ class Developers_API():
                         elif not max_revenue_2:
                             revenue_two_roomed += two_roomed_full_price * sales_value_2[-1]
 
-                        if sum(sales_value_2) >= max_flats_count_2 and idx_month == 0:
-                            answ_2 = max_flats_count_2
-                        elif sum(sales_value_2) >= max_flats_count_2 and idx_month != 0:
-                            answ_2 = 0
-                        elif sum(sales_value_2) < max_flats_count_2:
-                            answ_2 = sales_value_2[-1]
+
 
                     if rooms == 3:
                         three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce] * price_coeff
@@ -413,12 +398,6 @@ class Developers_API():
                         elif not max_revenue_3:
                             revenue_three_roomed += three_roomed_full_price * sales_value_3[-1]
 
-                        if sum(sales_value_3) >= max_flats_count_3 and idx_month == 0:
-                            answ_3 = max_flats_count_3
-                        elif sum(sales_value_3) >= max_flats_count_3 and idx_month != 0:
-                            answ_3 = 0
-                        elif sum(sales_value_3) < max_flats_count_3:
-                            answ_3 = sales_value_3[-1]
 
 
                     if rooms == 4:
@@ -438,6 +417,46 @@ class Developers_API():
                             answ_4 = 0
                         elif sum(sales_value_4) < max_flats_count_4:
                             answ_4 = sales_value_4[-1]
+
+
+            if rooms == 's':
+                if sum(sales_value_studio) >= max_flats_count_s and idx_month == 0:
+                    s_answ = max_flats_count_s
+                elif sum(sales_value_studio) >= max_flats_count_s and idx_month != 0:
+                    s_answ = 0
+                elif sum(sales_value_studio) < max_flats_count_s:
+                    s_answ = sales_value_studio[-1]
+
+            if rooms == 1:
+                if sum(sales_value_1) >= max_flats_count_1 and idx_month == 0:
+                    answ_1 = max_flats_count_1
+                elif sum(sales_value_1) >= max_flats_count_1 and idx_month != 0:
+                    answ_1 = 0
+                elif sum(sales_value_1) < max_flats_count_1:
+                    answ_1 = sales_value_1[-1]
+
+            if rooms == 2:
+                if sum(sales_value_2) >= max_flats_count_2 and idx_month == 0:
+                    answ_2 = max_flats_count_2
+                elif sum(sales_value_2) >= max_flats_count_2 and idx_month != 0:
+                    answ_2 = 0
+                elif sum(sales_value_2) < max_flats_count_2:
+                    answ_2 = sales_value_2[-1]
+            if rooms == 3:
+                if sum(sales_value_3) >= max_flats_count_3 and idx_month == 0:
+                    answ_3 = max_flats_count_3
+                elif sum(sales_value_3) >= max_flats_count_3 and idx_month != 0:
+                    answ_3 = 0
+                elif sum(sales_value_3) < max_flats_count_3:
+                    answ_3 = sales_value_3[-1]
+
+            if rooms == 4:
+                if sum(sales_value_4) >= max_flats_count_4 and idx_month == 0:
+                    answ_4 = max_flats_count_4
+                elif sum(sales_value_4) >= max_flats_count_4 and idx_month != 0:
+                    answ_4 = 0
+                elif sum(sales_value_4) < max_flats_count_4:
+                    answ_4 = sales_value_4[-1]
 
             # Accumulated sales values for each flat_type
             sales_value_studio_acc += sum(sales_value_studio)

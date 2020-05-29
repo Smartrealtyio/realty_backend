@@ -749,11 +749,11 @@ class Developers_API():
                 # Determine the growth rate depending on year
                 n_years = yyyy_announce - sale_start_year
                 if n_years > 0:
-                    sales_volume_coeff_s += 0.1 * n_years # per one year volume grows by five percent
-                    sales_volume_coeff_1 += 0.09 * n_years  # per one year volume grows by five percent
-                    sales_volume_coeff_2 += 0.07 * n_years  # per one year volume grows by five percent
-                    sales_volume_coeff_3 += 0.06 * n_years  # per one year volume grows by five percent
-                    sales_volume_coeff_4 += 0.05 * n_years  # per one year volume grows by five percent
+                    sales_volume_coeff_s += 0.1  # per one year volume grows by five percent
+                    sales_volume_coeff_1 += 0.09  # per one year volume grows by five percent
+                    sales_volume_coeff_2 += 0.07   # per one year volume grows by five percent
+                    sales_volume_coeff_3 += 0.06   # per one year volume grows by five percent
+                    sales_volume_coeff_4 += 0.05  # per one year volume grows by five percent
 
                     # Calculate number of studios
                     if rooms == 's':
@@ -769,6 +769,7 @@ class Developers_API():
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=1,
                                                                                      housing_class=housing_class) * sales_volume_coeff_1)
+                        print('mm_graphic={0}, sales_value_1={1}'.format(idx_month+1, sales_value))
                         sales_value_1.append(sales_value)
 
                     # Calculate number of 2-roomed flats
@@ -777,6 +778,7 @@ class Developers_API():
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=2,
                                                                                      housing_class=housing_class) * sales_volume_coeff_2)
+                        print('mm_graphic={0}, sales_value_2={1}'.format(idx_month + 1, sales_value))
                         sales_value_2.append(sales_value)
 
                     # Calculate number of 3-roomed flats
@@ -785,6 +787,7 @@ class Developers_API():
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=3,
                                                                                      housing_class=housing_class) * sales_volume_coeff_3)
+                        print('mm_graphic={0}, sales_value_3={1}'.format(idx_month + 1, sales_value))
                         sales_value_3.append(sales_value)
 
                     # Calculate number of 4-roomed flats

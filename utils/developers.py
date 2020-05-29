@@ -289,6 +289,12 @@ class Developers_API():
                     sales_volume_coeff_3 += 0.06  # per one year volume grows by five percent
                     sales_volume_coeff_4 += 0.05  # per one year volume grows by five percent
 
+                    flats_count_s = flats_count if rooms == 's' else flats_count_s
+                    flats_count_1 = flats_count if rooms == 1 else flats_count_1
+                    flats_count_2 = flats_count if rooms == 2 else flats_count_2
+                    flats_count_3 = flats_count if rooms == 3 else flats_count_3
+                    flats_count_4 = flats_count if rooms == 4 else flats_count_4
+
                     # Calculate number of studios
                     if rooms == 's':
                         sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
@@ -336,33 +342,50 @@ class Developers_API():
                     if rooms == 's':
                         s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce]
                         s_full_price = s_price_meter_sq * full_sq
-                        revenue_s += s_full_price * sales_value_studio[-1] if len(sales_value_studio) != 0 else 0
+                        if (sum(sales_value_studio) <= flats_count_s) and (sum(sales_value_studio)!=0):
+                            revenue_s += s_full_price * sales_value_studio[-1]
+                        elif sum(sales_value_studio)==0:
+                            revenue_s+=0
+                        else:
+                            revenue_s=s_full_price*flats_count_s
                     if rooms == 1:
                         one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce]
                         one_roomed_full_price = one_roomed_price_meter_sq * full_sq
-                        revenue_one_roomed += one_roomed_full_price * sales_value_1[-1] if len(
-                            sales_value_1) != 0 else 0
+                        if (sum(sales_value_1) <= flats_count_1) and (sum(sales_value_1) != 0):
+                            revenue_one_roomed += one_roomed_full_price * sales_value_1[-1]
+                        elif sum(sales_value_1) == 0:
+                            revenue_one_roomed += 0
+                        else:
+                            revenue_one_roomed = one_roomed_full_price * flats_count_1
                     if rooms == 2:
                         two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
                         two_roomed_full_price = two_roomed_price_meter_sq * full_sq
-                        revenue_two_roomed += two_roomed_full_price * sales_value_2[-1] if len(
-                            sales_value_2) != 0 else 0
+                        if (sum(sales_value_2) <= flats_count_2) and (sum(sales_value_2) != 0):
+                            revenue_two_roomed += two_roomed_full_price * sales_value_2[-1]
+                        elif sum(sales_value_2) == 0:
+                            revenue_two_roomed += 0
+                        else:
+                            revenue_two_roomed = two_roomed_full_price * flats_count_2
                     if rooms == 3:
                         three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce]
                         three_roomed_full_price = three_roomed_price_meter_sq * full_sq
-                        revenue_three_roomed += three_roomed_full_price * sales_value_3[-1] if len(
-                            sales_value_3) != 0 else 0
+                        if (sum(sales_value_3) <= flats_count_3) and (sum(sales_value_3) != 0):
+                            revenue_three_roomed += three_roomed_full_price * sales_value_3[-1]
+                        elif sum(sales_value_3) == 0:
+                            revenue_three_roomed += 0
+                        else:
+                            revenue_three_roomed = three_roomed_full_price * flats_count_3
                     if rooms == 4:
                         four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce]
                         four_roomed_full_price = four_roomed_price_meter_sq * full_sq
-                        revenue_four_roomed += four_roomed_full_price * sales_value_4[-1] if len(
-                            sales_value_4) != 0 else 0
+                        if (sum(sales_value_4) <= flats_count_4) and (sum(sales_value_4) != 0):
+                            revenue_four_roomed += four_roomed_full_price * sales_value_4[-1]
+                        elif sum(sales_value_4) == 0:
+                            revenue_four_roomed += 0
+                        else:
+                            revenue_four_roomed = four_roomed_full_price * flats_count_4
 
-                flats_count_s = flats_count if rooms == 's' else flats_count_s
-                flats_count_1 = flats_count if rooms == 1 else flats_count_1
-                flats_count_2 = flats_count if rooms == 2 else flats_count_2
-                flats_count_3 = flats_count if rooms == 3 else flats_count_3
-                flats_count_4 = flats_count if rooms == 4 else flats_count_4
+
 
             print('\nFirst graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
@@ -424,23 +447,23 @@ class Developers_API():
 
 
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  's_sold': sales_value_studio_acc,
+                                  's_sold': sales_value_studio_acc if sales_value_studio_acc <= flats_count_s else flats_count_s,
                                   's_all': flats_count_s})
             dt_stamp = datetime(yyyy_announce, mm_announce, 2)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '1_sold': sales_value_1_acc,
+                                  '1_sold': sales_value_1_acc if sales_value_1_acc <= flats_count_1 else flats_count_1,
                                   '1_all': flats_count_1})
             dt_stamp = datetime(yyyy_announce, mm_announce, 3)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '2_sold': sales_value_2_acc,
+                                  '2_sold': sales_value_2_acc if sales_value_2_acc <= flats_count_2 else flats_count_2,
                                   '2_all': flats_count_2})
             dt_stamp = datetime(yyyy_announce, mm_announce, 4)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '3_sold': sales_value_3_acc,
+                                  '3_sold': sales_value_3_acc if sales_value_3_acc <= flats_count_3 else flats_count_3,
                                   '3_all': flats_count_3})
             dt_stamp = datetime(yyyy_announce, mm_announce, 5)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '4_sold': sales_value_4_acc,
+                                  '4_sold': sales_value_4_acc if sales_value_4_acc <= flats_count_4 else flats_count_4,
                                   '4_all': flats_count_4})
 
             print('\nThird graphic: \nMonth_graphic={0} '.format(idx_month))

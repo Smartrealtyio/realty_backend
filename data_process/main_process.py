@@ -421,8 +421,9 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             return current_flat, term
 
         # Find actual term for current flat price
-        if (list_of_dicts[-1].get('y') > current_flat.get('y') > list_of_dicts[0].get('y')) and len(set([i['x'] for  i in list_of_dicts])) > 2:
-            print('length unique list_of_dicts = {0}'.format(len(set([i['x'] for  i in list_of_dicts]))))
+        if (list_of_dicts[-1].get('y') > current_flat.get('y') > list_of_dicts[0].get('y')) and \
+                len(set([i['x'] for  i in list_of_dicts])) > 2 and list_of_terms[-1] > list_of_terms[0]:
+            print('Number of unique term valus in list_of_dicts = {0}'.format(len(set([i['x'] for  i in list_of_dicts]))))
             current_flat, term = find_term(l=list_of_dicts, current_flat=current_flat)
         else:
             answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}

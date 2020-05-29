@@ -444,15 +444,13 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                     terms.append(list_of_dicts[i].get('x'))
             return result
 
-        if len(list_of_dicts) > 2:
+        if len(set([i['x'] for  i in list_of_dicts])) > 2:
             list_of_dicts = select_unique_term_price_pairs(list_of_dicts)
         else:
             answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
             return answ
 
-        # Check if list not empty
-        # oops = 1 if len(list_of_dicts) <= 2 else 0
-        # list_of_dicts = [{"x": 0, 'y': 0}] if oops else list_of_dicts
+
 
         def check(l: list, current_flat):
             for i in l:
@@ -757,80 +755,94 @@ class Developers_API():
                     sales_volume_coeff_3 += 0.06 * n_years  # per one year volume grows by five percent
                     sales_volume_coeff_4 += 0.05 * n_years  # per one year volume grows by five percent
 
+                    # Calculate number of studios
+                    if rooms == 's':
+                        sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                     mm_sold=mm_announce,
+                                                                                     rooms=0,
+                                                                                     housing_class=housing_class) * sales_volume_coeff_s)
+                        sales_value_studio.append(sales_value)
 
+                    # Calculate number of 1-roomed flats
+                    if rooms == 1:
+                        sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                     mm_sold=mm_announce,
+                                                                                     rooms=1,
+                                                                                     housing_class=housing_class) * sales_volume_coeff_1)
+                        sales_value_1.append(sales_value)
 
-                # Calculate number of studios
-                if rooms == 's':
-                    sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                  mm_sold=mm_announce,
-                                                                                  rooms=0, housing_class=housing_class) * sales_volume_coeff_s)
-                    sales_value_studio.append(sales_value)
+                    # Calculate number of 2-roomed flats
+                    if rooms == 2:
+                        sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                     mm_sold=mm_announce,
+                                                                                     rooms=2,
+                                                                                     housing_class=housing_class) * sales_volume_coeff_2)
+                        sales_value_2.append(sales_value)
 
-                # Calculate number of 1-roomed flats
-                if rooms == 1:
-                    sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                             mm_sold=mm_announce,
-                                                                             rooms=1, housing_class=housing_class) * sales_volume_coeff_1)
-                    sales_value_1.append(sales_value)
+                    # Calculate number of 3-roomed flats
+                    if rooms == 3:
+                        sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                     mm_sold=mm_announce,
+                                                                                     rooms=3,
+                                                                                     housing_class=housing_class) * sales_volume_coeff_3)
+                        sales_value_3.append(sales_value)
 
-                # Calculate number of 2-roomed flats
-                if rooms == 2:
-                    sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                             mm_sold=mm_announce,
-                                                                             rooms=2, housing_class=housing_class) * sales_volume_coeff_2)
-                    sales_value_2.append(sales_value)
+                    # Calculate number of 4-roomed flats
+                    if rooms == 4:
+                        sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                     mm_sold=mm_announce,
+                                                                                     rooms=4,
+                                                                                     housing_class=housing_class) * sales_volume_coeff_4)
+                        sales_value_4.append(sales_value)
 
-                # Calculate number of 3-roomed flats
-                if rooms == 3:
-                    sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                             mm_sold=mm_announce,
-                                                                             rooms=3, housing_class=housing_class) * sales_volume_coeff_3)
-                    sales_value_3.append(sales_value)
-
-                # Calculate number of 4-roomed flats
-                if rooms == 4:
-                    sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                             mm_sold=mm_announce,
-                                                                             rooms=4, housing_class=housing_class) * sales_volume_coeff_4)
-                    sales_value_4.append(sales_value)
-
-
-                # Calculate revenue for each type and change price depeneding on the month
-                if rooms == 's':
-                    s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce]
-                    s_full_price = s_price_meter_sq * full_sq
-                    revenue_s += s_full_price*sales_value_studio[-1] if len(sales_value_studio) !=0 else 0
-                if rooms == 1:
-                    one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce]
-                    one_roomed_full_price = s_price_meter_sq * full_sq
-                    revenue_one_roomed += one_roomed_full_price * sales_value_1[-1] if len(sales_value_1) !=0 else 0
-                if rooms == 2:
-                    two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
-                    two_roomed_full_price = two_roomed_price_meter_sq * full_sq
-                    revenue_two_roomed += two_roomed_full_price * sales_value_2[-1] if len(sales_value_2) !=0 else 0
-                if rooms == 3:
-                    three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce]
-                    three_roomed_full_price = three_roomed_price_meter_sq * full_sq
-                    revenue_three_roomed += three_roomed_full_price * sales_value_3[-1] if len(sales_value_3) !=0 else 0
-                if rooms == 4:
-                    four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce]
-                    four_roomed_full_price = four_roomed_price_meter_sq * full_sq
-                    revenue_four_roomed += four_roomed_full_price * sales_value_4[-1] if len(sales_value_4) !=0 else 0
+                    # Calculate revenue for each type and change price depeneding on the month
+                    if rooms == 's':
+                        s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce]
+                        s_full_price = s_price_meter_sq * full_sq
+                        revenue_s += s_full_price * sales_value_studio[-1] if len(sales_value_studio) != 0 else 0
+                    if rooms == 1:
+                        one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce]
+                        one_roomed_full_price = one_roomed_price_meter_sq * full_sq
+                        revenue_one_roomed += one_roomed_full_price * sales_value_1[-1] if len(
+                            sales_value_1) != 0 else 0
+                    if rooms == 2:
+                        two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce]
+                        two_roomed_full_price = two_roomed_price_meter_sq * full_sq
+                        revenue_two_roomed += two_roomed_full_price * sales_value_2[-1] if len(
+                            sales_value_2) != 0 else 0
+                    if rooms == 3:
+                        three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce]
+                        three_roomed_full_price = three_roomed_price_meter_sq * full_sq
+                        revenue_three_roomed += three_roomed_full_price * sales_value_3[-1] if len(
+                            sales_value_3) != 0 else 0
+                    if rooms == 4:
+                        four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce]
+                        four_roomed_full_price = four_roomed_price_meter_sq * full_sq
+                        revenue_four_roomed += four_roomed_full_price * sales_value_4[-1] if len(
+                            sales_value_4) != 0 else 0
 
             print('\nFirst graphic: \nMonth_graphic={0} '.format(idx_month))
-            print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month +1,'s': sum(sales_value_studio),
-                 '1': sum(sales_value_1), '2': sum(sales_value_2), '3': sum(sales_value_3), '4': sum(sales_value_4), 'revenue_s':
-                     float('{:.2f}'.format(revenue_s/1000000)), 'revenue_1': float('{:.2f}'.format(revenue_one_roomed/1000000)),
-            'revenue_2': float('{:.2f}'.format(revenue_two_roomed/1000000)), 'revenue_3': float('{:.2f}'.format(revenue_three_roomed/1000000)),
-                 'revenue_4': float('{:.2f}'.format(revenue_four_roomed/1000000))})
+            print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
+                   's': sum(sales_value_studio),
+                   '1': sum(sales_value_1), '2': sum(sales_value_2), '3': sum(sales_value_3), '4': sum(sales_value_4),
+                   'revenue_s':
+                       float('{:.2f}'.format(revenue_s / 1000000)),
+                   'revenue_1': float('{:.2f}'.format(revenue_one_roomed / 1000000)),
+                   'revenue_2': float('{:.2f}'.format(revenue_two_roomed / 1000000)),
+                   'revenue_3': float('{:.2f}'.format(revenue_three_roomed / 1000000)),
+                   'revenue_4': float('{:.2f}'.format(revenue_four_roomed / 1000000))})
 
             # Collect data for first graphic
             first_graphic.append(
-                {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month +1,'s': sum(sales_value_studio),
-                 '1': sum(sales_value_1), '2': sum(sales_value_2), '3': sum(sales_value_3), '4': sum(sales_value_4), 'revenue_s':
-                     float('{:.2f}'.format(revenue_s/1000000)), 'revenue_1': float('{:.2f}'.format(revenue_one_roomed/1000000)),
-            'revenue_2': float('{:.2f}'.format(revenue_two_roomed/1000000)), 'revenue_3': float('{:.2f}'.format(revenue_three_roomed/1000000)),
-                 'revenue_4': float('{:.2f}'.format(revenue_four_roomed/1000000))})
+                {'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
+                 's': sum(sales_value_studio),
+                 '1': sum(sales_value_1), '2': sum(sales_value_2), '3': sum(sales_value_3), '4': sum(sales_value_4),
+                 'revenue_s':
+                     float('{:.2f}'.format(revenue_s / 1000000)),
+                 'revenue_1': float('{:.2f}'.format(revenue_one_roomed / 1000000)),
+                 'revenue_2': float('{:.2f}'.format(revenue_two_roomed / 1000000)),
+                 'revenue_3': float('{:.2f}'.format(revenue_three_roomed / 1000000)),
+                 'revenue_4': float('{:.2f}'.format(revenue_four_roomed / 1000000))})
 
             # print('\nFirst graphic: ', first_graphic, flush=True)
             # Convert mm and year to datetime format

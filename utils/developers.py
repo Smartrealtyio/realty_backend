@@ -258,6 +258,7 @@ class Developers_API():
                 sales_volume_coeff_2 += 0.07  # per one year volume grows by five percent
                 sales_volume_coeff_3 += 0.06  # per one year volume grows by five percent
                 sales_volume_coeff_4 += 0.05  # per one year volume grows by five percent
+                max_revenue_4, max_revenue_3, max_revenue_2, max_revenue_1, max_revenue_s = 0, 0, 0, 0, 0
 
 
             # Get flat parameters for each flat

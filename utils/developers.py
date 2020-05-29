@@ -351,10 +351,10 @@ class Developers_API():
                     if rooms == 's':
                         s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce] * price_coeff
                         s_full_price = s_price_meter_sq * full_sq
-                        if (sum(sales_value_studio) >= max_flats_count_s) and (sum(sales_value_studio)!=0):
+                        if (sales_value_studio_acc >= max_flats_count_s) and (sales_value_studio_acc!=0):
                             revenue_s = s_full_price * max_flats_count_s
                             max_revenue_s = True
-                        elif sum(sales_value_studio)==0:
+                        elif sales_value_studio_acc==0:
                             revenue_s+=0
                         elif not max_revenue_s:
                             revenue_s += s_full_price * sales_value_studio[-1]
@@ -362,30 +362,30 @@ class Developers_API():
                     if rooms == 1:
                         one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce] * price_coeff
                         one_roomed_full_price = one_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_1) >= max_flats_count_1) and (sum(sales_value_1) != 0):
+                        if (sales_value_1_acc >= max_flats_count_1) and (sales_value_1_acc != 0):
                             revenue_one_roomed = one_roomed_full_price * max_flats_count_1
                             max_revenue_1 = True
-                        elif sum(sales_value_1) == 0:
+                        elif sales_value_1_acc == 0:
                             revenue_one_roomed += 0
                         elif not max_revenue_1:
                             revenue_one_roomed += one_roomed_full_price * sales_value_1[-1]
                     if rooms == 2:
-                        two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce] *  price_coeff
+                        two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce] * price_coeff
                         two_roomed_full_price = two_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_2) >= max_flats_count_2) and (sum(sales_value_2) != 0):
+                        if (sales_value_2_acc >= max_flats_count_2) and (sales_value_2_acc != 0):
                             revenue_two_roomed = two_roomed_full_price * max_flats_count_2
                             max_revenue_2 = True
-                        elif sum(sales_value_2) == 0:
+                        elif sales_value_2_acc == 0:
                             revenue_two_roomed += 0
                         elif not max_revenue_2:
                             revenue_two_roomed += two_roomed_full_price * sales_value_2[-1]
                     if rooms == 3:
                         three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce] * price_coeff
                         three_roomed_full_price = three_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_3) >= max_flats_count_3) and (sum(sales_value_3) != 0):
+                        if (sales_value_3_acc >= max_flats_count_3) and (sales_value_3_acc != 0):
                             revenue_three_roomed = three_roomed_full_price * max_flats_count_3
                             max_revenue_3 = True
-                        elif sum(sales_value_3) == 0:
+                        elif sales_value_3_acc == 0:
                             revenue_three_roomed += 0
                         elif not max_revenue_3:
                             revenue_three_roomed += three_roomed_full_price * sales_value_3[-1]
@@ -393,10 +393,10 @@ class Developers_API():
                     if rooms == 4:
                         four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce] * price_coeff
                         four_roomed_full_price = four_roomed_price_meter_sq * full_sq
-                        if (sum(sales_value_4) >= max_flats_count_4) and (sum(sales_value_4) != 0):
+                        if (sales_value_4_acc >= max_flats_count_4) and (sales_value_4_acc != 0):
                             revenue_four_roomed = four_roomed_full_price * max_flats_count_4
                             max_revenue_4 = True
-                        elif sum(sales_value_4) == 0:
+                        elif sales_value_4_acc == 0:
                             revenue_four_roomed += 0
                         elif not max_revenue_4:
                             revenue_four_roomed += four_roomed_full_price * sales_value_4[-1]

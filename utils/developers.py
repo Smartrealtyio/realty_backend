@@ -461,23 +461,23 @@ class Developers_API():
 
 
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  's_sold': sales_value_studio_acc ,
+                                  's_sold':  sales_value_studio_acc if sales_value_studio_acc < max_flats_count_s else max_flats_count_s,
                                   's_all': max_flats_count_s})
             dt_stamp = datetime(yyyy_announce, mm_announce, 2)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '1_sold': sales_value_1_acc ,
+                                  '1_sold':  sales_value_1_acc if sales_value_1_acc < max_flats_count_1 else max_flats_count_1,
                                   '1_all': max_flats_count_1})
             dt_stamp = datetime(yyyy_announce, mm_announce, 3)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '2_sold': sales_value_2_acc ,
+                                  '2_sold':  sales_value_2_acc if sales_value_2_acc < max_flats_count_2 else max_flats_count_2,
                                   '2_all': max_flats_count_2})
             dt_stamp = datetime(yyyy_announce, mm_announce, 4)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '3_sold': sales_value_3_acc ,
+                                  '3_sold':  sales_value_3_acc if sales_value_3_acc < max_flats_count_3 else max_flats_count_3,
                                   '3_all': max_flats_count_3})
             dt_stamp = datetime(yyyy_announce, mm_announce, 5)
             third_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '4_sold': sales_value_4_acc ,
+                                  '4_sold':  sales_value_4_acc if sales_value_4_acc < max_flats_count_4 else max_flats_count_4,
                                   '4_all': max_flats_count_4})
 
             print('\nThird graphic: \nMonth_graphic={0} '.format(idx_month))

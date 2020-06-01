@@ -64,6 +64,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             gbr = load(PATH_PRICE_GBR_MOSCOW_D)
             rf = load(PATH_PRICE_RF_MOSCOW_D)
             lgbm = load(PATH_PRICE_LGBM_MOSCOW_D)
+            print("Pretrained models loaded! Moscow")
 
             city_center_lon = 37.619291
             city_center_lat = 55.751474
@@ -96,6 +97,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             gbr = load(PATH_PRICE_GBR_SPB_D)
             rf = load(PATH_PRICE_RF_SPB_D)
             lgbm = load(PATH_PRICE_LGBM_SPB_D)
+            print("Pretrained models loaded! Spb")
 
             city_center_lon = 30.315239
             city_center_lat = 59.940735
@@ -195,17 +197,17 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
     ####################
 
     # Remove price and term outliers (out of 3 sigmas)
-    data1 = data[(np.abs(stats.zscore(data.price)) < 3)]
-    data2 = data[(np.abs(stats.zscore(data.term)) < 3)]
+    data = data[((np.abs(stats.zscore(data.price)) < 3) & (np.abs(stats.zscore(data.term)) < 3))]
+    print("Outliers removed", flush=True)
 
-    data = pd.merge(data1, data2, on=list(data.columns), how='left')
+    # data = pd.merge(data1, data2, on=list(data.columns), how='left')
 
     # Fill NaN if it appears after merging
     data[['term']] = data[['term']].fillna(data[['term']].mean())
 
     # Create subsample of flats from same cluster (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_cluster[0]]
-    print('Shape of current cluster: {0}'.format(df_for_current_label.shape))
+    print('Shape of current cluster: {0}'.format(df_for_current_label.shape), flush=True)
 
     # Check if subsample size have more than 3 samples
     if df_for_current_label.shape[0] < 3:
@@ -241,6 +243,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
             # Create LinearModel and fitting
             reg = LinearRegression().fit(X, y)
+            print("Term linear regression fitted", flush=True)
             return reg
 
         def larger(p=0, percent=2):

@@ -360,6 +360,13 @@ class Developers_API():
                                                                                  housing_class=housing_class) * sales_volume_coeff_4)
                     sales_value_4.append(sales_value_4roomed)
 
+                # Accumulated sales values for each flat_type
+                sales_value_studio_acc += sum(sales_value_studio)
+                sales_value_1_acc += sum(sales_value_1)
+                sales_value_2_acc += sum(sales_value_2)
+                sales_value_3_acc += sum(sales_value_3)
+                sales_value_4_acc += sum(sales_value_4)
+
                 # Calculate revenue for each type and change price depending on the month
                 if rooms == 's' and not max_revenue_s:
                     s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce] * price_coeff
@@ -432,12 +439,7 @@ class Developers_API():
 
 
 
-                # Accumulated sales values for each flat_type
-                sales_value_studio_acc += sum(sales_value_studio)
-                sales_value_1_acc += sum(sales_value_1)
-                sales_value_2_acc += sum(sales_value_2)
-                sales_value_3_acc += sum(sales_value_3)
-                sales_value_4_acc += sum(sales_value_4)
+
 
             s_answ, update_s = (sales_value_studio_acc, 1) if (0 <= sales_value_studio_acc < max_flats_count_s and update_s) else (max_flats_count_s, 0)
             answ_1, update_1 = (sales_value_1_acc, 1) if (0 <= sales_value_1_acc < max_flats_count_1 and update_1) else (max_flats_count_1, False)

@@ -337,7 +337,8 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         if (list_of_dicts[-1].get('y') > current_flat.get('y') > list_of_dicts[0].get('y')) and \
                 len(set([i['x'] for i in list_of_dicts])) > 2 and list_of_terms[-1] > list_of_terms[0]:
             print(
-                'Number of unique term valus in list_of_dicts = {0}'.format(len(set([i['x'] for i in list_of_dicts]))))
+                'Number of unique term valus in list_of_dicts = {0}'.format(len(set([i['x'] for i in list_of_dicts]))),
+            flush=True)
             current_flat, term = find_term(l=list_of_dicts, current_flat=current_flat)
         else:
             answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
@@ -375,6 +376,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         print('not oops', flush=True)
         # Check if all dict's keys and values in list are unique
         list_of_dicts = check(list_of_dicts, current_flat)
+        print(len(set([i['x'] for i in list_of_dicts])), flush=True)
 
         # # Update list of dicts with current flat
         # list_of_dicts.insert(0, current_flat)

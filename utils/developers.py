@@ -220,6 +220,7 @@ class Developers_API():
         # Initial price_meter_sq for each flat_type
         s_price_meter_sq, one_roomed_price_meter_sq, two_roomed_price_meter_sq, three_roomed_price_meter_sq, \
         four_roomed_price_meter_sq = 0, 0, 0, 0, 0
+        update_s, update_1, update_2, update_3, update_4 = 1, 1, 1, 1, 1
         # Initial sales value for each flat_type
         sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
         # Accumulated sales value for each flat_type
@@ -438,11 +439,11 @@ class Developers_API():
                 sales_value_3_acc += sum(sales_value_3)
                 sales_value_4_acc += sum(sales_value_4)
 
-            s_answ = sum(sales_value_studio) if 0 <= sales_value_studio_acc <= max_flats_count_s else max_flats_count_s
-            answ_1 = sales_value_1_acc if 0 <= sales_value_1_acc <= max_flats_count_1 else max_flats_count_1
-            answ_2 = sales_value_2_acc if 0 <= sales_value_2_acc <= max_flats_count_2 else max_flats_count_2
-            answ_3 = sales_value_3_acc if 0 <= sales_value_3_acc <= max_flats_count_3 else max_flats_count_3
-            answ_4 = sales_value_4_acc if 0 <= sales_value_4_acc <= max_flats_count_4 else max_flats_count_4
+            s_answ, update_s = (sales_value_studio_acc, 1) if (0 <= sales_value_studio_acc < max_flats_count_s and update_s) else (max_flats_count_s, 0)
+            answ_1, update_1 = (sales_value_1_acc, 1) if (0 <= sales_value_1_acc < max_flats_count_1 and update_1) else (max_flats_count_1, False)
+            answ_2, update_2 = (sales_value_2_acc, 1) if (0 <= sales_value_2_acc < max_flats_count_2 and update_2) else (max_flats_count_2, False)
+            answ_3, udpate_3 = (sales_value_3_acc, 1) if (0 <= sales_value_3_acc < max_flats_count_3 and update_3) else (max_flats_count_3, False)
+            answ_4, udpate_4 = (sales_value_4_acc, 1) if (0 <= sales_value_4_acc < max_flats_count_4 and udpate_4) else (max_flats_count_4, 0)
 
             print('\nFirst graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,

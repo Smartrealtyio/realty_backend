@@ -29,14 +29,15 @@ class Developers_API():
     # Load data from csv
     def load_data(self, spb_new: str, spb_vtor: str, msc_new: str, msc_vtor: str):
 
-        spb_new = pd.read_csv(spb_new)
-        spb_vtor = pd.read_csv(spb_vtor)
+        # spb_new = pd.read_csv(spb_new)
+        # spb_vtor = pd.read_csv(spb_vtor)
         msc_new = pd.read_csv(msc_new)
         msc_vtor = pd.read_csv(msc_vtor)
 
         # Concatenate new flats + secondary flats
-        self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)
-        self.all_msc = pd.concat([msc_new, msc_vtor], ignore_index=True, axis=0)
+        # self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)
+        # self.all_msc = pd.concat([msc_new, msc_vtor], ignore_index=True, axis=0)
+
 
         # Just new flats
         # self.msc_new_flats = msc_new
@@ -403,7 +404,7 @@ class Developers_API():
                     if rooms == 4:
                         four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce] * price_coeff
                         four_roomed_full_price = four_roomed_price_meter_sq * full_sq
-                        if ((sales_value_3_acc >= max_flats_count_3) or (sum(sales_value_3) >= max_flats_count_3)):
+                        if ((sales_value_4_acc >= max_flats_count_4) or (sum(sales_value_4) >= max_flats_count_4)):
                             revenue_four_roomed = four_roomed_full_price * max_flats_count_4
                             max_revenue_4 = True
                         elif sales_value_4_acc == 0:
@@ -411,52 +412,44 @@ class Developers_API():
                         elif not max_revenue_4:
                             revenue_four_roomed += four_roomed_full_price * sales_value_4[-1]
 
-                        if sum(sales_value_4) >= max_flats_count_4 and idx_month == 0:
-                            answ_4 = max_flats_count_4
-                        elif sum(sales_value_4) >= max_flats_count_4 and idx_month != 0:
-                            answ_4 = 0
-                        elif sum(sales_value_4) < max_flats_count_4:
-                            answ_4 = sales_value_4[-1]
+                if rooms == 's':
+                    if sum(sales_value_studio) >= max_flats_count_s and idx_month == 0:
+                        s_answ = max_flats_count_s
+                    elif sum(sales_value_studio) >= max_flats_count_s and idx_month != 0:
+                        s_answ = 0
+                    elif sum(sales_value_studio) < max_flats_count_s:
+                        s_answ = sales_value_studio[-1]
 
+                if rooms == 1:
+                    if sum(sales_value_1) >= max_flats_count_1 and idx_month == 0:
+                        answ_1 = max_flats_count_1
+                    elif sum(sales_value_1) >= max_flats_count_1 and idx_month != 0:
+                        answ_1 = 0
+                    elif sum(sales_value_1) < max_flats_count_1:
+                        answ_1 = sales_value_1[-1]
 
-            if rooms == 's':
-                if sum(sales_value_studio) >= max_flats_count_s and idx_month == 0:
-                    s_answ = max_flats_count_s
-                elif sum(sales_value_studio) >= max_flats_count_s and idx_month != 0:
-                    s_answ = 0
-                elif sum(sales_value_studio) < max_flats_count_s:
-                    s_answ = sales_value_studio[-1]
+                if rooms == 2:
+                    if sum(sales_value_2) >= max_flats_count_2 and idx_month == 0:
+                        answ_2 = max_flats_count_2
+                    elif sum(sales_value_2) >= max_flats_count_2 and idx_month != 0:
+                        answ_2 = 0
+                    elif sum(sales_value_2) < max_flats_count_2:
+                        answ_2 = sales_value_2[-1]
+                if rooms == 3:
+                    if sum(sales_value_3) >= max_flats_count_3 and idx_month == 0:
+                        answ_3 = max_flats_count_3
+                    elif sum(sales_value_3) >= max_flats_count_3 and idx_month != 0:
+                        answ_3 = 0
+                    elif sum(sales_value_3) < max_flats_count_3:
+                        answ_3 = sales_value_3[-1]
 
-            if rooms == 1:
-                if sum(sales_value_1) >= max_flats_count_1 and idx_month == 0:
-                    answ_1 = max_flats_count_1
-                elif sum(sales_value_1) >= max_flats_count_1 and idx_month != 0:
-                    answ_1 = 0
-                elif sum(sales_value_1) < max_flats_count_1:
-                    answ_1 = sales_value_1[-1]
-
-            if rooms == 2:
-                if sum(sales_value_2) >= max_flats_count_2 and idx_month == 0:
-                    answ_2 = max_flats_count_2
-                elif sum(sales_value_2) >= max_flats_count_2 and idx_month != 0:
-                    answ_2 = 0
-                elif sum(sales_value_2) < max_flats_count_2:
-                    answ_2 = sales_value_2[-1]
-            if rooms == 3:
-                if sum(sales_value_3) >= max_flats_count_3 and idx_month == 0:
-                    answ_3 = max_flats_count_3
-                elif sum(sales_value_3) >= max_flats_count_3 and idx_month != 0:
-                    answ_3 = 0
-                elif sum(sales_value_3) < max_flats_count_3:
-                    answ_3 = sales_value_3[-1]
-
-            if rooms == 4:
-                if sum(sales_value_4) >= max_flats_count_4 and idx_month == 0:
-                    answ_4 = max_flats_count_4
-                elif sum(sales_value_4) >= max_flats_count_4 and idx_month != 0:
-                    answ_4 = 0
-                elif sum(sales_value_4) < max_flats_count_4:
-                    answ_4 = sales_value_4[-1]
+                if rooms == 4:
+                    if sum(sales_value_4) >= max_flats_count_4 and idx_month == 0:
+                        answ_4 = max_flats_count_4
+                    elif sum(sales_value_4) >= max_flats_count_4 and idx_month != 0:
+                        answ_4 = 0
+                    elif sum(sales_value_4) < max_flats_count_4:
+                        answ_4 = sales_value_4[-1]
 
             # Accumulated sales values for each flat_type
             sales_value_studio_acc += sum(sales_value_studio)

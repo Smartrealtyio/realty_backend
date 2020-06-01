@@ -303,7 +303,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         # Example: [{'x': int, 'y': int}, {'x': int, 'y': int}]
         def createListOfDicts(terms: list, prices: list):
             list_of_dicts = []
-            list_of_dicts += ({'y': int(prc), 'x': int(trm)} for prc, trm in zip(prices, terms))
+            list_of_dicts += ({'price': int(prc), 'term': int(trm)} for prc, trm in zip(prices, terms))
             return list_of_dicts
 
         # Create list of dicts
@@ -311,37 +311,37 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
         # Check if list not empty
         if len(list_of_dicts) <= 2:
-            answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
+            answ = {'Price': price, 'Duration': 0, 'PLot': [{"term": 0, 'price': 0}], 'FlatsTerm': 0, "OOPS": 1}
             return answ
 
         print('list_of_dicts: ', list_of_dicts, flush=True)
 
         # Define current flat with predicted price and initial term = minimal value from list of term
-        current_flat = {'x': min(list_of_terms), 'y': price}
+        current_flat = {'term': min(list_of_terms), 'price': price}
 
         # Iterate over the list of dicts and try to find suitable term based on prices values
         def find_term(l: list, current_flat: dict):
             term = 0
-            if l[-1].get('y') > current_flat.get('y') > l[0].get('y'):
+            if l[-1].get('price') > current_flat.get('price') > l[0].get('price'):
                 for i in enumerate(l):
                     print(i)
-                    if l[i[0]].get('y') <= current_flat.get('y') < l[i[0] + 1].get('y'):
+                    if l[i[0]].get('price') <= current_flat.get('price') < l[i[0] + 1].get('price'):
                         print('!')
-                        current_flat['x'] = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
-                        term = int((l[i[0]].get('x') + l[i[0] + 1].get('x')) / 2)
+                        current_flat['term'] = int((l[i[0]].get('term') + l[i[0] + 1].get('term')) / 2)
+                        term = int((l[i[0]].get('term') + l[i[0] + 1].get('term')) / 2)
                         break
                 print("New term: ", current_flat, flush=True)
             return current_flat, term
 
         # Find actual term for current flat price
-        if (list_of_dicts[-1].get('y') > current_flat.get('y') > list_of_dicts[0].get('y')) and \
-                len(set([i['x'] for i in list_of_dicts])) > 2 and list_of_terms[-1] > list_of_terms[0]:
+        if (list_of_dicts[-1].get('price') > current_flat.get('price') > list_of_dicts[0].get('price')) and \
+                len(set([i['term'] for i in list_of_dicts])) > 2 and list_of_terms[-1] > list_of_terms[0]:
             print(
-                'Number of unique term valus in list_of_dicts = {0}'.format(len(set([i['x'] for i in list_of_dicts]))),
+                'Number of unique term valus in list_of_dicts = {0}'.format(len(set([i['term'] for i in list_of_dicts]))),
             flush=True)
             current_flat, term = find_term(l=list_of_dicts, current_flat=current_flat)
         else:
-            answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
+            answ = {'Price': price, 'Duration': 0, 'PLot': [{"term": 0, 'price': 0}], 'FlatsTerm': 0, "OOPS": 1}
             return answ
 
         # Leave only unique pairs [{'x': int1, 'y': int2}, {'x': int3, 'y': int4}]
@@ -350,42 +350,43 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             result = []
 
             for i in range(1, len(list_of_dicts)):
-                if (list_of_dicts[i].get('x') != list_of_dicts[i - 1].get('x')) and list_of_dicts[i].get(
-                        'x') not in terms:
-                    if list_of_dicts[i - 1].get('x') not in terms:
+                if (list_of_dicts[i].get('term') != list_of_dicts[i - 1].get('term')) and list_of_dicts[i].get(
+                        'term') not in terms:
+                    if list_of_dicts[i - 1].get('term') not in terms:
                         result.append(list_of_dicts[i - 1])
-                        terms.append(list_of_dicts[i - 1].get('x'))
+                        terms.append(list_of_dicts[i - 1].get('term'))
                     result.append(list_of_dicts[i])
-                    terms.append(list_of_dicts[i].get('x'))
+                    terms.append(list_of_dicts[i].get('term'))
             return result
 
-        if len(set([i['x'] for i in list_of_dicts])) > 2:
+        if len(set([i['term'] for i in list_of_dicts])) > 2:
             list_of_dicts = select_unique_term_price_pairs(list_of_dicts)
         else:
-            answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
+            answ = {'Price': price, 'Duration': 0, 'PLot': [{"term": 0, 'price': 0}], 'FlatsTerm': 0, "OOPS": 1}
             return answ
 
         def check(l: list, current_flat):
             for i in l:
-                if ((i['x'] == current_flat['x']) | (i['y'] == current_flat['y'])):
+                if ((i['term'] == current_flat['term']) | (i['price'] == current_flat['price'])):
                     l.remove(i)
             l.append(current_flat)
-            return sorted(l, key=lambda k: k['x'])
+            return sorted(l, key=lambda k: k['term'])
 
 
         # Check if all dict's keys and values in list are unique
         list_of_dicts = check(list_of_dicts, current_flat)
-        print('Unique term values: ', len(set([i['x'] for i in list_of_dicts])), flush=True)
+        print('Unique term values: ', len(set([i['term'] for i in list_of_dicts])), flush=True)
 
 
         # Check if final list have items in it, otherwise set parameter "OOPS" to 1
         oops = 1 if len(list_of_dicts) <= 2 else 0
         term = 0 if len(list_of_dicts) <= 2 else term
+
         answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': 0, "OOPS": oops}
         print('ANSWER: \nprice: {0}, \nterm: {1}, \nlist_of_dicts: {2}, \noops: {3}'.format(
             price, term, list_of_dicts, oops), flush=True)
     else:
-        print("Not enough data to plot", flush=True)
-        answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}
+        print("!!! Warning !!! \n----------> Not enough data to plot", flush=True)
+        answ = {'Price': price, 'Duration': 0, 'PLot': [{"term": 0, 'price': 0}], 'FlatsTerm': 0, "OOPS": 1}
 
     return answ

@@ -361,7 +361,7 @@ class Developers_API():
                     sales_value_4.append(sales_value_4roomed)
 
                 # Calculate revenue for each type and change price depending on the month
-                if rooms == 's':
+                if rooms == 's' and not max_revenue_s:
                     s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce] * price_coeff
                     s_full_price = s_price_meter_sq * full_sq
                     if ((sales_value_studio_acc >= max_flats_count_s) or (sum(sales_value_studio) >= max_flats_count_s)) \
@@ -375,7 +375,7 @@ class Developers_API():
 
 
 
-                if rooms == 1:
+                if rooms == 1 and not max_revenue_1:
                     one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce] * price_coeff
                     one_roomed_full_price = one_roomed_price_meter_sq * full_sq
                     if ((sales_value_1_acc >= max_flats_count_1) or (sum(sales_value_1) >= max_flats_count_1)) and not max_revenue_1:
@@ -388,7 +388,7 @@ class Developers_API():
 
 
 
-                if rooms == 2:
+                if rooms == 2 and not max_revenue_2:
                     two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce] * price_coeff
                     two_roomed_full_price = two_roomed_price_meter_sq * full_sq
                     if ((sales_value_2_acc >= max_flats_count_2) or (sum(sales_value_2) >= max_flats_count_2)) \
@@ -402,7 +402,7 @@ class Developers_API():
 
 
 
-                if rooms == 3:
+                if rooms == 3 and not max_revenue_3:
                     three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce] * price_coeff
                     three_roomed_full_price = three_roomed_price_meter_sq * full_sq
                     if ((sales_value_3_acc >= max_flats_count_3) or (sum(sales_value_3) >= max_flats_count_3)) and not \
@@ -416,7 +416,7 @@ class Developers_API():
 
 
 
-                if rooms == 4:
+                if rooms == 4 and not max_revenue_4:
                     four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce] * price_coeff
                     four_roomed_full_price = four_roomed_price_meter_sq * full_sq
                     if ((sales_value_4_acc >= max_flats_count_4) or (sum(sales_value_4) >= max_flats_count_4)) and not\
@@ -443,7 +443,7 @@ class Developers_API():
             answ_1, update_1 = (sales_value_1_acc, 1) if (0 <= sales_value_1_acc < max_flats_count_1 and update_1) else (max_flats_count_1, False)
             answ_2, update_2 = (sales_value_2_acc, 1) if (0 <= sales_value_2_acc < max_flats_count_2 and update_2) else (max_flats_count_2, False)
             answ_3, udpate_3 = (sales_value_3_acc, 1) if (0 <= sales_value_3_acc < max_flats_count_3 and update_3) else (max_flats_count_3, False)
-            answ_4, udpate_4 = (sales_value_4_acc, 1) if (0 <= sales_value_4_acc < max_flats_count_4 and udpate_4) else (max_flats_count_4, 0)
+            answ_4, udpate_4 = (sales_value_4_acc, 1) if (0 <= sales_value_4_acc < max_flats_count_4 and update_4) else (max_flats_count_4, 0)
 
             print('\nFirst graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,

@@ -372,24 +372,18 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             l.append(current_flat)
             return sorted(l, key=lambda k: k['x'])
 
-        # if not oops:
-        print('not oops', flush=True)
+
         # Check if all dict's keys and values in list are unique
         list_of_dicts = check(list_of_dicts, current_flat)
-        print(len(set([i['x'] for i in list_of_dicts])), flush=True)
+        print('Unique term values: ', len(set([i['x'] for i in list_of_dicts])), flush=True)
 
-        # # Update list of dicts with current flat
-        # list_of_dicts.insert(0, current_flat)
-        #
-        # # Finally sort
-        # list_of_dicts = sorted(list_of_dicts, key=lambda z: z['x'], reverse=False)
-        print('Answer: ', list_of_dicts, flush=True)
 
         # Check if final list have items in it, otherwise set parameter "OOPS" to 1
         oops = 1 if len(list_of_dicts) <= 2 else 0
         term = 0 if len(list_of_dicts) <= 2 else term
         answ = {'Price': price, 'Duration': term, 'PLot': list_of_dicts, 'FlatsTerm': 0, "OOPS": oops}
-        print('answ: ', price, term, list_of_dicts, oops, sep='\n', flush=True)
+        print('ANSWER: \nprice: {0}, \nterm: {1}, \nlist_of_dicts: {2}, \noops: {3}'.format(
+            price, term, list_of_dicts, oops), flush=True)
     else:
         print("Not enough data to plot", flush=True)
         answ = {'Price': price, 'Duration': 0, 'PLot': [{"x": 0, 'y': 0}], 'FlatsTerm': 0, "OOPS": 1}

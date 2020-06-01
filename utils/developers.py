@@ -41,9 +41,19 @@ class Developers_API():
 
         # Just new flats
         # self.msc_new_flats = msc_new
+        # Leave only CLOSED, from YANDEX(resource_id=0), OPEND ONLY 2019
+        msc_new = msc_new[((msc_new['resource_id'] == 0))]
+
+
+        # Create dictionary: key = group number, value = lower threshold value of full_sq
+        # Example: {1: 38.0, 2: 42.5}
+        full_sq_grouping_dict = {}
 
         # Group dataset by full_sq
-        self.list_of_squares = [38.0, 42.5, 47.0, 51.5, 56.0, 60.5, 65.0, 69.5, 74.0, 78.5, 83.0, 87.5]
+        self.list_of_squares = np.arange(38, 120, 4.5).tolist()
+        # [38.0, 42.5, 47.0, 51.5, 56.0, 60.5, 65.0, 69.5, 74.0, 78.5, 83.0,
+        # 87.5, 92.0, 96.5, 101.0, 105.5, 110.0, 114.5, 119.0]
+
 
         # Initialize full_sq_group values with zero
         msc_new.loc[:, 'full_sq_group'] = 0

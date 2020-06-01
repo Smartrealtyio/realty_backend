@@ -303,7 +303,7 @@ class Developers_API():
                 # Determine appropriate full_sq_group based on full_sq
                 full_sq_group = 0
                 for idx, item in enumerate(self.list_of_squares):
-                    if full_sq >= item:
+                    if full_sq <= item:
                         full_sq_group = idx + 1
                         break
                 # print('full_sq_group={0}, full_sq={1}'.format(full_sq_group, full_sq), flush=True)
@@ -311,116 +311,122 @@ class Developers_API():
                 # CALCULATE SALES VOLUME FOR EACH FLAT TYPE
                 # Determine the growth rate depending on year
                 n_years = yyyy_announce - sale_start_year
-                if n_years >= 0:
+                if n_years < 0:
+                    return
 
 
 
-                    # Calculate number of studios
-                    if rooms == 's':
-                        sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                     mm_sold=mm_announce,
-                                                                                     rooms=0,
-                                                                                     housing_class=housing_class) * sales_volume_coeff_s)
-                        sales_value_studio.append(sales_value)
+                # Calculate number of studios
+                if rooms == 's':
+                    sales_value_s = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                 mm_sold=mm_announce,
+                                                                                 rooms=0,
+                                                                                 housing_class=housing_class) * sales_volume_coeff_s)
+                    sales_value_studio.append(sales_value_s)
 
-                    # Calculate number of 1-roomed flats
-                    if rooms == 1:
-                        sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                     mm_sold=mm_announce,
-                                                                                     rooms=1,
-                                                                                     housing_class=housing_class) * sales_volume_coeff_1)
-                        print('mm_graphic={0}, sales_value_1={1}'.format(idx_month + 1, sales_value), flush=True)
-                        sales_value_1.append(sales_value)
+                # Calculate number of 1-roomed flats
+                if rooms == 1:
+                    sales_value_1roomed = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                 mm_sold=mm_announce,
+                                                                                 rooms=1,
+                                                                                 housing_class=housing_class) * sales_volume_coeff_1)
+                    print('mm_graphic={0}, sales_value_1={1}'.format(idx_month + 1, sales_value_1roomed), flush=True)
+                    sales_value_1.append(sales_value_1roomed)
 
-                    # Calculate number of 2-roomed flats
-                    if rooms == 2:
-                        sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                     mm_sold=mm_announce,
-                                                                                     rooms=2,
-                                                                                     housing_class=housing_class) * sales_volume_coeff_2)
-                        print('mm_graphic={0}, sales_value_2={1}'.format(idx_month + 1, sales_value), flush=True)
-                        sales_value_2.append(sales_value)
+                # Calculate number of 2-roomed flats
+                if rooms == 2:
+                    sales_value_2roomed = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                 mm_sold=mm_announce,
+                                                                                 rooms=2,
+                                                                                 housing_class=housing_class) * sales_volume_coeff_2)
+                    print('mm_graphic={0}, sales_value_2={1}'.format(idx_month + 1, sales_value_2roomed), flush=True)
+                    sales_value_2.append(sales_value_2roomed)
 
-                    # Calculate number of 3-roomed flats
-                    if rooms == 3:
-                        sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                     mm_sold=mm_announce,
-                                                                                     rooms=3,
-                                                                                     housing_class=housing_class) * sales_volume_coeff_3)
-                        print('mm_graphic={0}, sales_value_3={1}'.format(idx_month + 1, sales_value), flush=True)
-                        sales_value_3.append(sales_value)
+                # Calculate number of 3-roomed flats
+                if rooms == 3:
+                    sales_value_3roomed = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                 mm_sold=mm_announce,
+                                                                                 rooms=3,
+                                                                                 housing_class=housing_class) * sales_volume_coeff_3)
+                    print('mm_graphic={0}, sales_value_3={1}'.format(idx_month + 1, sales_value_3roomed), flush=True)
+                    sales_value_3.append(sales_value_3roomed)
 
-                    # Calculate number of 4-roomed flats
-                    if rooms == 4:
-                        sales_value = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                     mm_sold=mm_announce,
-                                                                                     rooms=4,
-                                                                                     housing_class=housing_class) * sales_volume_coeff_4)
-                        sales_value_4.append(sales_value)
+                # Calculate number of 4-roomed flats
+                if rooms == 4:
+                    sales_value_4roomed = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                 mm_sold=mm_announce,
+                                                                                 rooms=4,
+                                                                                 housing_class=housing_class) * sales_volume_coeff_4)
+                    sales_value_4.append(sales_value_4roomed)
 
-                    # Calculate revenue for each type and change price depeneding on the month
-                    if rooms == 's':
-                        s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce] * price_coeff
-                        s_full_price = s_price_meter_sq * full_sq
-                        if ((sales_value_studio_acc >= max_flats_count_s) or (sum(sales_value_studio) >= max_flats_count_s)) and not max_revenue_s:
-                            revenue_s = s_full_price * max_flats_count_s
-                            max_revenue_s = True
-                        elif sales_value_studio_acc==0:
-                            revenue_s+=0
-                        elif not max_revenue_s:
-                            revenue_s += s_full_price * sales_value_studio[-1]
-
-
-
-                    if rooms == 1:
-                        one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce] * price_coeff
-                        one_roomed_full_price = one_roomed_price_meter_sq * full_sq
-                        if ((sales_value_1_acc >= max_flats_count_1) or (sum(sales_value_1) >= max_flats_count_1)):
-                            revenue_one_roomed = one_roomed_full_price * max_flats_count_1
-                            max_revenue_1 = True
-                        elif sales_value_1_acc == 0:
-                            revenue_one_roomed += 0
-                        elif not max_revenue_1:
-                            revenue_one_roomed += one_roomed_full_price * sales_value_1[-1]
+                # Calculate revenue for each type and change price depending on the month
+                if rooms == 's':
+                    s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce] * price_coeff
+                    s_full_price = s_price_meter_sq * full_sq
+                    if ((sales_value_studio_acc >= max_flats_count_s) or (sum(sales_value_studio) >= max_flats_count_s)) \
+                            and not max_revenue_s:
+                        revenue_s = s_full_price * max_flats_count_s
+                        max_revenue_s = True
+                    elif sales_value_studio_acc==0:
+                        pass
+                    elif not max_revenue_s and (0 < sum(sales_value_studio) < max_flats_count_s):
+                        revenue_s += s_full_price * sales_value_studio[-1]
 
 
 
-                    if rooms == 2:
-                        two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce] * price_coeff
-                        two_roomed_full_price = two_roomed_price_meter_sq * full_sq
-                        if ((sales_value_2_acc >= max_flats_count_2) or (sum(sales_value_2) >= max_flats_count_2)):
-                            revenue_two_roomed = two_roomed_full_price * max_flats_count_2
-                            max_revenue_2 = True
-                        elif sales_value_2_acc == 0:
-                            revenue_two_roomed += 0
-                        elif not max_revenue_2:
-                            revenue_two_roomed += two_roomed_full_price * sales_value_2[-1]
+                if rooms == 1:
+                    one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce] * price_coeff
+                    one_roomed_full_price = one_roomed_price_meter_sq * full_sq
+                    if ((sales_value_1_acc >= max_flats_count_1) or (sum(sales_value_1) >= max_flats_count_1)) and not max_revenue_1:
+                        revenue_one_roomed = one_roomed_full_price * max_flats_count_1
+                        max_revenue_1 = True
+                    elif sales_value_1_acc == 0:
+                        pass
+                    elif not max_revenue_1 and (0 < sum(sales_value_1) < max_flats_count_1):
+                        revenue_one_roomed += one_roomed_full_price * sales_value_1[-1]
 
 
 
-                    if rooms == 3:
-                        three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce] * price_coeff
-                        three_roomed_full_price = three_roomed_price_meter_sq * full_sq
-                        if ((sales_value_3_acc >= max_flats_count_3) or (sum(sales_value_3) >= max_flats_count_3)):
-                            revenue_three_roomed = three_roomed_full_price * max_flats_count_3
-                            max_revenue_3 = True
-                        elif sales_value_3_acc == 0:
-                            revenue_three_roomed += 0
-                        elif not max_revenue_3:
-                            revenue_three_roomed += three_roomed_full_price * sales_value_3[-1]
+                if rooms == 2:
+                    two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce] * price_coeff
+                    two_roomed_full_price = two_roomed_price_meter_sq * full_sq
+                    if ((sales_value_2_acc >= max_flats_count_2) or (sum(sales_value_2) >= max_flats_count_2)) \
+                            and not max_revenue_2:
+                        revenue_two_roomed = two_roomed_full_price * max_flats_count_2
+                        max_revenue_2 = True
+                    elif sales_value_2_acc == 0:
+                        pass
+                    elif not max_revenue_2 and (0 < sum(sales_value_2) < max_flats_count_2):
+                        revenue_two_roomed += two_roomed_full_price * sales_value_2[-1]
 
 
 
-                    if rooms == 4:
-                        four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce] * price_coeff
-                        four_roomed_full_price = four_roomed_price_meter_sq * full_sq
-                        if ((sales_value_4_acc >= max_flats_count_4) or (sum(sales_value_4) >= max_flats_count_4)):
-                            revenue_four_roomed = four_roomed_full_price * max_flats_count_4
-                            max_revenue_4 = True
-                        elif sales_value_4_acc == 0:
-                            revenue_four_roomed += 0
-                        elif not max_revenue_4:
-                            revenue_four_roomed += four_roomed_full_price * sales_value_4[-1]
+                if rooms == 3:
+                    three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce] * price_coeff
+                    three_roomed_full_price = three_roomed_price_meter_sq * full_sq
+                    if ((sales_value_3_acc >= max_flats_count_3) or (sum(sales_value_3) >= max_flats_count_3)) and not \
+                            max_revenue_3:
+                        revenue_three_roomed = three_roomed_full_price * max_flats_count_3
+                        max_revenue_3 = True
+                    elif sales_value_3_acc == 0:
+                        pass
+                    elif not max_revenue_3 and (0 < sum(sales_value_3) < max_flats_count_3):
+                        revenue_three_roomed += three_roomed_full_price * sales_value_3[-1]
+
+
+
+                if rooms == 4:
+                    four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce] * price_coeff
+                    four_roomed_full_price = four_roomed_price_meter_sq * full_sq
+                    if ((sales_value_4_acc >= max_flats_count_4) or (sum(sales_value_4) >= max_flats_count_4)) and not\
+                            max_revenue_4:
+                        revenue_four_roomed = four_roomed_full_price * max_flats_count_4
+                        max_revenue_4 = True
+                    elif sales_value_4_acc == 0:
+                        pass
+                    elif not max_revenue_4 and (0 < sum(sales_value_4) < max_flats_count_4):
+                        revenue_four_roomed += four_roomed_full_price * sales_value_4[-1]
+
 
                 if rooms == 's':
                     if sum(sales_value_studio) >= max_flats_count_s and idx_month == 0:
@@ -453,20 +459,20 @@ class Developers_API():
                     elif sum(sales_value_3) < max_flats_count_3:
                         answ_3 = sales_value_3[-1]
 
-                if rooms == 4:
-                    if sum(sales_value_4) >= max_flats_count_4 and idx_month == 0:
-                        answ_4 = max_flats_count_4
-                    elif sum(sales_value_4) >= max_flats_count_4 and idx_month != 0:
-                        answ_4 = 0
-                    elif sum(sales_value_4) < max_flats_count_4:
-                        answ_4 = sales_value_4[-1]
 
-            # Accumulated sales values for each flat_type
-            sales_value_studio_acc += sum(sales_value_studio)
-            sales_value_1_acc += sum(sales_value_1)
-            sales_value_2_acc += sum(sales_value_2)
-            sales_value_3_acc += sum(sales_value_3)
-            sales_value_4_acc += sum(sales_value_4)
+
+                # Accumulated sales values for each flat_type
+                sales_value_studio_acc += sum(sales_value_studio)
+                sales_value_1_acc += sum(sales_value_1)
+                sales_value_2_acc += sum(sales_value_2)
+                sales_value_3_acc += sum(sales_value_3)
+                sales_value_4_acc += sum(sales_value_4)
+
+            s_answ = sum(sales_value_studio) if 0 <= sum(sales_value_studio) <= max_flats_count_s else max_flats_count_s
+            answ_1 = sum(sales_value_1) if 0 <= sum(sales_value_1) <= max_flats_count_1 else max_flats_count_1
+            answ_2 = sum(sales_value_2) if 0 <= sum(sales_value_2) <= max_flats_count_2 else max_flats_count_2
+            answ_3 = sum(sales_value_3) if 0 <= sum(sales_value_3) <= max_flats_count_3 else max_flats_count_3
+            answ_4 = sum(sales_value_4) if 0 <= sum(sales_value_4) <= max_flats_count_4 else max_flats_count_4
 
             print('\nFirst graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
@@ -555,16 +561,23 @@ class Developers_API():
             print('\nThird graphic: \nMonth_graphic={0} '.format(idx_month))
             print({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   's_sold':  sales_value_studio_acc if sales_value_studio_acc < max_flats_count_s else max_flats_count_s,
-                                  's_all': max_flats_count_s}, {'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '1_sold':  sales_value_1_acc if sales_value_1_acc < max_flats_count_1 else max_flats_count_1,
-                                  '1_all': max_flats_count_1}, {'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '2_sold':  sales_value_2_acc if sales_value_2_acc < max_flats_count_2 else max_flats_count_2,
-                                  '2_all': max_flats_count_2},
+                                  's_all': max_flats_count_s},
                   {'date': dt_stamp.strftime('%Y.%m.%d'),
-                   '3_sold': sales_value_3_acc,
-                   '3_all': max_flats_count_3}, {'date': dt_stamp.strftime('%Y.%m.%d'),
-                                  '4_sold':  sales_value_4_acc if sales_value_4_acc < max_flats_count_4 else max_flats_count_4,
-                                  '4_all': max_flats_count_4})
+                   '1_sold': sales_value_1_acc if sales_value_1_acc < max_flats_count_1 else max_flats_count_1,
+                   '1_all': max_flats_count_1},
+                  {'date': dt_stamp.strftime('%Y.%m.%d'),
+                   '2_sold': sales_value_2_acc if sales_value_2_acc < max_flats_count_2 else max_flats_count_2,
+                   '2_all': max_flats_count_2},
+                  {'date': dt_stamp.strftime('%Y.%m.%d'),
+                   '2_sold': sales_value_2_acc if sales_value_2_acc < max_flats_count_2 else max_flats_count_2,
+                   '2_all': max_flats_count_2},
+                  {'date': dt_stamp.strftime('%Y.%m.%d'),
+                   '3_sold': sales_value_3_acc if sales_value_3_acc < max_flats_count_3 else max_flats_count_3,
+                   '3_all': max_flats_count_3},
+                  {'date': dt_stamp.strftime('%Y.%m.%d'),
+                   '4_sold': sales_value_4_acc if sales_value_4_acc < max_flats_count_4 else max_flats_count_4,
+                   '4_all': max_flats_count_4}
+                  )
             # print('\nThird graphic: ', third_graphic, flush=True)
 
 

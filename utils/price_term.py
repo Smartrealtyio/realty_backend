@@ -281,8 +281,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         list_of_prices = list_of_smaller_prices + list_of_larger_prices
         list_of_prices = [int(i) for i in list_of_prices]
 
-        del list_of_larger_prices
-        del list_of_larger_prices
+        
 
         # Call LinearReg on term
         reg = LinearReg_Term(df_for_current_label)

@@ -378,19 +378,19 @@ class MainPreprocessing():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
         # Define Gradient Boosting Machine model
-        # lgbm_model = LGBMRegressor(objective='regression',
-        #                            learning_rate=0.07,
-        #                            n_estimators=1250, max_depth=10, min_child_samples=1, verbose=0)
-        RF = RandomForestRegressor(n_estimators=300, verbose=1, n_jobs=-1)
+        lgbm_model = LGBMRegressor(objective='regression',
+                                   learning_rate=0.07,
+                                   n_estimators=1250, max_depth=10, min_child_samples=1, verbose=0)
+        # RF = RandomForestRegressor(n_estimators=300, verbose=1, n_jobs=-1)
         # Train GBR on train dataset
-        RF.fit(X_train, y_train)
-        lgbm_preds = RF.predict(X_test)
+        lgbm_model.fit(X_train, y_train)
+        lgbm_preds = lgbm_model.predict(X_test)
         print('The R2_score of the Gradient boost is', r2_score(y_test, lgbm_preds), flush=True)
         print('RMSE is: \n', mean_squared_error(y_test, lgbm_preds), flush=True)
 
         # Train GBR on full dataset
-        RF.fit(X, y)
-        return RF, columns
+        lgbm_model.fit(X, y)
+        return lgbm_model, columns
 
     def calculate_profit(self, data: pd.DataFrame, price_model: GradientBoostingRegressor, list_of_columns: list):
 

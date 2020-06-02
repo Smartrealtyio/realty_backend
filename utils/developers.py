@@ -433,8 +433,8 @@ class Developers_API():
                         max_revenue_4 = True
 
             # Accumulated sales values for each flat_type
-            sales_value_studio_acc += sum(sales_value_studio)
-            sales_value_1_acc += sum(sales_value_1)
+            sales_value_studio_acc += sum(sales_value_studio) if not max_revenue_s else 0
+            sales_value_1_acc += sum(sales_value_1) if not
             sales_value_2_acc += sum(sales_value_2)
             sales_value_3_acc += sum(sales_value_3)
             sales_value_4_acc += sum(sales_value_4)

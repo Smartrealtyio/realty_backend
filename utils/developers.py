@@ -32,7 +32,7 @@ class Developers_API():
         # spb_new = pd.read_csv(spb_new)
         # spb_vtor = pd.read_csv(spb_vtor)
         msc_new = pd.read_csv(msc_new)
-        msc_vtor = pd.read_csv(msc_vtor)
+        # msc_vtor = pd.read_csv(msc_vtor)
 
         # Concatenate new flats + secondary flats
         # self.all_spb = pd.concat([spb_new, spb_vtor], ignore_index=True, axis=0)

@@ -55,7 +55,11 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             # Load data Moscow flats
             data1 = pd.read_csv(MOSCOW_DATA_NEW)
             data2 = pd.read_csv(MOSCOW_DATA_SECONDARY)
+
             data = pd.concat([data1, data2], ignore_index=True)
+
+            del data1
+            del data2
 
             # Load KMean Clustering model
             kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
@@ -89,6 +93,9 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             data1 = pd.read_csv(SPB_DATA_NEW)
             data2 = pd.read_csv(SPB_DATA_SECONDARY)
             data = pd.concat([data1, data2], ignore_index=True)
+
+            del data1
+            del data2
 
             # Load KMean Clustering model
             kmeans = load(KMEANS_CLUSTERING_SPB_MAIN)
@@ -207,6 +214,8 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
     # Create subsample of flats from same cluster (from same "geographical" district)
     df_for_current_label = data[data.clusters == current_cluster[0]]
+
+    del data
     print('Shape of current cluster: {0}'.format(df_for_current_label.shape), flush=True)
 
     # Check if subsample size have more than 3 samples
@@ -272,6 +281,9 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         list_of_prices = list_of_smaller_prices + list_of_larger_prices
         list_of_prices = [int(i) for i in list_of_prices]
 
+        del list_of_larger_prices
+        del list_of_larger_prices
+
         # Call LinearReg on term
         reg = LinearReg_Term(df_for_current_label)
 
@@ -287,6 +299,8 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
         # Calculating term for each price from generated list of prices based on associated profit -> returns list of terms
         list_of_terms = CalculateProfit(list_of_prices)
+
+        del reg
 
         # Add links to flats
         # term_links = df_for_current_label.to_dict('record')

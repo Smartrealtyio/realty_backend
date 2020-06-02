@@ -395,12 +395,12 @@ class MainPreprocessing():
     def calculate_profit(self, data: pd.DataFrame, price_model: GradientBoostingRegressor, list_of_columns: list):
 
         data.closed = data.closed.fillna(False)
-        # data_closed = data[data.closed == True]
-        # opened_data = data[data.closed == False]
+        data_recent = data[((data.yyyy_announce == 20) | (data.yyyy_announce == 19) | (data.yyyy_announce == 18))]
+        data_not_recent = data[~((data.yyyy_announce == 20) | (data.yyyy_announce == 19) | (data.yyyy_announce == 18))]
 
         # data = data[list_of_columns]
         # !!!!! ADD row.was_opened
-        data['pred_price'] = data[list_of_columns].apply(lambda row: int(np.expm1(price_model.predict(
+        data_recent['pred_price'] = data_recent[list_of_columns].apply(lambda row: int(np.expm1(price_model.predict(
             [[np.log1p(row.full_sq), np.log1p(row.to_center), np.log1p(row.kitchen_sq), np.log1p(row.life_sq), row.rooms, row.is_apartment,
               row.renovation, row.has_elevator, row.time_to_metro, row.floor_first, row.floor_last,
               row.is_rented, row.rent_quarter, row.rent_year, row.mm_announce, row.yyyy_announce,
@@ -408,14 +408,14 @@ class MainPreprocessing():
               row.kindergartens_1000m, row.clinics_500m, row.clinics_1000m, row.shops_500m,
               row.shops_1000m]]))[0]), axis=1)
 
-        data['profit'] = data[['pred_price', 'price']].apply(
+        data_recent['profit'] = data_recent[['pred_price', 'price']].apply(
             lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)
 
         # Handle negative profit values
         # data_closed['profit'] = data_closed['profit'] + 1 - data_closed['profit'].min()
 
         # Concat opened and closed
-        # data = pd.concat([data_closed, opened_data], axis=0, ignore_index=True)
+        data = pd.concat([data_recent, data_not_recent], axis=0, ignore_index=True)
         data.profit = data.profit.fillna(0)
         return data
 

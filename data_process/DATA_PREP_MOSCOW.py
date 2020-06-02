@@ -343,8 +343,8 @@ class MainPreprocessing():
     def train_price_model(self, data: pd.DataFrame):
 
         df = data
-        df = df[((np.abs(stats.zscore(df.price)) < 3) & (np.abs(stats.zscore(df.term)) < 3) & (
-                    np.abs(stats.zscore(df.full_sq)) < 3))]
+        df = df[((np.abs(stats.zscore(df.price)) < 2.8) & (np.abs(stats.zscore(df.term)) < 2.8) & (
+                    np.abs(stats.zscore(df.full_sq)) < 2.8))]
 
         # !!!!!!!! ADD 'was_opened'
 
@@ -353,9 +353,7 @@ class MainPreprocessing():
                  'time_to_metro', 'floor_first', 'floor_last',
                  'is_rented', 'rent_quarter',
                  'rent_year', 'mm_announce', 'yyyy_announce',
-                 'clusters', 'schools_500m', 'schools_1000m', 'kindergartens_500m',
-                 'kindergartens_1000m', 'clinics_500m', 'clinics_1000m', 'shops_500m',
-                 'shops_1000m']]
+                 'clusters']]
         # Save leaved columns to variable
         columns = list(df.columns)
 
@@ -404,9 +402,7 @@ class MainPreprocessing():
             [[np.log1p(row.full_sq), np.log1p(row.to_center), np.log1p(row.kitchen_sq), np.log1p(row.life_sq), row.rooms, row.is_apartment,
               row.renovation, row.has_elevator, row.time_to_metro, row.floor_first, row.floor_last,
               row.is_rented, row.rent_quarter, row.rent_year, row.mm_announce, row.yyyy_announce,
-              row.clusters, row.schools_500m, row.schools_1000m, row.kindergartens_500m,
-              row.kindergartens_1000m, row.clinics_500m, row.clinics_1000m, row.shops_500m,
-              row.shops_1000m]]))[0]), axis=1)
+              row.clusters]]))[0]), axis=1)
 
         data_recent['profit'] = data_recent[['pred_price', 'price']].apply(
             lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)

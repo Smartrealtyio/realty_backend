@@ -35,15 +35,15 @@ def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longit
     if city_id == 0:
         data_offers = pd.read_csv(MOSCOW_DATA_SECONDARY)
         # data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
-        gbr = load(PATH_PRICE_GBR_MOSCOW_D)
-        rf = load(PATH_PRICE_RF_MOSCOW_D)
-        lgbm = load(PATH_PRICE_LGBM_MOSCOW_D)
+        # gbr = load(PATH_PRICE_GBR_MOSCOW_D)
+        # rf = load(PATH_PRICE_RF_MOSCOW_D)
+        # lgbm = load(PATH_PRICE_LGBM_MOSCOW_D)
     elif city_id == 1:
         data_offers = pd.read_csv(SPB_DATA_SECONDARY)
         # data_offers = data_offers[data_offers.flat_type == 'SECONDARY']
-        gbr = load(PATH_PRICE_GBR_SPB_D)
-        rf = load(PATH_PRICE_RF_SPB_D)
-        lgbm = load(PATH_PRICE_LGBM_SPB_D)
+        # gbr = load(PATH_PRICE_GBR_SPB_D)
+        # rf = load(PATH_PRICE_RF_SPB_D)
+        # lgbm = load(PATH_PRICE_LGBM_SPB_D)
 
     # Apply filtering flats in database on parameters: full_sq range, coordinates scope
     filter = (((data_offers.full_sq >= full_sq_from) & (data_offers.full_sq <= full_sq_to)) & (
@@ -82,24 +82,7 @@ def mean_estimation(full_sq_from, full_sq_to, latitude_from, latitude_to, longit
         data_offers = data_offers[data_offers.price <= price_to]
 
     # PRICE PREDICTION
-    # data_offers['pred_price'] = data_offers[
-    #     ['life_sq', 'to_center', 'mm_announce', 'rooms', 'renovation', 'has_elevator', 'longitude', 'latitude', 'full_sq', 'kitchen_sq',
-    #      'time_to_metro', 'floor_last', 'floor_first', 'clusters', 'is_rented', 'rent_quarter', 'rent_year']].apply(
-    #     lambda row:
-    #     int((np.expm1(
-    #         rf.predict([[np.log1p(row.life_sq), np.log1p(row.to_center), row.mm_announce, row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
-    #                      np.log1p(row.latitude), np.log1p(row.latitude),
-    #                      np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last,
-    #                      row.clusters, row.is_rented, row.rent_quarter, row.rent_year]])) + np.expm1(
-    #         lgbm.predict([[np.log1p(row.life_sq), np.log1p(row.to_center), row.mm_announce, row.rooms, row.renovation, row.has_elevator, np.log1p(row.longitude),
-    #                        np.log1p(row.latitude), np.log1p(row.latitude),
-    #                        np.log1p(row.kitchen_sq), row.time_to_metro, row.floor_first, row.floor_last,
-    #                        row.clusters, row.is_rented, row.rent_quarter, row.rent_year]])))[0] / 2), axis=1)
-    #
-    # # Calculate the profitability for each flat knowing current and the price that our model predicted
-    # data_offers['profit'] = data_offers[['pred_price', 'price']].apply(
-    #     lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)
-
+    
     # Set threshold for showing profitable offers
     print(data_offers.shape, flush=True)
     data_offers = data_offers[(data_offers.profit >= 5)]

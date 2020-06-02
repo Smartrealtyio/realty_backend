@@ -447,16 +447,16 @@ if __name__ == '__main__':
     cl_data = mp.clustering(features_data, path_kmeans_models=PATH_TO_MODELS, K_clusters=K_CLUSTERS)
 
     # Create dummies variables
-    print("Categorical features transforming to dummies...", flush=True)
-    cat_data = mp.to_dummies(cl_data)
+    # print("Categorical features transforming to dummies...", flush=True)
+    # cat_data = mp.to_dummies(cl_data)
 
     # Train price model
     print("Price model training...", flush=True)
-    price_model, list_columns = mp.train_price_model(data=cat_data)
+    price_model, list_columns = mp.train_price_model(data=cl_data)
 
     # Calculate profit for each flat
     print("Profit calculating for each closed offer in dataset...", flush=True)
-    test = mp.calculate_profit(data=cat_data, price_model=price_model, list_of_columns=list_columns)
+    test = mp.calculate_profit(data=cl_data, price_model=price_model, list_of_columns=list_columns)
 
     # Create separate files for secondary flats
     mp.secondary_flats(data=test, path_to_save_data=PREPARED_DATA)

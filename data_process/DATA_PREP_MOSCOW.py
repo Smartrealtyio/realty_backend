@@ -347,12 +347,13 @@ class MainPreprocessing():
                     np.abs(stats.zscore(df.full_sq)) < 2.8))]
 
         # !!!!!!!! ADD 'was_opened'
-
+        # Fix year: only 2019
+        df = df[(df.yyyy_announce.isin([19, 20]))]
         df = df[['price', 'to_center', 'full_sq', 'kitchen_sq', 'life_sq', 'rooms', 'is_apartment',
                  'renovation', 'has_elevator',
                  'time_to_metro', 'floor_first', 'floor_last',
                  'is_rented', 'rent_quarter',
-                 'rent_year', 'mm_announce', 'yyyy_announce',
+                 'rent_year', 'mm_announce', 'yyyy_announce'
                  'clusters']]
         # Save leaved columns to variable
         columns = list(df.columns)
@@ -393,8 +394,8 @@ class MainPreprocessing():
     def calculate_profit(self, data: pd.DataFrame, price_model: GradientBoostingRegressor, list_of_columns: list):
 
         data.closed = data.closed.fillna(False)
-        data_recent = data[((data.yyyy_announce == 20) | (data.yyyy_announce == 19) | (data.yyyy_announce == 18))]
-        data_not_recent = data[~((data.yyyy_announce == 20) | (data.yyyy_announce == 19) | (data.yyyy_announce == 18))]
+        data_recent = data[(data.yyyy_announce.isin([19, 20]))]
+        data_not_recent = data[~(data.yyyy_announce.isin([19, 20]))]
 
         # data = data[list_of_columns]
         # !!!!! ADD row.was_opened

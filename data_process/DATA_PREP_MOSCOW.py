@@ -394,7 +394,7 @@ class MainPreprocessing():
     def calculate_profit_based_on_mean(self, data: pd.DataFrame):
 
         # Group dataset by full_sq
-        list_of_squares = np.arange(38, 120, 4.5).tolist()
+        list_of_squares = np.arange(38, 250, 4.5).tolist()
         # [38.0, 42.5, 47.0, 51.5, 56.0, 60.5, 65.0, 69.5, 74.0, 78.5, 83.0,
         # 87.5, 92.0, 96.5, 101.0, 105.5, 110.0, 114.5, 119.0]
 

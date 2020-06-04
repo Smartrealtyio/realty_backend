@@ -47,7 +47,7 @@ class Developers_API():
 
         # Create dictionary: key = group number, value = lower threshold value of full_sq
         # Example: {1: 38.0, 2: 42.5}
-        full_sq_grouping_dict = {}
+
 
         # Group dataset by full_sq
         self.list_of_squares = np.arange(38, 120, 4.5).tolist()
@@ -56,18 +56,18 @@ class Developers_API():
 
 
         # Initialize full_sq_group values with zero
-        msc_new.loc[:, 'full_sq_group'] = 0
-
-        # Create dictionary: key = group number, value = lower threshold value of full_sq
-        # Example: {1: 38.0, 2: 42.5}
-        full_sq_grouping_dict = {}
-
-        # Update "full_sq_group" column value according to "full_sq" column value
-        for i in range(len(self.list_of_squares)):
-            # print(i + 1, self.list_of_squares[i])
-            full_sq_grouping_dict[i + 1] = self.list_of_squares[i]
-            msc_new.loc[:, 'full_sq_group'] = np.where(msc_new['full_sq'] >= self.list_of_squares[i], i + 1,
-                                                       msc_new['full_sq_group'])
+        # msc_new.loc[:, 'full_sq_group'] = 0
+        #
+        # # Create dictionary: key = group number, value = lower threshold value of full_sq
+        # # Example: {1: 38.0, 2: 42.5}
+        # full_sq_grouping_dict = {}
+        #
+        # # Update "full_sq_group" column value according to "full_sq" column value
+        # for i in range(len(self.list_of_squares)):
+        #     # print(i + 1, self.list_of_squares[i])
+        #     full_sq_grouping_dict[i + 1] = self.list_of_squares[i]
+        #     msc_new.loc[:, 'full_sq_group'] = np.where(msc_new['full_sq'] >= self.list_of_squares[i], i + 1,
+        #                                                msc_new['full_sq_group'])
 
         # Auxiliary columns to calculate flat_class: econom, comfort, business, elite
         # 0(econom) if price_meter_sq < 0.6 price_meter_sq's quantile within group

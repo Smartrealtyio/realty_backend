@@ -82,6 +82,10 @@ class MainPreprocessing():
                                      ],
                             true_values="t", false_values="f", header=0)
 
+        # Replace negative values with 0
+        flats = flats._get_numeric_data()
+        flats[flats < 0] = 0
+
         # Calculating selling term.
         # First fulfill missing values in close_data with 0 and created_at with mode value
         flats.created_at = flats.created_at.fillna(flats.created_at.mode()[0])
@@ -217,8 +221,8 @@ class MainPreprocessing():
         df['floor_first'] = np.where(df['floor'] == 1, 1, 0)
 
         # Replace all negative values with zero
-        num = df._get_numeric_data()
-        num[num < 0] = 0
+        df = df._get_numeric_data()
+        df[df < 0] = 0
 
         # Count price per meter square for each flat
         df['price_meter_sq'] = df[['price', 'full_sq']].apply(

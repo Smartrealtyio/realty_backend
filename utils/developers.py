@@ -127,7 +127,7 @@ class Developers_API():
 
         self.msc_new = msc_new
 
-        self.full_sq_grouping_dict = full_sq_grouping_dict
+        # self.full_sq_grouping_dict = full_sq_grouping_dict
 
     def parse_json(self, data=0):
         if "Storage" in machine:

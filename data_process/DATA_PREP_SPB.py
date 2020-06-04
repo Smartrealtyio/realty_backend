@@ -391,7 +391,7 @@ class MainPreprocessing():
 
 
         data_recent['profit'] = data_recent[['pred_price', 'price']].apply(
-            lambda row: ((row.pred_price * 100 / row.price) - 100), axis=1)
+            lambda row: (100 - (row.price/(row.pred_price/100))), axis=1)
 
         # Handle negative profit values
         # data_closed['profit'] = data_closed['profit'] + 1 - data_closed['profit'].min()

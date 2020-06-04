@@ -19,13 +19,15 @@ def get_other_params(flats):
             if station:
                 flat['metros'].append({'station': station[0], 'time_to_metro': metro[1]})
 
-        if flat['resource_id'] == 0:
-            flat['link'] = 'https://realty.yandex.ru/offer/' + str(flat['offer_id'])
-        else:
-            flat['link'] = 'https://www.cian.ru/sale/flat/' + str(flat['offer_id'])
+        cur.execute("select offer_id from flats where id=%s", (flat['flat_id'], ))
+        offer_id = cur.fetchone()[0]
 
-        cur.execute("select address from buildings where id=%s;",
-                    (flat['building_id'],))
+        if flat['resource_id']:
+            flat['link'] = 'https://www.cian.ru/sale/flat/' + str(offer_id)
+        else:
+            flat['link'] = 'https://realty.yandex.ru/offer/' + str(offer_id)
+
+        cur.execute("select address from buildings where id=%s;", (flat['building_id'],))
         flat['address'] = cur.fetchone()[0]
 
         if type(flat['image']) != str:

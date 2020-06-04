@@ -376,6 +376,35 @@ class MainPreprocessing():
         lgbm_model.fit(X, y)
         return lgbm_model, columns
 
+    def calculate_profit_based_on_mean(self, data: pd.DataFrame):
+
+        # Group dataset by full_sq
+        list_of_squares = np.arange(38, 120, 4.5).tolist()
+        # [38.0, 42.5, 47.0, 51.5, 56.0, 60.5, 65.0, 69.5, 74.0, 78.5, 83.0,
+        # 87.5, 92.0, 96.5, 101.0, 105.5, 110.0, 114.5, 119.0]
+
+        # Initialize full_sq_group values with zero
+        data.loc[:, 'full_sq_group'] = 0
+
+        # Create dictionary: key = group number, value = lower threshold value of full_sq
+        # Example: {1: 38.0, 2: 42.5}
+        full_sq_grouping_dict = {}
+
+        # Update "full_sq_group" column value according to "full_sq" column value
+        for i in range(len(list_of_squares)):
+            # print(i + 1, self.list_of_squares[i])
+            full_sq_grouping_dict[i + 1] = list_of_squares[i]
+            data.loc[:, 'full_sq_group'] = np.where(data['full_sq'] >= list_of_squares[i], i + 1,
+                                                    data['full_sq_group'])
+
+        data.loc[:, 'mean_price'] = data.groupby(['yyyy_announce', 'clusters', 'full_sq_group', 'rooms'])[
+            'price'].transform('mean')
+
+        data['profit'] = data[['mean_price', 'price']].apply(
+            lambda row: (100 - (row.price / (row.mean_price / 100))), axis=1)
+
+        return data
+
     def calculate_profit(self, data: pd.DataFrame, price_model: GradientBoostingRegressor, list_of_columns: list):
 
         data.closed = data.closed.fillna(False)
@@ -451,12 +480,13 @@ if __name__ == '__main__':
     # cat_data = mp.to_dummies(cl_data)
 
     # Train price model
-    print("Price model training...", flush=True)
-    price_model, list_columns = mp.train_price_model(data=cl_data)
+    # print("Price model training...", flush=True)
+    # price_model, list_columns = mp.train_price_model(data=cl_data)
 
     # Calculate profit for each flat
     print("Profit calculating for each closed offer in dataset...", flush=True)
-    test = mp.calculate_profit(data=cl_data, price_model=price_model, list_of_columns=list_columns)
+    # test = mp.calculate_profit(data=cl_data, price_model=price_model, list_of_columns=list_columns)
+    test = mp.calculate_profit_based_on_mean(cl_data)
 
     # Create separate files for secondary flats
     mp.secondary_flats(data=test, path_to_save_data=PREPARED_DATA)

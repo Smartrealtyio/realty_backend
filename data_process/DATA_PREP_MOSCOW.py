@@ -353,7 +353,7 @@ class MainPreprocessing():
                  'renovation', 'has_elevator',
                  'time_to_metro', 'floor_first', 'floor_last',
                  'is_rented', 'rent_quarter',
-                 'rent_year', 'mm_announce', 'yyyy_announce'
+                 'rent_year', 'mm_announce', 'yyyy_announce',
                  'clusters']]
         # Save leaved columns to variable
         columns = list(df.columns)

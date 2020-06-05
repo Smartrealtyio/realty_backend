@@ -332,10 +332,11 @@ class Developers_API():
                 if rooms == 's':
                     flats_count-=sales_value_studio_acc
                     if flats_count > 0:
-                        sales_value_s = round(round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                        prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=0,
-                                                                                     housing_class=housing_class) * sales_volume_coeff_s) * flats_count)
+                                                                                     housing_class=housing_class)
+                        sales_value_s = round(round(prob * sales_volume_coeff_s) * flats_count) if int(prob) != 1 else val
                         print('sales_value_s={0}, month{1}'.format(sales_value_s, mm_announce), flush=True)
                         if max_flats_count_s >= sales_value_studio_acc+sales_value_s:
                             sales_value_studio.append(sales_value_s)
@@ -349,10 +350,12 @@ class Developers_API():
                 if rooms == 1:
                     flats_count -= sales_value_1_acc
                     if flats_count > 0:
-                        sales_value_1roomed = round(round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                     mm_sold=mm_announce,
-                                                                                     rooms=1,
-                                                                                     housing_class=housing_class) * sales_volume_coeff_1) *flats_count)
+                        prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                             mm_sold=mm_announce,
+                                                                             rooms=1,
+                                                                             housing_class=housing_class)
+                        sales_value_1roomed = round(round(prob * sales_volume_coeff_1) * flats_count) if int(
+                            prob) != 1 else val
                         print('sales_value_1={0}, month{1}'.format(sales_value_1, mm_announce), flush=True)
                         if max_flats_count_1 >= sales_value_1_acc + sales_value_1roomed:
                             sales_value_1.append(sales_value_1roomed)
@@ -365,11 +368,12 @@ class Developers_API():
                 if rooms == 2:
                     flats_count -= sales_value_2_acc
                     if flats_count > 0:
-                        sales_value_2roomed = round(
-                            round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                           mm_sold=mm_announce,
-                                                                           rooms=2,
-                                                                           housing_class=housing_class) * sales_volume_coeff_2) * flats_count)
+                        prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                             mm_sold=mm_announce,
+                                                                             rooms=2,
+                                                                             housing_class=housing_class)
+                        sales_value_2roomed = round(round(prob * sales_volume_coeff_2) * flats_count) if int(
+                            prob) != 1 else val
                         print('sales_value_2={0}, month{1}'.format(sales_value_2, mm_announce), flush=True)
                         if max_flats_count_2 >= sales_value_2_acc + sales_value_2roomed:
                             sales_value_2.append(sales_value_2roomed)
@@ -382,11 +386,12 @@ class Developers_API():
                 if rooms == 3:
                     flats_count -= sales_value_3_acc
                     if flats_count > 0:
-                        sales_value_3roomed = round(
-                            round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                           mm_sold=mm_announce,
-                                                                           rooms=3,
-                                                                           housing_class=housing_class) * sales_volume_coeff_3) * flats_count)
+                        prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                             mm_sold=mm_announce,
+                                                                             rooms=3,
+                                                                             housing_class=housing_class)
+                        sales_value_3roomed = round(round(prob * sales_volume_coeff_3) * flats_count) if int(
+                            prob) != 1 else val
                         print('sales_value_3={0}, month{1}'.format(sales_value_3, mm_announce), flush=True)
                         if max_flats_count_3 >= sales_value_3_acc + sales_value_3roomed:
                             sales_value_3.append(sales_value_3roomed)
@@ -399,12 +404,13 @@ class Developers_API():
                 if rooms == 4:
                     flats_count -= sales_value_4_acc
                     if flats_count > 0:
-                        sales_value_4roomed = round(
-                            round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                           mm_sold=mm_announce,
-                                                                           rooms=4,
-                                                                           housing_class=housing_class) * sales_volume_coeff_4) * flats_count)
-                        print('sales_value_4={0}, month{1}'.format(sales_value_1, mm_announce), flush=True)
+                        prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                             mm_sold=mm_announce,
+                                                                             rooms=4,
+                                                                             housing_class=housing_class)
+                        sales_value_4roomed = round(round(prob * sales_volume_coeff_4) * flats_count) if int(
+                            prob) != 1 else val
+                        print('sales_value_4={0}, month{1}'.format(sales_value_4, mm_announce), flush=True)
                         if max_flats_count_4 >= sales_value_4_acc + sales_value_4roomed:
                             sales_value_4.append(sales_value_4roomed)
                             sales_value_4_acc += sales_value_4roomed
@@ -690,7 +696,7 @@ class Developers_API():
         print('all: ', len(sale_volume_data_all), flush=True)
         print('closed: ', len(sale_volume_data_sold), flush=True)
         print('Предложение: {0}\nСпрос: {1}\n prob: {2}'.format(volume_19_all, volume_19_sold, (volume_19_sold / volume_19_all)), flush=True)
-        return volume_19_sold / volume_19_all
+        return volume_19_sold / volume_19_all, volume_19_sold
 
     # def calculate_sale_month_and_year(self, type: int, term: int, yyyy_announce: int, mm_announce: int):
     #

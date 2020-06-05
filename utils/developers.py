@@ -289,7 +289,7 @@ class Developers_API():
             print('Current month: ', mm_announce, flush=True)
             # Get flat parameters for each flat
             for idx_flats, i in enumerate(flats):
-                print(20 * '-', 'check front: ', idx_flats, i, flush=True)
+
                 price_meter_sq = int(i['price_meter_sq'])
                 # mm_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%m'))  # Get month from unix
                 # yyyy_announce = int(datetime.utcfromtimestamp(i['announce_timestamp']).strftime('%Y'))  # Get year from unix
@@ -340,6 +340,7 @@ class Developers_API():
                                                                                      rooms=0,
                                                                                      housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_s = round((prob * flats_count)* sales_volume_coeff_s) if (prob < 1 and flats_count < val)  else round(val*prob)
+                        print('flats_count: ', flats_count, flush=True)
                         print('sales_value_s={0}, month{1}'.format(sales_value_s, mm_announce), flush=True)
                         if max_flats_count_s >= sales_value_studio_acc+sales_value_s:
                             sales_value_studio.append(sales_value_s)
@@ -358,7 +359,7 @@ class Developers_API():
                                                                              rooms=1,
                                                                              housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_1roomed = round((prob * flats_count)* sales_volume_coeff_1) if (prob < 1 and flats_count < val)  else round(val*prob)
-                        print('flats_count: ', flats_count)
+                        print('flats_count: ', flats_count, flush=True)
                         print('1roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_1roomed), flush=True)
                         print('sales_value_1={0}, month{1}'.format(sales_value_1roomed, mm_announce), flush=True)
                         if max_flats_count_1 >= sales_value_1_acc + sales_value_1roomed:
@@ -379,7 +380,7 @@ class Developers_API():
                         sales_value_2roomed = round((prob * flats_count)* sales_volume_coeff_2) if (prob < 1 and flats_count < val)  else round(val*prob)
                         print('flats_count: ', flats_count)
                         print(
-                            '2roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_2roomed),
+                            '2roomd, prob={0}, val={1}, sales_value_2roomed={2}'.format(prob, val, sales_value_2roomed),
                             flush=True)
                         print('sales_value_2={0}, month{1}'.format(sales_value_2roomed, mm_announce), flush=True)
                         if max_flats_count_2 >= sales_value_2_acc + sales_value_2roomed:
@@ -399,7 +400,7 @@ class Developers_API():
                                                                              housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_3roomed = round((prob * flats_count)* sales_volume_coeff_3) if (prob < 1 and flats_count < val) else round(val*prob)
                         print(
-                            '3roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_3roomed),
+                            '3roomd, prob={0}, val={1}, sales_value_3roomed={2}'.format(prob, val, sales_value_3roomed),
                             flush=True)
                         print('sales_value_3={0}, month{1}'.format(sales_value_3roomed, mm_announce), flush=True)
                         if max_flats_count_3 >= sales_value_3_acc + sales_value_3roomed:
@@ -419,7 +420,7 @@ class Developers_API():
                                                                              housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_4roomed = round((prob * flats_count)* sales_volume_coeff_4) if (prob < 1 and flats_count < val)  else round(val*prob)
                         print(
-                            '4roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_4roomed),
+                            '4roomd, prob={0}, val={1}, sales_value_4roomed={2}'.format(prob, val, sales_value_4roomed),
                             flush=True)
                         print('sales_value_4={0}, month{1}'.format(sales_value_4roomed, mm_announce), flush=True)
                         if max_flats_count_4 >= sales_value_4_acc + sales_value_4roomed:
@@ -516,7 +517,7 @@ class Developers_API():
             answ_3, udpate_3 = (sales_value_3_acc, 1) if (0 <= sales_value_3_acc < max_flats_count_3 and update_3) else (max_flats_count_3, False)
             answ_4, udpate_4 = (sales_value_4_acc, 1) if (0 <= sales_value_4_acc < max_flats_count_4 and update_4) else (max_flats_count_4, 0)
 
-            print('\nFirst graphic: \nMonth_graphic={0} '.format(idx_month))
+            print('\nFirst graphic: \nMonth={0} '.format(mm_announce))
             print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,
                  's': s_answ,
                  '1': answ_1,
@@ -558,13 +559,13 @@ class Developers_API():
 
             dt_stamp = datetime(yyyy_announce, mm_announce, 1)
 
-            print('\nSecond graphic: \nMonth_graphic={0} '.format(idx_month))
-            print({'date': dt_stamp.strftime('%Y.%m.%d'),
-                   's_price': s_price_meter_sq,
-                   '1_price': one_roomed_price_meter_sq,
-                   '2_price': two_roomed_price_meter_sq,
-                   '3_price': three_roomed_price_meter_sq,
-                   '4_price': four_roomed_price_meter_sq})
+            # print('\nSecond graphic: \nMonth={0} '.format(mm_announce))
+            # print({'date': dt_stamp.strftime('%Y.%m.%d'),
+            #        's_price': s_price_meter_sq,
+            #        '1_price': one_roomed_price_meter_sq,
+            #        '2_price': two_roomed_price_meter_sq,
+            #        '3_price': three_roomed_price_meter_sq,
+            #        '4_price': four_roomed_price_meter_sq})
 
             # Collect data for second graphic
             second_graphic.append({'date': dt_stamp.strftime('%Y.%m.%d'),
@@ -600,7 +601,7 @@ class Developers_API():
                                   '4_sold':  sales_value_4_acc if sales_value_4_acc < max_flats_count_4 else max_flats_count_4,
                                   '4_all': max_flats_count_4})
 
-            print('\nThird graphic: \nMonth_graphic={0} '.format(idx_month))
+            print('\nThird graphic: \nMonth={0} '.format(mm_announce))
             print({'date': dt_stamp.strftime('%Y.%m.%d'),
                                   's_sold':  sales_value_studio_acc if sales_value_studio_acc < max_flats_count_s else max_flats_count_s,
                                   's_all': max_flats_count_s},
@@ -620,7 +621,7 @@ class Developers_API():
                    '4_sold': sales_value_4_acc if sales_value_4_acc < max_flats_count_4 else max_flats_count_4,
                    '4_all': max_flats_count_4}
                   )
-            # print('\nThird graphic: ', third_graphic, flush=True)
+            print('\n\n', flush=True)
 
 
 

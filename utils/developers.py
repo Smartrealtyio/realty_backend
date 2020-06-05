@@ -382,7 +382,7 @@ class Developers_API():
                         print(
                             '2roomd, prob={0}, val={1}, sales_value_2roomed={2}'.format(prob, val, sales_value_2roomed),
                             flush=True)
-                        print('sales_value_2={0}, month{1}, acc={2}'.format(sales_value_2roomed, mm_announce, sales_value_2_accl), flush=True)
+                        print('sales_value_2={0}, month{1}, acc={2}'.format(sales_value_2roomed, mm_announce, sales_value_2_acc), flush=True)
                         if max_flats_count_2 >= sales_value_2_acc + sales_value_2roomed:
                             sales_value_2.append(sales_value_2roomed)
                             sales_value_2_acc += sales_value_2roomed

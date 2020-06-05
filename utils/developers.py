@@ -674,10 +674,10 @@ class Developers_API():
                      sale_volume_data_sold.mm_sold == mm_sold) & (
                      sale_volume_data_sold.housing_class == housing_class))].shape[0]
 
-        # Only closed offers
+        # All offers
         sale_volume_data_all = self.msc_new
         volume_19_all = sale_volume_data_all[
-            ((sale_volume_data_all.rooms == rooms) & (sale_volume_data_all.yyyy_sold == 19) & (
+            ((sale_volume_data_all.rooms == rooms) & (sale_volume_data_all.yyy.isin([19, 20])) & (
                     sale_volume_data_all.full_sq_group == full_sq_group) & (
                      sale_volume_data_all.mm_sold == mm_sold) & (
                      sale_volume_data_all.housing_class == housing_class))].shape[0]

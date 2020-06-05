@@ -437,6 +437,8 @@ class Developers_API():
                 if rooms == 's' and not max_revenue_s:
                     s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce] * price_coeff
                     s_full_price = s_price_meter_sq * full_sq
+                    if len(sales_value_studio) == 0:
+                        sales_value_studio.append(0)
                     if not_sold_s-sales_value_studio_acc > 0 and sales_value_studio[-1] <= not_sold_s-sales_value_studio_acc:
                         revenue_s += sales_value_studio[-1]*s_full_price
                         not_sold_s-=sales_value_studio[-1]
@@ -450,6 +452,8 @@ class Developers_API():
                 if rooms == 1 and not max_revenue_1:
                     one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce] * price_coeff
                     one_roomed_full_price = one_roomed_price_meter_sq * full_sq
+                    if len(sales_value_1) == 0:
+                        sales_value_1.append(0)
                     if not_sold_1 - sales_value_1_acc > 0 and sales_value_1[-1] <= not_sold_1 - sales_value_1_acc:
                         revenue_one_roomed += sales_value_1[-1] * one_roomed_full_price
                         not_sold_1 -= sales_value_1[-1]
@@ -462,6 +466,8 @@ class Developers_API():
                 if rooms == 2 and not max_revenue_2:
                     two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce] * price_coeff
                     two_roomed_full_price = two_roomed_price_meter_sq * full_sq
+                    if len(sales_value_2) == 0:
+                        sales_value_2.append(0)
                     if not_sold_2 - sales_value_2_acc > 0 and sales_value_2[-1] <= not_sold_2 - sales_value_2_acc:
                         revenue_two_roomed += sales_value_2[-1] * two_roomed_full_price
                         not_sold_2 -= sales_value_2[-1]
@@ -488,6 +494,8 @@ class Developers_API():
                 if rooms == 3 and not max_revenue_3:
                     three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce] * price_coeff
                     three_roomed_full_price = three_roomed_price_meter_sq * full_sq
+                    if len(sales_value_3) == 0:
+                        sales_value_3.append(0)
                     if max_flats_count_3 - sales_value_3_acc > 0 and sales_value_3[-1] <= not_sold_3:
                         revenue_three_roomed += sales_value_3[-1] * three_roomed_full_price
                         not_sold_3 -= sales_value_3[-1]
@@ -496,16 +504,18 @@ class Developers_API():
                         not_sold_3 = 0
                         max_revenue_3 = True
 
-                if rooms == 3 and not max_revenue_3:
-                    three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce] * price_coeff
-                    three_roomed_full_price = three_roomed_price_meter_sq * full_sq
-                    if max_flats_count_3 - sales_value_3_acc > 0 and sales_value_3[-1] <= not_sold_3:
-                        revenue_three_roomed += sales_value_3[-1] * three_roomed_full_price
-                        not_sold_3 -= sales_value_3[-1]
-                    elif sales_value_3[-1] > not_sold_3:
-                        revenue_three_roomed += three_roomed_full_price * not_sold_3
-                        not_sold_3 = 0
-                        max_revenue_3 = True
+                if rooms == 4 and not max_revenue_4:
+                    four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce] * price_coeff
+                    four_roomed_full_price = four_roomed_price_meter_sq * full_sq
+                    if len(sales_value_4) == 0:
+                        sales_value_4.append(0)
+                    if max_flats_count_4 - sales_value_4_acc > 0 and sales_value_4[-1] <= not_sold_4:
+                        revenue_four_roomed += sales_value_4[-1] * four_roomed_full_price
+                        not_sold_4 -= sales_value_4[-1]
+                    elif sales_value_4[-1] > not_sold_4:
+                        revenue_four_roomed += four_roomed_full_price * not_sold_4
+                        not_sold_4 = 0
+                        max_revenue_4 = True
 
             # Accumulated sales values for each flat_type
             sales_value_studio_acc += sum(sales_value_studio) if not max_revenue_s else 0

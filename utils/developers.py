@@ -5,6 +5,7 @@ import numpy as np
 import os
 import json
 import sys
+from joblib import load
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -18,6 +19,8 @@ MOSCOW_DATA_NEW = SETTINGS.DATA_MOSCOW + '/MOSCOW_NEW_FLATS.csv'
 MOSCOW_DATA_SECONDARY = SETTINGS.DATA_MOSCOW + '/MOSCOW_VTOR.csv'
 SPB_DATA_NEW = SETTINGS.DATA_SPB + '/SPB_NEW_FLATS.csv'
 SPB_DATA_SECONDARY = SETTINGS.DATA_SPB + '/SPB_VTOR.csv'
+
+KMEANS_CLUSTERING_MOSCOW_MAIN = SETTINGS.MODEL_MOSCOW + '/KMEANS_CLUSTERING_MOSCOW_MAIN.joblib'
 
 
 # Class for developers page
@@ -335,7 +338,7 @@ class Developers_API():
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=0,
-                                                                                     housing_class=housing_class)
+                                                                                     housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_s = round((prob * flats_count)* sales_volume_coeff_s) if (prob < 1 and flats_count < val)  else round(val*prob)
                         print('sales_value_s={0}, month{1}'.format(sales_value_s, mm_announce), flush=True)
                         if max_flats_count_s >= sales_value_studio_acc+sales_value_s:
@@ -353,7 +356,7 @@ class Developers_API():
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=1,
-                                                                             housing_class=housing_class)
+                                                                             housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_1roomed = round((prob * flats_count)* sales_volume_coeff_1) if (prob < 1 and flats_count < val)  else round(val*prob)
                         print('flats_count: ', flats_count)
                         print('1roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_1roomed), flush=True)
@@ -372,7 +375,7 @@ class Developers_API():
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=2,
-                                                                             housing_class=housing_class)
+                                                                             housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_2roomed = round((prob * flats_count)* sales_volume_coeff_2) if (prob < 1 and flats_count < val)  else round(val*prob)
                         print('flats_count: ', flats_count)
                         print(
@@ -393,7 +396,7 @@ class Developers_API():
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=3,
-                                                                             housing_class=housing_class)
+                                                                             housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_3roomed = round((prob * flats_count)* sales_volume_coeff_3) if (prob < 1 and flats_count < val) else round(val*prob)
                         print(
                             '3roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_3roomed),
@@ -413,7 +416,7 @@ class Developers_API():
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=4,
-                                                                             housing_class=housing_class)
+                                                                             housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_4roomed = round((prob * flats_count)* sales_volume_coeff_4) if (prob < 1 and flats_count < val)  else round(val*prob)
                         print(
                             '4roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_4roomed),
@@ -680,18 +683,22 @@ class Developers_API():
     # Расчёт месяца и года продажи при известном сроке(в днях). Предполгается, что квартиры вымещаются на продажу только в начале месяца.
 
     # Calculate sales volume for each flat sub-group based on its group, number of rooms, sale month
-    def calculate_sales_volume_previos_year(self, rooms: int, full_sq_group: int, mm_sold: int, housing_class: int):
+    def calculate_sales_volume_previos_year(self, rooms: int, full_sq_group: int, mm_sold: int, housing_class: int, lat: float, lon: float):
 
         # Only closed offers
         sale_volume_data_sold = self.msc_new[(
             (self.msc_new['closed'] == True))]
+
+        kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
+
+        current_cluster = kmeans.predict([[lon, lat]])[0]
 
         # Get sales volume
         volume_19_sold = sale_volume_data_sold[
             ((sale_volume_data_sold.rooms == rooms) & (sale_volume_data_sold.yyyy_sold == 19) & (
                     sale_volume_data_sold.full_sq_group == full_sq_group) & (
                      sale_volume_data_sold.mm_sold == mm_sold) & (
-                     sale_volume_data_sold.housing_class == housing_class))].shape[0]
+                     sale_volume_data_sold.housing_class == housing_class) & (sale_volume_data_sold.clusters == current_cluster))].shape[0]
 
         # All offers
         sale_volume_data_all = self.msc_new

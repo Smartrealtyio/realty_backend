@@ -689,16 +689,16 @@ class Developers_API():
         sale_volume_data_sold = self.msc_new[(
             (self.msc_new['closed'] == True))]
 
-        kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
+        # kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
 
-        current_cluster = kmeans.predict([[lon, lat]])[0]
+        # current_cluster = kmeans.predict([[lon, lat]])[0]
 
         # Get sales volume
         volume_19_sold = sale_volume_data_sold[
             ((sale_volume_data_sold.rooms == rooms) & (sale_volume_data_sold.yyyy_sold == 19) & (
                     sale_volume_data_sold.full_sq_group == full_sq_group) & (
                      sale_volume_data_sold.mm_sold == mm_sold) & (
-                     sale_volume_data_sold.housing_class == housing_class) & (sale_volume_data_sold.clusters == current_cluster))].shape[0]
+                     sale_volume_data_sold.housing_class == housing_class) )].shape[0]
 
         # All offers
         sale_volume_data_all = self.msc_new

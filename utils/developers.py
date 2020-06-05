@@ -680,6 +680,7 @@ class Developers_API():
                      sale_volume_data_all.mm_sold == mm_sold) & (
                      sale_volume_data_all.housing_class == housing_class))].shape[0]
 
+        print('Предложение: {0}\nСпрос: {1}\n prob: {2}'.format(volume_19_all, volume_19_sold, (volume_19_sold / volume_19_all)))
         return volume_19_sold / volume_19_all
 
     # def calculate_sale_month_and_year(self, type: int, term: int, yyyy_announce: int, mm_announce: int):

@@ -348,13 +348,14 @@ class Developers_API():
 
                 # Calculate number of 1-roomed flats
                 if rooms == 1:
-                    flats_count -= sales_value_1_acc
+                    # flats_count -= sales_value_1_acc
                     if flats_count > 0:
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=1,
                                                                              housing_class=housing_class)
                         sales_value_1roomed = round(round(prob * sales_volume_coeff_1) * flats_count) if prob < 1 else 0
+                        print('flats_count: ', flats_count)
                         print('1roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_1roomed), flush=True)
                         print('sales_value_1={0}, month{1}'.format(sales_value_1roomed, mm_announce), flush=True)
                         if max_flats_count_1 >= sales_value_1_acc + sales_value_1roomed:
@@ -373,6 +374,7 @@ class Developers_API():
                                                                              rooms=2,
                                                                              housing_class=housing_class)
                         sales_value_2roomed = round(round(prob * sales_volume_coeff_2) * flats_count) if prob < 1 else 0
+                        print('flats_count: ', flats_count)
                         print(
                             '2roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_2roomed),
                             flush=True)

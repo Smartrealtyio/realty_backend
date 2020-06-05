@@ -336,7 +336,7 @@ class Developers_API():
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=0,
                                                                                      housing_class=housing_class)
-                        sales_value_s = round((prob * flats_count)* sales_volume_coeff_s) if prob < 1 else 0
+                        sales_value_s = round((prob * flats_count)* sales_volume_coeff_s) if (prob < 1 and flats_count < val)  else 0
                         print('sales_value_s={0}, month{1}'.format(sales_value_s, mm_announce), flush=True)
                         if max_flats_count_s >= sales_value_studio_acc+sales_value_s:
                             sales_value_studio.append(sales_value_s)
@@ -354,7 +354,7 @@ class Developers_API():
                                                                              mm_sold=mm_announce,
                                                                              rooms=1,
                                                                              housing_class=housing_class)
-                        sales_value_1roomed = round((prob * flats_count)* sales_volume_coeff_1) if prob < 1 else 0
+                        sales_value_1roomed = round((prob * flats_count)* sales_volume_coeff_1) if (prob < 1 and flats_count < val)  else 0
                         print('flats_count: ', flats_count)
                         print('1roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_1roomed), flush=True)
                         print('sales_value_1={0}, month{1}'.format(sales_value_1roomed, mm_announce), flush=True)
@@ -373,7 +373,7 @@ class Developers_API():
                                                                              mm_sold=mm_announce,
                                                                              rooms=2,
                                                                              housing_class=housing_class)
-                        sales_value_2roomed = round((prob * flats_count)* sales_volume_coeff_2) if prob < 1 else 0
+                        sales_value_2roomed = round((prob * flats_count)* sales_volume_coeff_2) if (prob < 1 and flats_count < val)  else 0
                         print('flats_count: ', flats_count)
                         print(
                             '2roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_2roomed),
@@ -394,7 +394,7 @@ class Developers_API():
                                                                              mm_sold=mm_announce,
                                                                              rooms=3,
                                                                              housing_class=housing_class)
-                        sales_value_3roomed = round((prob * flats_count)* sales_volume_coeff_3) if prob < 1 else 0
+                        sales_value_3roomed = round((prob * flats_count)* sales_volume_coeff_3) if (prob < 1 and flats_count < val) else val
                         print(
                             '3roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_3roomed),
                             flush=True)
@@ -414,7 +414,7 @@ class Developers_API():
                                                                              mm_sold=mm_announce,
                                                                              rooms=4,
                                                                              housing_class=housing_class)
-                        sales_value_4roomed = round((prob * flats_count)* sales_volume_coeff_4) if prob < 1 else 0
+                        sales_value_4roomed = round((prob * flats_count)* sales_volume_coeff_4) if (prob < 1 and flats_count < val)  else 0
                         print(
                             '4roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_4roomed),
                             flush=True)

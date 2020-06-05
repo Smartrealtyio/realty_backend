@@ -711,8 +711,11 @@ class Developers_API():
 
         print('all: ', len(sale_volume_data_all), flush=True)
         print('closed: ', len(sale_volume_data_sold), flush=True)
-        print('Предложение: {0}\nСпрос: {1}\n prob: {2}'.format(volume_19_all, volume_19_sold, (volume_19_sold / volume_19_all)), flush=True)
-        return (volume_19_sold / volume_19_all), volume_19_sold
+        if volume_19_sold != 0:
+            print('Предложение: {0}\nСпрос: {1}\n prob: {2}'.format(volume_19_all, volume_19_sold, (volume_19_sold / volume_19_all)), flush=True)
+        if volume_19_sold != 0:
+            return (volume_19_sold / volume_19_all), volume_19_sold
+        return 0, volume_19_sold
 
     # def calculate_sale_month_and_year(self, type: int, term: int, yyyy_announce: int, mm_announce: int):
     #

@@ -328,47 +328,82 @@ class Developers_API():
 
                 # Calculate number of studios
                 if rooms == 's':
-                    sales_value_s = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                 mm_sold=mm_announce,
-                                                                                 rooms=0,
-                                                                                 housing_class=housing_class) * sales_volume_coeff_s)
-                    sales_value_studio.append(sales_value_s)
-                    sales_value_studio_acc+=sales_value_s
+                    flats_count-=sales_value_studio_acc
+                    if flats_count > 0:
+                        sales_value_s = int(round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                     mm_sold=mm_announce,
+                                                                                     rooms=0,
+                                                                                     housing_class=housing_class) * sales_volume_coeff_s) * flats_count)
+                        if max_flats_count_s >= sales_value_studio_acc+sales_value_s:
+                            sales_value_studio.append(sales_value_s)
+                            sales_value_studio_acc+=sales_value_s
+                        else:
+                            sales_value_studio.append(max_flats_count_s - sales_value_studio_acc)
+                            sales_value_studio_acc = max_flats_count_s
+
 
                 # Calculate number of 1-roomed flats
                 if rooms == 1:
-                    sales_value_1roomed = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                 mm_sold=mm_announce,
-                                                                                 rooms=1,
-                                                                                 housing_class=housing_class) * sales_volume_coeff_1)
-                    print('mm_graphic={0}, sales_value_1={1}'.format(idx_month + 1, sales_value_1roomed), flush=True)
-                    sales_value_1.append(sales_value_1roomed)
+                    flats_count -= sales_value_1_acc
+                    if flats_count > 0:
+                        sales_value_1roomed = int(round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                                     mm_sold=mm_announce,
+                                                                                     rooms=1,
+                                                                                     housing_class=housing_class) * sales_volume_coeff_1) *flats_count)
+                        if max_flats_count_1 >= sales_value_1_acc + sales_value_1roomed:
+                            sales_value_1.append(sales_value_1roomed)
+                            sales_value_1_acc += sales_value_1roomed
+                        else:
+                            sales_value_1.append(max_flats_count_1 - sales_value_1_acc)
+                            sales_value_1_acc = max_flats_count_1
 
                 # Calculate number of 2-roomed flats
                 if rooms == 2:
-                    sales_value_2roomed = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                 mm_sold=mm_announce,
-                                                                                 rooms=2,
-                                                                                 housing_class=housing_class) * sales_volume_coeff_2)
-                    print('mm_graphic={0}, sales_value_2={1}'.format(idx_month + 1, sales_value_2roomed), flush=True)
-                    sales_value_2.append(sales_value_2roomed)
+                    flats_count -= sales_value_2_acc
+                    if flats_count > 0:
+                        sales_value_2roomed = int(
+                            round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                           mm_sold=mm_announce,
+                                                                           rooms=2,
+                                                                           housing_class=housing_class) * sales_volume_coeff_2) * flats_count)
+                        if max_flats_count_2 >= sales_value_2_acc + sales_value_2roomed:
+                            sales_value_2.append(sales_value_2roomed)
+                            sales_value_2_acc += sales_value_2roomed
+                        else:
+                            sales_value_2.append(max_flats_count_2 - sales_value_2_acc)
+                            sales_value_2_acc = max_flats_count_2
 
                 # Calculate number of 3-roomed flats
                 if rooms == 3:
-                    sales_value_3roomed = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                 mm_sold=mm_announce,
-                                                                                 rooms=3,
-                                                                                 housing_class=housing_class) * sales_volume_coeff_3)
-                    print('mm_graphic={0}, sales_value_3={1}'.format(idx_month + 1, sales_value_3roomed), flush=True)
-                    sales_value_3.append(sales_value_3roomed)
+                    flats_count -= sales_value_3_acc
+                    if flats_count > 0:
+                        sales_value_3roomed = int(
+                            round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                           mm_sold=mm_announce,
+                                                                           rooms=3,
+                                                                           housing_class=housing_class) * sales_volume_coeff_3) * flats_count)
+                        if max_flats_count_3 >= sales_value_3_acc + sales_value_3roomed:
+                            sales_value_3.append(sales_value_3roomed)
+                            sales_value_3_acc += sales_value_3roomed
+                        else:
+                            sales_value_3.append(max_flats_count_3 - sales_value_3_acc)
+                            sales_value_3_acc = max_flats_count_3
 
                 # Calculate number of 4-roomed flats
                 if rooms == 4:
-                    sales_value_4roomed = round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
-                                                                                 mm_sold=mm_announce,
-                                                                                 rooms=4,
-                                                                                 housing_class=housing_class) * sales_volume_coeff_4)
-                    sales_value_4.append(sales_value_4roomed)
+                    flats_count -= sales_value_4_acc
+                    if flats_count > 0:
+                        sales_value_4roomed = int(
+                            round(self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                                                                           mm_sold=mm_announce,
+                                                                           rooms=4,
+                                                                           housing_class=housing_class) * sales_volume_coeff_4) * flats_count)
+                        if max_flats_count_4 >= sales_value_4_acc + sales_value_4roomed:
+                            sales_value_4.append(sales_value_4roomed)
+                            sales_value_4_acc += sales_value_4roomed
+                        else:
+                            sales_value_4.append(max_flats_count_4 - sales_value_4_acc)
+                            sales_value_4_acc = max_flats_count_4
 
 
 
@@ -627,17 +662,25 @@ class Developers_API():
     def calculate_sales_volume_previos_year(self, rooms: int, full_sq_group: int, mm_sold: int, housing_class: int):
 
         # Only closed offers
-        sale_volume_data = self.msc_new[(
+        sale_volume_data_sold = self.msc_new[(
             (self.msc_new['closed'] == True))]
 
         # Get sales volume
-        volume_19 = sale_volume_data[
-            ((sale_volume_data.rooms == rooms) & (sale_volume_data.yyyy_sold == 19) & (
-                    sale_volume_data.full_sq_group == full_sq_group) & (
-                     sale_volume_data.mm_sold == mm_sold) & (
-                     sale_volume_data.housing_class == housing_class))].shape[0]
+        volume_19_sold = sale_volume_data_sold[
+            ((sale_volume_data_sold.rooms == rooms) & (sale_volume_data_sold.yyyy_sold == 19) & (
+                    sale_volume_data_sold.full_sq_group == full_sq_group) & (
+                     sale_volume_data_sold.mm_sold == mm_sold) & (
+                     sale_volume_data_sold.housing_class == housing_class))].shape[0]
 
-        return volume_19
+        # Only closed offers
+        sale_volume_data_all = self.msc_new
+        volume_19_all = sale_volume_data_all[
+            ((sale_volume_data_all.rooms == rooms) & (sale_volume_data_all.yyyy_sold == 19) & (
+                    sale_volume_data_all.full_sq_group == full_sq_group) & (
+                     sale_volume_data_all.mm_sold == mm_sold) & (
+                     sale_volume_data_all.housing_class == housing_class))].shape[0]
+
+        return volume_19_sold / volume_19_all
 
     # def calculate_sale_month_and_year(self, type: int, term: int, yyyy_announce: int, mm_announce: int):
     #

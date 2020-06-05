@@ -416,7 +416,7 @@ class MainPreprocessing():
             data.loc[:, 'full_sq_group'] = np.where(data['full_sq'] >= list_of_squares[i], i + 1,
                                                        data['full_sq_group'])
 
-        data.loc[: , 'mean_price'] = data.groupby(['yyyy_announce', 'clusters', 'full_sq_group', 'rooms'])['price'].transform('mean')
+        data.loc[: , 'mean_price'] = data.groupby(['flat_type', 'yyyy_announce', 'clusters', 'full_sq_group', 'rooms'])['price'].transform('mean')
 
         data['profit'] = data[['mean_price', 'price']].apply(
             lambda row: (100 - (row.price / (row.mean_price / 100))), axis=1)

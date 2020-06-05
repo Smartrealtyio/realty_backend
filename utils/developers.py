@@ -341,7 +341,7 @@ class Developers_API():
                                                                                      housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_s = round((prob * flats_count)* sales_volume_coeff_s) if (prob < 1 and flats_count < val)  else round(val*prob)
                         print('flats_count: ', flats_count, flush=True)
-                        print('sales_value_s={0}, month{1}'.format(sales_value_s, mm_announce), flush=True)
+                        print('sales_value_s={0}, month{1}, acc={2}'.format(sales_value_s, mm_announce, sales_value_studio_acc), flush=True)
                         if max_flats_count_s >= sales_value_studio_acc+sales_value_s:
                             sales_value_studio.append(sales_value_s)
                             sales_value_studio_acc+=sales_value_s
@@ -361,7 +361,7 @@ class Developers_API():
                         sales_value_1roomed = round((prob * flats_count)* sales_volume_coeff_1) if (prob < 1 and flats_count < val)  else round(val*prob)
                         print('flats_count: ', flats_count, flush=True)
                         print('1roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_1roomed), flush=True)
-                        print('sales_value_1={0}, month{1}'.format(sales_value_1roomed, mm_announce), flush=True)
+                        print('sales_value_1={0}, month{1}, acc={2}'.format(sales_value_1roomed, mm_announce, sales_value_1_acc), flush=True)
                         if max_flats_count_1 >= sales_value_1_acc + sales_value_1roomed:
                             sales_value_1.append(sales_value_1roomed)
                             sales_value_1_acc += sales_value_1roomed
@@ -382,7 +382,7 @@ class Developers_API():
                         print(
                             '2roomd, prob={0}, val={1}, sales_value_2roomed={2}'.format(prob, val, sales_value_2roomed),
                             flush=True)
-                        print('sales_value_2={0}, month{1}'.format(sales_value_2roomed, mm_announce), flush=True)
+                        print('sales_value_2={0}, month{1}, acc={2}'.format(sales_value_2roomed, mm_announce, sales_value_2_accl), flush=True)
                         if max_flats_count_2 >= sales_value_2_acc + sales_value_2roomed:
                             sales_value_2.append(sales_value_2roomed)
                             sales_value_2_acc += sales_value_2roomed
@@ -402,7 +402,7 @@ class Developers_API():
                         print(
                             '3roomd, prob={0}, val={1}, sales_value_3roomed={2}'.format(prob, val, sales_value_3roomed),
                             flush=True)
-                        print('sales_value_3={0}, month{1}'.format(sales_value_3roomed, mm_announce), flush=True)
+                        print('sales_value_3={0}, month{1}, acc={2}'.format(sales_value_3roomed, mm_announce, sales_value_3_acc), flush=True)
                         if max_flats_count_3 >= sales_value_3_acc + sales_value_3roomed:
                             sales_value_3.append(sales_value_3roomed)
                             sales_value_3_acc += sales_value_3roomed
@@ -422,7 +422,7 @@ class Developers_API():
                         print(
                             '4roomd, prob={0}, val={1}, sales_value_4roomed={2}'.format(prob, val, sales_value_4roomed),
                             flush=True)
-                        print('sales_value_4={0}, month{1}'.format(sales_value_4roomed, mm_announce), flush=True)
+                        print('sales_value_4={0}, month{1}, acc={2}'.format(sales_value_4roomed, mm_announce, sales_value_4_acc), flush=True)
                         if max_flats_count_4 >= sales_value_4_acc + sales_value_4roomed:
                             sales_value_4.append(sales_value_4roomed)
                             sales_value_4_acc += sales_value_4roomed

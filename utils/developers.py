@@ -332,7 +332,7 @@ class Developers_API():
                 if rooms == 's':
                     flats_count-=sales_value_studio_acc
                     if flats_count > 0:
-                        prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                        val, prob = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=0,
                                                                                      housing_class=housing_class)
@@ -350,7 +350,7 @@ class Developers_API():
                 if rooms == 1:
                     flats_count -= sales_value_1_acc
                     if flats_count > 0:
-                        prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                        val, prob = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=1,
                                                                              housing_class=housing_class)
@@ -369,7 +369,7 @@ class Developers_API():
                 if rooms == 2:
                     flats_count -= sales_value_2_acc
                     if flats_count > 0:
-                        prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                        val, prob = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=2,
                                                                              housing_class=housing_class)
@@ -387,7 +387,7 @@ class Developers_API():
                 if rooms == 3:
                     flats_count -= sales_value_3_acc
                     if flats_count > 0:
-                        prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                        val, prob = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=3,
                                                                              housing_class=housing_class)
@@ -405,7 +405,7 @@ class Developers_API():
                 if rooms == 4:
                     flats_count -= sales_value_4_acc
                     if flats_count > 0:
-                        prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
+                        val, prob = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=4,
                                                                              housing_class=housing_class)

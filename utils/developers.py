@@ -282,6 +282,8 @@ class Developers_API():
                 # max_revenue_4, max_revenue_3, max_revenue_2, max_revenue_1, max_revenue_s = 0, 0, 0, 0, 0
 
 
+
+            print('Current month: ', mm_announce, flush=True)
             # Get flat parameters for each flat
             for idx_flats, i in enumerate(flats):
                 print(20 * '-', 'check front: ', idx_flats, i, flush=True)

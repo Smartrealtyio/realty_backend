@@ -377,11 +377,11 @@ class Developers_API():
                         if max_flats_count_1 >= sales_value_1_acc + sales_value_1roomed:
                             sales_value_1.append(sales_value_1roomed)
                             sales_value_1_acc += sales_value_1roomed
-                            udpate_1 = True
+                            update_1 = True
                         else:
                             sales_value_1.append(max_flats_count_1 - sales_value_1_acc)
                             sales_value_1_acc = max_flats_count_1
-                            udpate_1 = False
+                            update_1 = False
 
                         print('\nConclusion: sales_value_1={0}, sales_value_1_acc={1}'.format(
                             sales_value_1, sales_value_1_acc), flush=True)
@@ -405,11 +405,11 @@ class Developers_API():
                         if max_flats_count_2 >= sales_value_2_acc + sales_value_2roomed:
                             sales_value_2.append(sales_value_2roomed)
                             sales_value_2_acc += sales_value_2roomed
-                            udpate_2 = True
+                            update_2 = True
                         else:
                             sales_value_2.append(max_flats_count_2 - sales_value_2_acc)
                             sales_value_2_acc = max_flats_count_2
-                            udpate_2 = False
+                            update_2 = False
                         print('\nConclusion: sales_value_2={0}, sales_value_2_acc={1}'.format(
                             sales_value_2, sales_value_2_acc), flush=True)
 
@@ -436,7 +436,7 @@ class Developers_API():
                         else:
                             sales_value_3.append(max_flats_count_3 - sales_value_3_acc)
                             sales_value_3_acc = max_flats_count_3
-                            udpate_3 = False
+                            update_3 = False
                         print('\nConclusion: sales_value_3={0}, sales_value_3_acc={1}'.format(
                             sales_value_3, sales_value_3_acc), flush=True)
                     else:

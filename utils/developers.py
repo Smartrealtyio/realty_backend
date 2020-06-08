@@ -581,6 +581,8 @@ class Developers_API():
             answ_3, update_3 = (sales_value_3[-1], 0) if update_3 else (0, 0)
             answ_4, update_4 = (sales_value_4[-1], 0) if update_4 else (0, 0)
 
+            print('DEEEVVV', flush=True)
+
 
             print('\nFirst graphic: \nMonth={0} '.format(mm_announce))
             print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,

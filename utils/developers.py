@@ -329,7 +329,7 @@ class Developers_API():
                 if n_years < 0:
                     return
 
-
+                print('----> MONTH {0}'.format(mm_announce), flush=True)
 
                 # Calculate number of studios
                 if rooms == 's':
@@ -340,14 +340,21 @@ class Developers_API():
                                                                                      rooms=0,
                                                                                      housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_s = round((prob * flats_count)* sales_volume_coeff_s) if (prob < 1 and flats_count < val)  else round(val*prob)
-                        print('flats_count: ', flats_count, flush=True)
-                        print('sales_value_s={0}, month{1}, acc={2}'.format(sales_value_s, mm_announce, sales_value_studio_acc), flush=True)
+                        print('Studio flats_count: ', flats_count, flush=True)
+                        print('Max_val={0}, sales_value_s in current month={1}, accumulated value={2}, flats_count={3}'.format(
+                            max_flats_count_s, sales_value_s, sales_value_studio_acc, flats_count), flush=True)
+
                         if max_flats_count_s >= sales_value_studio_acc+sales_value_s:
                             sales_value_studio.append(sales_value_s)
                             sales_value_studio_acc+=sales_value_s
                         else:
                             sales_value_studio.append(max_flats_count_s - sales_value_studio_acc)
                             sales_value_studio_acc = max_flats_count_s
+
+                        print('\nConclusion: sales_value_studio={0}, sales_value_studio_acc={1}'.format(
+                            sales_value_studio, sales_value_studio_acc), flush=True)
+                    else:
+                        print('!!!!!!!!!Studio flats_count: ', flats_count, flush=True)
 
 
                 # Calculate number of 1-roomed flats
@@ -359,15 +366,22 @@ class Developers_API():
                                                                              rooms=1,
                                                                              housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_1roomed = round((prob * flats_count)* sales_volume_coeff_1) if (prob < 1 and flats_count < val)  else round(val*prob)
-                        print('flats_count: ', flats_count, flush=True)
-                        print('1roomd, prob={0}, val={1}, sales_value_1roomed={2}'.format(prob, val, sales_value_1roomed), flush=True)
-                        print('sales_value_1={0}, month{1}, acc={2}'.format(sales_value_1roomed, mm_announce, sales_value_1_acc), flush=True)
+                        print('1Roomed flats_count: ', flats_count, flush=True)
+                        print(
+                            'Max_val={0}, sales_value_1 in current month={1}, accumulated value={2}, flats_count={3}'.format(
+                                max_flats_count_1, sales_value_1roomed, sales_value_1_acc, flats_count), flush=True)
                         if max_flats_count_1 >= sales_value_1_acc + sales_value_1roomed:
                             sales_value_1.append(sales_value_1roomed)
                             sales_value_1_acc += sales_value_1roomed
                         else:
                             sales_value_1.append(max_flats_count_1 - sales_value_1_acc)
                             sales_value_1_acc = max_flats_count_1
+
+                        print('\nConclusion: sales_value_1={0}, sales_value_1_acc={1}'.format(
+                            sales_value_1, sales_value_1_acc), flush=True)
+
+                    else:
+                        print('!!!!!!!!!1Roomed flats_count: ', flats_count, flush=True)
 
                 # Calculate number of 2-roomed flats
                 if rooms == 2:
@@ -378,17 +392,21 @@ class Developers_API():
                                                                              rooms=2,
                                                                              housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_2roomed = round((prob * flats_count)* sales_volume_coeff_2) if (prob < 1 and flats_count < val)  else round(val*prob)
-                        print('flats_count: ', flats_count)
+                        print('2Roomed flats_count: ', flats_count, flush=True)
                         print(
-                            '2roomd, prob={0}, val={1}, sales_value_2roomed={2}'.format(prob, val, sales_value_2roomed),
-                            flush=True)
-                        print('sales_value_2={0}, month{1}, acc={2}'.format(sales_value_2roomed, mm_announce, sales_value_2_acc), flush=True)
+                            'Max_val={0}, sales_value_2 in current month={1}, accumulated value={2}, flats_count={3}'.format(
+                                max_flats_count_2, sales_value_2roomed, sales_value_2_acc, flats_count), flush=True)
                         if max_flats_count_2 >= sales_value_2_acc + sales_value_2roomed:
                             sales_value_2.append(sales_value_2roomed)
                             sales_value_2_acc += sales_value_2roomed
                         else:
                             sales_value_2.append(max_flats_count_2 - sales_value_2_acc)
                             sales_value_2_acc = max_flats_count_2
+                        print('\nConclusion: sales_value_2={0}, sales_value_2_acc={1}'.format(
+                            sales_value_2, sales_value_2_acc), flush=True)
+
+                    else:
+                        print('!!!!!!!!!2Roomed flats_count: ', flats_count, flush=True)
 
                 # Calculate number of 3-roomed flats
                 if rooms == 3:
@@ -399,16 +417,20 @@ class Developers_API():
                                                                              rooms=3,
                                                                              housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_3roomed = round((prob * flats_count)* sales_volume_coeff_3) if (prob < 1 and flats_count < val) else round(val*prob)
+                        print('3Roomed flats_count: ', flats_count, flush=True)
                         print(
-                            '3roomd, prob={0}, val={1}, sales_value_3roomed={2}'.format(prob, val, sales_value_3roomed),
-                            flush=True)
-                        print('sales_value_3={0}, month{1}, acc={2}'.format(sales_value_3roomed, mm_announce, sales_value_3_acc), flush=True)
+                            'Max_val={0}, sales_value_3 in current month={1}, accumulated value={2}, flats_count={3}'.format(
+                                max_flats_count_3, sales_value_3roomed, sales_value_3_acc, flats_count), flush=True)
                         if max_flats_count_3 >= sales_value_3_acc + sales_value_3roomed:
                             sales_value_3.append(sales_value_3roomed)
                             sales_value_3_acc += sales_value_3roomed
                         else:
                             sales_value_3.append(max_flats_count_3 - sales_value_3_acc)
                             sales_value_3_acc = max_flats_count_3
+                        print('\nConclusion: sales_value_3={0}, sales_value_3_acc={1}'.format(
+                            sales_value_3, sales_value_3_acc), flush=True)
+                    else:
+                        print('!!!!!!!!!3Roomed flats_count: ', flats_count, flush=True)
 
                 # Calculate number of 4-roomed flats
                 if rooms == 4:
@@ -419,16 +441,21 @@ class Developers_API():
                                                                              rooms=4,
                                                                              housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_4roomed = round((prob * flats_count)* sales_volume_coeff_4) if (prob < 1 and flats_count < val)  else round(val*prob)
+                        print('4Roomed flats_count: ', flats_count, flush=True)
                         print(
-                            '4roomd, prob={0}, val={1}, sales_value_4roomed={2}'.format(prob, val, sales_value_4roomed),
-                            flush=True)
-                        print('sales_value_4={0}, month{1}, acc={2}'.format(sales_value_4roomed, mm_announce, sales_value_4_acc), flush=True)
+                            'Max_val={0}, sales_value_4 in current month={1}, accumulated value={2}, flats_count={3}'.format(
+                                max_flats_count_4, sales_value_4roomed, sales_value_4_acc, flats_count), flush=True)
                         if max_flats_count_4 >= sales_value_4_acc + sales_value_4roomed:
                             sales_value_4.append(sales_value_4roomed)
                             sales_value_4_acc += sales_value_4roomed
                         else:
                             sales_value_4.append(max_flats_count_4 - sales_value_4_acc)
                             sales_value_4_acc = max_flats_count_4
+                        print('\nConclusion: sales_value_4={0}, sales_value_4_acc={1}'.format(
+                            sales_value_4, sales_value_4_acc), flush=True)
+                    else:
+                        print('!!!!!!!!!4Roomed flats_count: ', flats_count, flush=True)
+
 
 
 
@@ -727,12 +754,15 @@ class Developers_API():
                      sale_volume_data_all.mm_sold == mm_sold) & (
                      sale_volume_data_all.housing_class == housing_class))].shape[0]
 
+        print('<---------------> ROOMS = {0} <--------------->'.format(rooms), flush=True)
         print('all: ', len(sale_volume_data_all), flush=True)
         print('closed: ', len(sale_volume_data_sold), flush=True)
-        if volume_19_sold != 0:
-            print('Предложение: {0}\nСпрос: {1}\n prob: {2}'.format(volume_19_all, volume_19_sold, (volume_19_sold / volume_19_all)), flush=True)
-        if volume_19_sold != 0:
+        if len(volume_19_sold) != 0:
+            print('Предложение: {0}\nСпрос: {1}\n prob: {2}'.format(volume_19_all, volume_19_sold,
+                                                                    (volume_19_sold / volume_19_all)), flush=True)
             return (volume_19_sold / volume_19_all), volume_19_sold
+
+        print('ERROR -------------> ROOMS {0} equals zero!'.foramt(rooms), flush=True)
         return 0, volume_19_sold
 
     # def calculate_sale_month_and_year(self, type: int, term: int, yyyy_announce: int, mm_announce: int):

@@ -534,6 +534,7 @@ class Developers_API():
                     print(
                         '/////////revenue_2 = {0}, sales_value_2 = {1}'.format(revenue_two_roomed, sales_value_2),
                         flush=True)
+                    print('max_flats_count_2 ({0}), sales_value_2_acc ({1}), sales_value_2[-1] ({2})'.format(max_flats_count_2, sales_value_2_acc, sales_value_2[-1]),  flush=True)
                     if len(sales_value_2) != 0:
                         if max_flats_count_2 - sales_value_2_acc >= 0 and sales_value_2[
                             -1] + sales_value_2_acc <= max_flats_count_2 - sales_value_2_acc:

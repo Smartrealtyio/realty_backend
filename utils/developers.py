@@ -387,7 +387,7 @@ class Developers_API():
                             sales_value_1, sales_value_1_acc), flush=True)
 
                     else:
-                        update_1= False
+                        update_1 = False
                         print('!!!!!!!!!1Roomed flats_count: ', flats_count, flush=True)
 
                 # Calculate number of 2-roomed flats
@@ -478,49 +478,55 @@ class Developers_API():
 
                 # Calculate revenue for each type and change price depending on the month
                 if rooms == 's' and not max_revenue_s:
-                    s_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce] * price_coeff
-                    s_full_price = s_price_meter_sq * full_sq
-                    if len(sales_value_studio) != 0:
 
-                        if not_sold_s - sales_value_studio_acc >= 0 and sales_value_studio[-1]+sales_value_studio_acc <= not_sold_s:
-                            revenue_s += sales_value_studio[-1]*s_full_price
-                            not_sold_s-=sales_value_studio[-1]
-                        elif not_sold_s - sales_value_studio_acc <= 0 or sales_value_studio[
-                                -1] + sales_value_studio_acc > not_sold_s:
-                            revenue_s += s_full_price * not_sold_s
-                            not_sold_s = 0
+                    # Calculate price_meter_sq for flat depends on price changes per month
+                    studio_price_meter_sq = price_meter_sq * prices_changes_studio[mm_announce] * price_coeff
+
+                    # Calculate price for whole flat
+                    studio_full_price = studio_price_meter_sq * full_sq
+
+                    if len(sales_value_studio) != 0:
+                        if max_flats_count_s - sales_value_studio_acc >= 0 and sales_value_studio[
+                            -1] + sales_value_studio_acc <= max_flats_count_s - sales_value_studio_acc:
+                            revenue_s += sales_value_studio[-1] * studio_full_price
+                        else:
+                            revenue_s += studio_full_price * (max_flats_count_s - sales_value_studio_acc)
                             max_revenue_s = True
 
 
 
                 if rooms == 1 and not max_revenue_1:
-                    one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce] * price_coeff
-                    one_roomed_full_price = one_roomed_price_meter_sq * full_sq
-                    if len(sales_value_1) != 0:
 
-                        if not_sold_1 - sales_value_1_acc >= 0 and sales_value_1[-1]+sales_value_1_acc <= not_sold_1:
+                    # Calculate price_meter_sq for flat depends on price changes per month
+                    one_roomed_price_meter_sq = price_meter_sq * prices_changes_1[mm_announce] * price_coeff
+
+                    # Calculate price for whole flat
+                    one_roomed_full_price = one_roomed_price_meter_sq * full_sq
+
+
+                    if len(sales_value_1) != 0:
+                        if max_flats_count_1 - sales_value_1_acc >= 0 and sales_value_1[
+                            -1] + sales_value_1_acc <= max_flats_count_1 - sales_value_1_acc:
                             revenue_one_roomed += sales_value_1[-1] * one_roomed_full_price
-                            not_sold_1 -= sales_value_1[-1]
-                        elif not_sold_1 - sales_value_1_acc < 0 or sales_value_1[
-                            -1] + sales_value_1_acc > not_sold_1:
-                            revenue_one_roomed += one_roomed_full_price * not_sold_1
-                            not_sold_1 = 0
+                        else:
+                            revenue_one_roomed += one_roomed_full_price * (max_flats_count_1 - sales_value_1_acc)
                             max_revenue_1 = True
 
                 if rooms == 2 and not max_revenue_2:
+
+                    # Calculate price_meter_sq for flat depends on price changes per month
                     two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce] * price_coeff
+
+                    # Calculate price for whole flat
                     two_roomed_full_price = two_roomed_price_meter_sq * full_sq
 
-                    if len(sales_value_2)!=0:
-                        if not_sold_2 - sales_value_2_acc >= 0 and sales_value_2[-1]+sales_value_2_acc <= not_sold_2:
+                    if len(sales_value_2) != 0:
+                        if max_flats_count_2 - sales_value_2_acc >= 0 and sales_value_2[
+                            -1] + sales_value_2_acc <= max_flats_count_2 - sales_value_2_acc:
                             revenue_two_roomed += sales_value_2[-1] * two_roomed_full_price
-                            not_sold_2 -= sales_value_2[-1]
-                        elif not_sold_2 - sales_value_2_acc <= 0 or sales_value_2[
-                            -1] + sales_value_2_acc > not_sold_2:
-                            revenue_two_roomed += two_roomed_full_price * not_sold_2
-                            not_sold_2 = 0
+                        else:
+                            revenue_two_roomed += two_roomed_full_price * (max_flats_count_2 - sales_value_2_acc)
                             max_revenue_2 = True
-
                 # if rooms == 2 and not max_revenue_2:
                 #     two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce] * price_coeff
                 #     two_roomed_full_price = two_roomed_price_meter_sq * full_sq
@@ -533,30 +539,36 @@ class Developers_API():
                 #         not_sold_2 = 0
                 #         max_revenue_2 = True
 
-
-
                 if rooms == 3 and not max_revenue_3:
+
+                    # Calculate price_meter_sq for flat depends on price changes per month
                     three_roomed_price_meter_sq = price_meter_sq * prices_changes_3[mm_announce] * price_coeff
+
+                    # Calculate price for whole flat
                     three_roomed_full_price = three_roomed_price_meter_sq * full_sq
+
                     if len(sales_value_3) != 0:
-                        if not_sold_3 - sales_value_3_acc >= 0 and sales_value_3[-1]+sales_value_3_acc <= not_sold_3:
+                        if max_flats_count_3 - sales_value_3_acc >= 0 and sales_value_3[
+                            -1] + sales_value_3_acc <= max_flats_count_3 - sales_value_3_acc:
                             revenue_three_roomed += sales_value_3[-1] * three_roomed_full_price
-                            not_sold_3 -= sales_value_3[-1]
-                        elif not_sold_3 - sales_value_3_acc <= 0 or sales_value_3[ -1] + sales_value_3_acc > not_sold_3:
-                            revenue_three_roomed += three_roomed_full_price * not_sold_3
-                            not_sold_3 = 0
+                        else:
+                            revenue_three_roomed += three_roomed_full_price * (max_flats_count_3 - sales_value_3_acc)
                             max_revenue_3 = True
 
                 if rooms == 4 and not max_revenue_4:
+
+                    # Calculate price_meter_sq for flat depends on price changes per month
                     four_roomed_price_meter_sq = price_meter_sq * prices_changes_4[mm_announce] * price_coeff
+
+                    # Calculate price for whole flat
                     four_roomed_full_price = four_roomed_price_meter_sq * full_sq
+
                     if len(sales_value_4) != 0:
-                        if not_sold_4 - sales_value_4_acc >= 0 and sales_value_4[-1]+sales_value_4_acc <= not_sold_4:
+                        if max_flats_count_4 - sales_value_4_acc >= 0 and sales_value_4[
+                            -1] + sales_value_4_acc <= max_flats_count_4 - sales_value_4_acc:
                             revenue_four_roomed += sales_value_4[-1] * four_roomed_full_price
-                            not_sold_4 -= sales_value_4[-1]
-                        elif not_sold_4 - sales_value_4_acc <= 0 or sales_value_4[-1] + sales_value_4_acc > not_sold_4:
-                            revenue_four_roomed += four_roomed_full_price * not_sold_4
-                            not_sold_4 = 0
+                        else:
+                            revenue_four_roomed += four_roomed_full_price * (max_flats_count_4 - sales_value_4_acc)
                             max_revenue_4 = True
 
             # Accumulated sales values for each flat_type

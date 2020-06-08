@@ -490,8 +490,7 @@ class Developers_API():
 
                     print('/////////revenue_s = {0}, sales_value_studio = {1}'.format(revenue_s, len(sales_value_studio)), flush=True)
                     if len(sales_value_studio) != 0:
-                        if max_flats_count_s - sales_value_studio_acc >= 0 and sales_value_studio[
-                            -1] + sales_value_studio_acc <= max_flats_count_s - sales_value_studio_acc:
+                        if max_flats_count_s - sales_value_studio_acc >= 0 and sales_value_studio_acc <= max_flats_count_s - sales_value_studio_acc:
                             revenue_s += sales_value_studio[-1] * studio_full_price
                         else:
                             revenue_s += studio_full_price * (max_flats_count_s - sales_value_studio_acc)
@@ -513,8 +512,7 @@ class Developers_API():
                         '/////////revenue_1 = {0}, sales_value_1 = {1}'.format(revenue_one_roomed, sales_value_1),
                         flush=True)
                     if len(sales_value_1) != 0:
-                        if max_flats_count_1 - sales_value_1_acc >= 0 and sales_value_1[
-                            -1] + sales_value_1_acc <= max_flats_count_1 - sales_value_1_acc:
+                        if max_flats_count_1 - sales_value_1_acc >= 0 and sales_value_1_acc <= max_flats_count_1 - sales_value_1_acc:
                             revenue_one_roomed += sales_value_1[-1] * one_roomed_full_price
                         else:
                             revenue_one_roomed += one_roomed_full_price * (max_flats_count_1 - sales_value_1_acc)
@@ -536,8 +534,7 @@ class Developers_API():
                         flush=True)
                     print('max_flats_count_2 ({0}), sales_value_2_acc ({1}), sales_value_2[-1] ({2})'.format(max_flats_count_2, sales_value_2_acc, sales_value_2[-1]),  flush=True)
                     if len(sales_value_2) != 0:
-                        if max_flats_count_2 - sales_value_2_acc >= 0 and sales_value_2[
-                            -1] + sales_value_2_acc <= max_flats_count_2 - sales_value_2_acc:
+                        if max_flats_count_2 - sales_value_2_acc >= 0 and sales_value_2_acc <= max_flats_count_2 - sales_value_2_acc:
                             revenue_two_roomed += sales_value_2[-1] * two_roomed_full_price
                             print('----> revenue_two_roomed({0}) = sales_value_2[-1] ({1}) * two_roomed_full_price ({2})'.format(revenue_two_roomed, sales_value_2[-1], two_roomed_full_price), flush=True)
                         else:
@@ -573,8 +570,7 @@ class Developers_API():
                         '/////////revenue_3 = {0}, sales_value_3 = {1}'.format(revenue_three_roomed, sales_value_3),
                         flush=True)
                     if len(sales_value_3) != 0:
-                        if max_flats_count_3 - sales_value_3_acc >= 0 and sales_value_3[
-                            -1] + sales_value_3_acc <= max_flats_count_3 - sales_value_3_acc:
+                        if max_flats_count_3 - sales_value_3_acc >= 0 and sales_value_3_acc <= max_flats_count_3 - sales_value_3_acc:
                             revenue_three_roomed += sales_value_3[-1] * three_roomed_full_price
                         else:
                             revenue_three_roomed += three_roomed_full_price * (max_flats_count_3 - sales_value_3_acc)
@@ -595,8 +591,7 @@ class Developers_API():
                         '/////////revenue_4 = {0}, sales_value_4 = {1}'.format(revenue_four_roomed, sales_value_4),
                         flush=True)
                     if len(sales_value_4) != 0:
-                        if max_flats_count_4 - sales_value_4_acc >= 0 and sales_value_4[
-                            -1] + sales_value_4_acc <= max_flats_count_4 - sales_value_4_acc:
+                        if max_flats_count_4 - sales_value_4_acc >= 0 and sales_value_4_acc <= max_flats_count_4 - sales_value_4_acc:
                             revenue_four_roomed += sales_value_4[-1] * four_roomed_full_price
                         else:
                             revenue_four_roomed += four_roomed_full_price * (max_flats_count_4 - sales_value_4_acc)

@@ -762,7 +762,7 @@ class Developers_API():
                                                                     (volume_19_sold / volume_19_all)), flush=True)
             return (volume_19_sold / volume_19_all), volume_19_sold
 
-        print('ERROR -------------> ROOMS {0} equals zero!'.foramt(rooms), flush=True)
+        print('ERROR -------------> ROOMS s% equals zero!' % rooms, flush=True)
         return 0, volume_19_sold
 
     # def calculate_sale_month_and_year(self, type: int, term: int, yyyy_announce: int, mm_announce: int):

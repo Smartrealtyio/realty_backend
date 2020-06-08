@@ -251,6 +251,8 @@ class Developers_API():
                                                                      max_flats_count_2, max_flats_count_3, max_flats_count_4
         price_coeff = 1
 
+        print("max_flats_count: ", max_flats_count_s, max_flats_count_1, max_flats_count_2, max_flats_count_3, max_flats_count_4)
+
         print('sale_start={0}.{1}, sale_end={2}.{3}'.format(sale_start_month, sale_start_year, sale_end_month,
                                                             sale_end_year), flush=True)
         # Calculate number of sale years
@@ -283,7 +285,6 @@ class Developers_API():
                 sales_volume_coeff_3 += 0.06  # per one year volume grows by five percent
                 sales_volume_coeff_4 += 0.05  # per one year volume grows by five percent
                 # max_revenue_4, max_revenue_3, max_revenue_2, max_revenue_1, max_revenue_s = 0, 0, 0, 0, 0
-
 
 
             print('Current month: ', mm_announce, flush=True)

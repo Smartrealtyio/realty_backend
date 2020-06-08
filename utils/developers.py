@@ -341,7 +341,7 @@ class Developers_API():
                                                                                      rooms=0,
                                                                                      housing_class=housing_class, lat=latitude, lon=longitude)
                         sales_value_s = round((prob * flats_count)* sales_volume_coeff_s) if (prob < 1 and flats_count < val)  else round(val*prob)
-                        
+
                         print('Max_val={0}, sales_value_s in current month={1}, accumulated value={2}, flats_count={3}'.format(
                             max_flats_count_s, sales_value_s, sales_value_studio_acc, flats_count), flush=True)
 
@@ -497,7 +497,7 @@ class Developers_API():
                             revenue_s += studio_full_price * (max_flats_count_s - sales_value_studio_acc)
                             max_revenue_s = True
                     print(
-                        '/////////revenue_s = {0}, sales_value_studio = {1}'.format(revenue_s, len(sales_value_studio)),
+                        '/////////revenue_s = {0}, sales_value_studio = {1}'.format(revenue_s, sales_value_studio),
                         flush=True)
 
 
@@ -510,7 +510,7 @@ class Developers_API():
                     one_roomed_full_price = one_roomed_price_meter_sq * full_sq
 
                     print(
-                        '/////////revenue_1 = {0}, sales_value_1 = {1}'.format(revenue_one_roomed, len(sales_value_1)),
+                        '/////////revenue_1 = {0}, sales_value_1 = {1}'.format(revenue_one_roomed, sales_value_1),
                         flush=True)
                     if len(sales_value_1) != 0:
                         if max_flats_count_1 - sales_value_1_acc >= 0 and sales_value_1[
@@ -520,7 +520,7 @@ class Developers_API():
                             revenue_one_roomed += one_roomed_full_price * (max_flats_count_1 - sales_value_1_acc)
                             max_revenue_1 = True
                     print(
-                        '/////////revenue_1 = {0}, sales_value_1 = {1}'.format(revenue_one_roomed, len(sales_value_1)),
+                        '/////////revenue_1 = {0}, sales_value_1 = {1}'.format(revenue_one_roomed, sales_value_1),
                         flush=True)
 
                 if rooms == 2 and not max_revenue_2:
@@ -532,7 +532,7 @@ class Developers_API():
                     two_roomed_full_price = two_roomed_price_meter_sq * full_sq
 
                     print(
-                        '/////////revenue_2 = {0}, sales_value_2 = {1}'.format(revenue_two_roomed, len(sales_value_2)),
+                        '/////////revenue_2 = {0}, sales_value_2 = {1}'.format(revenue_two_roomed, sales_value_2),
                         flush=True)
                     if len(sales_value_2) != 0:
                         if max_flats_count_2 - sales_value_2_acc >= 0 and sales_value_2[
@@ -543,7 +543,7 @@ class Developers_API():
                             max_revenue_2 = True
 
                     print(
-                        '/////////revenue_2 = {0}, sales_value_2 = {1}'.format(revenue_two_roomed, len(sales_value_2)),
+                        '/////////revenue_2 = {0}, sales_value_2 = {1}'.format(revenue_two_roomed, sales_value_2),
                         flush=True)
                 # if rooms == 2 and not max_revenue_2:
                 #     two_roomed_price_meter_sq = price_meter_sq * prices_changes_2[mm_announce] * price_coeff
@@ -566,7 +566,7 @@ class Developers_API():
                     three_roomed_full_price = three_roomed_price_meter_sq * full_sq
 
                     print(
-                        '/////////revenue_3 = {0}, sales_value_3 = {1}'.format(revenue_three_roomed, len(sales_value_3)),
+                        '/////////revenue_3 = {0}, sales_value_3 = {1}'.format(revenue_three_roomed, sales_value_3),
                         flush=True)
                     if len(sales_value_3) != 0:
                         if max_flats_count_3 - sales_value_3_acc >= 0 and sales_value_3[
@@ -576,7 +576,7 @@ class Developers_API():
                             revenue_three_roomed += three_roomed_full_price * (max_flats_count_3 - sales_value_3_acc)
                             max_revenue_3 = True
                     print(
-                        '/////////revenue3 = {0}, sales_value_3 = {1}'.format(revenue_three_roomed, len(sales_value_3)),
+                        '/////////revenue3 = {0}, sales_value_3 = {1}'.format(revenue_three_roomed, sales_value_3),
                         flush=True)
 
                 if rooms == 4 and not max_revenue_4:
@@ -588,7 +588,7 @@ class Developers_API():
                     four_roomed_full_price = four_roomed_price_meter_sq * full_sq
 
                     print(
-                        '/////////revenue_4 = {0}, sales_value_4 = {1}'.format(revenue_four_roomed, len(sales_value_4)),
+                        '/////////revenue_4 = {0}, sales_value_4 = {1}'.format(revenue_four_roomed, sales_value_4),
                         flush=True)
                     if len(sales_value_4) != 0:
                         if max_flats_count_4 - sales_value_4_acc >= 0 and sales_value_4[
@@ -598,7 +598,7 @@ class Developers_API():
                             revenue_four_roomed += four_roomed_full_price * (max_flats_count_4 - sales_value_4_acc)
                             max_revenue_4 = True
                     print(
-                        '/////////revenue_4 = {0}, sales_value_4 = {1}'.format(revenue_four_roomed, len(sales_value_4)),
+                        '/////////revenue_4 = {0}, sales_value_4 = {1}'.format(revenue_four_roomed, sales_value_4),
                         flush=True)
 
             # Accumulated sales values for each flat_type

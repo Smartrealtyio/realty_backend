@@ -230,7 +230,7 @@ class Developers_API():
         # Initial price_meter_sq for each flat_type
         s_price_meter_sq, one_roomed_price_meter_sq, two_roomed_price_meter_sq, three_roomed_price_meter_sq, \
         four_roomed_price_meter_sq = 0, 0, 0, 0, 0
-        update_s, update_1, update_2, update_3, update_4 = 1, 1, 1, 1, 1
+        update_s, update_1, update_2, update_3, update_4 = 0, 0, 0, 0, 0
         # Initial sales value for each flat_type
         sales_value_studio, sales_value_1, sales_value_2, sales_value_3, sales_value_4 = [], [], [], [], []
         # Accumulated sales value for each flat_type

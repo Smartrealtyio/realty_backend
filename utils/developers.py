@@ -357,7 +357,7 @@ class Developers_API():
                         print('\nConclusion: sales_value_studio={0}, sales_value_studio_acc={1}'.format(
                             sales_value_studio, sales_value_studio_acc), flush=True)
                     else:
-
+                        update_s = False
                         print('!!!!!!!!!Studio flats_count: ', flats_count, flush=True)
 
 
@@ -387,6 +387,7 @@ class Developers_API():
                             sales_value_1, sales_value_1_acc), flush=True)
 
                     else:
+                        update_1= False
                         print('!!!!!!!!!1Roomed flats_count: ', flats_count, flush=True)
 
                 # Calculate number of 2-roomed flats
@@ -414,6 +415,7 @@ class Developers_API():
                             sales_value_2, sales_value_2_acc), flush=True)
 
                     else:
+                        update_2 = False
                         print('!!!!!!!!!2Roomed flats_count: ', flats_count, flush=True)
 
                 # Calculate number of 3-roomed flats
@@ -440,6 +442,7 @@ class Developers_API():
                         print('\nConclusion: sales_value_3={0}, sales_value_3_acc={1}'.format(
                             sales_value_3, sales_value_3_acc), flush=True)
                     else:
+                        update_3 = False
                         print('!!!!!!!!!3Roomed flats_count: ', flats_count, flush=True)
 
                 # Calculate number of 4-roomed flats
@@ -466,6 +469,7 @@ class Developers_API():
                         print('\nConclusion: sales_value_4={0}, sales_value_4_acc={1}'.format(
                             sales_value_4, sales_value_4_acc), flush=True)
                     else:
+                        update_4 = False
                         print('!!!!!!!!!4Roomed flats_count: ', flats_count, flush=True)
 
 

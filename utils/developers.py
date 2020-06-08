@@ -538,9 +538,12 @@ class Developers_API():
                         if max_flats_count_2 - sales_value_2_acc >= 0 and sales_value_2[
                             -1] + sales_value_2_acc <= max_flats_count_2 - sales_value_2_acc:
                             revenue_two_roomed += sales_value_2[-1] * two_roomed_full_price
+                            print('----> revenue_two_roomed({0}) = sales_value_2[-1] ({1}) * two_roomed_full_price ({2})'.format(revenue_two_roomed, sales_value_2[-1], two_roomed_full_price), flush=True)
                         else:
                             revenue_two_roomed += two_roomed_full_price * (max_flats_count_2 - sales_value_2_acc)
                             max_revenue_2 = True
+                            print('----> revenue_two_roomed({0}) = (max_flats_count_2({1}) - sales_value_2_acc({2})) * two_roomed_full_price ({3})'.format(revenue_two_roomed, max_flats_count_2,
+                                                                                                                                                           sales_value_2_acc, two_roomed_full_price), flush=True)
 
                     print(
                         '/////////revenue_2 = {0}, sales_value_2 = {1}'.format(revenue_two_roomed, sales_value_2),

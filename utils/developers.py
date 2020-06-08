@@ -335,7 +335,7 @@ class Developers_API():
                 # Calculate number of studios
                 if rooms == 's':
                     flats_count-=sales_value_studio_acc
-                    if flats_count > 0:
+                    if flats_count >= 0:
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                                      mm_sold=mm_announce,
                                                                                      rooms=0,
@@ -348,20 +348,23 @@ class Developers_API():
                         if max_flats_count_s >= sales_value_studio_acc+sales_value_s:
                             sales_value_studio.append(sales_value_s)
                             sales_value_studio_acc+=sales_value_s
+                            update_s = True
                         else:
                             sales_value_studio.append(max_flats_count_s - sales_value_studio_acc)
                             sales_value_studio_acc = max_flats_count_s
+                            update_s = False
 
                         print('\nConclusion: sales_value_studio={0}, sales_value_studio_acc={1}'.format(
                             sales_value_studio, sales_value_studio_acc), flush=True)
                     else:
+
                         print('!!!!!!!!!Studio flats_count: ', flats_count, flush=True)
 
 
                 # Calculate number of 1-roomed flats
                 if rooms == 1:
                     flats_count -= sales_value_1_acc
-                    if flats_count > 0:
+                    if flats_count >= 0:
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=1,
@@ -374,9 +377,11 @@ class Developers_API():
                         if max_flats_count_1 >= sales_value_1_acc + sales_value_1roomed:
                             sales_value_1.append(sales_value_1roomed)
                             sales_value_1_acc += sales_value_1roomed
+                            udpate_1 = True
                         else:
                             sales_value_1.append(max_flats_count_1 - sales_value_1_acc)
                             sales_value_1_acc = max_flats_count_1
+                            udpate_1 = False
 
                         print('\nConclusion: sales_value_1={0}, sales_value_1_acc={1}'.format(
                             sales_value_1, sales_value_1_acc), flush=True)
@@ -387,7 +392,7 @@ class Developers_API():
                 # Calculate number of 2-roomed flats
                 if rooms == 2:
                     flats_count -= sales_value_2_acc
-                    if flats_count > 0:
+                    if flats_count >= 0:
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=2,
@@ -400,9 +405,11 @@ class Developers_API():
                         if max_flats_count_2 >= sales_value_2_acc + sales_value_2roomed:
                             sales_value_2.append(sales_value_2roomed)
                             sales_value_2_acc += sales_value_2roomed
+                            udpate_2 = True
                         else:
                             sales_value_2.append(max_flats_count_2 - sales_value_2_acc)
                             sales_value_2_acc = max_flats_count_2
+                            udpate_2 = False
                         print('\nConclusion: sales_value_2={0}, sales_value_2_acc={1}'.format(
                             sales_value_2, sales_value_2_acc), flush=True)
 
@@ -412,7 +419,7 @@ class Developers_API():
                 # Calculate number of 3-roomed flats
                 if rooms == 3:
                     flats_count -= sales_value_3_acc
-                    if flats_count > 0:
+                    if flats_count >= 0:
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=3,
@@ -425,9 +432,11 @@ class Developers_API():
                         if max_flats_count_3 >= sales_value_3_acc + sales_value_3roomed:
                             sales_value_3.append(sales_value_3roomed)
                             sales_value_3_acc += sales_value_3roomed
+                            udpate_3 = True
                         else:
                             sales_value_3.append(max_flats_count_3 - sales_value_3_acc)
                             sales_value_3_acc = max_flats_count_3
+                            udpate_3 = False
                         print('\nConclusion: sales_value_3={0}, sales_value_3_acc={1}'.format(
                             sales_value_3, sales_value_3_acc), flush=True)
                     else:
@@ -436,7 +445,7 @@ class Developers_API():
                 # Calculate number of 4-roomed flats
                 if rooms == 4:
                     flats_count -= sales_value_4_acc
-                    if flats_count > 0:
+                    if flats_count >= 0:
                         prob, val = self.calculate_sales_volume_previos_year(full_sq_group=full_sq_group,
                                                                              mm_sold=mm_announce,
                                                                              rooms=4,
@@ -449,9 +458,11 @@ class Developers_API():
                         if max_flats_count_4 >= sales_value_4_acc + sales_value_4roomed:
                             sales_value_4.append(sales_value_4roomed)
                             sales_value_4_acc += sales_value_4roomed
+                            update_4 = True
                         else:
                             sales_value_4.append(max_flats_count_4 - sales_value_4_acc)
                             sales_value_4_acc = max_flats_count_4
+                            update_4 = False
                         print('\nConclusion: sales_value_4={0}, sales_value_4_acc={1}'.format(
                             sales_value_4, sales_value_4_acc), flush=True)
                     else:
@@ -558,11 +569,18 @@ class Developers_API():
 
 
 
-            s_answ, update_s = (sales_value_studio_acc, 1) if (0 <= sales_value_studio_acc < max_flats_count_s and update_s) else (max_flats_count_s, 0)
-            answ_1, update_1 = (sales_value_1_acc, 1) if (0 <= sales_value_1_acc < max_flats_count_1 and update_1) else (max_flats_count_1, False)
-            answ_2, update_2 = (sales_value_2_acc, 1) if (0 <= sales_value_2_acc < max_flats_count_2 and update_2) else (max_flats_count_2, False)
-            answ_3, udpate_3 = (sales_value_3_acc, 1) if (0 <= sales_value_3_acc < max_flats_count_3 and update_3) else (max_flats_count_3, False)
-            answ_4, udpate_4 = (sales_value_4_acc, 1) if (0 <= sales_value_4_acc < max_flats_count_4 and update_4) else (max_flats_count_4, 0)
+            # s_answ, update_s = (sales_value_studio_acc, 1) if (0 <= sales_value_studio_acc < max_flats_count_s and update_s) else (max_flats_count_s, 0)
+            # answ_1, update_1 = (sales_value_1_acc, 1) if (0 <= sales_value_1_acc < max_flats_count_1 and update_1) else (max_flats_count_1, False)
+            # answ_2, update_2 = (sales_value_2_acc, 1) if (0 <= sales_value_2_acc < max_flats_count_2 and update_2) else (max_flats_count_2, False)
+            # answ_3, udpate_3 = (sales_value_3_acc, 1) if (0 <= sales_value_3_acc < max_flats_count_3 and update_3) else (max_flats_count_3, False)
+            # answ_4, udpate_4 = (sales_value_4_acc, 1) if (0 <= sales_value_4_acc < max_flats_count_4 and update_4) else (max_flats_count_4, 0)
+
+            s_answ, update_s = (sales_value_studio[-1], 0) if update_s else (0, 0)
+            answ_1, update_1 = (sales_value_1[-1], 0) if update_1 else (0, 0)
+            answ_2, update_2 = (sales_value_2[-1], 0) if update_2 else (0, 0)
+            answ_3, update_3 = (sales_value_3[-1], 0) if update_3 else (0, 0)
+            answ_4, update_4 = (sales_value_4[-1], 0) if update_4 else (0, 0)
+
 
             print('\nFirst graphic: \nMonth={0} '.format(mm_announce))
             print({'month_announce': mm_announce, 'year_announce': yyyy_announce, 'month_graphic': idx_month + 1,

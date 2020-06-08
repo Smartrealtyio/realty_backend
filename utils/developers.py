@@ -243,10 +243,10 @@ class Developers_API():
         sales_volume_coeff_4 = 1, 1, 1, 1, 1
         max_revenue_4, max_revenue_3, max_revenue_2, max_revenue_1, max_revenue_s = 0, 0, 0, 0, 0
         max_flats_count_s = sum([int(i['flats_count']) for i in flats if i['rooms'] == 's'])
-        max_flats_count_1 = sum([int(i['flats_count']) for i in flats if i['rooms'] == 1])
-        max_flats_count_2 = sum([int(i['flats_count']) for i in flats if i['rooms'] == 2])
-        max_flats_count_3 = sum([int(i['flats_count']) for i in flats if i['rooms'] == 3])
-        max_flats_count_4 = sum([int(i['flats_count']) for i in flats if i['rooms'] == 4])
+        max_flats_count_1 = sum([int(i['flats_count']) for i in flats if i['rooms'] == '1'])
+        max_flats_count_2 = sum([int(i['flats_count']) for i in flats if i['rooms'] == '2'])
+        max_flats_count_3 = sum([int(i['flats_count']) for i in flats if i['rooms'] == '3'])
+        max_flats_count_4 = sum([int(i['flats_count']) for i in flats if i['rooms'] == '4'])
         not_sold_s, not_sold_1, not_sold_2, not_sold_3, not_sold_4 = max_flats_count_s, max_flats_count_1, \
                                                                      max_flats_count_2, max_flats_count_3, max_flats_count_4
         price_coeff = 1

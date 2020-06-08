@@ -251,7 +251,7 @@ class Developers_API():
                                                                      max_flats_count_2, max_flats_count_3, max_flats_count_4
         price_coeff = 1
 
-        print("max_flats_count: ", max_flats_count_s, max_flats_count_1, max_flats_count_2, max_flats_count_3, max_flats_count_4)
+        print("max_flats_count: ", max_flats_count_s, max_flats_count_1, max_flats_count_2, max_flats_count_3, max_flats_count_4, flush=True)
 
         print('sale_start={0}.{1}, sale_end={2}.{3}'.format(sale_start_month, sale_start_year, sale_end_month,
                                                             sale_end_year), flush=True)

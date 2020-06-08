@@ -757,7 +757,7 @@ class Developers_API():
         print('<---------------> ROOMS = {0} <--------------->'.format(rooms), flush=True)
         print('all: ', len(sale_volume_data_all), flush=True)
         print('closed: ', len(sale_volume_data_sold), flush=True)
-        if len(volume_19_sold) != 0:
+        if volume_19_sold != 0:
             print('Предложение: {0}\nСпрос: {1}\n prob: {2}'.format(volume_19_all, volume_19_sold,
                                                                     (volume_19_sold / volume_19_all)), flush=True)
             return (volume_19_sold / volume_19_all), volume_19_sold

@@ -352,7 +352,7 @@ class Developers_API():
                         else:
                             sales_value_studio.append(max_flats_count_s - sales_value_studio_acc)
                             sales_value_studio_acc = max_flats_count_s
-                            update_s = False
+                            update_s = True
 
                         print('\nConclusion: sales_value_studio={0}, sales_value_studio_acc={1}'.format(
                             sales_value_studio, sales_value_studio_acc), flush=True)
@@ -381,7 +381,7 @@ class Developers_API():
                         else:
                             sales_value_1.append(max_flats_count_1 - sales_value_1_acc)
                             sales_value_1_acc = max_flats_count_1
-                            update_1 = False
+                            update_1 = True
 
                         print('\nConclusion: sales_value_1={0}, sales_value_1_acc={1}'.format(
                             sales_value_1, sales_value_1_acc), flush=True)
@@ -409,7 +409,7 @@ class Developers_API():
                         else:
                             sales_value_2.append(max_flats_count_2 - sales_value_2_acc)
                             sales_value_2_acc = max_flats_count_2
-                            update_2 = False
+                            update_2 = True
                         print('\nConclusion: sales_value_2={0}, sales_value_2_acc={1}'.format(
                             sales_value_2, sales_value_2_acc), flush=True)
 
@@ -432,11 +432,11 @@ class Developers_API():
                         if max_flats_count_3 >= sales_value_3_acc + sales_value_3roomed:
                             sales_value_3.append(sales_value_3roomed)
                             sales_value_3_acc += sales_value_3roomed
-                            udpate_3 = True
+                            update_3 = True
                         else:
                             sales_value_3.append(max_flats_count_3 - sales_value_3_acc)
                             sales_value_3_acc = max_flats_count_3
-                            update_3 = False
+                            update_3 = True
                         print('\nConclusion: sales_value_3={0}, sales_value_3_acc={1}'.format(
                             sales_value_3, sales_value_3_acc), flush=True)
                     else:
@@ -462,7 +462,7 @@ class Developers_API():
                         else:
                             sales_value_4.append(max_flats_count_4 - sales_value_4_acc)
                             sales_value_4_acc = max_flats_count_4
-                            update_4 = False
+                            update_4 = True
                         print('\nConclusion: sales_value_4={0}, sales_value_4_acc={1}'.format(
                             sales_value_4, sales_value_4_acc), flush=True)
                     else:

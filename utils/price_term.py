@@ -67,11 +67,11 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
             # Load Price Models Moscow Secondary
             gbr = load(PATH_PRICE_GBR_MOSCOW_D)
-            rf = load(PATH_PRICE_RF_MOSCOW_D)
+            # rf = load(PATH_PRICE_RF_MOSCOW_D)
             lgbm = load(PATH_PRICE_LGBM_MOSCOW_D)
             print("Pretrained models loaded! Moscow")
             print('Price: ', Path(PATH_PRICE_GBR_MOSCOW_D).stat().st_size, flush=True)
-            print('Price: ', Path(PATH_PRICE_RF_MOSCOW_D).stat().st_size, flush=True)
+            # print('Price: ', Path(PATH_PRICE_RF_MOSCOW_D).stat().st_size, flush=True)
             print('Price: ', Path(PATH_PRICE_LGBM_MOSCOW_D).stat().st_size, flush=True)
             print('Clusters: ', Path(KMEANS_CLUSTERING_MOSCOW_MAIN).stat().st_size, flush=True)
             print("AAAA", flush=True)
@@ -106,7 +106,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
             # Load Price Models Spb Secondary
             gbr = load(PATH_PRICE_GBR_SPB_D)
-            rf = load(PATH_PRICE_RF_SPB_D)
+            # rf = load(PATH_PRICE_RF_SPB_D)
             lgbm = load(PATH_PRICE_LGBM_SPB_D)
             print("Pretrained models loaded! Spb")
 
@@ -125,11 +125,11 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         #     lgbm = load(PATH_PRICE_LGBM_SPB_VTOR)
 
         print("Initial shape: ", data.shape, flush=True)
-        return data, kmeans, gbr, rf, lgbm, city_center_lon, city_center_lat
+        return data, kmeans, gbr, lgbm, city_center_lon, city_center_lat # TODO: RETURN RF
 
     print("define city: ", flush=True)
     # Call define function
-    data, kmeans, gbr, rf, lgbm, city_center_lon, city_center_lat = define_city(city_id=city_id, secondary=secondary)
+    data, kmeans, gbr, lgbm, city_center_lon, city_center_lat = define_city(city_id=city_id, secondary=secondary)
 
     print("Data loaded #2", flush=True)
     ####################
@@ -176,13 +176,13 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
               rent_year]]))
         print("Gbr predicted price ", gbr_predicted_price, flush=True)
 
-        rf_predicted_price = np.expm1(rf_model.predict(
-            [[np.log1p(life_sq), np.log1p(to_city_center_distance), mm_announce, rooms, renovation, has_elevator,
-              np.log1p(longitude), np.log1p(latitude),
-              np.log1p(full_sq),
-              np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter,
-              rent_year]]))
-        print("rf predicted price ", rf_predicted_price, flush=True)
+        # rf_predicted_price = np.expm1(rf_model.predict(
+        #     [[np.log1p(life_sq), np.log1p(to_city_center_distance), mm_announce, rooms, renovation, has_elevator,
+        #       np.log1p(longitude), np.log1p(latitude),
+        #       np.log1p(full_sq),
+        #       np.log1p(kitchen_sq), time_to_metro, floor_first, floor_last, current_cluster, is_rented, rent_quarter,
+        #       rent_year]]))
+        # print("rf predicted price ", rf_predicted_price, flush=True)
 
         lgbm_pedicted_price = np.expm1(lgbm_model.predict(
             [[np.log1p(life_sq), np.log1p(to_city_center_distance), mm_announce, rooms, renovation, has_elevator,
@@ -193,7 +193,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         print("Lgbm predicted price ", lgbm_pedicted_price, flush=True)
 
         # Calculate mean price value based on three algorithms
-        price_main = (gbr_predicted_price + lgbm_pedicted_price + rf_predicted_price) / 3
+        price_main = (gbr_predicted_price + lgbm_pedicted_price) / 3
         price = int(price_main[0])
         print("Predicted Price: ", price, flush=True)
 
@@ -201,7 +201,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         return price, price_meter_sq
 
     # Calculate price
-    price, price_meter_sq = calculate_price(gbr_model=gbr, rf_model=rf, lgbm_model=lgbm, secondary=secondary)
+    price, price_meter_sq = calculate_price(gbr_model=gbr , lgbm_model=lgbm, secondary=secondary)
 
     ####################
     #                  #

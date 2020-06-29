@@ -41,7 +41,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
                    floor_first, floor_last, time_to_metro, is_rented, rent_year, rent_quarter, city_id):
     # Get current time
     now = datetime.now()
-
+    print("Date: ", now, flush=True)
     # City_id: 0 = Moscow, 1 = Spb
 
     def define_city(city_id: int, secondary: int):
@@ -121,6 +121,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         print("Initial shape: ", data.shape, flush=True)
         return data, kmeans, gbr, rf, lgbm, city_center_lon, city_center_lat
 
+    print("define city: ", flush=True)
     # Call define function
     data, kmeans, gbr, rf, lgbm, city_center_lon, city_center_lat = define_city(city_id=city_id, secondary=secondary)
 

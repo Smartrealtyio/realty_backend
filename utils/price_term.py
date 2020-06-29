@@ -193,7 +193,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
         print("Lgbm predicted price ", lgbm_pedicted_price, flush=True)
 
         # Calculate mean price value based on three algorithms
-        price_main = (gbr_predicted_price + lgbm_pedicted_price) / 3
+        price_main = (gbr_predicted_price + lgbm_pedicted_price) / 2
         price = int(price_main[0])
         print("Predicted Price: ", price, flush=True)
 

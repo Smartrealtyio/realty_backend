@@ -164,7 +164,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
     mm_announce = now.month
 
     # Predict Price using gbr, rf, lgmb if not secondary
-    def calculate_price(gbr_model: GradientBoostingRegressor, rf_model: RandomForestRegressor,
+    def calculate_price(gbr_model: GradientBoostingRegressor,
                         lgbm_model: LGBMRegressor, secondary: int):
         gbr_predicted_price, lgbm_pedicted_price, rf_predicted_price = 0, 0, 0
         # New

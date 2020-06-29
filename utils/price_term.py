@@ -57,9 +57,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             data2 = pd.read_csv(MOSCOW_DATA_SECONDARY)
 
             data = pd.concat([data1, data2], ignore_index=True)
-
-            del data1
-            del data2
+            print("data loaded: ", flush=True)
 
             # Load KMean Clustering model
             kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
@@ -126,6 +124,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
     # Call define function
     data, kmeans, gbr, rf, lgbm, city_center_lon, city_center_lat = define_city(city_id=city_id, secondary=secondary)
 
+    print("Data loaded #2", flush=True)
     ####################
     #                  #
     # PRICE PREDICTION #

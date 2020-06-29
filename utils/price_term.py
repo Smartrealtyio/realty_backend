@@ -10,6 +10,7 @@ from lightgbm import LGBMRegressor
 from scipy import stats
 import sys
 import os
+from pathlib import Path
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -58,15 +59,21 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
 
             data = pd.concat([data1, data2], ignore_index=True)
             print("data loaded: ", flush=True)
-
+            print('CSv: ', Path(MOSCOW_DATA_NEW).stat().st_size, flush=True)
+            print('CSv: ', Path(MOSCOW_DATA_SECONDARY).stat().st_size, flush=True)
             # Load KMean Clustering model
             kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
+            
 
             # Load Price Models Moscow Secondary
             gbr = load(PATH_PRICE_GBR_MOSCOW_D)
             rf = load(PATH_PRICE_RF_MOSCOW_D)
             lgbm = load(PATH_PRICE_LGBM_MOSCOW_D)
             print("Pretrained models loaded! Moscow")
+            print('Price: ', Path(PATH_PRICE_GBR_MOSCOW_D).stat().st_size, flush=True)
+            print('Price: ', Path(PATH_PRICE_RF_MOSCOW_D).stat().st_size, flush=True)
+            print('Price: ', Path(PATH_PRICE_LGBM_MOSCOW_D).stat().st_size, flush=True)
+            print('Clusters: ', Path(KMEANS_CLUSTERING_MOSCOW_MAIN).stat().st_size, flush=True)
 
             city_center_lon = 37.619291
             city_center_lat = 55.751474
@@ -92,8 +99,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             data2 = pd.read_csv(SPB_DATA_SECONDARY)
             data = pd.concat([data1, data2], ignore_index=True)
 
-            del data1
-            del data2
+
 
             # Load KMean Clustering model
             kmeans = load(KMEANS_CLUSTERING_SPB_MAIN)

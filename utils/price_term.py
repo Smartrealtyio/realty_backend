@@ -63,7 +63,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             print('CSv: ', Path(MOSCOW_DATA_SECONDARY).stat().st_size, flush=True)
             # Load KMean Clustering model
             kmeans = load(KMEANS_CLUSTERING_MOSCOW_MAIN)
-            
+
 
             # Load Price Models Moscow Secondary
             gbr = load(PATH_PRICE_GBR_MOSCOW_D)
@@ -74,7 +74,7 @@ def map_estimation(longitude, rooms, latitude, full_sq, kitchen_sq, life_sq, ren
             print('Price: ', Path(PATH_PRICE_RF_MOSCOW_D).stat().st_size, flush=True)
             print('Price: ', Path(PATH_PRICE_LGBM_MOSCOW_D).stat().st_size, flush=True)
             print('Clusters: ', Path(KMEANS_CLUSTERING_MOSCOW_MAIN).stat().st_size, flush=True)
-
+            print("AAAA", flush=True)
             city_center_lon = 37.619291
             city_center_lat = 55.751474
 
